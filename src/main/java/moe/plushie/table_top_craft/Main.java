@@ -1,7 +1,9 @@
 package moe.plushie.table_top_craft;
 
 import moe.plushie.table_top_craft.proxy.CommonProxy;
+import moe.plushie.table_top_craft.tab.ModTab;
 import moe.plushie.table_top_craft.util.registrymanager.RegistryManager;
+import net.minecraft.creativetab.CreativeTabs;
 import net.minecraftforge.fml.common.Mod;
 import net.minecraftforge.fml.common.Mod.EventHandler;
 import net.minecraftforge.fml.common.Mod.Instance;
@@ -20,6 +22,9 @@ public class Main {
 //Server and Client Proxy
     @SidedProxy(clientSide = Reference.CLIENT, serverSide = Reference.SERVER)
     public static CommonProxy proxy;
+    
+//Sets the Tab
+  	public static final CreativeTabs modtab = new ModTab("Table Top Craft");
     
 //PreInit
     @EventHandler

@@ -7,7 +7,7 @@ import net.minecraft.item.ItemStack;
 
 public class ModTab extends CreativeTabs {
 	public ModTab(String label) {
-		super("Table Top Craft");
+		super("table_top_craft");
 		this.setBackgroundImageName("items.png");
 	}
 

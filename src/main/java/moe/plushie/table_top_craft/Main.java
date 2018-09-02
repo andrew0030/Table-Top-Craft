@@ -24,7 +24,7 @@ public class Main {
     public static CommonProxy proxy;
     
 //Sets the Tab
-  	public static final CreativeTabs modtab = new ModTab("Table Top Craft");
+  	public static final CreativeTabs modtab = new ModTab("table_top_craft");
     
 //PreInit
     @EventHandler

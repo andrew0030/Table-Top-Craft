@@ -12,8 +12,13 @@ import net.minecraft.block.state.IBlockState;
 import net.minecraft.item.Item;
 import net.minecraft.item.ItemBlock;
 import net.minecraft.util.ResourceLocation;
+import net.minecraft.util.math.AxisAlignedBB;
+import net.minecraft.util.math.BlockPos;
+import net.minecraft.world.IBlockAccess;
 
 public class BlockChess extends Block implements IHasModel {
+	private static final AxisAlignedBB BOUNDING_BOX = new AxisAlignedBB(0.0625F * -1F, 0, 0.0625F * -1F, 0.0625F * 17F, 0.0625F * 16.5F, 0.0625F * 17F);
+	
 	public BlockChess(String name) {
 		super(Material.WOOD);
 		this.setUnlocalizedName(name);
@@ -34,6 +39,16 @@ public class BlockChess extends Block implements IHasModel {
 	@Override
 	public boolean isFullCube(IBlockState state) {
 		return false;
+	}
+	
+	@Override
+	public AxisAlignedBB getBoundingBox(IBlockState state, IBlockAccess source, BlockPos pos) {
+		return BOUNDING_BOX;
+	}
+	
+	@Override
+	public AxisAlignedBB getCollisionBoundingBox(IBlockState blockState, IBlockAccess worldIn, BlockPos pos) {
+		return BOUNDING_BOX;
 	}
 	
 	@Override

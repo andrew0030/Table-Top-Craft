@@ -24,8 +24,9 @@ public class TileEntiryChessRenderer extends TileEntitySpecialRenderer<TileEntit
     public void render(TileEntityChess te, double x, double y, double z, float partialTicks, int destroyStage, float alpha) {
         float scale = 1F / 16F;
         GlStateManager.pushMatrix();
-        GlStateManager.translate(x - 0.125F, y + 1.02F, z + 0.25F);
+        GlStateManager.translate(x + 0.75F, y + 1.02F, z - 0.125F);
         GlStateManager.scale(1F, -1F, -1F);
+        GlStateManager.rotate(90.0F, 0.0F, 1.0F, 0.0F);
         GlStateManager.enableNormalize();
         bindTexture(PAWN_TEXTURE);
         

@@ -22,7 +22,7 @@ import net.minecraft.world.World;
 
 public class BlockChess extends BlockContainer implements IHasModel {
 
-    private static final AxisAlignedBB BOUNDING_BOX = new AxisAlignedBB(0.0625F * -1F, 0, 0.0625F * -1F, 0.0625F * 17F, 0.0625F * 16.5F, 0.0625F * 17F);
+    private static final AxisAlignedBB BOUNDING_BOX = new AxisAlignedBB(0.0625F * -1F, 0, 0.0625F * -1F, 0.0625F * 17F, 0.0625F * 16.2F, 0.0625F * 17F);
 
     public BlockChess(String name) {
         super(Material.WOOD);

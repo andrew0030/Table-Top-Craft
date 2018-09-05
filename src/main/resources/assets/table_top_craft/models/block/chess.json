@@ -192,7 +192,7 @@
         {
             "__comment": "Box19",
             "from": [ -1, 15, 0 ],
-            "to": [ 0, 16.5, 16 ],
+            "to": [ 0, 16.2, 16 ],
             "faces": {
                 "down": { "uv": [ 0, 15, 16, 16 ], "texture": "#dark_parts", "rotation": 90 },
                 "up": { "uv": [ 0, 15, 16, 16 ], "texture": "#dark_parts", "rotation": 90 },
@@ -203,7 +203,7 @@
         {
             "__comment": "Box19",
             "from": [ 16, 15, 0 ],
-            "to": [ 17, 16.5, 16 ],
+            "to": [ 17, 16.2, 16 ],
             "faces": {
                 "down": { "uv": [ 0, 15, 16, 16 ], "texture": "#dark_parts", "rotation": 180 },
                 "up": { "uv": [ 0, 15, 16, 16 ], "texture": "#dark_parts", "rotation": 90 },
@@ -214,7 +214,7 @@
         {
             "__comment": "Box19",
             "from": [ 0, 15, -1 ],
-            "to": [ 16, 16.5, 0 ],
+            "to": [ 16, 16.2, 0 ],
             "faces": {
                 "down": { "uv": [ 0, 15, 16, 16 ], "texture": "#dark_parts", "rotation": 180 },
                 "up": { "uv": [ 0, 15, 16, 16 ], "texture": "#dark_parts", "rotation": 180 },
@@ -225,7 +225,7 @@
         {
             "__comment": "Box19",
             "from": [ 0, 15, 16 ],
-            "to": [ 16, 16.5, 17 ],
+            "to": [ 16, 16.2, 17 ],
             "faces": {
                 "down": { "uv": [ 0, 15, 16, 16 ], "texture": "#dark_parts", "rotation": 180 },
                 "up": { "uv": [ 0, 15, 16, 16 ], "texture": "#dark_parts" },
@@ -236,7 +236,7 @@
         {
             "__comment": "Box23",
             "from": [ -1, 15, -1 ],
-            "to": [ 0, 16.5, 0 ],
+            "to": [ 0, 16.2, 0 ],
             "faces": {
                 "down": { "uv": [ 15, 15, 16, 16 ], "texture": "#dark_parts" },
                 "up": { "uv": [ 15, 15, 16, 16 ], "texture": "#dark_parts" },
@@ -247,7 +247,7 @@
         {
             "__comment": "Box24",
             "from": [ 16, 15, -1 ],
-            "to": [ 17, 16.5, 0 ],
+            "to": [ 17, 16.2, 0 ],
             "faces": {
                 "down": { "uv": [ 0, 0, 1, 1 ], "texture": "#dark_parts" },
                 "up": { "uv": [ 0, 15, 1, 16 ], "texture": "#dark_parts" },
@@ -258,7 +258,7 @@
         {
             "__comment": "Box25",
             "from": [ -1, 15, 16 ],
-            "to": [ 0, 16.5, 17 ],
+            "to": [ 0, 16.2, 17 ],
             "faces": {
                 "down": { "uv": [ 15, 15, 16, 16 ], "texture": "#dark_parts" },
                 "up": { "uv": [ 15, 0, 16, 1 ], "texture": "#dark_parts" },
@@ -269,7 +269,7 @@
         {
             "__comment": "Box26",
             "from": [ 16, 15, 16 ],
-            "to": [ 17, 16.5, 17 ],
+            "to": [ 17, 16.2, 17 ],
             "faces": {
                 "down": { "uv": [ 0, 15, 1, 16 ], "texture": "#dark_parts" },
                 "up": { "uv": [ 0, 0, 1, 1 ], "texture": "#dark_parts" },

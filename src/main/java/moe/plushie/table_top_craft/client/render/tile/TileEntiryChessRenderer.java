@@ -13,7 +13,8 @@ import net.minecraftforge.fml.relauncher.SideOnly;
 @SideOnly(Side.CLIENT)
 public class TileEntiryChessRenderer extends TileEntitySpecialRenderer<TileEntityChess> {
 
-    private static final ResourceLocation PAWN_TEXTURE = new ResourceLocation(Reference.MOD_ID, "textures/models/chess_pawn.png");
+    private static final ResourceLocation PAWN_TEXTURE_BLACK = new ResourceLocation(Reference.MOD_ID, "textures/models/black_pieces.png");
+    private static final ResourceLocation PAWN_TEXTURE_WHITE = new ResourceLocation(Reference.MOD_ID, "textures/models/white_pieces.png");
     private final ChessPawn pawnModel;
     
     public TileEntiryChessRenderer() {
@@ -28,7 +29,26 @@ public class TileEntiryChessRenderer extends TileEntitySpecialRenderer<TileEntit
         GlStateManager.scale(1F, -1F, -1F);
         GlStateManager.rotate(90.0F, 0.0F, 1.0F, 0.0F);
         GlStateManager.enableNormalize();
-        bindTexture(PAWN_TEXTURE);
+        bindTexture(PAWN_TEXTURE_BLACK);
+        
+        GlStateManager.pushMatrix();
+        for (int i = 0; i < 8; i++) {
+            GlStateManager.translate(0.125F, 0F, 0F);
+            pawnModel.render(null, 0, 0, 0, 0, 0, scale);
+        }
+        GlStateManager.popMatrix();
+        
+        GlStateManager.pushMatrix();
+        GlStateManager.translate(0, 0, 0.126F);
+        for (int i = 0; i < 8; i++) {
+            GlStateManager.translate(0.125F, 0F, 0F);
+            pawnModel.render(null, 0, 0, 0, 0, 0, scale);
+        }
+        GlStateManager.popMatrix();
+        
+        GlStateManager.translate(1.25F, 0.0F, -0.5F);
+        GlStateManager.rotate(180.0F, 0.0F, 1.0F, 0.0F);
+        bindTexture(PAWN_TEXTURE_WHITE);
         
         GlStateManager.pushMatrix();
         for (int i = 0; i < 8; i++) {

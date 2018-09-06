@@ -1,6 +1,7 @@
 package moe.plushie.table_top_craft.client.render.tile;
 
 import moe.plushie.table_top_craft.client.model.ChessPawn;
+import moe.plushie.table_top_craft.client.model.ChessRook;
 import moe.plushie.table_top_craft.common.lib.ModReference;
 import moe.plushie.table_top_craft.common.tileentities.TileEntityChessTable;
 import net.minecraft.client.renderer.GlStateManager;
@@ -15,9 +16,11 @@ public class TileEntiryChessTableRenderer extends TileEntitySpecialRenderer<Tile
     private static final ResourceLocation PAWN_TEXTURE_BLACK = new ResourceLocation(ModReference.MOD_ID, "textures/models/black_pieces.png");
     private static final ResourceLocation PAWN_TEXTURE_WHITE = new ResourceLocation(ModReference.MOD_ID, "textures/models/white_pieces.png");
     private final ChessPawn pawnModel;
+    private final ChessRook rookModel;
     
     public TileEntiryChessTableRenderer() {
         pawnModel = new ChessPawn();
+        rookModel = new ChessRook();
     }
     
     @Override
@@ -41,7 +44,7 @@ public class TileEntiryChessTableRenderer extends TileEntitySpecialRenderer<Tile
         GlStateManager.translate(0, 0, 0.126F);
         for (int i = 0; i < 8; i++) {
             GlStateManager.translate(0.125F, 0F, 0F);
-            pawnModel.render(null, 0, 0, 0, 0, 0, scale);
+            rookModel.render(null, 0, 0, 0, 0, 0, scale);
         }
         GlStateManager.popMatrix();
         
@@ -60,7 +63,7 @@ public class TileEntiryChessTableRenderer extends TileEntitySpecialRenderer<Tile
         GlStateManager.translate(0, 0, 0.126F);
         for (int i = 0; i < 8; i++) {
             GlStateManager.translate(0.125F, 0F, 0F);
-            pawnModel.render(null, 0, 0, 0, 0, 0, scale);
+            rookModel.render(null, 0, 0, 0, 0, 0, scale);
         }
         GlStateManager.popMatrix();
 

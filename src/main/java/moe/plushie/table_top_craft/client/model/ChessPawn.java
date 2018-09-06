@@ -30,8 +30,8 @@ public class ChessPawn extends ModelBase {
     public ModelRenderer LowerArmLeft;
 
     public ChessPawn() {
-        this.textureWidth = 64;
-        this.textureHeight = 64;
+        this.textureWidth = 128;
+        this.textureHeight = 128;
         this.WeaponGrip = new ModelRenderer(this, 0, 27);
         this.WeaponGrip.setRotationPoint(0.5F, 0.0F, -5.0F);
         this.WeaponGrip.addBox(0.0F, 2.6F, 0.0F, 1, 1, 16, 0.0F);

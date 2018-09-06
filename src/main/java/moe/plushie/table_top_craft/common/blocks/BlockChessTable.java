@@ -22,8 +22,6 @@ import net.minecraft.world.World;
 
 public class BlockChessTable extends BlockContainer implements IHasModel {
 
-    private static final AxisAlignedBB BOUNDING_BOX = new AxisAlignedBB(0.0625F * -1F, 0, 0.0625F * -1F, 0.0625F * 17F, 0.0625F * 16.2F, 0.0625F * 17F);
-
     public BlockChessTable(String name) {
         super(Material.WOOD);
         this.setUnlocalizedName(name);
@@ -49,16 +47,6 @@ public class BlockChessTable extends BlockContainer implements IHasModel {
     @Override
     public boolean isFullCube(IBlockState state) {
         return false;
-    }
-
-    @Override
-    public AxisAlignedBB getBoundingBox(IBlockState state, IBlockAccess source, BlockPos pos) {
-        return BOUNDING_BOX;
-    }
-
-    @Override
-    public AxisAlignedBB getCollisionBoundingBox(IBlockState blockState, IBlockAccess worldIn, BlockPos pos) {
-        return BOUNDING_BOX;
     }
 
     @Override

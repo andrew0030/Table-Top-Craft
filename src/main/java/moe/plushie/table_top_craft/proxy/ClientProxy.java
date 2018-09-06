@@ -1,11 +1,11 @@
 package moe.plushie.table_top_craft.proxy;
 
 import moe.plushie.table_top_craft.TableTopCraft;
-import moe.plushie.table_top_craft.client.render.tile.TileEntiryChessRenderer;
+import moe.plushie.table_top_craft.client.render.tile.TileEntiryChessTableRenderer;
 import moe.plushie.table_top_craft.common.init.BlockInit;
 import moe.plushie.table_top_craft.common.init.ItemInit;
-import moe.plushie.table_top_craft.common.lib.Reference;
-import moe.plushie.table_top_craft.common.tileentities.TileEntityChess;
+import moe.plushie.table_top_craft.common.lib.ModReference;
+import moe.plushie.table_top_craft.common.tileentities.TileEntityChessTable;
 import moe.plushie.table_top_craft.util.interfaces.IHasModel;
 import net.minecraft.block.Block;
 import net.minecraft.client.renderer.block.model.ModelResourceLocation;
@@ -18,7 +18,7 @@ import net.minecraftforge.fml.common.eventhandler.SubscribeEvent;
 import net.minecraftforge.fml.relauncher.Side;
 import net.minecraftforge.fml.relauncher.SideOnly;
 
-@Mod.EventBusSubscriber(modid = Reference.MOD_ID, value = { Side.CLIENT })
+@Mod.EventBusSubscriber(modid = ModReference.MOD_ID, value = { Side.CLIENT })
 @SideOnly(Side.CLIENT)
 public class ClientProxy extends CommonProxy {
 
@@ -39,7 +39,7 @@ public class ClientProxy extends CommonProxy {
     @Override
     public void init() {
         super.init();
-        ClientRegistry.bindTileEntitySpecialRenderer(TileEntityChess.class, new TileEntiryChessRenderer());
+        ClientRegistry.bindTileEntitySpecialRenderer(TileEntityChessTable.class, new TileEntiryChessTableRenderer());
     }
 
     @Override

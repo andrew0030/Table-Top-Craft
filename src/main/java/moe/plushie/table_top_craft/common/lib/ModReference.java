@@ -1,6 +1,6 @@
 package moe.plushie.table_top_craft.common.lib;
 
-public class Reference {
+public class ModReference {
 
     // The ModId,Name,Version for the Mod
     public static final String MOD_ID = "table_top_craft";

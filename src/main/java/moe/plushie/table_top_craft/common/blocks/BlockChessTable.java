@@ -3,8 +3,8 @@ package moe.plushie.table_top_craft.common.blocks;
 import moe.plushie.table_top_craft.TableTopCraft;
 import moe.plushie.table_top_craft.common.init.BlockInit;
 import moe.plushie.table_top_craft.common.init.ItemInit;
-import moe.plushie.table_top_craft.common.lib.Reference;
-import moe.plushie.table_top_craft.common.tileentities.TileEntityChess;
+import moe.plushie.table_top_craft.common.lib.ModReference;
+import moe.plushie.table_top_craft.common.tileentities.TileEntityChessTable;
 import moe.plushie.table_top_craft.util.interfaces.IHasModel;
 import net.minecraft.block.BlockContainer;
 import net.minecraft.block.SoundType;
@@ -20,14 +20,14 @@ import net.minecraft.util.math.BlockPos;
 import net.minecraft.world.IBlockAccess;
 import net.minecraft.world.World;
 
-public class BlockChess extends BlockContainer implements IHasModel {
+public class BlockChessTable extends BlockContainer implements IHasModel {
 
     private static final AxisAlignedBB BOUNDING_BOX = new AxisAlignedBB(0.0625F * -1F, 0, 0.0625F * -1F, 0.0625F * 17F, 0.0625F * 16.2F, 0.0625F * 17F);
 
-    public BlockChess(String name) {
+    public BlockChessTable(String name) {
         super(Material.WOOD);
         this.setUnlocalizedName(name);
-        this.setRegistryName(new ResourceLocation(Reference.MOD_ID, name));
+        this.setRegistryName(new ResourceLocation(ModReference.MOD_ID, name));
         this.setCreativeTab(TableTopCraft.getInstance().getModtab());
         this.setSoundType(SoundType.WOOD);
         this.setHardness(2F);
@@ -68,6 +68,6 @@ public class BlockChess extends BlockContainer implements IHasModel {
 
     @Override
     public TileEntity createNewTileEntity(World worldIn, int meta) {
-        return new TileEntityChess();
+        return new TileEntityChessTable();
     }
 }

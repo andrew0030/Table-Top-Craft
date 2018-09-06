@@ -14,6 +14,6 @@ public class ModTab extends CreativeTabs {
 
     @Override
     public ItemStack getTabIconItem() {
-        return new ItemStack(Item.getItemFromBlock(BlockInit.CHESS));
+        return new ItemStack(Item.getItemFromBlock(BlockInit.CHESS_TABLE));
     }
 }

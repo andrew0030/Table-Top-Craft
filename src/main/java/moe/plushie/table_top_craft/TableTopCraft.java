@@ -2,7 +2,7 @@ package moe.plushie.table_top_craft;
 
 import org.apache.logging.log4j.Logger;
 
-import moe.plushie.table_top_craft.common.lib.Reference;
+import moe.plushie.table_top_craft.common.lib.ModReference;
 import moe.plushie.table_top_craft.common.tab.ModTab;
 import moe.plushie.table_top_craft.proxy.CommonProxy;
 import net.minecraft.creativetab.CreativeTabs;
@@ -14,15 +14,15 @@ import net.minecraftforge.fml.common.event.FMLInitializationEvent;
 import net.minecraftforge.fml.common.event.FMLPostInitializationEvent;
 import net.minecraftforge.fml.common.event.FMLPreInitializationEvent;
 
-@Mod(modid = Reference.MOD_ID, version = Reference.VERSION, name = Reference.NAME)
+@Mod(modid = ModReference.MOD_ID, version = ModReference.VERSION, name = ModReference.NAME)
 public class TableTopCraft {
 
     // An instance for the Mod
-    @Instance(Reference.MOD_ID)
+    @Instance(ModReference.MOD_ID)
     private static TableTopCraft instance;
 
     // Server and Client Proxy
-    @SidedProxy(clientSide = Reference.PROXY_CLIENT, serverSide = Reference.PROXY_SERVER)
+    @SidedProxy(clientSide = ModReference.PROXY_CLIENT, serverSide = ModReference.PROXY_SERVER)
     private static CommonProxy proxy;
 
     // Sets the Tab
@@ -34,7 +34,7 @@ public class TableTopCraft {
     @EventHandler
     public static void preinit(FMLPreInitializationEvent event) {
         logger = event.getModLog();
-        logger.info(String.format("Loading %s version %s.", Reference.NAME, Reference.VERSION));
+        logger.info(String.format("Loading %s version %s.", ModReference.NAME, ModReference.VERSION));
         proxy.preinit();
     }
 

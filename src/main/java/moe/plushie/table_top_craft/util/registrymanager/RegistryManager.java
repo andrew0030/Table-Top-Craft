@@ -1,9 +1,9 @@
 package moe.plushie.table_top_craft.util.registrymanager;
 
-import moe.plushie.table_top_craft.common.lib.Reference;
+import moe.plushie.table_top_craft.common.lib.ModReference;
 import net.minecraftforge.fml.common.Mod.EventBusSubscriber;
 
-@EventBusSubscriber(modid = Reference.MOD_ID)
+@EventBusSubscriber(modid = ModReference.MOD_ID)
 public class RegistryManager {
 
 

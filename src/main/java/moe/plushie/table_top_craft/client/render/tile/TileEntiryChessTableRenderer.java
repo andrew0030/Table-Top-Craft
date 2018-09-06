@@ -1,28 +1,27 @@
 package moe.plushie.table_top_craft.client.render.tile;
 
 import moe.plushie.table_top_craft.client.model.ChessPawn;
-import moe.plushie.table_top_craft.common.lib.Reference;
-import moe.plushie.table_top_craft.common.tileentities.TileEntityChess;
+import moe.plushie.table_top_craft.common.lib.ModReference;
+import moe.plushie.table_top_craft.common.tileentities.TileEntityChessTable;
 import net.minecraft.client.renderer.GlStateManager;
-import net.minecraft.client.renderer.OpenGlHelper;
 import net.minecraft.client.renderer.tileentity.TileEntitySpecialRenderer;
 import net.minecraft.util.ResourceLocation;
 import net.minecraftforge.fml.relauncher.Side;
 import net.minecraftforge.fml.relauncher.SideOnly;
 
 @SideOnly(Side.CLIENT)
-public class TileEntiryChessRenderer extends TileEntitySpecialRenderer<TileEntityChess> {
+public class TileEntiryChessTableRenderer extends TileEntitySpecialRenderer<TileEntityChessTable> {
 
-    private static final ResourceLocation PAWN_TEXTURE_BLACK = new ResourceLocation(Reference.MOD_ID, "textures/models/black_pieces.png");
-    private static final ResourceLocation PAWN_TEXTURE_WHITE = new ResourceLocation(Reference.MOD_ID, "textures/models/white_pieces.png");
+    private static final ResourceLocation PAWN_TEXTURE_BLACK = new ResourceLocation(ModReference.MOD_ID, "textures/models/black_pieces.png");
+    private static final ResourceLocation PAWN_TEXTURE_WHITE = new ResourceLocation(ModReference.MOD_ID, "textures/models/white_pieces.png");
     private final ChessPawn pawnModel;
     
-    public TileEntiryChessRenderer() {
+    public TileEntiryChessTableRenderer() {
         pawnModel = new ChessPawn();
     }
     
     @Override
-    public void render(TileEntityChess te, double x, double y, double z, float partialTicks, int destroyStage, float alpha) {
+    public void render(TileEntityChessTable te, double x, double y, double z, float partialTicks, int destroyStage, float alpha) {
         float scale = 1F / 16F;
         GlStateManager.pushMatrix();
         GlStateManager.translate(x + 0.75F, y + 1.02F, z - 0.125F);
@@ -64,7 +63,7 @@ public class TileEntiryChessRenderer extends TileEntitySpecialRenderer<TileEntit
             pawnModel.render(null, 0, 0, 0, 0, 0, scale);
         }
         GlStateManager.popMatrix();
-        
+
         GlStateManager.popMatrix();
     }
 }

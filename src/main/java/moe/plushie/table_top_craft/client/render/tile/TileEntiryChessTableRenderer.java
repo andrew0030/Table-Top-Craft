@@ -4,11 +4,14 @@ import moe.plushie.table_top_craft.client.model.ChessKing;
 import moe.plushie.table_top_craft.client.model.ChessKnight;
 import moe.plushie.table_top_craft.client.model.ChessPawn;
 import moe.plushie.table_top_craft.client.model.ChessRook;
+import moe.plushie.table_top_craft.common.blocks.BlockChessTable;
 import moe.plushie.table_top_craft.common.games.chess.ChessPieceType;
 import moe.plushie.table_top_craft.common.lib.ModReference;
 import moe.plushie.table_top_craft.common.tileentities.TileEntityChessTable;
+import net.minecraft.block.state.IBlockState;
 import net.minecraft.client.renderer.GlStateManager;
 import net.minecraft.client.renderer.tileentity.TileEntitySpecialRenderer;
+import net.minecraft.util.EnumFacing;
 import net.minecraft.util.ResourceLocation;
 import net.minecraftforge.fml.relauncher.Side;
 import net.minecraftforge.fml.relauncher.SideOnly;
@@ -36,16 +39,36 @@ public class TileEntiryChessTableRenderer extends TileEntitySpecialRenderer<Tile
     
     @Override
     public void render(TileEntityChessTable te, double x, double y, double z, float partialTicks, int destroyStage, float alpha) {
+        IBlockState blockState = te.getWorld().getBlockState(te.getPos());
+        EnumFacing facing = blockState.getValue(BlockChessTable.STATE_FACING);
         GlStateManager.pushMatrix();
         GlStateManager.pushAttrib();
         GlStateManager.enableNormalize();
         GlStateManager.enableRescaleNormal();
-        GlStateManager.translate(x + 1F, y + 1.02F, z);
+        GlStateManager.translate(x + 0.5F, y + 1.02F, z + 0.5F);
+
+        switch (facing) {
+        case EAST:
+            GlStateManager.rotate(180.0F, 0.0F, 1.0F, 0.0F);
+            break;
+        case SOUTH:
+            GlStateManager.rotate(90.0F, 0.0F, 1.0F, 0.0F);
+            break;
+        case NORTH:
+            GlStateManager.rotate(-90.0F, 0.0F, 1.0F, 0.0F);
+            break;
+        default:
+            break;
+        }
+        GlStateManager.translate(0.5F, 0, -0.5F);
         GlStateManager.scale(1F, -1F, -1F);
         GlStateManager.translate(-SCALE_CHESS, 0F, -SCALE_CHESS);
+
         GlStateManager.enableNormalize();
         renderWhitePieces();
         renderBlackPieces();
+        GlStateManager.disableNormalize();
+        GlStateManager.disableRescaleNormal();
         GlStateManager.popAttrib();
         GlStateManager.popMatrix();
     }

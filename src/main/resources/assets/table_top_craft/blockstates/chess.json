@@ -1,5 +1,9 @@
 {
-    "variants": {
-        "normal": { "model": "table_top_craft:chess" }
-    }
+	"variants": {
+		"normal": { "model": "table_top_craft:chess" },
+		"facing=north": {"model": "table_top_craft:chess"},
+		"facing=east": {"model": "table_top_craft:chess", "y": 90},
+		"facing=south": {"model": "table_top_craft:chess", "y": 180},
+		"facing=west": {"model": "table_top_craft:chess", "y": 270}
+	}
 }

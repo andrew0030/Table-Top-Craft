@@ -1,5 +1,6 @@
 package moe.plushie.table_top_craft.client.render.tile;
 
+import moe.plushie.table_top_craft.client.model.ChessKing;
 import moe.plushie.table_top_craft.client.model.ChessKnight;
 import moe.plushie.table_top_craft.client.model.ChessPawn;
 import moe.plushie.table_top_craft.client.model.ChessRook;
@@ -21,6 +22,7 @@ public class TileEntiryChessTableRenderer extends TileEntitySpecialRenderer<Tile
     private final ChessPawn pawnModel;
     private final ChessRook rookModel;
     private final ChessKnight knightModel;
+    private final ChessKing kingModel;
     
     private static final float SCALE_MC = 0.0625F;
     private static final float SCALE_CHESS = 0.125F;
@@ -29,6 +31,7 @@ public class TileEntiryChessTableRenderer extends TileEntitySpecialRenderer<Tile
         pawnModel = new ChessPawn();
         rookModel = new ChessRook();
         knightModel = new ChessKnight();
+        kingModel = new ChessKing();
     }
     
     @Override
@@ -92,7 +95,7 @@ public class TileEntiryChessTableRenderer extends TileEntitySpecialRenderer<Tile
         }
         switch (pieceType) {
         case KING:
-            //kingModel.render(null, 0, 0, 0, 0, 0, SCALE_MC);
+            kingModel.render(null, 0, 0, 0, 0, 0, SCALE_MC);
             break;
         case QUEEN:
             //queenModel.render(null, 0, 0, 0, 0, 0, SCALE_MC);

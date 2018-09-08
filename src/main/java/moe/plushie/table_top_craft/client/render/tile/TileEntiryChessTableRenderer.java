@@ -38,10 +38,12 @@ public class TileEntiryChessTableRenderer extends TileEntitySpecialRenderer<Tile
     public void render(TileEntityChessTable te, double x, double y, double z, float partialTicks, int destroyStage, float alpha) {
         GlStateManager.pushMatrix();
         GlStateManager.pushAttrib();
+        GlStateManager.enableNormalize();
+        GlStateManager.enableRescaleNormal();
         GlStateManager.translate(x + 1F, y + 1.02F, z);
         GlStateManager.scale(1F, -1F, -1F);
-        GlStateManager.enableNormalize();
         GlStateManager.translate(-SCALE_CHESS, 0F, -SCALE_CHESS);
+        GlStateManager.enableNormalize();
         renderWhitePieces();
         renderBlackPieces();
         GlStateManager.popAttrib();

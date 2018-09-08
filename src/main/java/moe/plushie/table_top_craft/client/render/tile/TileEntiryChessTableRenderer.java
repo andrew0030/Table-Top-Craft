@@ -46,7 +46,6 @@ public class TileEntiryChessTableRenderer extends TileEntitySpecialRenderer<Tile
         GlStateManager.enableNormalize();
         GlStateManager.enableRescaleNormal();
         GlStateManager.translate(x + 0.5F, y + 1.02F, z + 0.5F);
-
         switch (facing) {
         case EAST:
             GlStateManager.rotate(180.0F, 0.0F, 1.0F, 0.0F);
@@ -63,8 +62,6 @@ public class TileEntiryChessTableRenderer extends TileEntitySpecialRenderer<Tile
         GlStateManager.translate(0.5F, 0, -0.5F);
         GlStateManager.scale(1F, -1F, -1F);
         GlStateManager.translate(-SCALE_CHESS, 0F, -SCALE_CHESS);
-
-        GlStateManager.enableNormalize();
         renderWhitePieces();
         renderBlackPieces();
         GlStateManager.disableNormalize();
@@ -88,8 +85,8 @@ public class TileEntiryChessTableRenderer extends TileEntitySpecialRenderer<Tile
         renderChessPiece(ChessPieceType.BISHOP, 2, 0, false);
         renderChessPiece(ChessPieceType.BISHOP, 5, 0, false);
         
-        renderChessPiece(ChessPieceType.QUEEN, 3, 0, false);
-        renderChessPiece(ChessPieceType.KING, 4, 0, false);
+        renderChessPiece(ChessPieceType.KING, 3, 0, false);
+        renderChessPiece(ChessPieceType.QUEEN, 4, 0, false);
     }
     
     private void renderBlackPieces() {
@@ -107,8 +104,8 @@ public class TileEntiryChessTableRenderer extends TileEntitySpecialRenderer<Tile
         renderChessPiece(ChessPieceType.BISHOP, 2, 7, true);
         renderChessPiece(ChessPieceType.BISHOP, 5, 7, true);
         
-        renderChessPiece(ChessPieceType.QUEEN, 3, 7, true);
-        renderChessPiece(ChessPieceType.KING, 4, 7, true);
+        renderChessPiece(ChessPieceType.KING, 3, 7, true);
+        renderChessPiece(ChessPieceType.QUEEN, 4, 7, true);
     }
     
     private void renderChessPiece(ChessPieceType pieceType, int x, int y, boolean flipped) {

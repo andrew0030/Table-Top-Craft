@@ -5,7 +5,10 @@ import moe.plushie.table_top_craft.client.model.ChessKnight;
 import moe.plushie.table_top_craft.client.model.ChessPawn;
 import moe.plushie.table_top_craft.client.model.ChessRook;
 import moe.plushie.table_top_craft.common.blocks.BlockChessTable;
+import moe.plushie.table_top_craft.common.games.chess.ChessGame;
 import moe.plushie.table_top_craft.common.games.chess.ChessPieceType;
+import moe.plushie.table_top_craft.common.games.chess.ChessTeam;
+import moe.plushie.table_top_craft.common.games.chess.pieces.ChessPiece;
 import moe.plushie.table_top_craft.common.lib.ModReference;
 import moe.plushie.table_top_craft.common.tileentities.TileEntityChessTable;
 import net.minecraft.block.state.IBlockState;
@@ -62,50 +65,37 @@ public class TileEntiryChessTableRenderer extends TileEntitySpecialRenderer<Tile
         GlStateManager.translate(0.5F, 0, -0.5F);
         GlStateManager.scale(1F, -1F, -1F);
         GlStateManager.translate(-SCALE_CHESS, 0F, -SCALE_CHESS);
-        renderWhitePieces();
-        renderBlackPieces();
+        ChessGame chessGame = te.getChessGame();
+        renderWhitePieces(chessGame);
+        renderBlackPieces(chessGame);
         GlStateManager.disableNormalize();
         GlStateManager.disableRescaleNormal();
         GlStateManager.popAttrib();
         GlStateManager.popMatrix();
     }
     
-    private void renderWhitePieces() {
+    private void renderWhitePieces(ChessGame chessGame) {
         bindTexture(PAWN_TEXTURE_WHITE);
-        // pawn row
-        for (int i = 0; i < 8; i++) {
-            renderChessPiece(ChessPieceType.PAWN, i, 1, false);
+        for (int ix = 0; ix < ChessGame.BOARD_SIZE; ix++) {
+            for (int iy = 0; iy < ChessGame.BOARD_SIZE; iy++) {
+                ChessPiece chessPiece = chessGame.getChessBoard()[ix][iy];
+                if (chessPiece != null && chessPiece.getTeam() == ChessTeam.WHITE) {
+                    renderChessPiece(chessPiece.getRenderPieceType(), ix, iy, chessPiece.getTeam() == ChessTeam.BLACK);
+                }
+            }
         }
-        renderChessPiece(ChessPieceType.ROOK, 0, 0, false);
-        renderChessPiece(ChessPieceType.ROOK, 7, 0, false);
-        
-        renderChessPiece(ChessPieceType.KNIGHT, 1, 0, false);
-        renderChessPiece(ChessPieceType.KNIGHT, 6, 0, false);
-        
-        renderChessPiece(ChessPieceType.BISHOP, 2, 0, false);
-        renderChessPiece(ChessPieceType.BISHOP, 5, 0, false);
-        
-        renderChessPiece(ChessPieceType.KING, 3, 0, false);
-        renderChessPiece(ChessPieceType.QUEEN, 4, 0, false);
     }
     
-    private void renderBlackPieces() {
+    private void renderBlackPieces(ChessGame chessGame) {
         bindTexture(PAWN_TEXTURE_BLACK);
-        // pawn row
-        for (int i = 0; i < 8; i++) {
-            renderChessPiece(ChessPieceType.PAWN, i, 6, true);
+        for (int ix = 0; ix < ChessGame.BOARD_SIZE; ix++) {
+            for (int iy = 0; iy < ChessGame.BOARD_SIZE; iy++) {
+                ChessPiece chessPiece = chessGame.getChessBoard()[ix][iy];
+                if (chessPiece != null && chessPiece.getTeam() == ChessTeam.BLACK) {
+                    renderChessPiece(chessPiece.getRenderPieceType(), ix, iy, chessPiece.getTeam() == ChessTeam.BLACK);
+                }
+            }
         }
-        renderChessPiece(ChessPieceType.ROOK, 0, 7, true);
-        renderChessPiece(ChessPieceType.ROOK, 7, 7, true);
-        
-        renderChessPiece(ChessPieceType.KNIGHT, 1, 7, true);
-        renderChessPiece(ChessPieceType.KNIGHT, 6, 7, true);
-        
-        renderChessPiece(ChessPieceType.BISHOP, 2, 7, true);
-        renderChessPiece(ChessPieceType.BISHOP, 5, 7, true);
-        
-        renderChessPiece(ChessPieceType.KING, 3, 7, true);
-        renderChessPiece(ChessPieceType.QUEEN, 4, 7, true);
     }
     
     private void renderChessPiece(ChessPieceType pieceType, int x, int y, boolean flipped) {

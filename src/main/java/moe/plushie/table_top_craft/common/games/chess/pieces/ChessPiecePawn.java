@@ -8,15 +8,17 @@ public class ChessPiecePawn extends ChessPiece {
     public ChessPiecePawn(ChessTeam chessTeam) {
         super(ChessPieceType.PAWN, chessTeam);
     }
-
+    
     @Override
-    public boolean canMoveTo(ChessPiece[][] chessBoard, int xPos, int yPos) {
-        // TODO Auto-generated method stub
+    public boolean canMoveTo(ChessPiece[][] chessBoard, int curX, int curY, int newX, int newY) {
+        if (getMoves() == 0) {
+            
+        }
         return false;
     }
-
+    
     @Override
-    public boolean canTake(ChessPiece[][] chessBoard, int xPos, int yPos) {
+    public boolean canTake(ChessPiece[][] chessBoard, int curX, int curY, int newX, int newY) {
         // TODO Auto-generated method stub
         return false;
     }

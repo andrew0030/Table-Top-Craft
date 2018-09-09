@@ -1,5 +1,6 @@
 package moe.plushie.table_top_craft.common.games.chess.pieces;
 
+import moe.plushie.table_top_craft.common.games.chess.ChessGame;
 import moe.plushie.table_top_craft.common.games.chess.ChessPieceType;
 import moe.plushie.table_top_craft.common.games.chess.ChessTeam;
 
@@ -29,14 +30,26 @@ public abstract class ChessPiece {
         this.moves = 0;
     }
     
-    public abstract boolean canMoveTo(ChessPiece[][] chessBoard, int xPos, int yPos);
+    public abstract boolean canMoveTo(ChessPiece[][] chessBoard, int curX, int curY, int newX, int newY);
     
-    public abstract boolean canTake(ChessPiece[][] chessBoard, int xPos, int yPos);
+    public boolean canTake(ChessPiece[][] chessBoard, int curX, int curY, int newX, int newY) {
+        return canMoveTo(chessBoard, curX, curY, newX, newY);
+    }
     
-    public void moveTo(ChessPiece[][] chessBoard, int xPos, int yPos) {
-        if (canMoveTo(chessBoard, xPos, yPos)) {
+    public void moveTo(ChessPiece[][] chessBoard, int curX, int curY, int newX, int newY) {
+        if (canMoveTo(chessBoard, curX, curY, newX, newY)) {
+            chessBoard[curX][curY] = null;
+            chessBoard[newX][newY] = this;
             moves++;
         }
+    }
+    
+    protected boolean isOnBoard(int x, int y) {
+        return x >= 0 & y >=0 & x < ChessGame.BOARD_SIZE & y < ChessGame.BOARD_SIZE;
+    }
+    
+    public int getMoves() {
+        return moves;
     }
     
     public ChessTeam getTeam() {

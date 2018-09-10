@@ -1,5 +1,6 @@
 package moe.plushie.table_top_craft.client.render.tile;
 
+import moe.plushie.table_top_craft.client.model.ChessBishop;
 import moe.plushie.table_top_craft.client.model.ChessKing;
 import moe.plushie.table_top_craft.client.model.ChessKnight;
 import moe.plushie.table_top_craft.client.model.ChessPawn;
@@ -31,7 +32,7 @@ public class TileEntiryChessTableRenderer extends TileEntitySpecialRenderer<Tile
     private final ChessKnight knightModel;
     private final ChessKing kingModel;
     private final ChessQueen queenModel;
-//    private final ChessBishop bishopModel;
+    private final ChessBishop bishopModel;
     
     private static final float SCALE_MC = 0.0625F;
     private static final float SCALE_CHESS = 0.125F;
@@ -42,7 +43,7 @@ public class TileEntiryChessTableRenderer extends TileEntitySpecialRenderer<Tile
         knightModel = new ChessKnight();
         kingModel = new ChessKing();
         queenModel = new ChessQueen();
-//        bishopModel = new ChessBishop();
+        bishopModel = new ChessBishop();
     }
     
     @Override
@@ -121,7 +122,7 @@ public class TileEntiryChessTableRenderer extends TileEntitySpecialRenderer<Tile
             knightModel.render(null, 0, 0, 0, 0, 0, SCALE_MC);
             break;
         case BISHOP:
-            //bishopModel.render(null, 0, 0, 0, 0, 0, SCALE_MC);
+            bishopModel.render(null, 0, 0, 0, 0, 0, SCALE_MC);
             break;
         case ROOK:
             rookModel.render(null, 0, 0, 0, 0, 0, SCALE_MC);

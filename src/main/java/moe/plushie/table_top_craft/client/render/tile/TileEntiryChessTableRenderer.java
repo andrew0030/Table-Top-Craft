@@ -54,7 +54,7 @@ public class TileEntiryChessTableRenderer extends TileEntitySpecialRenderer<Tile
         GlStateManager.pushAttrib();
         GlStateManager.enableNormalize();
         GlStateManager.enableRescaleNormal();
-        GlStateManager.translate(x + 0.5F, y + 1.02F, z + 0.5F);
+        GlStateManager.translate(x + 0.5F, y + 0.77F, z + 0.5F);
         switch (facing) {
         case EAST:
             GlStateManager.rotate(180.0F, 0.0F, 1.0F, 0.0F);

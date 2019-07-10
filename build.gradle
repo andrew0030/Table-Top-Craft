@@ -11,7 +11,11 @@ apply plugin: 'net.minecraftforge.gradle.forge'
 //Only edit below this line, the above code adds and enables the necessary things for Forge to be setup.
 
 
-version = "0.0"
+if (System.env.BUILD_NUMBER != null) {
+    version = "$minecraftVersion-$modVersion.$System.env.BUILD_NUMBER"
+} else {
+    version = "$minecraftVersion-$modVersion"
+}
 group = "moe.plushie.table_top_craft" // http://maven.apache.org/guides/mini/guide-naming-conventions.html
 archivesBaseName = "table_top_craft"
 
@@ -21,8 +25,12 @@ compileJava {
 }
 
 minecraft {
-    version = "1.12.2-14.23.4.2759"
+    version = "$project.minecraftVersion-$project.forgeVersion"
     runDir = "run"
+	
+	replaceIn "common/lib/ModReference.java"
+	replace "@VERSION@", project.version
+	//moe.plushie.table_top_craft.common.lib.VERSION
     
     // the mappings can be changed at any time, and must be in the following format.
     // snapshot_YYYYMMDD   snapshot are built nightly.
@@ -30,7 +38,7 @@ minecraft {
     // Use non-default mappings at your own risk. they may not always work.
     // simply re-run your setup task after changing the mappings to update your workspace.
     mappings = "snapshot_20171003"
-    makeObfSourceJar = false // an Srg named sources jar is made by default. uncomment this to disable.
+    makeObfSourceJar = true // an Srg named sources jar is made by default. uncomment this to disable.
 }
 
 dependencies {

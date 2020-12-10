@@ -1,4 +1,0 @@
-Changelog:
-Build 2759:
-	LexManos: Remove BlamingTransformer (#5115)
-

@@ -1,0 +1,27 @@
+modLoader="javafml"
+loaderVersion="[35,)"
+license="All rights reserved"
+[[mods]]
+	modId="table_top_craft"
+	version="1.16.4-1.0.0" #mandatory
+	displayName="Table Top Craft"
+	displayURL="http://example.com/" #optional
+	logoFile="examplemod.png" #optional
+	authors="andrew0030" #optional
+	description='''
+	A Table Top Games Mod
+	'''
+
+[[dependencies.table_top_craft]]
+    modId="forge"
+    mandatory=true
+    versionRange="[35,)"
+    ordering="NONE"
+    side="BOTH"
+
+[[dependencies.table_top_craft]]
+    modId="minecraft"
+    mandatory=true
+    versionRange="[1.16.4,1.17)"
+    ordering="NONE"
+    side="BOTH"

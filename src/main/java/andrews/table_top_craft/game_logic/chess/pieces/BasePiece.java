@@ -1,0 +1,176 @@
+package andrews.table_top_craft.game_logic.chess.pieces;
+
+import java.util.Collection;
+
+import andrews.table_top_craft.game_logic.chess.PieceColor;
+import andrews.table_top_craft.game_logic.chess.board.Board;
+import andrews.table_top_craft.game_logic.chess.board.moves.BaseMove;
+import cpw.mods.modlauncher.serviceapi.ILaunchPluginService.ComputeFlags;
+
+public abstract class BasePiece
+{
+	protected final PieceType pieceType;
+	protected final int piecePosition;
+	protected final PieceColor pieceColor;
+	protected final boolean isFirstMove;
+	private final int cachedHashCode;
+	
+	BasePiece(final PieceType pieceType, final int piecePosition, final PieceColor pieceColor)
+	{
+		this.pieceType = pieceType;
+		this.piecePosition = piecePosition;
+		this.pieceColor = pieceColor;
+		//TODO replace with logic
+		this.isFirstMove = false;
+		this.cachedHashCode = computeHashCode();
+	}
+	
+	/**
+	 * @return - A HashCode for this BasePiece
+	 */
+	private int computeHashCode()
+	{
+		int result = pieceType.hashCode();
+		result = 31 * result + pieceColor.hashCode();
+		result = 31 * result + piecePosition;
+		result = 31 * result + (isFirstMove ? 1 : 0);
+		
+		return result;
+	}
+
+	@Override
+	public boolean equals(final Object object)
+	{
+		if(this == object)
+			return true;
+		if(!(object instanceof BasePiece))
+			return false;
+		// After we got past all the if checks, we can cast the object to a BasePiece
+		final BasePiece otherPiece = (BasePiece) object;
+		
+		return piecePosition == otherPiece.getPiecePosition() &&
+			   pieceType == otherPiece.getPieceType() &&
+			   pieceColor == otherPiece.getPieceColor() &&
+			   isFirstMove == otherPiece.isFirstMove();
+	}
+	
+	@Override
+	public int hashCode()
+	{
+		return this.cachedHashCode;
+	}
+	
+	/**
+	 * @return - The Position of this Piece
+	 */
+	public int getPiecePosition()
+	{
+		return this.piecePosition;
+	}
+	
+	/**
+	 * @return - The PieceColor of this Piece
+	 */
+	public PieceColor getPieceColor()
+	{
+		return this.pieceColor;
+	}
+	
+	/**
+	 * @return - Whether or not this Piece has all ready been moved
+	 */
+	public boolean isFirstMove()
+	{
+		return this.isFirstMove;
+	}
+	
+	/**
+	 * @return - The PieceType of this Piece
+	 */
+	public PieceType getPieceType()
+	{
+		return this.pieceType;
+	}
+	
+	/**
+	 * @param board - The Chess Board
+	 * @return - A Collection of all legal Moves this Piece has
+	 */
+	public abstract Collection<BaseMove> calculateLegalMoves(final Board board);
+	
+	/**
+	 * @param move - The Move that is being made
+	 * @return - A new Piece that is just like the old one, with an updated Piece position
+	 */
+	public abstract BasePiece movePiece(BaseMove move);
+	
+	public enum PieceType
+	{
+		PAWN("P")
+		{
+			@Override
+			public boolean isKing()
+			{
+				return false;
+			}
+		},
+		KNIGHT("N")
+		{
+			@Override
+			public boolean isKing()
+			{
+				return false;
+			}
+		},
+		BISHOP("B")
+		{
+			@Override
+			public boolean isKing()
+			{
+				return false;
+			}
+		},
+		ROOK("R")
+		{
+			@Override
+			public boolean isKing()
+			{
+				return false;
+			}
+		},
+		QUEEN("Q")
+		{
+			@Override
+			public boolean isKing()
+			{
+				return false;
+			}
+		},
+		KING("K")
+		{
+			@Override
+			public boolean isKing()
+			{
+				return true;
+			}
+		};
+		
+		private String pieceName;
+		
+		PieceType(final String pieceName)
+		{
+			this.pieceName = pieceName;
+		}
+		
+		@Override
+		public String toString()
+		{
+			return this.pieceName;
+		}
+		
+		/**
+		 * @return - Whether or not this PieceType is a KingPiece
+		 */
+		public abstract boolean isKing();
+	}
+}

@@ -9,8 +9,8 @@ import com.google.common.collect.ImmutableList;
 import andrews.table_top_craft.game_logic.chess.PieceColor;
 import andrews.table_top_craft.game_logic.chess.board.Board;
 import andrews.table_top_craft.game_logic.chess.board.BoardUtils;
-import andrews.table_top_craft.game_logic.chess.board.moves.AttackMove;
 import andrews.table_top_craft.game_logic.chess.board.moves.BaseMove;
+import andrews.table_top_craft.game_logic.chess.board.moves.MajorAttackMove;
 import andrews.table_top_craft.game_logic.chess.board.moves.MajorMove;
 import andrews.table_top_craft.game_logic.chess.board.tiles.BaseChessTile;
 
@@ -35,7 +35,12 @@ public class RookPiece extends BasePiece
 	
 	public RookPiece(final PieceColor pieceColor, final int piecePosition)
 	{
-		super(PieceType.ROOK, piecePosition, pieceColor);
+		super(PieceType.ROOK, piecePosition, pieceColor, true);
+	}
+	
+	public RookPiece(final PieceColor pieceColor, final int piecePosition, final boolean isFirstMove)
+	{
+		super(PieceType.ROOK, piecePosition, pieceColor, isFirstMove);
 	}
 
 	@Override
@@ -76,7 +81,7 @@ public class RookPiece extends BasePiece
 						// Checks if the Piece at the given Position is the same color, if it isn't it can be taken
 						if(this.pieceColor != pieceColor)
 						{
-							legalMoves.add(new AttackMove(board, this, candidateDestinationCoordinate, pieceAtDestination));
+							legalMoves.add(new MajorAttackMove(board, this, candidateDestinationCoordinate, pieceAtDestination));
 						}
 						// We stop the loop as the Rook can't go over other Pieces
 						break;
@@ -96,7 +101,7 @@ public class RookPiece extends BasePiece
 	@Override
 	public RookPiece movePiece(final BaseMove move)
 	{
-		return new RookPiece(move.getMovedPiece().getPieceColor(), move.getDestinationCoordinate());
+		return new RookPiece(move.getMovedPiece().getPieceColor(), move.getDestinationCoordinate(), false);
 	}
 	
 	/**

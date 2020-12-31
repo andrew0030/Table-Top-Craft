@@ -5,6 +5,7 @@ import java.util.Collection;
 import java.util.List;
 
 import com.google.common.collect.ImmutableList;
+import com.google.common.collect.Iterables;
 
 import andrews.table_top_craft.game_logic.chess.PieceColor;
 import andrews.table_top_craft.game_logic.chess.board.Board;
@@ -23,8 +24,8 @@ public abstract class BaseChessPlayer
 	{
 		this.board = board;
 		this.playerKing = establishKing();
-		this.legalMoves = legalMoves;
-		this.isInCheck = !BaseChessPlayer.calculateAttacksOnTile(this.playerKing.getPiecePosition(), opponentMoves).isEmpty();
+		this.isInCheck = !calculateAttacksOnTile(this.playerKing.getPiecePosition(), opponentMoves).isEmpty();
+		this.legalMoves = ImmutableList.copyOf(Iterables.concat(legalMoves, calculateKingCastles(legalMoves, opponentMoves)));
 	}
 
 	/**
@@ -51,7 +52,7 @@ public abstract class BaseChessPlayer
 	 * @param moves - The Opponents Moves
 	 * @return - A Collection of Moves the enemy could do, to attack the King Piece
 	 */
-	private static Collection<BaseMove> calculateAttacksOnTile(int piecePosition, Collection<BaseMove> moves)
+	protected static Collection<BaseMove> calculateAttacksOnTile(int piecePosition, Collection<BaseMove> moves)
 	{
 		final List<BaseMove> attackMoves = new ArrayList<>();
 		
@@ -113,6 +114,22 @@ public abstract class BaseChessPlayer
 	public boolean isInStaleMate()
 	{
 		return !this.isInCheck && !hasEscapeMoves();
+	}
+	
+	/**
+	 * @return - Whether or not this Chess player can perform a King side Castle Move
+	 */
+	public boolean isKingSideCastleCapable()
+	{
+		return this.playerKing.isKingSideCastleCapable();
+	}
+	
+	/**
+	 * @return - Whether or not this Chess player can perform a Queen side Castle Move
+	 */
+	public boolean isQueenSideCastleCapable()
+	{
+		return this.playerKing.isQueenSideCastleCapable();
 	}
 	
 	/**
@@ -178,4 +195,6 @@ public abstract class BaseChessPlayer
 	 * @return - The BaseChessPlayer that is the Opponent of this BaseChessPlayer
 	 */
 	public abstract BaseChessPlayer getOpponent();
+	
+	protected abstract Collection<BaseMove> calculateKingCastles(Collection<BaseMove> playerLegals, Collection<BaseMove> opponentsLegals);
 }

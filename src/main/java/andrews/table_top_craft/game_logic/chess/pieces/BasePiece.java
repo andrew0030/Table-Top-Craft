@@ -5,7 +5,6 @@ import java.util.Collection;
 import andrews.table_top_craft.game_logic.chess.PieceColor;
 import andrews.table_top_craft.game_logic.chess.board.Board;
 import andrews.table_top_craft.game_logic.chess.board.moves.BaseMove;
-import cpw.mods.modlauncher.serviceapi.ILaunchPluginService.ComputeFlags;
 
 public abstract class BasePiece
 {
@@ -15,13 +14,12 @@ public abstract class BasePiece
 	protected final boolean isFirstMove;
 	private final int cachedHashCode;
 	
-	BasePiece(final PieceType pieceType, final int piecePosition, final PieceColor pieceColor)
+	BasePiece(final PieceType pieceType, final int piecePosition, final PieceColor pieceColor, final boolean isFirstMove)
 	{
 		this.pieceType = pieceType;
 		this.piecePosition = piecePosition;
 		this.pieceColor = pieceColor;
-		//TODO replace with logic
-		this.isFirstMove = false;
+		this.isFirstMove = isFirstMove;
 		this.cachedHashCode = computeHashCode();
 	}
 	
@@ -93,6 +91,14 @@ public abstract class BasePiece
 	}
 	
 	/**
+	 * @return - The Value of this Piece
+	 */
+	public int getPieceValue()
+	{
+		return this.pieceType.getPieceValue();
+	}
+	
+	/**
 	 * @param board - The Chess Board
 	 * @return - A Collection of all legal Moves this Piece has
 	 */
@@ -106,59 +112,97 @@ public abstract class BasePiece
 	
 	public enum PieceType
 	{
-		PAWN("P")
+		PAWN(100, "P")
 		{
 			@Override
 			public boolean isKing()
 			{
 				return false;
 			}
+
+			@Override
+			public boolean isRook()
+			{
+				return false;
+			}
 		},
-		KNIGHT("N")
+		KNIGHT(300, "N")
 		{
 			@Override
 			public boolean isKing()
 			{
 				return false;
 			}
+
+			@Override
+			public boolean isRook()
+			{
+				return false;
+			}
 		},
-		BISHOP("B")
+		BISHOP(300, "B")
 		{
 			@Override
 			public boolean isKing()
 			{
 				return false;
 			}
+
+			@Override
+			public boolean isRook()
+			{
+				return false;
+			}
 		},
-		ROOK("R")
+		ROOK(500, "R")
 		{
 			@Override
 			public boolean isKing()
 			{
 				return false;
 			}
+
+			@Override
+			public boolean isRook()
+			{
+				return true;
+			}
 		},
-		QUEEN("Q")
+		QUEEN(900, "Q")
 		{
 			@Override
 			public boolean isKing()
 			{
 				return false;
 			}
+
+			@Override
+			public boolean isRook()
+			{
+				return false;
+			}
 		},
-		KING("K")
+		KING(10000, "K")
 		{
 			@Override
 			public boolean isKing()
 			{
 				return true;
 			}
+
+			@Override
+			public boolean isRook()
+			{
+				return false;
+			}
 		};
 		
+		private int pieceValue;
 		private String pieceName;
 		
-		PieceType(final String pieceName)
+		PieceType(final int pieceValue, final String pieceName)
 		{
+			this.pieceValue = pieceValue;
 			this.pieceName = pieceName;
 		}
 		
@@ -168,9 +212,19 @@ public abstract class BasePiece
 			return this.pieceName;
 		}
 		
+		public int getPieceValue()
+		{
+			return this.pieceValue;
+		}
+		
 		/**
 		 * @return - Whether or not this PieceType is a KingPiece
 		 */
 		public abstract boolean isKing();
+
+		/**
+		 * @return - Whether or not this PieceType is a RookPiece
+		 */
+		public abstract boolean isRook();
 	}
 }

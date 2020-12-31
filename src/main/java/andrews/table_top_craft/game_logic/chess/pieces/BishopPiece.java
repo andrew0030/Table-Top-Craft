@@ -9,8 +9,8 @@ import com.google.common.collect.ImmutableList;
 import andrews.table_top_craft.game_logic.chess.PieceColor;
 import andrews.table_top_craft.game_logic.chess.board.Board;
 import andrews.table_top_craft.game_logic.chess.board.BoardUtils;
-import andrews.table_top_craft.game_logic.chess.board.moves.AttackMove;
 import andrews.table_top_craft.game_logic.chess.board.moves.BaseMove;
+import andrews.table_top_craft.game_logic.chess.board.moves.MajorAttackMove;
 import andrews.table_top_craft.game_logic.chess.board.moves.MajorMove;
 import andrews.table_top_craft.game_logic.chess.board.tiles.BaseChessTile;
 
@@ -35,7 +35,12 @@ public class BishopPiece extends BasePiece
 
 	public BishopPiece(final PieceColor pieceColor, final int piecePosition)
 	{
-		super(PieceType.BISHOP, piecePosition, pieceColor);
+		super(PieceType.BISHOP, piecePosition, pieceColor, true);
+	}
+	
+	public BishopPiece(final PieceColor pieceColor, final int piecePosition, final boolean isFirstMove)
+	{
+		super(PieceType.BISHOP, piecePosition, pieceColor, isFirstMove);
 	}
 
 	@Override
@@ -76,7 +81,7 @@ public class BishopPiece extends BasePiece
 						// Checks if the Piece at the given Position is the same color, if it isn't it can be taken
 						if(this.pieceColor != pieceColor)
 						{
-							legalMoves.add(new AttackMove(board, this, candidateDestinationCoordinate, pieceAtDestination));
+							legalMoves.add(new MajorAttackMove(board, this, candidateDestinationCoordinate, pieceAtDestination));
 						}
 						// We stop the loop as the Bishop can't go over other Pieces
 						break;
@@ -118,6 +123,6 @@ public class BishopPiece extends BasePiece
 	@Override
 	public BishopPiece movePiece(final BaseMove move)
 	{
-		return new BishopPiece(move.getMovedPiece().getPieceColor(), move.getDestinationCoordinate());
+		return new BishopPiece(move.getMovedPiece().getPieceColor(), move.getDestinationCoordinate(), false);
 	}
 }

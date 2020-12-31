@@ -7,6 +7,7 @@ import java.util.List;
 import java.util.Map;
 
 import com.google.common.collect.ImmutableList;
+import com.google.common.collect.Iterables;
 
 import andrews.table_top_craft.game_logic.chess.PieceColor;
 import andrews.table_top_craft.game_logic.chess.board.moves.BaseMove;
@@ -32,11 +33,14 @@ public class Board
 	private final BlackChessPlayer blackChessPlayer;
 	private final BaseChessPlayer currentPlayer;
 	
+	private final PawnPiece enPassantPawn;
+	
 	private Board(final Builder builder)
 	{
 		this.gameBoard = createGameBoard(builder);
 		this.whitePieces = calculateActivePieces(this.gameBoard, PieceColor.WHITE);
 		this.blackPieces = calculateActivePieces(this.gameBoard, PieceColor.BLACK);
+		this.enPassantPawn = builder.enPassantPawn;
 		
 		final Collection<BaseMove> whiteStandardLegalMoves = calculateLegalMoves(this.whitePieces);
 		final Collection<BaseMove> blackStandardLegalMoves = calculateLegalMoves(this.blackPieces);
@@ -86,6 +90,14 @@ public class Board
 	public BaseChessPlayer getCurrentChessPlayer()
 	{
 		return this.currentPlayer;
+	}
+	
+	/**
+	 * @return - The en passant Pawn Piece
+	 */
+	public PawnPiece getEnPassantPawn()
+	{
+		return this.enPassantPawn;
 	}
 	
 	/**
@@ -182,7 +194,7 @@ public class Board
         builder.setPiece(new KnightPiece(PieceColor.BLACK, 1));
         builder.setPiece(new BishopPiece(PieceColor.BLACK, 2));
         builder.setPiece(new QueenPiece(PieceColor.BLACK, 3));
-        builder.setPiece(new KingPiece(PieceColor.BLACK, 4));
+        builder.setPiece(new KingPiece(PieceColor.BLACK, 4, true, true));
         builder.setPiece(new BishopPiece(PieceColor.BLACK, 5));
         builder.setPiece(new KnightPiece(PieceColor.BLACK, 6));
         builder.setPiece(new RookPiece(PieceColor.BLACK, 7));
@@ -207,7 +219,7 @@ public class Board
         builder.setPiece(new KnightPiece(PieceColor.WHITE, 57));
         builder.setPiece(new BishopPiece(PieceColor.WHITE, 58));
         builder.setPiece(new QueenPiece(PieceColor.WHITE, 59));
-        builder.setPiece(new KingPiece(PieceColor.WHITE, 60));
+        builder.setPiece(new KingPiece(PieceColor.WHITE, 60, true, true));
         builder.setPiece(new BishopPiece(PieceColor.WHITE, 61));
         builder.setPiece(new KnightPiece(PieceColor.WHITE, 62));
         builder.setPiece(new RookPiece(PieceColor.WHITE, 63));
@@ -217,10 +229,19 @@ public class Board
         return builder.build();
 	}
 	
+	/**
+	 * @return - An Iterable of all legal Moves both the White Chess Player and the Black Chess Player have
+	 */
+	public Iterable<BaseMove> getAllLegalMoves()
+	{
+		return Iterables.unmodifiableIterable(Iterables.concat(this.whiteChessPlayer.getLegalMoves(), this.blackChessPlayer.getLegalMoves()));
+	}
+	
 	public static class Builder
 	{
 		Map<Integer, BasePiece> boardConfig;
 		PieceColor nextMoveMaker;
+		PawnPiece enPassantPawn;
 		
 		public Builder()
 		{
@@ -237,6 +258,11 @@ public class Board
 		{
 			this.nextMoveMaker = nextMoveMaker;
 			return this;
+		}
+		
+		public void setEnPassantPawn(PawnPiece enPassantPawn)
+		{
+			this.enPassantPawn = enPassantPawn;
 		}
 		
 		public Board build()

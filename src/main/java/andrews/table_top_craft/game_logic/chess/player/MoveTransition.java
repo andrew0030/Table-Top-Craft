@@ -27,4 +27,17 @@ public class MoveTransition
 	{
 		return this.moveStatus;
 	}
+	
+	/**
+	 * @return - The Board we are transitioning to
+	 */
+	public Board getTransitionBoard()
+	{
+		return this.transitionBoard;
+	}
+	
+	public BaseMove getMove()//TODO remove or replace
+	{
+		return this.move;
+	}
 }

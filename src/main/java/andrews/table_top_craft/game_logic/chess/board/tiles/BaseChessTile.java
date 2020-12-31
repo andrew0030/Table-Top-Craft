@@ -52,4 +52,12 @@ public abstract class BaseChessTile
 	 * @return - The Piece that is occupying this Tile
 	 */
 	public abstract BasePiece getPiece();
+	
+	/**
+	 * @return - The Coordinate of this Tile
+	 */
+	public int getTileCoordinate()
+	{
+		return this.tileCoordinate;
+	}
 }

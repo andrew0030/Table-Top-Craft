@@ -1,5 +1,6 @@
 package andrews.table_top_craft;
 
+import andrews.table_top_craft.network.TTCNetwork;
 import andrews.table_top_craft.registry.TTCBlocks;
 import andrews.table_top_craft.registry.TTCItems;
 import andrews.table_top_craft.registry.TTCTileEntities;
@@ -41,7 +42,6 @@ public class TableTopCraft
 		TTCBlocks.BLOCKS.register(modEventBus);
 //		PCSounds.SOUNDS.register(modEventBus);
 		TTCTileEntities.TILE_ENTITY_TYPES.register(modEventBus);
-//		PCContainers.CONTAINERS.register(modEventBus);
 		
 		DistExecutor.runWhenOn(Dist.CLIENT, () -> () ->
 		{
@@ -59,7 +59,7 @@ public class TableTopCraft
 			
 		});
 		//Thread Safe Stuff
-		
+		TTCNetwork.setupMessages();
 	}
 	
 	@OnlyIn(Dist.CLIENT)
@@ -67,8 +67,6 @@ public class TableTopCraft
 	{
 		event.enqueueWork(() -> 
 		{
-//			PCRenderLayers.setBlockRenderLayers();
-//			PCContainers.screenSetup();
 			TTCTileEntities.registerTileRenders();
 		});
 		//Thread Safe Stuff

@@ -2,6 +2,21 @@
 "_comment1": "Item Groups",
 	"itemGroup.table_top_craft": "Table Top Craft",
 	
-"_comment6": "Blocks",
-	"block.table_top_craft.chess": "Chess"
+"_comment2": "Blocks",
+	"block.table_top_craft.chess": "Chess Board",
+	
+"_comment3": "GUI",
+	"gui.table_top_craft.chess.board_settings": "Chess Board Settings",
+	"gui.table_top_craft.chess.board_colors": "Chess Board Colors",
+	"gui.table_top_craft.chess.fen_loader": "FEN Loader",
+	"gui.table_top_craft.chess.button.settings": "Settings",
+	"gui.table_top_craft.chess.button.colors": "Colors",
+	"gui.table_top_craft.chess.new_game": "New Game",
+	"gui.table_top_craft.chess.copy_fen": "Copy FEN",
+	"gui.table_top_craft.chess.load_fen": "Load FEN",
+	"gui.table_top_craft.chess.cancel": "Cancel",
+	"gui.table_top_craft.chess.confirm_fen": "Confirm FEN",
+	"gui.table_top_craft.chess.show_tile_info": "Show Tile Info",
+	"gui.table_top_craft.chess.show_available_moves": "Show Available Moves",
+	"gui.table_top_craft.chess.show_previous_move": "Show Previous Move"
 }

@@ -1,5 +1,19 @@
 {
-    "variants": {
-        "": { "model": "table_top_craft:block/chess"}
+  "variants": {
+    "facing=east": {
+      "model": "table_top_craft:block/chess",
+      "y": 90
+    },
+    "facing=north": {
+      "model": "table_top_craft:block/chess"
+    },
+    "facing=south": {
+      "model": "table_top_craft:block/chess",
+      "y": 180
+    },
+    "facing=west": {
+      "model": "table_top_craft:block/chess",
+      "y": 270
     }
+  }
 }

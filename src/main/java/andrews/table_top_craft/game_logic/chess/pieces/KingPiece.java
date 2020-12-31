@@ -9,8 +9,8 @@ import com.google.common.collect.ImmutableList;
 import andrews.table_top_craft.game_logic.chess.PieceColor;
 import andrews.table_top_craft.game_logic.chess.board.Board;
 import andrews.table_top_craft.game_logic.chess.board.BoardUtils;
-import andrews.table_top_craft.game_logic.chess.board.moves.AttackMove;
 import andrews.table_top_craft.game_logic.chess.board.moves.BaseMove;
+import andrews.table_top_craft.game_logic.chess.board.moves.MajorAttackMove;
 import andrews.table_top_craft.game_logic.chess.board.moves.MajorMove;
 import andrews.table_top_craft.game_logic.chess.board.tiles.BaseChessTile;
 
@@ -32,10 +32,39 @@ public class KingPiece extends BasePiece
 	 * [   ][   ][   ][   ][   ][   ][   ][   ]
 	 */
 	private final static int[] CANDIDATE_MOVE_COORDINATES = {-9, -8, -7, -1, 1, 7, 8, 9};
+	private final boolean isCastled;
+	private final boolean kingSideCastleCapable;
+	private final boolean queenSideCastleCapable;
 
-	public KingPiece(final PieceColor pieceColor, final int piecePosition)
+	public KingPiece(final PieceColor pieceColor, final int piecePosition, final boolean kingSideCastleCapable, final boolean queenSideCastleCapable)
 	{
-		super(PieceType.KING, piecePosition, pieceColor);
+		super(PieceType.KING, piecePosition, pieceColor, true);
+		this.isCastled = false;
+		this.kingSideCastleCapable = kingSideCastleCapable;
+		this.queenSideCastleCapable = queenSideCastleCapable;
+	}
+	
+	public KingPiece(final PieceColor pieceColor, final int piecePosition, final boolean isFirstMove, final boolean isCastled, final boolean kingSideCastleCapable, final boolean queenSideCastleCapable)
+	{
+		super(PieceType.KING, piecePosition, pieceColor, isFirstMove);
+		this.isCastled = isCastled;
+		this.kingSideCastleCapable = kingSideCastleCapable;
+		this.queenSideCastleCapable = queenSideCastleCapable;
+	}
+	
+	public boolean isCastled()
+	{
+		return this.isCastled;
+	}
+	
+	public boolean isKingSideCastleCapable()
+	{
+		return this.kingSideCastleCapable;
+	}
+	
+	public boolean isQueenSideCastleCapable()
+	{
+		return this.queenSideCastleCapable;
 	}
 
 	@Override
@@ -56,11 +85,12 @@ public class KingPiece extends BasePiece
 			{
 				final BaseChessTile candidateDestinationTile = board.getTile(candidateDestinationCoordinate);
 				
+				// Checks if the tile is occupied
 				if(!candidateDestinationTile.isTileOccupied())
-				{
+				{	
 					legalMoves.add(new MajorMove(board, this, candidateDestinationCoordinate));
 				}
-				else
+				else // The Tile is occupied
 				{
 					final BasePiece pieceAtDestination = candidateDestinationTile.getPiece();
 					final PieceColor pieceColor = pieceAtDestination.getPieceColor();
@@ -68,7 +98,7 @@ public class KingPiece extends BasePiece
 					// Checks if the Piece at the given Position is the same color, if it isn't it can be taken
 					if(this.pieceColor != pieceColor)
 					{
-						legalMoves.add(new AttackMove(board, this, candidateDestinationCoordinate, pieceAtDestination));
+						legalMoves.add(new MajorAttackMove(board, this, candidateDestinationCoordinate, pieceAtDestination));
 					}
 				}
 			}
@@ -107,6 +137,6 @@ public class KingPiece extends BasePiece
 	@Override
 	public KingPiece movePiece(final BaseMove move)
 	{
-		return new KingPiece(move.getMovedPiece().getPieceColor(), move.getDestinationCoordinate());
+		return new KingPiece(move.getMovedPiece().getPieceColor(), move.getDestinationCoordinate(), false, move.isCastlingMove(), false, false);
 	}
 }

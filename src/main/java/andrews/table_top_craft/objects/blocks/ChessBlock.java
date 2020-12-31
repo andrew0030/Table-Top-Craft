@@ -1,12 +1,22 @@
 package andrews.table_top_craft.objects.blocks;
 
-import andrews.table_top_craft.game_logic.chess.board.Board;
+import andrews.table_top_craft.game_logic.chess.board.moves.BaseMove;
+import andrews.table_top_craft.game_logic.chess.board.moves.MoveFactory;
+import andrews.table_top_craft.game_logic.chess.board.tiles.BaseChessTile;
+import andrews.table_top_craft.game_logic.chess.player.MoveTransition;
 import andrews.table_top_craft.registry.TTCBlocks;
+import andrews.table_top_craft.screens.chess.menus.ChessBoardSettingsScreen;
 import andrews.table_top_craft.tile_entities.ChessTileEntity;
 import net.minecraft.block.Block;
 import net.minecraft.block.BlockState;
+import net.minecraft.block.HorizontalBlock;
+import net.minecraft.block.SoundType;
 import net.minecraft.block.material.Material;
+import net.minecraft.client.Minecraft;
 import net.minecraft.entity.player.PlayerEntity;
+import net.minecraft.item.BlockItemUseContext;
+import net.minecraft.state.DirectionProperty;
+import net.minecraft.state.StateContainer.Builder;
 import net.minecraft.tileentity.TileEntity;
 import net.minecraft.util.ActionResultType;
 import net.minecraft.util.Direction;
@@ -26,13 +36,15 @@ import net.minecraft.world.World;
 import net.minecraftforge.common.ForgeMod;
 import net.minecraftforge.common.ToolType;
 
-public class ChessBlock extends Block
+public class ChessBlock extends HorizontalBlock
 {
+	public static final DirectionProperty FACING = HorizontalBlock.HORIZONTAL_FACING;
 	protected static final VoxelShape CHESS_BLOCK_AABB = Block.makeCuboidShape(0.0D, 0.0D, 0.0D, 16.0D, 12.0D, 16.0D);
 	
 	public ChessBlock()
 	{
 		super(getProperties());
+		this.setDefaultState(this.stateContainer.getBaseState().with(FACING, Direction.NORTH));
 	}
 
 	/**
@@ -44,8 +56,21 @@ public class ChessBlock extends Block
 		properties.hardnessAndResistance(2.0F);
 		properties.harvestTool(ToolType.AXE);
 		properties.notSolid();
+		properties.sound(SoundType.WOOD);
 		
 		return properties;
+	}
+	
+	@Override
+	public BlockState getStateForPlacement(BlockItemUseContext context)
+	{
+		return this.getDefaultState().with(FACING, context.getPlacementHorizontalFacing());
+	}
+	
+	@Override
+	protected void fillStateContainer(Builder<Block, BlockState> builder)
+	{
+		 builder.add(FACING);
 	}
 
 	@Override
@@ -59,11 +84,14 @@ public class ChessBlock extends Block
 	{
 		if(player.isSneaking())
 		{
-			Board board = Board.createStandardBoard();
-			System.out.println("\n" + board);//TODO remove
+			if(worldIn.getTileEntity(pos) instanceof ChessTileEntity)
+			{
+				ChessTileEntity chessTileEntity = (ChessTileEntity) worldIn.getTileEntity(pos);
+				Minecraft.getInstance().displayGuiScreen(new ChessBoardSettingsScreen(chessTileEntity));
+			}
 		}
 		else
-		{
+		{	
 			RayTraceResult raycast = rayTraceFromPlayer(worldIn, player, FluidMode.NONE);
 			if(raycast.getType() == RayTraceResult.Type.BLOCK)
 			{
@@ -73,11 +101,65 @@ public class ChessBlock extends Block
 					
 					if(face.equals(Direction.UP))
 					{
-						if(worldIn.isRemote)
-							player.sendMessage(new StringTextComponent(getLetterFromNumber(getPixelValue(raycast.getHitVec().getZ())) + Integer.toString(getPixelValue(raycast.getHitVec().getX()) + 1)), player.getUniqueID());
+						Direction facing = state.get(FACING);
+						int chessRank = getChessRank(raycast.getHitVec(), facing) + 1;
+						int chessColumn = getChessColumn(raycast.getHitVec(), facing);
+						TileEntity tileentity = worldIn.getTileEntity(pos);
+						
+						// We make sure the TileEntity is a ChessTileEntity
+						if(tileentity instanceof ChessTileEntity)
+				        {
+							ChessTileEntity chessTileEntity = (ChessTileEntity)tileentity;
+							// We do not continue the game logic if there is no Chess
+							if(chessTileEntity.getBoard() == null)
+								return ActionResultType.SUCCESS;
+							BaseChessTile chessTile = chessTileEntity.getBoard().getTile((8 - chessRank) * 8 + chessColumn);
+							
+							// Checks if a Tile has allready been selected
+							if(chessTileEntity.getSourceTile() == null)
+							{
+								if(chessTile.isTileOccupied())
+								{
+									if(chessTile.getPiece().getPieceColor() == chessTileEntity.getBoard().getCurrentChessPlayer().getPieceColor())//TODO make sure is fine
+									{
+										chessTileEntity.setSourceTile(chessTile);
+										chessTileEntity.setHumanMovedPiece(chessTile.getPiece());
+										if(chessTileEntity.getHumanMovedPiece() == null)
+											chessTileEntity.setSourceTile(null);
+										
+										chessTileEntity.markDirty();//TODO maybe remove?
+									}
+								}
+							}
+							else // Gets Called when a Tile is all ready selected
+							{
+								chessTileEntity.setDestinationTile(chessTile);
+								final BaseMove move = MoveFactory.createMove(chessTileEntity.getBoard(), chessTileEntity.getSourceTile().getTileCoordinate(), chessTileEntity.getDestinationTile().getTileCoordinate());
+								final MoveTransition transition = chessTileEntity.getBoard().getCurrentChessPlayer().makeMove(move);
+								if(transition.getMoveStatus().isDone())
+								{
+									chessTileEntity.setBoard(transition.getTransitionBoard());
+									// Adds the move to the MoveLog
+									chessTileEntity.getMoveLog().addMove(move);
+									// Syncs the TileEntity TODO mayebe move
+									worldIn.notifyBlockUpdate(pos, worldIn.getBlockState(pos), worldIn.getBlockState(pos), 2);//TODO fix EnPassant
+									// Prints out the Move TODO remove and or repalce somehow
+									if(chessTileEntity.getMoveLog().size() > 0)
+									{
+										final BaseMove lastMove = chessTileEntity.getMoveLog().getMoves().get(chessTileEntity.getMoveLog().size() - 1);
+										final String moveText = lastMove.toString();
+										
+										if(worldIn.isRemote)
+											player.sendMessage(new StringTextComponent(moveText), player.getUniqueID());
+									}
+								}
+								chessTileEntity.setSourceTile(null);
+								chessTileEntity.setDestinationTile(null);
+								chessTileEntity.setHumanMovedPiece(null);
+							}
+				        }
 					}
 				}
-				
 			}
 		}
 		return ActionResultType.SUCCESS;
@@ -119,35 +201,60 @@ public class ChessBlock extends Block
 		return worldIn.rayTraceBlocks(new RayTraceContext(vec3d, vec3d1, RayTraceContext.BlockMode.OUTLINE, fluidMode, player));
 	}
 	
-	private int getPixelValue(double value)
+	/**
+	 * @param vec3d - The Vector of the BlockPosition
+	 * @param facing - The Direction this Block is facing
+	 * @return - The Rank the player pressed
+	 */
+	private int getChessRank(Vector3d vec3d, Direction facing)
 	{
-		value -= Math.floor(value);//TODO test in negative world coordinates
+		double value = facing == Direction.NORTH || facing == Direction.SOUTH ? vec3d.getZ() : vec3d.getX();
+		
+		
+		// We floor the value and subtract it from the original, that way we get rid of the block position value
+		value -= Math.floor(value);
+		// We multiply the value with 100 to make it easier to use
 		value *= 100;
-		value += 1;
-		return (int) Math.floor(value / 12.5D);
-	}
-	
-	private String getLetterFromNumber(int number)
-	{
-		switch(number)
+		
+		switch(facing)
 		{
 		default:
-		case 0:
-			return "a";
-		case 1:
-			return "b";
-		case 2:
-			return "c";
-		case 3:
-			return "d";
-		case 4:
-			return "e";
-		case 5:
-			return "f";
-		case 6:
-			return "g";
-		case 7:
-			return "h";
+		case NORTH:
+			return (int) (7 - Math.floor(value / 12.5D));
+		case SOUTH:
+			return (int) Math.floor(value / 12.5D);
+		case WEST:
+			return (int) (7 - Math.floor(value / 12.5D));
+		case EAST:
+			return (int) Math.floor(value / 12.5D);
+		}
+	}
+	
+	/**
+	 * @param vec3d - The Vector of the BlockPosition
+	 * @param facing - The Direction this Block is facing
+	 * @return - The Column the player pressed
+	 */
+	private int getChessColumn(Vector3d vec3d, Direction facing)
+	{
+		// We get either the X or Z value depending on the Direction the Block is facing
+		double value = facing == Direction.NORTH || facing == Direction.SOUTH ? vec3d.getX() : vec3d.getZ();
+		// We floor the value and subtract it from the original, that way we get rid of the block position value
+		value -= Math.floor(value);
+		// We multiply the value with 100 to make it easier to use
+		value *= 100;
+		
+		switch(facing)
+		{
+		default:
+		case NORTH:
+			return (int) Math.floor(value / 12.5D);
+		case SOUTH:
+			return (int) (7 - Math.floor(value / 12.5D));
+		case WEST:
+			return (int) (7 - Math.floor(value / 12.5D));
+		case EAST:
+			return (int) Math.floor(value / 12.5D);
 		}
 	}
 }

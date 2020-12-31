@@ -3,7 +3,7 @@ package andrews.table_top_craft.game_logic.chess.board.moves;
 import andrews.table_top_craft.game_logic.chess.board.Board;
 import andrews.table_top_craft.game_logic.chess.pieces.BasePiece;
 
-public final class AttackMove extends BaseMove
+public class AttackMove extends BaseMove
 {
 	final BasePiece attackedPiece;
 	
@@ -14,8 +14,31 @@ public final class AttackMove extends BaseMove
 	}
 
 	@Override
-	public Board execute()
+	public int hashCode()
 	{
-		return null;//TODO
+		return this.attackedPiece.hashCode() + super.hashCode();
+	}
+	
+	@Override
+	public boolean equals(final Object object)
+	{
+		if(this == object)
+			return true;
+		if(!(object instanceof AttackMove))
+			return false;
+		final AttackMove otherAttackMove = (AttackMove) object;
+		return super.equals(otherAttackMove) && getAttackedPiece().equals(otherAttackMove.getAttackedPiece());
+	}
+	
+	@Override
+	public boolean isAttack()
+	{
+		return true;
+	}
+	
+	@Override
+	public BasePiece getAttackedPiece()
+	{
+		return this.attackedPiece;
 	}
 }

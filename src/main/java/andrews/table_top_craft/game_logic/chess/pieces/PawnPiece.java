@@ -10,7 +10,11 @@ import andrews.table_top_craft.game_logic.chess.PieceColor;
 import andrews.table_top_craft.game_logic.chess.board.Board;
 import andrews.table_top_craft.game_logic.chess.board.BoardUtils;
 import andrews.table_top_craft.game_logic.chess.board.moves.BaseMove;
-import andrews.table_top_craft.game_logic.chess.board.moves.MajorMove;
+import andrews.table_top_craft.game_logic.chess.board.moves.PawnAttackMove;
+import andrews.table_top_craft.game_logic.chess.board.moves.PawnEnPassantAttackMove;
+import andrews.table_top_craft.game_logic.chess.board.moves.PawnJumpMove;
+import andrews.table_top_craft.game_logic.chess.board.moves.PawnMove;
+import andrews.table_top_craft.game_logic.chess.board.moves.PawnPromotion;
 
 public class PawnPiece extends BasePiece
 {
@@ -25,7 +29,12 @@ public class PawnPiece extends BasePiece
 
 	public PawnPiece(final PieceColor pieceColor, final int piecePosition)
 	{
-		super(PieceType.PAWN, piecePosition, pieceColor);
+		super(PieceType.PAWN, piecePosition, pieceColor, true);
+	}
+	
+	public PawnPiece(final PieceColor pieceColor, final int piecePosition, final boolean isFirstMove)
+	{
+		super(PieceType.PAWN, piecePosition, pieceColor, isFirstMove);
 	}
 
 	@Override
@@ -47,19 +56,26 @@ public class PawnPiece extends BasePiece
 			// Normal Pawn Move
 			if(currentCandidateOffset == 8 && !board.getTile(candidateDestinationCoordinate).isTileOccupied())
 			{
-				legalMoves.add(new MajorMove(board, this, candidateDestinationCoordinate));//TODO replace with PawnMove
+				if(this.pieceColor.isPawnPromotionSquare(candidateDestinationCoordinate))
+				{
+					legalMoves.add(new PawnPromotion(new PawnMove(board, this, candidateDestinationCoordinate)));
+				}
+				else
+				{
+					legalMoves.add(new PawnMove(board, this, candidateDestinationCoordinate));
+				}
 			}
 			// Jump Pawn Move (It Moves 2 Tiles)
 			else if(currentCandidateOffset == 16 && this.isFirstMove() &&
-				   (BoardUtils.SECOND_ROW[this.piecePosition] && this.getPieceColor().isBlack()) ||
-				   (BoardUtils.SEVENTH_ROW[this.piecePosition] && this.getPieceColor().isWhite()))
+				   ((BoardUtils.SEVENTH_RANK[this.piecePosition] && this.getPieceColor().isBlack()) ||
+				   (BoardUtils.SECOND_RANK[this.piecePosition] && this.getPieceColor().isWhite())))
 			{
 				final int behindCandidateDestinationCoordinate = this.piecePosition + (this.pieceColor.getDirection() * 8);
 				
 				// We make sure the Tile behind the DestinationCoordinate Tile is also empty and, add it to the List if it is
 				if(!board.getTile(behindCandidateDestinationCoordinate).isTileOccupied() && !board.getTile(candidateDestinationCoordinate).isTileOccupied())
 				{
-					legalMoves.add(new MajorMove(board, this, behindCandidateDestinationCoordinate));//TODO replace with PawnMove
+					legalMoves.add(new PawnJumpMove(board, this, candidateDestinationCoordinate));
 				}
 			}
 			// Attack Pawn Move
@@ -75,7 +91,26 @@ public class PawnPiece extends BasePiece
 					// We check if the Piece that occupies the Tile has the same color as this Piece, and add an AttackMove to the list if it doesn't
 					if(this.pieceColor != pieceOnCandidate.getPieceColor())
 					{
-						legalMoves.add(new MajorMove(board, this, candidateDestinationCoordinate));//TODO replace with PawnMove
+						if(this.pieceColor.isPawnPromotionSquare(candidateDestinationCoordinate))
+						{
+							legalMoves.add(new PawnPromotion(new PawnAttackMove(board, this, candidateDestinationCoordinate, pieceOnCandidate)));
+						}
+						else
+						{
+							legalMoves.add(new PawnAttackMove(board, this, candidateDestinationCoordinate, pieceOnCandidate));
+						}
+					}
+				}
+				else if(board.getEnPassantPawn() != null)// We make sure there is an en passant Pawn Piece on the Board
+				{
+					if(board.getEnPassantPawn().getPiecePosition() == this.piecePosition + (this.pieceColor.getOppositeDirection()))
+					{
+						final BasePiece pieceOnCandidate = board.getEnPassantPawn();
+						
+						if(this.pieceColor != pieceOnCandidate.getPieceColor())
+						{
+							legalMoves.add(new PawnEnPassantAttackMove(board, this, candidateDestinationCoordinate, pieceOnCandidate));
+						}
 					}
 				}
 			}
@@ -92,7 +127,26 @@ public class PawnPiece extends BasePiece
 					// We check if the Piece that occupies the Tile has the same color as this Piece, and add an AttackMove to the list if it doesn't
 					if(this.pieceColor != pieceOnCandidate.getPieceColor())
 					{
-						legalMoves.add(new MajorMove(board, this, candidateDestinationCoordinate));//TODO replace with PawnMove
+						if(this.pieceColor.isPawnPromotionSquare(candidateDestinationCoordinate))
+						{
+							legalMoves.add(new PawnPromotion(new PawnAttackMove(board, this, candidateDestinationCoordinate, pieceOnCandidate)));
+						}
+						else
+						{
+							legalMoves.add(new PawnAttackMove(board, this, candidateDestinationCoordinate, pieceOnCandidate));
+						}
+					}
+				}
+				else if(board.getEnPassantPawn() != null)// We make sure there is an en passant Pawn Piece on the Board
+				{
+					if(board.getEnPassantPawn().getPiecePosition() == this.piecePosition - (this.pieceColor.getOppositeDirection()))
+					{
+						final BasePiece pieceOnCandidate = board.getEnPassantPawn();
+						
+						if(this.pieceColor != pieceOnCandidate.getPieceColor())
+						{
+							legalMoves.add(new PawnEnPassantAttackMove(board, this, candidateDestinationCoordinate, pieceOnCandidate));
+						}
 					}
 				}
 			}
@@ -109,6 +163,14 @@ public class PawnPiece extends BasePiece
 	@Override
 	public PawnPiece movePiece(final BaseMove move)
 	{
-		return new PawnPiece(move.getMovedPiece().getPieceColor(), move.getDestinationCoordinate());
+		return new PawnPiece(move.getMovedPiece().getPieceColor(), move.getDestinationCoordinate(), false);
+	}
+	
+	/**
+	 * @return - The Piece this Pawn is being promoted to
+	 */
+	public BasePiece getPromotionPiece()
+	{
+		return new QueenPiece(this.pieceColor, this.piecePosition, false);//TODO replace with a method to choose the Piece instead
 	}
 }

@@ -8,10 +8,6 @@ import java.util.ArrayList;
 import org.apache.commons.compress.utils.IOUtils;
 import org.lwjgl.opengl.GL11;
 
-import com.mojang.blaze3d.platform.GlStateManager;
-import com.mojang.blaze3d.systems.RenderSystem;
-
-import io.netty.handler.ssl.JdkApplicationProtocolNegotiator.AllocatorAwareSslEngineWrapperFactory;
 import net.minecraft.client.renderer.GLAllocation;
 import net.minecraft.client.renderer.Tessellator;
 import net.minecraft.client.renderer.vertex.DefaultVertexFormats;
@@ -43,7 +39,7 @@ public class ObjModel
     {
         if(modelList == -1)
         { 
-        	modelList = GL11.glGenLists(1);
+            modelList = GL11.glGenLists(1);
             GL11.glNewList(modelList, GL11.GL_COMPILE);
             renderModel();
             GL11.glEndList();
@@ -55,10 +51,8 @@ public class ObjModel
     {
         Tessellator tess = Tessellator.getInstance();
         tess.getBuffer().begin(GL11.GL_TRIANGLES, DefaultVertexFormats.POSITION_TEX);
-        try
-        {
-            for(int i = 0; i < faces.length; i++)
-            {
+        try {
+            for (int i = 0; i < faces.length; i++) {
                 Face face = faces[i];
                 
                 Vector3d v1 = v[face.v1 - 1];
@@ -69,23 +63,23 @@ public class ObjModel
                 Vector2f vt2 = vt[face.vt2 - 1];
                 Vector2f vt3 = vt[face.vt3 - 1];
                 
-                Vector3f vn1 = vn[face.vn1 - 1];
-                Vector3f vn2 = vn[face.vn2 - 1];
-                Vector3f vn3 = vn[face.vn3 - 1];
+//                Vector3f vn1 = vn[face.vn1 - 1];
+//                Vector3f vn2 = vn[face.vn2 - 1];
+//                Vector3f vn3 = vn[face.vn3 - 1];
                 
                 tess.getBuffer().pos(-v1.x, -v1.y, v1.z);
                 tess.getBuffer().tex(vt1.x, -vt1.y);
-                tess.getBuffer().normal(-vn1.getX(), -vn1.getY(), vn1.getZ());
+//                tess.getBuffer().normal(-vn1.x, -vn1.y, vn1.z);
                 tess.getBuffer().endVertex();
                 
                 tess.getBuffer().pos(-v2.x, -v2.y, v2.z);
                 tess.getBuffer().tex(vt2.x, -vt2.y);
-                tess.getBuffer().normal(-vn2.getX(), -vn2.getY(), vn2.getZ());
+//                tess.getBuffer().normal(-vn2.x, -vn2.y, vn2.z);
                 tess.getBuffer().endVertex();
                 
                 tess.getBuffer().pos(-v3.x, -v3.y, v3.z);
                 tess.getBuffer().tex(vt3.x, -vt3.y);
-                tess.getBuffer().normal(-vn3.getX(), -vn3.getY(), vn3.getZ());
+//                tess.getBuffer().normal(-vn3.x, -vn3.y, vn3.z);
                 tess.getBuffer().endVertex();
             }
         }
@@ -141,8 +135,7 @@ public class ObjModel
     {
         InputStream input = null;
         ByteArrayOutputStream output = null;
-        try
-        {
+        try {
             input = ObjModel.class.getClassLoader().getResourceAsStream("assets/table_top_craft/" + resourceLocation.getPath());
             if(input != null)
             {
@@ -154,7 +147,7 @@ public class ObjModel
             }
             else
             {
-//                Mod.getLogger().error(String.format("Error extracting file %s.", resourceLocation.toString()));
+//                DakimakuraMod.getLogger().error(String.format("Error extracting file %s.", resourceLocation.toString()));
             }
         }
         catch(IOException e)

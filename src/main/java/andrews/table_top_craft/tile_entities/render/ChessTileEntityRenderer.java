@@ -34,12 +34,9 @@ import andrews.table_top_craft.tile_entities.model.chess.ChessTilesInfoModel;
 import andrews.table_top_craft.util.NBTColorSaving;
 import andrews.table_top_craft.util.Reference;
 import andrews.table_top_craft.util.TTCRenderTypes;
-import andrews.table_top_craft.util.obj.model.ChessObjQueenModel;
 import net.minecraft.block.BlockState;
 import net.minecraft.client.renderer.IRenderTypeBuffer;
 import net.minecraft.client.renderer.RenderType;
-import net.minecraft.client.renderer.Tessellator;
-import net.minecraft.client.renderer.texture.OverlayTexture;
 import net.minecraft.client.renderer.tileentity.TileEntityRenderer;
 import net.minecraft.client.renderer.tileentity.TileEntityRendererDispatcher;
 import net.minecraft.util.Direction;
@@ -67,8 +64,6 @@ public class ChessTileEntityRenderer extends TileEntityRenderer<ChessTileEntity>
     private final ChessTilesInfoModel tilesInfoModel;
     private final ChessBoardPlateModel chessBoardPlateModel;
     
-    ChessObjQueenModel queenObjModel;
-    
 	public ChessTileEntityRenderer(TileEntityRendererDispatcher rendererDispatcherIn)
 	{
 		super(rendererDispatcherIn);
@@ -81,23 +76,11 @@ public class ChessTileEntityRenderer extends TileEntityRenderer<ChessTileEntity>
 		highlightModel = new ChessHighlightModel();
 		tilesInfoModel = new ChessTilesInfoModel();
 		chessBoardPlateModel = new ChessBoardPlateModel();
-		
-		queenObjModel = new ChessObjQueenModel();
 	}
 	
 	@Override
 	public void render(ChessTileEntity tileEntityIn, float partialTicks, MatrixStack matrixStackIn, IRenderTypeBuffer bufferIn, int combinedLightIn, int combinedOverlayIn)
 	{
-//		matrixStackIn.push();
-//		IRenderTypeBuffer.Impl irendertypebuffer$impl = IRenderTypeBuffer.getImpl(Tessellator.getInstance().getBuffer());
-//	    IVertexBuilder ivertexbuilder = irendertypebuffer$impl.getBuffer(queenObjModel.getRenderType(PIECES_TEXTURE));
-//	    queenObjModel.render(matrixStackIn, ivertexbuilder, 15728880, OverlayTexture.NO_OVERLAY, 1.0F, 1.0F, 1.0F, 1.0F);
-//		matrixStackIn.pop();
-		
-		
-		
-		
-		
 		Board board;
 		Direction facing = Direction.NORTH;
 	    if(tileEntityIn.hasWorld())

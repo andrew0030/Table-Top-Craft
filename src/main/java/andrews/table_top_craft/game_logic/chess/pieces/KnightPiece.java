@@ -92,6 +92,12 @@ public class KnightPiece extends BasePiece
 	}
 	
 	@Override
+    public int locationBonus()
+	{
+        return this.pieceColor.knightBonus(this.piecePosition);
+    }
+	
+	@Override
 	public KnightPiece movePiece(final BaseMove move)
 	{
 		return new KnightPiece(move.getMovedPiece().getPieceColor(), move.getDestinationCoordinate(), false);

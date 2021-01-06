@@ -99,6 +99,12 @@ public class QueenPiece extends BasePiece
 	}
 	
 	@Override
+    public int locationBonus()
+	{
+        return this.pieceColor.queenBonus(this.piecePosition);
+    }
+	
+	@Override
 	public QueenPiece movePiece(final BaseMove move)
 	{
 		return new QueenPiece(move.getMovedPiece().getPieceColor(), move.getDestinationCoordinate(), false);

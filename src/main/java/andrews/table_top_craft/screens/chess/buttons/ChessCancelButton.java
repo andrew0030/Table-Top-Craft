@@ -18,8 +18,10 @@ import net.minecraftforge.fml.client.gui.GuiUtils;
 public class ChessCancelButton extends Button
 {
 	private static final ResourceLocation TEXTURE = new ResourceLocation(Reference.MODID + ":textures/gui/buttons/chess_menu_buttons.png");
-	private final String buttonText = new TranslationTextComponent("gui.table_top_craft.chess.cancel").getString();
+	private final String buttonCancelText = new TranslationTextComponent("gui.table_top_craft.chess.cancel").getString();
+	private final String buttonBackText = new TranslationTextComponent("gui.table_top_craft.chess.back").getString();
 	private static ChessCancelMenuTarget targetScreen;
+	private final ChessCancelButtonText targetText;
 	private final FontRenderer fontRenderer;
 	private static ChessTileEntity chessTileEntity;
 	private static final int buttonWidth = 82;
@@ -27,12 +29,13 @@ public class ChessCancelButton extends Button
 	private int u = 0;
 	private int v = 0;
 	
-	public ChessCancelButton(ChessTileEntity tileEntity, ChessCancelMenuTarget target, int xPos, int yPos) 
+	public ChessCancelButton(ChessTileEntity tileEntity, ChessCancelMenuTarget target, ChessCancelButtonText targetText, int xPos, int yPos) 
 	{
 		super(xPos, yPos, buttonWidth, buttonHeight, new StringTextComponent(""), (button) -> { handleButtonPress(); });
 		this.fontRenderer = Minecraft.getInstance().fontRenderer;
 		chessTileEntity = tileEntity;
 		targetScreen = target;
+		this.targetText = targetText;
 	}
 	
 	@Override
@@ -53,7 +56,15 @@ public class ChessCancelButton extends Button
 		GuiUtils.drawTexturedModalRect(matrixStack, x, y, u, v, width, height, 0);
 		RenderSystem.disableBlend();
 		matrixStack.pop();
-		this.fontRenderer.drawString(matrixStack, this.buttonText, x + ((this.width / 2) - (this.fontRenderer.getStringWidth(this.buttonText) / 2)), y + 3, 0x000000);
+		switch(this.targetText)
+		{
+		default:
+		case CANCEL:
+			this.fontRenderer.drawString(matrixStack, this.buttonCancelText, x + ((this.width / 2) - (this.fontRenderer.getStringWidth(this.buttonCancelText) / 2)), y + 3, 0x000000);
+			break;
+		case BACK:
+			this.fontRenderer.drawString(matrixStack, this.buttonBackText, x + ((this.width / 2) - (this.fontRenderer.getStringWidth(this.buttonBackText) / 2)), y + 3, 0x000000);	
+		}
 	}
 	
 	/**
@@ -76,5 +87,11 @@ public class ChessCancelButton extends Button
 	{
 		CHESS_BOARD_SETTINGS,
 		CHESS_BOARD_COLORS;
+	}
+	
+	public enum ChessCancelButtonText
+	{
+		CANCEL,
+		BACK;
 	}
 }

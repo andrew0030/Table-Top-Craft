@@ -4,7 +4,6 @@ import andrews.table_top_craft.game_logic.chess.board.moves.BaseMove;
 import andrews.table_top_craft.game_logic.chess.board.moves.MoveFactory;
 import andrews.table_top_craft.game_logic.chess.board.tiles.BaseChessTile;
 import andrews.table_top_craft.game_logic.chess.player.MoveTransition;
-import andrews.table_top_craft.registry.TTCBlocks;
 import andrews.table_top_craft.screens.chess.menus.ChessBoardSettingsScreen;
 import andrews.table_top_craft.tile_entities.ChessTileEntity;
 import net.minecraft.block.Block;
@@ -15,6 +14,7 @@ import net.minecraft.block.material.Material;
 import net.minecraft.client.Minecraft;
 import net.minecraft.entity.player.PlayerEntity;
 import net.minecraft.item.BlockItemUseContext;
+import net.minecraft.state.BooleanProperty;
 import net.minecraft.state.DirectionProperty;
 import net.minecraft.state.StateContainer.Builder;
 import net.minecraft.tileentity.TileEntity;
@@ -39,12 +39,13 @@ import net.minecraftforge.common.ToolType;
 public class ChessBlock extends HorizontalBlock
 {
 	public static final DirectionProperty FACING = HorizontalBlock.HORIZONTAL_FACING;
+	public static final BooleanProperty SHOW_PLATE = BooleanProperty.create("show_plate");
 	protected static final VoxelShape CHESS_BLOCK_AABB = Block.makeCuboidShape(0.0D, 0.0D, 0.0D, 16.0D, 12.0D, 16.0D);
 	
 	public ChessBlock()
 	{
 		super(getProperties());
-		this.setDefaultState(this.stateContainer.getBaseState().with(FACING, Direction.NORTH));
+		this.setDefaultState(this.stateContainer.getBaseState().with(FACING, Direction.NORTH).with(SHOW_PLATE, true));
 	}
 
 	/**
@@ -64,13 +65,13 @@ public class ChessBlock extends HorizontalBlock
 	@Override
 	public BlockState getStateForPlacement(BlockItemUseContext context)
 	{
-		return this.getDefaultState().with(FACING, context.getPlacementHorizontalFacing());
+		return this.getDefaultState().with(FACING, context.getPlacementHorizontalFacing()).with(SHOW_PLATE, true);
 	}
 	
 	@Override
 	protected void fillStateContainer(Builder<Block, BlockState> builder)
 	{
-		 builder.add(FACING);
+		 builder.add(FACING, SHOW_PLATE);
 	}
 
 	@Override
@@ -95,7 +96,7 @@ public class ChessBlock extends HorizontalBlock
 			RayTraceResult raycast = rayTraceFromPlayer(worldIn, player, FluidMode.NONE);
 			if(raycast.getType() == RayTraceResult.Type.BLOCK)
 			{
-				if(worldIn.getBlockState(new BlockPos(raycast.getHitVec())).getBlock() == TTCBlocks.CHESS.get())
+				if(worldIn.getBlockState(new BlockPos(raycast.getHitVec())).getBlock() instanceof ChessBlock)
 				{
 					Direction face = ((BlockRayTraceResult) raycast).getFace();
 					

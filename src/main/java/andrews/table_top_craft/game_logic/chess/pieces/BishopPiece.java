@@ -121,6 +121,12 @@ public class BishopPiece extends BasePiece
 	}
 
 	@Override
+    public int locationBonus()
+	{
+        return this.pieceColor.bishopBonus(this.piecePosition);
+    }
+	
+	@Override
 	public BishopPiece movePiece(final BaseMove move)
 	{
 		return new BishopPiece(move.getMovedPiece().getPieceColor(), move.getDestinationCoordinate(), false);

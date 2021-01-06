@@ -135,6 +135,12 @@ public class KingPiece extends BasePiece
 	}
 	
 	@Override
+    public int locationBonus()
+	{
+        return this.pieceColor.kingBonus(this.piecePosition);
+    }
+	
+	@Override
 	public KingPiece movePiece(final BaseMove move)
 	{
 		return new KingPiece(move.getMovedPiece().getPieceColor(), move.getDestinationCoordinate(), false, move.isCastlingMove(), false, false);

@@ -99,6 +99,12 @@ public class RookPiece extends BasePiece
 	}
 	
 	@Override
+    public int locationBonus()
+	{
+        return this.pieceColor.rookBonus(this.piecePosition);
+    }
+	
+	@Override
 	public RookPiece movePiece(final BaseMove move)
 	{
 		return new RookPiece(move.getMovedPiece().getPieceColor(), move.getDestinationCoordinate(), false);

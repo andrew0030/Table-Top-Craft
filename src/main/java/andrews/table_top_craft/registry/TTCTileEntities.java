@@ -17,7 +17,7 @@ public class TTCTileEntities
 {
 	public static final DeferredRegister<TileEntityType<?>> TILE_ENTITY_TYPES = DeferredRegister.create(ForgeRegistries.TILE_ENTITIES, Reference.MODID);
 	
-	public static final RegistryObject<TileEntityType<ChessTileEntity>> CHESS = TILE_ENTITY_TYPES.register("chess", () -> new TileEntityType<>(ChessTileEntity::new, Sets.newHashSet(TTCBlocks.CHESS.get()), null));
+	public static final RegistryObject<TileEntityType<ChessTileEntity>> CHESS = TILE_ENTITY_TYPES.register("chess", () -> new TileEntityType<>(ChessTileEntity::new, Sets.newHashSet(TTCBlocks.OAK_CHESS.get(), TTCBlocks.SPRUCE_CHESS.get(), TTCBlocks.BIRCH_CHESS.get(), TTCBlocks.JUNGLE_CHESS.get(), TTCBlocks.ACACIA_CHESS.get(), TTCBlocks.DARK_OAK_CHESS.get(), TTCBlocks.CRIMSON_CHESS.get(), TTCBlocks.WARPED_CHESS.get()), null));
 	
     @OnlyIn(Dist.CLIENT)
     public static void registerTileRenders()

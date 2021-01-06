@@ -28,7 +28,7 @@ public class TableTopCraft
 		@Override
 		public ItemStack createIcon()
 		{
-			return new ItemStack(Item.BLOCK_TO_ITEM.getOrDefault(TTCBlocks.CHESS.get(), Items.AIR));
+			return new ItemStack(Item.BLOCK_TO_ITEM.getOrDefault(TTCBlocks.OAK_CHESS.get(), Items.AIR));
 		}
 	};
 	

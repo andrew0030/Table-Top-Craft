@@ -2,9 +2,12 @@ package andrews.table_top_craft.network;
 
 import andrews.table_top_craft.network.server.MessageServerLoadFEN;
 import andrews.table_top_craft.network.server.MessageServerNewChessGame;
+import andrews.table_top_craft.network.server.MessageServerSetColor;
+import andrews.table_top_craft.network.server.MessageServerSetColors;
 import andrews.table_top_craft.network.server.MessageServerShowAvailableMoves;
 import andrews.table_top_craft.network.server.MessageServerShowPreviousMove;
 import andrews.table_top_craft.network.server.MessageServerShowTileInfo;
+import andrews.table_top_craft.network.server.MessageServerUseCustomPlate;
 import andrews.table_top_craft.util.Reference;
 import net.minecraft.util.ResourceLocation;
 import net.minecraftforge.fml.network.NetworkRegistry;
@@ -52,6 +55,21 @@ public static final String NETWORK_PROTOCOL = "1";
 		CHANNEL.messageBuilder(MessageServerShowPreviousMove.class, id++)
 		.encoder(MessageServerShowPreviousMove::serialize).decoder(MessageServerShowPreviousMove::deserialize)
 		.consumer(MessageServerShowPreviousMove::handle)
+		.add();
+		
+		CHANNEL.messageBuilder(MessageServerSetColor.class, id++)
+		.encoder(MessageServerSetColor::serialize).decoder(MessageServerSetColor::deserialize)
+		.consumer(MessageServerSetColor::handle)
+		.add();
+		
+		CHANNEL.messageBuilder(MessageServerUseCustomPlate.class, id++)
+		.encoder(MessageServerUseCustomPlate::serialize).decoder(MessageServerUseCustomPlate::deserialize)
+		.consumer(MessageServerUseCustomPlate::handle)
+		.add();
+		
+		CHANNEL.messageBuilder(MessageServerSetColors.class, id++)
+		.encoder(MessageServerSetColors::serialize).decoder(MessageServerSetColors::deserialize)
+		.consumer(MessageServerSetColors::handle)
 		.add();
 	}
 }

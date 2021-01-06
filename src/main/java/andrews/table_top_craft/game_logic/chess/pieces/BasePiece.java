@@ -105,6 +105,11 @@ public abstract class BasePiece
 	public abstract Collection<BaseMove> calculateLegalMoves(final Board board);
 	
 	/**
+	 * @return - The bonus value this Piece gets for being in a certain position
+	 */
+	public abstract int locationBonus();
+	
+	/**
 	 * @param move - The Move that is being made
 	 * @return - A new Piece that is just like the old one, with an updated Piece position
 	 */

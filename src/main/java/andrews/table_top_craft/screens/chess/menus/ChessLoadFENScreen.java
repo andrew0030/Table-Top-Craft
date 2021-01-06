@@ -3,8 +3,9 @@ package andrews.table_top_craft.screens.chess.menus;
 import com.mojang.blaze3d.matrix.MatrixStack;
 
 import andrews.table_top_craft.screens.chess.buttons.ChessCancelButton;
+import andrews.table_top_craft.screens.chess.buttons.ChessCancelButton.ChessCancelButtonText;
 import andrews.table_top_craft.screens.chess.buttons.ChessCancelButton.ChessCancelMenuTarget;
-import andrews.table_top_craft.screens.chess.buttons.ChessConfirmFENButton;
+import andrews.table_top_craft.screens.chess.buttons.settings.ChessConfirmFENButton;
 import andrews.table_top_craft.tile_entities.ChessTileEntity;
 import andrews.table_top_craft.util.Reference;
 import net.minecraft.client.gui.screen.Screen;
@@ -53,7 +54,7 @@ public class ChessLoadFENScreen extends Screen
 	    this.fenStringField.setFocused2(true);
 		
 		// The Buttons in the Gui Menu
-	    this.addButton(new ChessCancelButton(this.chessTileEntity, ChessCancelMenuTarget.CHESS_BOARD_SETTINGS, x + 5, y + 39));
+	    this.addButton(new ChessCancelButton(this.chessTileEntity, ChessCancelMenuTarget.CHESS_BOARD_SETTINGS, ChessCancelButtonText.CANCEL, x + 5, y + 39));
 	    this.addButton(new ChessConfirmFENButton(this.chessTileEntity, fenStringField, x + 90, y + 39));
 	}
 	

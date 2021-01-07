@@ -8,9 +8,13 @@ import java.util.ArrayList;
 import org.apache.commons.compress.utils.IOUtils;
 import org.lwjgl.opengl.GL11;
 
+import com.google.common.collect.ImmutableList;
+
 import net.minecraft.client.renderer.GLAllocation;
 import net.minecraft.client.renderer.Tessellator;
 import net.minecraft.client.renderer.vertex.DefaultVertexFormats;
+import net.minecraft.client.renderer.vertex.VertexFormat;
+import net.minecraft.client.renderer.vertex.VertexFormatElement;
 import net.minecraft.util.ResourceLocation;
 import net.minecraft.util.math.vector.Vector2f;
 import net.minecraft.util.math.vector.Vector3d;
@@ -20,7 +24,8 @@ import net.minecraftforge.api.distmarker.OnlyIn;
 
 @OnlyIn(Dist.CLIENT)
 public class ObjModel
-{    
+{
+	public static final VertexFormat POSITION_TEX_NORMAL = new VertexFormat(ImmutableList.<VertexFormatElement>builder().add(DefaultVertexFormats.POSITION_3F).add(DefaultVertexFormats.TEX_2F).add(DefaultVertexFormats.NORMAL_3B).build());
     private Vector3d[] v;
     private Vector2f[] vt;
     private Vector3f[] vn;
@@ -50,7 +55,7 @@ public class ObjModel
     private void renderModel()
     {
         Tessellator tess = Tessellator.getInstance();
-        tess.getBuffer().begin(GL11.GL_TRIANGLES, DefaultVertexFormats.POSITION_TEX);
+        tess.getBuffer().begin(GL11.GL_TRIANGLES, POSITION_TEX_NORMAL);
         try {
             for (int i = 0; i < faces.length; i++) {
                 Face face = faces[i];
@@ -63,23 +68,23 @@ public class ObjModel
                 Vector2f vt2 = vt[face.vt2 - 1];
                 Vector2f vt3 = vt[face.vt3 - 1];
                 
-//                Vector3f vn1 = vn[face.vn1 - 1];
-//                Vector3f vn2 = vn[face.vn2 - 1];
-//                Vector3f vn3 = vn[face.vn3 - 1];
+                Vector3f vn1 = vn[face.vn1 - 1];
+                Vector3f vn2 = vn[face.vn2 - 1];
+                Vector3f vn3 = vn[face.vn3 - 1];
                 
                 tess.getBuffer().pos(-v1.x, -v1.y, v1.z);
                 tess.getBuffer().tex(vt1.x, -vt1.y);
-//                tess.getBuffer().normal(-vn1.x, -vn1.y, vn1.z);
+                tess.getBuffer().normal(-vn1.getX(), -vn1.getY(), vn1.getZ());
                 tess.getBuffer().endVertex();
                 
                 tess.getBuffer().pos(-v2.x, -v2.y, v2.z);
                 tess.getBuffer().tex(vt2.x, -vt2.y);
-//                tess.getBuffer().normal(-vn2.x, -vn2.y, vn2.z);
+                tess.getBuffer().normal(-vn2.getX(), -vn2.getY(), vn2.getZ());
                 tess.getBuffer().endVertex();
                 
                 tess.getBuffer().pos(-v3.x, -v3.y, v3.z);
                 tess.getBuffer().tex(vt3.x, -vt3.y);
-//                tess.getBuffer().normal(-vn3.x, -vn3.y, vn3.z);
+                tess.getBuffer().normal(-vn3.getX(), -vn3.getY(), vn3.getZ());
                 tess.getBuffer().endVertex();
             }
         }

@@ -34,6 +34,7 @@ import andrews.table_top_craft.tile_entities.model.chess.ChessTilesInfoModel;
 import andrews.table_top_craft.util.NBTColorSaving;
 import andrews.table_top_craft.util.Reference;
 import andrews.table_top_craft.util.TTCRenderTypes;
+import andrews.table_top_craft.util.obj.ObjModel;
 import net.minecraft.block.BlockState;
 import net.minecraft.client.renderer.IRenderTypeBuffer;
 import net.minecraft.client.renderer.RenderType;
@@ -80,7 +81,7 @@ public class ChessTileEntityRenderer extends TileEntityRenderer<ChessTileEntity>
 	
 	@Override
 	public void render(ChessTileEntity tileEntityIn, float partialTicks, MatrixStack matrixStackIn, IRenderTypeBuffer bufferIn, int combinedLightIn, int combinedOverlayIn)
-	{
+	{	
 		Board board;
 		Direction facing = Direction.NORTH;
 	    if(tileEntityIn.hasWorld())

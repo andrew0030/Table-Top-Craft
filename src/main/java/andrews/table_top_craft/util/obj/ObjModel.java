@@ -10,7 +10,6 @@ import org.lwjgl.opengl.GL11;
 
 import com.google.common.collect.ImmutableList;
 
-import net.minecraft.client.renderer.GLAllocation;
 import net.minecraft.client.renderer.Tessellator;
 import net.minecraft.client.renderer.vertex.DefaultVertexFormats;
 import net.minecraft.client.renderer.vertex.VertexFormat;
@@ -43,7 +42,7 @@ public class ObjModel
     public void render()
     {
         if(modelList == -1)
-        { 
+        {
             modelList = GL11.glGenLists(1);
             GL11.glNewList(modelList, GL11.GL_COMPILE);
             renderModel();
@@ -56,8 +55,10 @@ public class ObjModel
     {
         Tessellator tess = Tessellator.getInstance();
         tess.getBuffer().begin(GL11.GL_TRIANGLES, POSITION_TEX_NORMAL);
-        try {
-            for (int i = 0; i < faces.length; i++) {
+        try
+        {
+            for(int i = 0; i < faces.length; i++)
+            {
                 Face face = faces[i];
                 
                 Vector3d v1 = v[face.v1 - 1];

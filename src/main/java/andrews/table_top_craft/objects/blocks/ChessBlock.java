@@ -55,6 +55,7 @@ public class ChessBlock extends HorizontalBlock
 	{	
 		Properties properties = Block.Properties.create(Material.WOOD);
 		properties.hardnessAndResistance(2.0F);
+		properties.setLightLevel(value -> 14);
 		properties.harvestTool(ToolType.AXE);
 		properties.notSolid();
 		properties.sound(SoundType.WOOD);
@@ -88,7 +89,8 @@ public class ChessBlock extends HorizontalBlock
 			if(worldIn.getTileEntity(pos) instanceof ChessTileEntity)
 			{
 				ChessTileEntity chessTileEntity = (ChessTileEntity) worldIn.getTileEntity(pos);
-				Minecraft.getInstance().displayGuiScreen(new ChessBoardSettingsScreen(chessTileEntity));
+				if(worldIn.isRemote)
+					Minecraft.getInstance().displayGuiScreen(new ChessBoardSettingsScreen(chessTileEntity));
 			}
 		}
 		else
@@ -125,6 +127,7 @@ public class ChessBlock extends HorizontalBlock
 									{
 										chessTileEntity.setSourceTile(chessTile);
 										chessTileEntity.setHumanMovedPiece(chessTile.getPiece());
+										worldIn.notifyBlockUpdate(pos, worldIn.getBlockState(pos), worldIn.getBlockState(pos), 2);
 										if(chessTileEntity.getHumanMovedPiece() == null)
 											chessTileEntity.setSourceTile(null);
 										

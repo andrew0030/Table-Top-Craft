@@ -111,6 +111,10 @@ public class ChessTileEntity extends TileEntity
 		chessNBT.putString("AttackMoveColor", getAttackMoveColor());
 		chessNBT.putString("PreviousMoveColor", getPreviousMoveColor());
 		chessNBT.putString("CastleMoveColor", getCastleMoveColor());
+		if(this.sourceTile != null)
+			chessNBT.putInt("SourceTile", this.getSourceTile().getTileCoordinate());
+		if(this.humanMovedPiece != null)
+			chessNBT.putInt("HumanMovedPiece", this.getHumanMovedPiece().getPiecePosition());
 		compound.put("ChessValues", chessNBT);
 		return compound;
 	}
@@ -151,6 +155,10 @@ public class ChessTileEntity extends TileEntity
 			this.previousMoveColor = chessNBT.getString("PreviousMoveColor");
 		if(chessNBT.contains("CastleMoveColor", NBT.TAG_STRING))
 			this.castleMoveColor = chessNBT.getString("CastleMoveColor");
+		if(chessNBT.contains("SourceTile", NBT.TAG_INT))
+			this.sourceTile = getBoard().getTile(chessNBT.getInt("SourceTile"));
+		if(chessNBT.contains("HumanMovedPiece", NBT.TAG_INT))
+			this.humanMovedPiece = getBoard().getTile(chessNBT.getInt("HumanMovedPiece")).getPiece();
 	}
 	
 	public ChessMoveLog getMoveLog()

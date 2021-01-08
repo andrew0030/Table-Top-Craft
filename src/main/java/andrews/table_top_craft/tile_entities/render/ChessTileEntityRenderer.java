@@ -43,6 +43,7 @@ import net.minecraft.client.renderer.tileentity.TileEntityRendererDispatcher;
 import net.minecraft.util.Direction;
 import net.minecraft.util.ResourceLocation;
 import net.minecraft.util.math.vector.Vector3f;
+import net.minecraftforge.client.model.ModelLoaderRegistry;
 
 public class ChessTileEntityRenderer extends TileEntityRenderer<ChessTileEntity>
 {
@@ -175,22 +176,22 @@ public class ChessTileEntityRenderer extends TileEntityRenderer<ChessTileEntity>
 						{
 						default:
 						case PAWN:
-							renderPawn(matrixStackIn, bufferIn, combinedLightIn, combinedOverlayIn, wR, wG, wB, bR, bG, bB, pieceColor, isSelectedPiece);
+//							renderPawn(matrixStackIn, bufferIn, combinedLightIn, combinedOverlayIn, wR, wG, wB, bR, bG, bB, pieceColor, isSelectedPiece);
 							break;
 						case ROOK:
-							renderRook(matrixStackIn, bufferIn, combinedLightIn, combinedOverlayIn, wR, wG, wB, bR, bG, bB, pieceColor, isSelectedPiece);
+//							renderRook(matrixStackIn, bufferIn, combinedLightIn, combinedOverlayIn, wR, wG, wB, bR, bG, bB, pieceColor, isSelectedPiece);
 							break;
 						case BISHOP:
-							renderBishop(matrixStackIn, bufferIn, combinedLightIn, combinedOverlayIn, wR, wG, wB, bR, bG, bB, pieceColor, isSelectedPiece);
+//							renderBishop(matrixStackIn, bufferIn, combinedLightIn, combinedOverlayIn, wR, wG, wB, bR, bG, bB, pieceColor, isSelectedPiece);
 							break;
 						case KNIGHT:
-							renderKnight(matrixStackIn, bufferIn, combinedLightIn, combinedOverlayIn, wR, wG, wB, bR, bG, bB, pieceColor, isSelectedPiece);
+//							renderKnight(matrixStackIn, bufferIn, combinedLightIn, combinedOverlayIn, wR, wG, wB, bR, bG, bB, pieceColor, isSelectedPiece);
 							break;
 						case KING:
-							renderKing(matrixStackIn, bufferIn, combinedLightIn, combinedOverlayIn, wR, wG, wB, bR, bG, bB, pieceColor, isSelectedPiece);
+//							renderKing(matrixStackIn, bufferIn, combinedLightIn, combinedOverlayIn, wR, wG, wB, bR, bG, bB, pieceColor, isSelectedPiece);
 							break;
 						case QUEEN:
-							renderQueen(matrixStackIn, bufferIn, combinedLightIn, combinedOverlayIn, wR, wG, wB, bR, bG, bB, pieceColor, isSelectedPiece);
+//							renderQueen(matrixStackIn, bufferIn, combinedLightIn, combinedOverlayIn, wR, wG, wB, bR, bG, bB, pieceColor, isSelectedPiece);
 						}
 						matrixStackIn.pop();
 					}
@@ -262,7 +263,7 @@ public class ChessTileEntityRenderer extends TileEntityRenderer<ChessTileEntity>
 			matrixStackIn.pop();
 		}
 	}
-	
+
 	/**
 	 * Renders all the taken Pieces under the Chess Board
 	 */
@@ -394,7 +395,6 @@ public class ChessTileEntityRenderer extends TileEntityRenderer<ChessTileEntity>
 		if(chessTileEntity.getHumanMovedPiece() != null && chessTileEntity.getHumanMovedPiece().getPieceColor() == chessTileEntity.getBoard().getCurrentChessPlayer().getPieceColor())
 		{
 			final List<BaseMove> pieceMoves = new ArrayList<>();
-			
 			for(BaseMove move : chessTileEntity.getBoard().getCurrentChessPlayer().getLegalMoves())
 			{
 				if(move.getMovedPiece() == chessTileEntity.getHumanMovedPiece())

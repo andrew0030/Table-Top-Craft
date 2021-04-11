@@ -7,9 +7,9 @@ import andrews.table_top_craft.screens.chess.buttons.ChessCancelButton;
 import andrews.table_top_craft.screens.chess.buttons.ChessCancelButton.ChessCancelButtonText;
 import andrews.table_top_craft.screens.chess.buttons.ChessCancelButton.ChessCancelMenuTarget;
 import andrews.table_top_craft.screens.chess.buttons.colors.ChessConfirmColorButton;
+import andrews.table_top_craft.screens.chess.buttons.colors.ChessConfirmColorButton.ColorMenuType;
 import andrews.table_top_craft.screens.chess.buttons.colors.ChessRandomColorButton;
 import andrews.table_top_craft.screens.chess.buttons.colors.ChessResetColorButton;
-import andrews.table_top_craft.screens.chess.buttons.colors.ChessConfirmColorButton.ColorMenuType;
 import andrews.table_top_craft.screens.chess.buttons.colors.ChessResetColorButton.DefaultColorType;
 import andrews.table_top_craft.screens.chess.sliders.ChessAlphaColorSlider;
 import andrews.table_top_craft.screens.chess.sliders.ChessBlueColorSlider;
@@ -23,10 +23,7 @@ import net.minecraft.client.util.InputMappings;
 import net.minecraft.util.ResourceLocation;
 import net.minecraft.util.text.StringTextComponent;
 import net.minecraft.util.text.TranslationTextComponent;
-import net.minecraftforge.api.distmarker.Dist;
-import net.minecraftforge.api.distmarker.OnlyIn;
 
-@OnlyIn(Dist.CLIENT)
 public class ChessBoardAttackMoveColorScreen extends Screen
 {
 	private static final ResourceLocation MENU_TEXTURE = new ResourceLocation(Reference.MODID, "textures/gui/menus/medium_chess_menu.png");

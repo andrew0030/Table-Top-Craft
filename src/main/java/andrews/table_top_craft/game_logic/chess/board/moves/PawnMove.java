@@ -22,4 +22,10 @@ public final class PawnMove extends BaseMove
 	{
 		return BoardUtils.getPositionAtCoordinate(this.destinationCoordinate);
 	}
+	
+	@Override
+	public String saveToNBT()
+	{
+		return "pawn_move/" + getColorForPiece(this.movedPiece) + "/" + this.movedPiece.getPiecePosition() + "/" + this.destinationCoordinate;
+	}
 }

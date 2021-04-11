@@ -11,7 +11,6 @@ import net.minecraft.block.BlockState;
 import net.minecraft.block.HorizontalBlock;
 import net.minecraft.block.SoundType;
 import net.minecraft.block.material.Material;
-import net.minecraft.client.Minecraft;
 import net.minecraft.entity.player.PlayerEntity;
 import net.minecraft.item.BlockItemUseContext;
 import net.minecraft.state.BooleanProperty;
@@ -30,7 +29,6 @@ import net.minecraft.util.math.RayTraceResult;
 import net.minecraft.util.math.shapes.ISelectionContext;
 import net.minecraft.util.math.shapes.VoxelShape;
 import net.minecraft.util.math.vector.Vector3d;
-import net.minecraft.util.text.StringTextComponent;
 import net.minecraft.world.IBlockReader;
 import net.minecraft.world.World;
 import net.minecraftforge.common.ForgeMod;
@@ -90,7 +88,7 @@ public class ChessBlock extends HorizontalBlock
 			{
 				ChessTileEntity chessTileEntity = (ChessTileEntity) worldIn.getTileEntity(pos);
 				if(worldIn.isRemote)
-					Minecraft.getInstance().displayGuiScreen(new ChessBoardSettingsScreen(chessTileEntity));
+					ChessBoardSettingsScreen.open(chessTileEntity);
 			}
 		}
 		else
@@ -123,15 +121,15 @@ public class ChessBlock extends HorizontalBlock
 							{
 								if(chessTile.isTileOccupied())
 								{
-									if(chessTile.getPiece().getPieceColor() == chessTileEntity.getBoard().getCurrentChessPlayer().getPieceColor())//TODO make sure is fine
-									{
+									if(chessTile.getPiece().getPieceColor() == chessTileEntity.getBoard().getCurrentChessPlayer().getPieceColor())
+									{	
 										chessTileEntity.setSourceTile(chessTile);
 										chessTileEntity.setHumanMovedPiece(chessTile.getPiece());
 										worldIn.notifyBlockUpdate(pos, worldIn.getBlockState(pos), worldIn.getBlockState(pos), 2);
 										if(chessTileEntity.getHumanMovedPiece() == null)
 											chessTileEntity.setSourceTile(null);
 										
-										chessTileEntity.markDirty();//TODO maybe remove?
+										chessTileEntity.markDirty();
 									}
 								}
 							}
@@ -145,17 +143,8 @@ public class ChessBlock extends HorizontalBlock
 									chessTileEntity.setBoard(transition.getTransitionBoard());
 									// Adds the move to the MoveLog
 									chessTileEntity.getMoveLog().addMove(move);
-									// Syncs the TileEntity TODO mayebe move
-									worldIn.notifyBlockUpdate(pos, worldIn.getBlockState(pos), worldIn.getBlockState(pos), 2);//TODO fix EnPassant
-									// Prints out the Move TODO remove and or repalce somehow
-									if(chessTileEntity.getMoveLog().size() > 0)
-									{
-										final BaseMove lastMove = chessTileEntity.getMoveLog().getMoves().get(chessTileEntity.getMoveLog().size() - 1);
-										final String moveText = lastMove.toString();
-										
-										if(worldIn.isRemote)
-											player.sendMessage(new StringTextComponent(moveText), player.getUniqueID());
-									}
+									// Syncs the TileEntity
+									worldIn.notifyBlockUpdate(pos, worldIn.getBlockState(pos), worldIn.getBlockState(pos), 2);
 								}
 								chessTileEntity.setSourceTile(null);
 								chessTileEntity.setDestinationTile(null);

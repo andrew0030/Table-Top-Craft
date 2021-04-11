@@ -45,6 +45,12 @@ public final class PawnJumpMove extends BaseMove
 	@Override
 	public String toString()
 	{
-		return movedPiece.getPieceType().toString() + BoardUtils.getPositionAtCoordinate(destinationCoordinate);
+		return BoardUtils.getPositionAtCoordinate(destinationCoordinate);
+	}
+	
+	@Override
+	public String saveToNBT()
+	{
+		return "pawn_jump/" + getColorForPiece(this.movedPiece) + "/" + this.movedPiece.getPiecePosition() + "/" + this.destinationCoordinate;
 	}
 }

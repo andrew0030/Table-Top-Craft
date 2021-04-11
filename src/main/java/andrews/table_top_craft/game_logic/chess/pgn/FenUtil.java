@@ -1,6 +1,5 @@
 package andrews.table_top_craft.game_logic.chess.pgn;
 
-import java.util.ArrayList;
 import java.util.Arrays;
 
 import andrews.table_top_craft.game_logic.chess.PieceColor;
@@ -13,12 +12,16 @@ import andrews.table_top_craft.game_logic.chess.pieces.KnightPiece;
 import andrews.table_top_craft.game_logic.chess.pieces.PawnPiece;
 import andrews.table_top_craft.game_logic.chess.pieces.QueenPiece;
 import andrews.table_top_craft.game_logic.chess.pieces.RookPiece;
-import net.minecraft.world.NextTickListEntry;
 
 public class FenUtil
 {
     private FenUtil() {}
 
+    public static Board createGameFromFEN(final String fenString, final String firstMovesList, boolean isWhiteCastled, boolean isBlackCastled)
+    {
+        return parseFEN(fenString, firstMovesList, isWhiteCastled, isBlackCastled);
+    }
+    
     public static Board createGameFromFEN(final String fenString)
     {
         return parseFEN(fenString);
@@ -33,6 +36,116 @@ public class FenUtil
                "0 0";
     }
 
+    /**
+     * @param fenString - The FEN String
+     * @return - A Chess Board based on the given FEN String
+     */
+    private static Board parseFEN(final String fenString, final String firstMovesList, boolean isWhiteCastled, boolean isBlackCastled)
+    {
+        final String[] fenPartitions = fenString.trim().split(" ");
+        final String[] firstMoveTiles = firstMovesList.trim().split("/");
+        final Builder builder = new Builder();
+        final boolean whiteKingSideCastle = whiteKingSideCastle(fenPartitions[2]);
+        final boolean whiteQueenSideCastle = whiteQueenSideCastle(fenPartitions[2]);
+        final boolean blackKingSideCastle = blackKingSideCastle(fenPartitions[2]);
+        final boolean blackQueenSideCastle = blackQueenSideCastle(fenPartitions[2]);
+        final String gameConfiguration = fenPartitions[0];
+        final char[] boardTiles = gameConfiguration.replaceAll("/", "")
+                .replaceAll("8", "--------")
+                .replaceAll("7", "-------")
+                .replaceAll("6", "------")
+                .replaceAll("5", "-----")
+                .replaceAll("4", "----")
+                .replaceAll("3", "---")
+                .replaceAll("2", "--")
+                .replaceAll("1", "-")
+                .toCharArray();
+        int i = 0;
+        int enPassantCoordinate = -1;
+        if(Arrays.stream(BoardUtils.ALGEBRAIC_NOTATION).anyMatch(fenPartitions[3]::equals))
+        	enPassantCoordinate = BoardUtils.getCoordinateAtPosition(fenPartitions[3]);
+        while(i < boardTiles.length)
+        {	
+        	// Black End Passant Pawn
+        	if(enPassantCoordinate != -1 && enPassantCoordinate == (i - 8) && BoardUtils.SIXTH_RANK[enPassantCoordinate])
+        	{
+        		PawnPiece enPassantPawn = new PawnPiece(PieceColor.BLACK, i);
+        		builder.setPiece(enPassantPawn);
+        		builder.setEnPassantPawn(enPassantPawn);
+        		i++;
+        		continue;
+        	}
+        	// White End Passant Pawn
+        	else if(enPassantCoordinate != -1 && enPassantCoordinate == (i + 8) && BoardUtils.THIRD_RANK[enPassantCoordinate])
+        	{
+        		PawnPiece enPassantPawn = new PawnPiece(PieceColor.WHITE, i);
+        		builder.setPiece(enPassantPawn);
+        		builder.setEnPassantPawn(enPassantPawn);
+        		i++;
+        		continue;
+        	}
+        	
+            switch(boardTiles[i])
+            {
+                case 'r':
+                    builder.setPiece(new RookPiece(PieceColor.BLACK, i, checkIsFirstMove(i, firstMoveTiles)));
+                    i++;
+                    break;
+                case 'n':
+                    builder.setPiece(new KnightPiece(PieceColor.BLACK, i, checkIsFirstMove(i, firstMoveTiles)));
+                    i++;
+                    break;
+                case 'b':
+                    builder.setPiece(new BishopPiece(PieceColor.BLACK, i, checkIsFirstMove(i, firstMoveTiles)));
+                    i++;
+                    break;
+                case 'q':
+                    builder.setPiece(new QueenPiece(PieceColor.BLACK, i, checkIsFirstMove(i, firstMoveTiles)));
+                    i++;
+                    break;
+                case 'k':
+                    builder.setPiece(new KingPiece(PieceColor.BLACK, i, checkIsFirstMove(i, firstMoveTiles), isBlackCastled, blackKingSideCastle, blackQueenSideCastle));
+                    i++;
+                    break;
+                case 'p':
+                    builder.setPiece(new PawnPiece(PieceColor.BLACK, i, checkIsFirstMove(i, firstMoveTiles)));
+                    i++;
+                    break;
+                case 'R':
+                    builder.setPiece(new RookPiece(PieceColor.WHITE, i, checkIsFirstMove(i, firstMoveTiles)));
+                    i++;
+                    break;
+                case 'N':
+                    builder.setPiece(new KnightPiece(PieceColor.WHITE, i, checkIsFirstMove(i, firstMoveTiles)));
+                    i++;
+                    break;
+                case 'B':
+                    builder.setPiece(new BishopPiece(PieceColor.WHITE, i, checkIsFirstMove(i, firstMoveTiles)));
+                    i++;
+                    break;
+                case 'Q':
+                    builder.setPiece(new QueenPiece(PieceColor.WHITE, i, checkIsFirstMove(i, firstMoveTiles)));
+                    i++;
+                    break;
+                case 'K':
+                    builder.setPiece(new KingPiece(PieceColor.WHITE, i, checkIsFirstMove(i, firstMoveTiles), isWhiteCastled, whiteKingSideCastle, whiteQueenSideCastle));
+                    i++;
+                    break;
+                case 'P':
+                    builder.setPiece(new PawnPiece(PieceColor.WHITE, i, checkIsFirstMove(i, firstMoveTiles)));
+                    i++;
+                    break;
+                case '-':
+                    i++;
+                    break;
+                default:
+                    throw new RuntimeException("Invalid FEN String " + gameConfiguration);
+            }
+        }
+        builder.setMoveMaker(moveMaker(fenPartitions[1]));
+        return builder.build();
+    }
+    
     /**
      * @param fenString - The FEN String
      * @return - A Chess Board based on the given FEN String
@@ -100,7 +213,6 @@ public class FenUtil
                     i++;
                     break;
                 case 'k':
-//                  final boolean isCastled = !blackKingSideCastle && !blackQueenSideCastle; //TODO maybe also save isCastled to the NBT
                     builder.setPiece(new KingPiece(PieceColor.BLACK, i, blackKingSideCastle, blackQueenSideCastle));
                     i++;
                     break;
@@ -141,6 +253,11 @@ public class FenUtil
         }
         builder.setMoveMaker(moveMaker(fenPartitions[1]));
         return builder.build();
+    }
+    
+    private static boolean checkIsFirstMove(Integer currentPos, String[] firstMoveList)
+    {
+    	return Arrays.asList(firstMoveList).contains(currentPos.toString());
     }
 
     private static PieceColor moveMaker(final String moveMakerString)

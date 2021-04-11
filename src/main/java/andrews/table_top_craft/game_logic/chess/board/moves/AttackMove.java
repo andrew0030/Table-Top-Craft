@@ -41,4 +41,10 @@ public class AttackMove extends BaseMove
 	{
 		return this.attackedPiece;
 	}
+	
+	@Override
+	public String saveToNBT()
+	{
+		return "attack_move/" + this.movedPiece.getPiecePosition() + "/" + this.destinationCoordinate + "/" + this.attackedPiece.getPiecePosition();
+	}
 }

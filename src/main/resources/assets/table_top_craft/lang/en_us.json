@@ -18,6 +18,8 @@
 	"gui.table_top_craft.chess.board_evaluator": "Chess Board Evaluator",
 	"gui.table_top_craft.chess.fen_loader": "FEN Loader",
 	"gui.table_top_craft.chess.move_log": "Move Log",
+	"gui.table_top_craft.chess.move_log.white": "White",
+	"gui.table_top_craft.chess.move_log.black": "Black",
 	"gui.table_top_craft.chess.button.settings": "Settings",
 	"gui.table_top_craft.chess.button.colors": "Colors",
 	"gui.table_top_craft.chess.new_game": "New Game",
@@ -78,5 +80,8 @@
 	"gui.table_top_craft.chess.color.white_tiles_settings": "White Tiles Settings",
 	"gui.table_top_craft.chess.color.black_tiles_settings": "Black Tiles Settings",
 	"gui.table_top_craft.chess.color.white_piece_settings": "White Piece Settings",
-	"gui.table_top_craft.chess.color.black_piece_settings": "Black Piece Settings"
+	"gui.table_top_craft.chess.color.black_piece_settings": "Black Piece Settings",
+	
+"_comment4": "Player Messages",
+	"message.table_top_craft.chess.invalidFEN": "The entered FEN was invalid and the board has been set to default!"
 }

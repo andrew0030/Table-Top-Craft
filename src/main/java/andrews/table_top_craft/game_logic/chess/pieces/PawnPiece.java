@@ -177,6 +177,6 @@ public class PawnPiece extends BasePiece
 	 */
 	public BasePiece getPromotionPiece()
 	{
-		return new QueenPiece(this.pieceColor, this.piecePosition, false);//TODO replace with a method to choose the Piece instead
+		return new QueenPiece(this.pieceColor, this.piecePosition, false);//TODO Maybe make a system that allows people to choose the Piece they get
 	}
 }

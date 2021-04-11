@@ -56,7 +56,7 @@ abstract class CastleMove extends BaseMove
 			builder.setPiece(piece);
 		}
 		builder.setPiece(this.movedPiece.movePiece(this));
-		builder.setPiece(new RookPiece(this.castleRook.getPieceColor(), this.castleRookDestination));//TODO first move
+		builder.setPiece(new RookPiece(this.castleRook.getPieceColor(), this.castleRookDestination));
 		builder.setMoveMaker(this.board.getCurrentChessPlayer().getOpponent().getPieceColor());
 		
 		return builder.build();
@@ -81,5 +81,11 @@ abstract class CastleMove extends BaseMove
 			return false;
 		final CastleMove otherCastleMove = (CastleMove) object;
 		return super.equals(otherCastleMove) && this.castleRook.equals(otherCastleMove.getCastleRook());
+	}
+	
+	@Override
+	public String saveToNBT()
+	{
+		return "";
 	}
 }

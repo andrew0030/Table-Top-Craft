@@ -20,4 +20,10 @@ public final class NullMove extends BaseMove
 	{
 		return -1;
 	}
+	
+	@Override
+	public String saveToNBT()
+	{
+		return "";
+	}
 }

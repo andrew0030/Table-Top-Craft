@@ -22,4 +22,10 @@ public final class MajorMove extends BaseMove
 	{
 		return movedPiece.getPieceType().toString() + BoardUtils.getPositionAtCoordinate(this.destinationCoordinate);
 	}
+	
+	@Override
+	public String saveToNBT()
+	{
+		return "major_move/" + getColorForPiece(this.movedPiece) + "/" + this.movedPiece.getPiecePosition() + "/" + this.destinationCoordinate + "/" + this.movedPiece.getPieceType().toString();
+	}
 }

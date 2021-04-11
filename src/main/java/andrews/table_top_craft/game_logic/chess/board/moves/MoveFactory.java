@@ -4,10 +4,7 @@ import andrews.table_top_craft.game_logic.chess.board.Board;
 
 public class MoveFactory
 {
-	private MoveFactory()
-	{
-		
-	}
+	private MoveFactory() {}
 	
 	/**
 	 * @param board - The Chess Board

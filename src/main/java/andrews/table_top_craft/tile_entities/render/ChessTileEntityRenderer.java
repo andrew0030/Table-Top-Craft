@@ -3,38 +3,24 @@ package andrews.table_top_craft.tile_entities.render;
 import java.util.ArrayList;
 import java.util.Collection;
 import java.util.Collections;
-import java.util.Comparator;
 import java.util.List;
 
 import com.google.common.collect.ImmutableList;
-import com.google.common.primitives.Ints;
 import com.mojang.blaze3d.matrix.MatrixStack;
 import com.mojang.blaze3d.vertex.IVertexBuilder;
-import com.mojang.blaze3d.vertex.VertexBuilderUtils;
 
-import andrews.table_top_craft.game_logic.chess.PieceColor;
 import andrews.table_top_craft.game_logic.chess.board.Board;
 import andrews.table_top_craft.game_logic.chess.board.BoardUtils;
-import andrews.table_top_craft.game_logic.chess.board.ChessMoveLog;
 import andrews.table_top_craft.game_logic.chess.board.moves.BaseMove;
-import andrews.table_top_craft.game_logic.chess.pieces.BasePiece;
-import andrews.table_top_craft.game_logic.chess.pieces.BasePiece.PieceType;
 import andrews.table_top_craft.game_logic.chess.player.MoveTransition;
 import andrews.table_top_craft.objects.blocks.ChessBlock;
 import andrews.table_top_craft.tile_entities.ChessTileEntity;
-import andrews.table_top_craft.tile_entities.model.chess.ChessBishopModel;
 import andrews.table_top_craft.tile_entities.model.chess.ChessBoardPlateModel;
 import andrews.table_top_craft.tile_entities.model.chess.ChessHighlightModel;
-import andrews.table_top_craft.tile_entities.model.chess.ChessKingModel;
-import andrews.table_top_craft.tile_entities.model.chess.ChessKnightModel;
-import andrews.table_top_craft.tile_entities.model.chess.ChessPawnModel;
-import andrews.table_top_craft.tile_entities.model.chess.ChessQueenModel;
-import andrews.table_top_craft.tile_entities.model.chess.ChessRookModel;
 import andrews.table_top_craft.tile_entities.model.chess.ChessTilesInfoModel;
 import andrews.table_top_craft.util.NBTColorSaving;
 import andrews.table_top_craft.util.Reference;
 import andrews.table_top_craft.util.TTCRenderTypes;
-import andrews.table_top_craft.util.obj.ObjModel;
 import net.minecraft.block.BlockState;
 import net.minecraft.client.renderer.IRenderTypeBuffer;
 import net.minecraft.client.renderer.RenderType;
@@ -43,11 +29,9 @@ import net.minecraft.client.renderer.tileentity.TileEntityRendererDispatcher;
 import net.minecraft.util.Direction;
 import net.minecraft.util.ResourceLocation;
 import net.minecraft.util.math.vector.Vector3f;
-import net.minecraftforge.client.model.ModelLoaderRegistry;
 
 public class ChessTileEntityRenderer extends TileEntityRenderer<ChessTileEntity>
 {
-	private static final ResourceLocation PIECES_TEXTURE = new ResourceLocation(Reference.MODID, "textures/tile/chess/pieces.png");
     private static final ResourceLocation HIGHLIGHT_TEXTURE = new ResourceLocation(Reference.MODID, "textures/tile/chess/highlight.png");
     private static final ResourceLocation TILES_INFO_TEXTURE = new ResourceLocation(Reference.MODID, "textures/tile/chess/chess_tiles_info.png");
     private static final ResourceLocation PLATE_WHITE_TILES_TEXTURE = new ResourceLocation(Reference.MODID, "textures/tile/chess/plate_white_tiles.png");
@@ -55,13 +39,7 @@ public class ChessTileEntityRenderer extends TileEntityRenderer<ChessTileEntity>
     private static final float CHESS_SCALE = 0.125F;
     private final float CHESS_PIECE_SCALE = 0.1F;
 	
-    //Chess Figures Models
-    private final ChessPawnModel pawnModel;
-    private final ChessRookModel rookModel;
-    private final ChessBishopModel bishopModel;
-    private final ChessKnightModel knightModel;
-    private final ChessKingModel kingModel;
-    private final ChessQueenModel queenModel;
+    //Chess Models
     private final ChessHighlightModel highlightModel;
     private final ChessTilesInfoModel tilesInfoModel;
     private final ChessBoardPlateModel chessBoardPlateModel;
@@ -69,12 +47,6 @@ public class ChessTileEntityRenderer extends TileEntityRenderer<ChessTileEntity>
 	public ChessTileEntityRenderer(TileEntityRendererDispatcher rendererDispatcherIn)
 	{
 		super(rendererDispatcherIn);
-		pawnModel = new ChessPawnModel();
-		rookModel = new ChessRookModel();
-		bishopModel = new ChessBishopModel();
-		knightModel = new ChessKnightModel();
-		kingModel = new ChessKingModel();
-		queenModel = new ChessQueenModel();
 		highlightModel = new ChessHighlightModel();
 		tilesInfoModel = new ChessTilesInfoModel();
 		chessBoardPlateModel = new ChessBoardPlateModel();
@@ -151,50 +123,6 @@ public class ChessTileEntityRenderer extends TileEntityRenderer<ChessTileEntity>
 				for(int column = 0; column < BoardUtils.NUM_TILES_PER_ROW; column++)
 				{
 					currentCoordinate++;
-					boolean isSelectedPiece = false;
-					
-					// Render all the Pieces
-					if(board.getTile(currentCoordinate).isTileOccupied())
-					{
-						PieceColor pieceColor = board.getTile(currentCoordinate).getPiece().getPieceColor();
-						PieceType pieceType = board.getTile(currentCoordinate).getPiece().getPieceType();
-						
-						matrixStackIn.push();
-						// Offsets the Piece that is about to be rendered to the current Tile
-						matrixStackIn.translate(CHESS_SCALE * -column, 0.0D, CHESS_SCALE * rank);
-						// Used to determine whether or not a piece should be highlighted
-						if(board.getTile(currentCoordinate) == tileEntityIn.getSourceTile() && tileEntityIn.getHumanMovedPiece() != null)
-							isSelectedPiece = true;
-						
-						float wR = (1F / 255F) * NBTColorSaving.getRed(tileEntityIn.getWhitePiecesColor());
-						float wG = (1F / 255F) * NBTColorSaving.getGreen(tileEntityIn.getWhitePiecesColor());
-						float wB = (1F / 255F) * NBTColorSaving.getBlue(tileEntityIn.getWhitePiecesColor());
-						float bR = (1F / 255F) * NBTColorSaving.getRed(tileEntityIn.getBlackPiecesColor());
-						float bG = (1F / 255F) * NBTColorSaving.getGreen(tileEntityIn.getBlackPiecesColor());
-						float bB = (1F / 255F) * NBTColorSaving.getBlue(tileEntityIn.getBlackPiecesColor());
-						switch(pieceType)
-						{
-						default:
-						case PAWN:
-//							renderPawn(matrixStackIn, bufferIn, combinedLightIn, combinedOverlayIn, wR, wG, wB, bR, bG, bB, pieceColor, isSelectedPiece);
-							break;
-						case ROOK:
-//							renderRook(matrixStackIn, bufferIn, combinedLightIn, combinedOverlayIn, wR, wG, wB, bR, bG, bB, pieceColor, isSelectedPiece);
-							break;
-						case BISHOP:
-//							renderBishop(matrixStackIn, bufferIn, combinedLightIn, combinedOverlayIn, wR, wG, wB, bR, bG, bB, pieceColor, isSelectedPiece);
-							break;
-						case KNIGHT:
-//							renderKnight(matrixStackIn, bufferIn, combinedLightIn, combinedOverlayIn, wR, wG, wB, bR, bG, bB, pieceColor, isSelectedPiece);
-							break;
-						case KING:
-//							renderKing(matrixStackIn, bufferIn, combinedLightIn, combinedOverlayIn, wR, wG, wB, bR, bG, bB, pieceColor, isSelectedPiece);
-							break;
-						case QUEEN:
-//							renderQueen(matrixStackIn, bufferIn, combinedLightIn, combinedOverlayIn, wR, wG, wB, bR, bG, bB, pieceColor, isSelectedPiece);
-						}
-						matrixStackIn.pop();
-					}
 					
 					matrixStackIn.push();
 					// Offsets the Piece that is about to be rendered to the current Tile
@@ -256,132 +184,6 @@ public class ChessTileEntityRenderer extends TileEntityRenderer<ChessTileEntity>
 					matrixStackIn.pop();
 				}
 			}
-			
-			// Renders all the taken Pieces
-			renderTakenPieces(tileEntityIn.getMoveLog(), matrixStackIn, bufferIn, combinedLightIn, combinedOverlayIn, tileEntityIn);
-			
-			matrixStackIn.pop();
-		}
-	}
-
-	/**
-	 * Renders all the taken Pieces under the Chess Board
-	 */
-	private void renderTakenPieces(ChessMoveLog moveLog, MatrixStack matrixStackIn, IRenderTypeBuffer bufferIn, int combinedLightIn, int combinedOverlayIn, ChessTileEntity chessTileEntity)
-	{
-		final List<BasePiece> whiteTakenPieces = new ArrayList<>();
-		final List<BasePiece> blackTakenPieces = new ArrayList<>();
-		
-		for(final BaseMove move : moveLog.getMoves())
-		{
-			if(move.isAttack())
-			{
-				final BasePiece takenPiece = move.getAttackedPiece();
-				
-				if(takenPiece.getPieceColor().isWhite())
-				{
-					whiteTakenPieces.add(takenPiece);
-				}
-				else if(takenPiece.getPieceColor().isBlack())
-				{
-					blackTakenPieces.add(takenPiece);
-				}
-				else
-				{
-					throw new RuntimeException("Attemted to get a Piece that had no PieceColor");
-				}
-			}
-		}
-		
-		// Sorts all White Taken Pieces depending on their Value
-		Collections.sort(whiteTakenPieces, new Comparator<BasePiece>()
-		{
-			@Override
-			public int compare(BasePiece piece1, BasePiece piece2)
-			{
-				return Ints.compare(piece2.getPieceValue(), piece1.getPieceValue());
-			}
-		});
-		
-		// Sorts all Black Taken Pieces depending on their Value
-		Collections.sort(blackTakenPieces, new Comparator<BasePiece>()
-		{
-			@Override
-			public int compare(BasePiece piece1, BasePiece piece2)
-			{
-				return Ints.compare(piece2.getPieceValue(), piece1.getPieceValue());
-			}
-		});
-		
-		matrixStackIn.push();
-		matrixStackIn.translate(CHESS_SCALE * -6.5D, 0.41D, CHESS_SCALE * 0.3D);
-		renderTakenPiecesFigures(matrixStackIn, bufferIn, combinedLightIn, combinedOverlayIn, chessTileEntity, whiteTakenPieces, true);
-		renderTakenPiecesFigures(matrixStackIn, bufferIn, combinedLightIn, combinedOverlayIn, chessTileEntity, blackTakenPieces, false);
-		matrixStackIn.pop();
-	}
-	
-	private void renderTakenPiecesFigures(MatrixStack matrixStackIn, IRenderTypeBuffer bufferIn, int combinedLightIn, int combinedOverlayIn, ChessTileEntity chessTileEntity, final List<BasePiece> pieceList, final boolean isWhite)
-	{
-		int currentCoordinate = -1;
-		int currentRank = 0;
-		for(final BasePiece piece : pieceList)
-		{
-			if(isWhite)
-			{
-				if(currentCoordinate < 7)
-				{
-					currentCoordinate++;
-				}
-				else
-				{
-					currentCoordinate = 0;
-					currentRank += 1;
-				}
-			}
-			else
-			{	
-				if(currentCoordinate > -9)
-				{
-					currentCoordinate--;
-				}
-				else
-				{
-					currentCoordinate = -2;
-					currentRank -= 1;
-				}
-			}
-			
-			matrixStackIn.push();
-			if(!isWhite)
-				matrixStackIn.translate((CHESS_SCALE * 0.855D) * 9D, 0.0D, 0.8D);
-			matrixStackIn.translate((CHESS_SCALE * 0.855D) * currentCoordinate, 0.0D, CHESS_SCALE * currentRank);
-			float wR = (1F / 255F) * NBTColorSaving.getRed(chessTileEntity.getWhitePiecesColor());
-			float wG = (1F / 255F) * NBTColorSaving.getGreen(chessTileEntity.getWhitePiecesColor());
-			float wB = (1F / 255F) * NBTColorSaving.getBlue(chessTileEntity.getWhitePiecesColor());
-			float bR = (1F / 255F) * NBTColorSaving.getRed(chessTileEntity.getBlackPiecesColor());
-			float bG = (1F / 255F) * NBTColorSaving.getGreen(chessTileEntity.getBlackPiecesColor());
-			float bB = (1F / 255F) * NBTColorSaving.getBlue(chessTileEntity.getBlackPiecesColor());
-			switch(piece.getPieceType())
-			{
-			default:
-			case PAWN:
-				renderPawn(matrixStackIn, bufferIn, combinedLightIn, combinedOverlayIn, wR, wG, wB, bR, bG, bB, piece.getPieceColor(), false);
-				break;
-			case ROOK:
-				renderRook(matrixStackIn, bufferIn, combinedLightIn, combinedOverlayIn, wR, wG, wB, bR, bG, bB, piece.getPieceColor(), false);
-				break;
-			case BISHOP:
-				renderBishop(matrixStackIn, bufferIn, combinedLightIn, combinedOverlayIn, wR, wG, wB, bR, bG, bB, piece.getPieceColor(), false);
-				break;
-			case KNIGHT:
-				renderKnight(matrixStackIn, bufferIn, combinedLightIn, combinedOverlayIn, wR, wG, wB, bR, bG, bB, piece.getPieceColor(), false);
-				break;
-			case KING:
-				renderKing(matrixStackIn, bufferIn, combinedLightIn, combinedOverlayIn, wR, wG, wB, bR, bG, bB, piece.getPieceColor(), false);
-				break;
-			case QUEEN:
-				renderQueen(matrixStackIn, bufferIn, combinedLightIn, combinedOverlayIn, wR, wG, wB, bR, bG, bB, piece.getPieceColor(), false);
-			}
 			matrixStackIn.pop();
 		}
 	}
@@ -405,126 +207,6 @@ public class ChessTileEntityRenderer extends TileEntityRenderer<ChessTileEntity>
 			return ImmutableList.copyOf(pieceMoves);
 		}
 		return Collections.emptyList();
-	}
-	
-	private void renderPawn(MatrixStack matrixStackIn, IRenderTypeBuffer bufferIn, int combinedLightIn, int combinedOverlayIn, float wR, float wG, float wB, float bR, float bG, float bB, PieceColor pieceColor, boolean isSelected)
-	{
-		IVertexBuilder builderPawn = bufferIn.getBuffer(RenderType.getEntityCutoutNoCull(PIECES_TEXTURE));
-		if(isSelected)
-			builderPawn = VertexBuilderUtils.newDelegate(bufferIn.getBuffer(RenderType.getEntityGlint()), bufferIn.getBuffer(RenderType.getEntityCutoutNoCull(PIECES_TEXTURE)));
-		matrixStackIn.push();
-		if(pieceColor.isBlack())
-			matrixStackIn.rotate(Vector3f.YN.rotationDegrees(180.0F));
-		matrixStackIn.scale(CHESS_PIECE_SCALE, CHESS_PIECE_SCALE, CHESS_PIECE_SCALE);
-		pawnModel.Base.render(matrixStackIn, builderPawn, combinedLightIn, combinedOverlayIn,
-							  pieceColor.isWhite() ? wR : bR,
-							  pieceColor.isWhite() ? wG : bG,
-							  pieceColor.isWhite() ? wB : bB,
-							  1.0F);
-		matrixStackIn.pop();
-	}
-	
-	private void renderRook(MatrixStack matrixStackIn, IRenderTypeBuffer bufferIn, int combinedLightIn, int combinedOverlayIn, float wR, float wG, float wB, float bR, float bG, float bB, PieceColor pieceColor, boolean isSelected)
-	{
-		IVertexBuilder builderRook = bufferIn.getBuffer(RenderType.getEntityCutoutNoCull(PIECES_TEXTURE));
-	    if(isSelected)
-	    	builderRook = VertexBuilderUtils.newDelegate(bufferIn.getBuffer(RenderType.getEntityGlint()), bufferIn.getBuffer(RenderType.getEntityCutoutNoCull(PIECES_TEXTURE)));
-		matrixStackIn.push();
-		if(pieceColor.isBlack())
-			matrixStackIn.rotate(Vector3f.YN.rotationDegrees(180.0F));
-		matrixStackIn.scale(CHESS_PIECE_SCALE, CHESS_PIECE_SCALE, CHESS_PIECE_SCALE);
-		matrixStackIn.push();
-		matrixStackIn.translate(0.0F, 0.1F, 0.0F);
-		matrixStackIn.scale(0.6F, 0.6F, 0.6F);
-		rookModel.GolemBodyTop.render(matrixStackIn, builderRook, combinedLightIn, combinedOverlayIn,
-									  pieceColor.isWhite() ? wR : bR,
-									  pieceColor.isWhite() ? wG : bG,
-									  pieceColor.isWhite() ? wB : bB,
-									  1.0F);
-		matrixStackIn.pop();
-		rookModel.Base.render(matrixStackIn, builderRook, combinedLightIn, combinedOverlayIn,
-							  pieceColor.isWhite() ? wR : bR,
-							  pieceColor.isWhite() ? wG : bG,
-							  pieceColor.isWhite() ? wB : bB,
-							  1.0F);
-		matrixStackIn.pop();
-	}
-	
-	private void renderBishop(MatrixStack matrixStackIn, IRenderTypeBuffer bufferIn, int combinedLightIn, int combinedOverlayIn, float wR, float wG, float wB, float bR, float bG, float bB, PieceColor pieceColor, boolean isSelected)
-	{
-		IVertexBuilder builderBishop = bufferIn.getBuffer(RenderType.getEntityCutoutNoCull(PIECES_TEXTURE));
-		if(isSelected)
-			builderBishop = VertexBuilderUtils.newDelegate(bufferIn.getBuffer(RenderType.getEntityGlint()), bufferIn.getBuffer(RenderType.getEntityCutoutNoCull(PIECES_TEXTURE)));
-		matrixStackIn.push();
-		if(pieceColor.isBlack())
-			matrixStackIn.rotate(Vector3f.YN.rotationDegrees(180.0F));
-		matrixStackIn.scale(CHESS_PIECE_SCALE, CHESS_PIECE_SCALE, CHESS_PIECE_SCALE);
-		bishopModel.Base.render(matrixStackIn, builderBishop, combinedLightIn, combinedOverlayIn,
-								pieceColor.isWhite() ? wR : bR,
-								pieceColor.isWhite() ? wG : bG,
-								pieceColor.isWhite() ? wB : bB,
-								1.0F);
-		matrixStackIn.pop();
-	}
-	
-	private void renderKnight(MatrixStack matrixStackIn, IRenderTypeBuffer bufferIn, int combinedLightIn, int combinedOverlayIn, float wR, float wG, float wB, float bR, float bG, float bB, PieceColor pieceColor, boolean isSelected)
-	{
-		IVertexBuilder builderRook = bufferIn.getBuffer(RenderType.getEntityCutoutNoCull(PIECES_TEXTURE));
-		if(isSelected)
-			builderRook = VertexBuilderUtils.newDelegate(bufferIn.getBuffer(RenderType.getEntityGlint()), bufferIn.getBuffer(RenderType.getEntityCutoutNoCull(PIECES_TEXTURE)));
-		matrixStackIn.push();
-		if(pieceColor.isBlack())
-			matrixStackIn.rotate(Vector3f.YN.rotationDegrees(180.0F));
-		matrixStackIn.scale(CHESS_PIECE_SCALE, CHESS_PIECE_SCALE, CHESS_PIECE_SCALE);
-		matrixStackIn.push();
-		matrixStackIn.translate(0.0F, 0.3F, 0.0F);
-		matrixStackIn.scale(0.6F, 0.6F, 0.6F);
-		knightModel.HorseBody.render(matrixStackIn, builderRook, combinedLightIn, combinedOverlayIn,
-									 pieceColor.isWhite() ? wR : bR,
-									 pieceColor.isWhite() ? wG : bG,
-									 pieceColor.isWhite() ? wB : bB,
-									 1.0F);
-		matrixStackIn.pop();
-		knightModel.Base.render(matrixStackIn, builderRook, combinedLightIn, combinedOverlayIn,
-								pieceColor.isWhite() ? wR : bR,
-								pieceColor.isWhite() ? wG : bG,
-								pieceColor.isWhite() ? wB : bB,
-								1.0F);
-		matrixStackIn.pop();
-	}
-	
-	private void renderKing(MatrixStack matrixStackIn, IRenderTypeBuffer bufferIn, int combinedLightIn, int combinedOverlayIn, float wR, float wG, float wB, float bR, float bG, float bB, PieceColor pieceColor, boolean isSelected)
-	{
-		IVertexBuilder builderKing = bufferIn.getBuffer(RenderType.getEntityCutoutNoCull(PIECES_TEXTURE));
-		if(isSelected)
-			builderKing = VertexBuilderUtils.newDelegate(bufferIn.getBuffer(RenderType.getEntityGlint()), bufferIn.getBuffer(RenderType.getEntityCutoutNoCull(PIECES_TEXTURE)));
-		matrixStackIn.push();
-		if(pieceColor.isBlack())
-			matrixStackIn.rotate(Vector3f.YN.rotationDegrees(180.0F));
-		matrixStackIn.scale(CHESS_PIECE_SCALE, CHESS_PIECE_SCALE, CHESS_PIECE_SCALE);
-		kingModel.Base.render(matrixStackIn, builderKing, combinedLightIn, combinedOverlayIn,
-							  pieceColor.isWhite() ? wR : bR,
-							  pieceColor.isWhite() ? wG : bG,
-							  pieceColor.isWhite() ? wB : bB,
-							  1.0F);
-		matrixStackIn.pop();
-	}
-	
-	private void renderQueen(MatrixStack matrixStackIn, IRenderTypeBuffer bufferIn, int combinedLightIn, int combinedOverlayIn, float wR, float wG, float wB, float bR, float bG, float bB, PieceColor pieceColor, boolean isSelected)
-	{
-		IVertexBuilder builderQueen = bufferIn.getBuffer(RenderType.getEntityCutoutNoCull(PIECES_TEXTURE));
-		if(isSelected)
-			builderQueen = VertexBuilderUtils.newDelegate(bufferIn.getBuffer(RenderType.getEntityGlint()), bufferIn.getBuffer(RenderType.getEntityCutoutNoCull(PIECES_TEXTURE)));
-		matrixStackIn.push();
-		if(pieceColor.isBlack())
-			matrixStackIn.rotate(Vector3f.YN.rotationDegrees(180.0F));
-		matrixStackIn.scale(CHESS_PIECE_SCALE, CHESS_PIECE_SCALE, CHESS_PIECE_SCALE);
-		queenModel.Base.render(matrixStackIn, builderQueen, combinedLightIn, combinedOverlayIn,
-							   pieceColor.isWhite() ? wR : bR,
-							   pieceColor.isWhite() ? wG : bG,
-							   pieceColor.isWhite() ? wB : bB,
-							   1.0F);
-		matrixStackIn.pop();
 	}
 	
 	private void renderHighlight(MatrixStack matrixStackIn, IRenderTypeBuffer bufferIn, int combinedLightIn, int combinedOverlayIn, HighlightType highlightType, ChessTileEntity chessTileEntity)

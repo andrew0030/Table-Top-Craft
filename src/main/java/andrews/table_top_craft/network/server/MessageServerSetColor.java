@@ -35,7 +35,7 @@ public class MessageServerSetColor
 	{
 		int colorType = buf.readInt();
 		BlockPos pos = buf.readBlockPos();
-		String color = buf.readString();
+		String color = buf.readString(32767);
 		return new MessageServerSetColor(colorType, pos, color);
 	}
 	

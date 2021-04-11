@@ -136,4 +136,14 @@ public abstract class BaseMove
 		
 		return builder.build();
 	}
+	
+	public String saveToNBT()
+	{
+		return "";
+	}
+	
+	public String getColorForPiece(BasePiece piece)
+	{
+		return piece.getPieceColor().isWhite() ? "W" : "B";
+	}
 }

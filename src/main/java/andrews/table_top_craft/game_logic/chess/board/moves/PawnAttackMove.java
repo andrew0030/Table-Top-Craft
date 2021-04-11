@@ -22,4 +22,10 @@ public class PawnAttackMove extends AttackMove
 	{
 		return BoardUtils.getPositionAtCoordinate(this.movedPiece.getPiecePosition()).substring(0, 1) + "x" + BoardUtils.getPositionAtCoordinate(this.destinationCoordinate);
 	}
+	
+	@Override
+	public String saveToNBT()
+	{
+		return "pawn_attack/" + getColorForPiece(this.movedPiece) + "/" + this.movedPiece.getPiecePosition() + "/" + this.destinationCoordinate + "/" + this.attackedPiece.getPiecePosition() + "/" + this.attackedPiece.getPieceType().toString();
+	}
 }

@@ -39,6 +39,12 @@ public class BlackChessPlayer extends BaseChessPlayer
 	{
 		return this.board.getWhiteChessPlayer();
 	}
+	
+	@Override
+	public boolean isCastled()
+	{
+		return this.playerKing.isCastled();
+	}
 
 	@Override
 	protected Collection<BaseMove> calculateKingCastles(final Collection<BaseMove> playerLegals, final Collection<BaseMove> opponentsLegals)
@@ -57,7 +63,8 @@ public class BlackChessPlayer extends BaseChessPlayer
 				{
 					if(BaseChessPlayer.calculateAttacksOnTile(5, opponentsLegals).isEmpty() &&
 					   BaseChessPlayer.calculateAttacksOnTile(6, opponentsLegals).isEmpty() &&
-					   rookTile.getPiece().getPieceType().isRook())
+					   rookTile.getPiece().getPieceType().isRook() &&
+					   this.playerKing.isKingSideCastleCapable())
 					{
 						kingCastles.add(new KingSideCastleMove(this.board, this.playerKing, 6, (RookPiece) rookTile.getPiece(), rookTile.getTileCoordinate(), 5));
 					}
@@ -72,7 +79,8 @@ public class BlackChessPlayer extends BaseChessPlayer
 				{
 					if(BaseChessPlayer.calculateAttacksOnTile(2, opponentsLegals).isEmpty() &&
 					   BaseChessPlayer.calculateAttacksOnTile(3, opponentsLegals).isEmpty() &&
-					   rookTile.getPiece().getPieceType().isRook())
+					   rookTile.getPiece().getPieceType().isRook() &&
+					   this.playerKing.isQueenSideCastleCapable())
 					{
 						kingCastles.add(new QueenSideCastleMove(this.board, this.playerKing, 2, (RookPiece) rookTile.getPiece(), rookTile.getTileCoordinate(), 3));
 					}

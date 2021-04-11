@@ -39,13 +39,19 @@ public class WhiteChessPlayer extends BaseChessPlayer
 	{
 		return this.board.getBlackChessPlayer();
 	}
+	
+	@Override
+	public boolean isCastled()
+	{
+		return this.playerKing.isCastled();
+	}
 
 	@Override
 	protected Collection<BaseMove> calculateKingCastles(final Collection<BaseMove> playerLegals, final Collection<BaseMove> opponentsLegals)
 	{
 		final List<BaseMove> kingCastles = new ArrayList<>();
 		
-		if(this.playerKing.isFirstMove() && !this.isInCheck())//TODO fix isInCheck because the king can currently castle out of a check
+		if(this.playerKing.isFirstMove() && !this.isInCheck())
 		{
 			// We check if the tiles in between the King and Rook are not occupied as thats a requirement for castling
 			// Whites King Side castle
@@ -57,7 +63,8 @@ public class WhiteChessPlayer extends BaseChessPlayer
 				{
 					if(BaseChessPlayer.calculateAttacksOnTile(61, opponentsLegals).isEmpty() &&
 					   BaseChessPlayer.calculateAttacksOnTile(62, opponentsLegals).isEmpty() &&
-					   rookTile.getPiece().getPieceType().isRook())
+					   rookTile.getPiece().getPieceType().isRook() &&
+					   this.playerKing.isKingSideCastleCapable())
 					{
 						kingCastles.add(new KingSideCastleMove(this.board, this.playerKing, 62, (RookPiece) rookTile.getPiece(), rookTile.getTileCoordinate(), 61));
 					}
@@ -72,7 +79,8 @@ public class WhiteChessPlayer extends BaseChessPlayer
 				{
 					if(BaseChessPlayer.calculateAttacksOnTile(58, opponentsLegals).isEmpty() &&
 					   BaseChessPlayer.calculateAttacksOnTile(59, opponentsLegals).isEmpty() &&
-					   rookTile.getPiece().getPieceType().isRook())
+					   rookTile.getPiece().getPieceType().isRook() &&
+					   this.playerKing.isQueenSideCastleCapable())
 					{
 						kingCastles.add(new QueenSideCastleMove(this.board, this.playerKing, 58, (RookPiece) rookTile.getPiece(), rookTile.getTileCoordinate(), 59));
 					}

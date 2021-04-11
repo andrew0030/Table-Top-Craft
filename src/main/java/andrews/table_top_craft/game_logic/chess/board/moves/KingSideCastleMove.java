@@ -23,4 +23,10 @@ public final class KingSideCastleMove extends CastleMove
 	{
 		return "O-O";
 	}
+	
+	@Override
+	public String saveToNBT()
+	{
+		return "king_side_castle/" + getColorForPiece(this.movedPiece) + "/" + this.movedPiece.getPiecePosition() + "/" + this.destinationCoordinate + "/" + this.castleRook.getPiecePosition() + "/" + this.castleRookStart + "/" + this.castleRookDestination;
+	}
 }

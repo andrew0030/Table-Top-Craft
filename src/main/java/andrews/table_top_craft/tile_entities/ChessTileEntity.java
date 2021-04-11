@@ -1,14 +1,32 @@
 package andrews.table_top_craft.tile_entities;
 
+import andrews.table_top_craft.game_logic.chess.PieceColor;
 import andrews.table_top_craft.game_logic.chess.board.Board;
+import andrews.table_top_craft.game_logic.chess.board.BoardUtils;
 import andrews.table_top_craft.game_logic.chess.board.ChessMoveLog;
+import andrews.table_top_craft.game_logic.chess.board.moves.KingSideCastleMove;
+import andrews.table_top_craft.game_logic.chess.board.moves.MajorAttackMove;
+import andrews.table_top_craft.game_logic.chess.board.moves.MajorMove;
+import andrews.table_top_craft.game_logic.chess.board.moves.PawnAttackMove;
+import andrews.table_top_craft.game_logic.chess.board.moves.PawnEnPassantAttackMove;
+import andrews.table_top_craft.game_logic.chess.board.moves.PawnJumpMove;
+import andrews.table_top_craft.game_logic.chess.board.moves.PawnMove;
+import andrews.table_top_craft.game_logic.chess.board.moves.PawnPromotion;
+import andrews.table_top_craft.game_logic.chess.board.moves.QueenSideCastleMove;
 import andrews.table_top_craft.game_logic.chess.board.tiles.BaseChessTile;
 import andrews.table_top_craft.game_logic.chess.pgn.FenUtil;
 import andrews.table_top_craft.game_logic.chess.pieces.BasePiece;
+import andrews.table_top_craft.game_logic.chess.pieces.BishopPiece;
+import andrews.table_top_craft.game_logic.chess.pieces.KingPiece;
+import andrews.table_top_craft.game_logic.chess.pieces.KnightPiece;
+import andrews.table_top_craft.game_logic.chess.pieces.PawnPiece;
+import andrews.table_top_craft.game_logic.chess.pieces.QueenPiece;
+import andrews.table_top_craft.game_logic.chess.pieces.RookPiece;
 import andrews.table_top_craft.registry.TTCTileEntities;
 import andrews.table_top_craft.util.NBTColorSaving;
 import net.minecraft.block.BlockState;
 import net.minecraft.nbt.CompoundNBT;
+import net.minecraft.nbt.ListNBT;
 import net.minecraft.network.NetworkManager;
 import net.minecraft.network.play.server.SUpdateTileEntityPacket;
 import net.minecraft.tileentity.TileEntity;
@@ -96,7 +114,40 @@ public class ChessTileEntity extends TileEntity
 	{
 		CompoundNBT chessNBT = new CompoundNBT();
 		if(this.board != null)
+		{
+			// We save the Board FEN
 			chessNBT.putString("BoardFEN", FenUtil.createFENFromGame(this.board));
+			
+			// We also save a List of all piecea that are on their first move as this information is not saved otherwise
+			final StringBuilder builder = new StringBuilder();
+			for(int i = 0; i < BoardUtils.NUM_TILES; i++)
+			{
+				if(this.board.getTile(i).isTileOccupied())
+				{
+					if(this.board.getTile(i).getPiece().isFirstMove())
+					{
+						builder.append(i + "/");
+					}
+				}
+			}
+			builder.setLength(builder.length() - 1);
+			
+			chessNBT.putString("FirstMoves", builder.toString());
+			chessNBT.putBoolean("IsWhiteCastled", this.board.getWhiteChessPlayer().isCastled());
+			chessNBT.putBoolean("IsBlackCastled", this.board.getBlackChessPlayer().isCastled());
+		}
+		
+		if(this.moveLog != null)
+		{
+			ListNBT chessMoves = new ListNBT();
+			for(int i = 0; i < this.moveLog.size(); i++)
+			{
+				CompoundNBT chessMove = new CompoundNBT();
+				chessMove.putString("Move" + (i + 1), moveLog.getMoves().get(i).saveToNBT());
+				chessMoves.add(chessMove);
+			}
+			chessNBT.put("MoveLog", chessMoves);
+		}
 		chessNBT.putInt("ShowTileInfo", this.showTileInfo == false ? 0 : 1);
 		chessNBT.putInt("ShowAvailableMoves", this.showAvailableMoves == false ? 0 : 1);
 		chessNBT.putInt("ShowPreviousMove", this.showPreviousMove == false ? 0 : 1);
@@ -125,8 +176,60 @@ public class ChessTileEntity extends TileEntity
 	private void loadFromNBT(CompoundNBT compound)
 	{
 		CompoundNBT chessNBT = compound.getCompound("ChessValues");
-		if(chessNBT.contains("BoardFEN", NBT.TAG_STRING))
-			this.board = FenUtil.createGameFromFEN(chessNBT.getString("BoardFEN"));
+		if(chessNBT.contains("BoardFEN", NBT.TAG_STRING) && chessNBT.contains("FirstMoves", NBT.TAG_STRING))
+		{
+			boolean isWhiteCastled = chessNBT.getBoolean("IsWhiteCastled");
+			boolean isBlackCastled = chessNBT.getBoolean("IsBlackCastled");
+			this.board = FenUtil.createGameFromFEN(chessNBT.getString("BoardFEN"), chessNBT.getString("FirstMoves"), isWhiteCastled, isBlackCastled);
+		}
+		
+		
+		if(chessNBT.contains("MoveLog"))
+		{
+			ListNBT listNBT = chessNBT.getList("MoveLog", NBT.TAG_COMPOUND);
+			moveLog.clear();
+			for(int i = 0; i < listNBT.size(); i++)
+			{
+				CompoundNBT compoundnbt = listNBT.getCompound(i);
+				String move = compoundnbt.getString("Move" + (i + 1));
+				String[] moveInfo = move.split("/");
+				PieceColor pieceColor = PieceColor.WHITE;
+				if(moveInfo[1].equals("B"))
+					pieceColor = PieceColor.BLACK;
+				
+				switch(moveInfo[0])
+				{
+				default:
+					break;
+				case "pawn_jump":
+					this.moveLog.addMove(new PawnJumpMove(this.getBoard(), new PawnPiece(pieceColor, Integer.parseInt(moveInfo[2])), Integer.parseInt(moveInfo[3])));
+					break;
+				case "pawn_move":
+					this.moveLog.addMove(new PawnMove(this.getBoard(), new PawnPiece(pieceColor, Integer.parseInt(moveInfo[2])), Integer.parseInt(moveInfo[3])));
+					break;
+				case "pawn_attack":
+					this.moveLog.addMove(new PawnAttackMove(this.getBoard(), new PawnPiece(pieceColor, Integer.parseInt(moveInfo[2])), Integer.parseInt(moveInfo[3]), getPieceFromType(moveInfo[5], pieceColor, Integer.parseInt(moveInfo[4]))));
+					break;
+				case "pawn_enpassant":
+					this.moveLog.addMove(new PawnEnPassantAttackMove(this.getBoard(), new PawnPiece(pieceColor, Integer.parseInt(moveInfo[2])), Integer.parseInt(moveInfo[3]), new PawnPiece(getOppositeColor(pieceColor), Integer.parseInt(moveInfo[4]))));
+					break;
+				case "pawn_promotion":
+					this.moveLog.addMove(new PawnPromotion(new PawnMove(this.getBoard(), new PawnPiece(pieceColor, Integer.parseInt(moveInfo[2])), Integer.parseInt(moveInfo[3]))));
+					break;
+				case "major_move":
+					this.moveLog.addMove(new MajorMove(this.getBoard(), getPieceFromType(moveInfo[4], getOppositeColor(pieceColor), Integer.parseInt(moveInfo[2])), Integer.parseInt(moveInfo[3])));
+					break;
+				case "major_attack":
+					this.moveLog.addMove(new MajorAttackMove(this.getBoard(), getPieceFromType(moveInfo[3], getOppositeColor(pieceColor), Integer.parseInt(moveInfo[2])), Integer.parseInt(moveInfo[4]), getPieceFromType(moveInfo[6], pieceColor, Integer.parseInt(moveInfo[5]))));
+					break;
+				case "king_side_castle":
+					this.moveLog.addMove(new KingSideCastleMove(this.getBoard(), new KingPiece(pieceColor, Integer.parseInt(moveInfo[2]), false, false), Integer.parseInt(moveInfo[3]), new RookPiece(pieceColor, Integer.parseInt(moveInfo[4])), Integer.parseInt(moveInfo[5]), Integer.parseInt(moveInfo[6])));
+					break;
+				case "queen_side_castle":
+					this.moveLog.addMove(new QueenSideCastleMove(this.getBoard(), new KingPiece(pieceColor, Integer.parseInt(moveInfo[2]), false, false), Integer.parseInt(moveInfo[3]), new RookPiece(pieceColor, Integer.parseInt(moveInfo[4])), Integer.parseInt(moveInfo[5]), Integer.parseInt(moveInfo[6])));
+				}
+			}
+		}
 		if(chessNBT.contains("ShowTileInfo", NBT.TAG_INT))
 			this.showTileInfo = chessNBT.getInt("ShowTileInfo") == 0 ? false : true;
 		if(chessNBT.contains("ShowAvailableMoves", NBT.TAG_INT))
@@ -159,6 +262,32 @@ public class ChessTileEntity extends TileEntity
 			this.sourceTile = getBoard().getTile(chessNBT.getInt("SourceTile"));
 		if(chessNBT.contains("HumanMovedPiece", NBT.TAG_INT))
 			this.humanMovedPiece = getBoard().getTile(chessNBT.getInt("HumanMovedPiece")).getPiece();
+	}
+	
+	private BasePiece getPieceFromType(String pieceType, PieceColor pieceColor, int piecePosition)
+	{
+		switch(pieceType)
+		{
+		case "P":
+			return new PawnPiece(getOppositeColor(pieceColor), piecePosition);
+		case "R":
+			return new RookPiece(getOppositeColor(pieceColor), piecePosition);
+		case "N":
+			return new KnightPiece(getOppositeColor(pieceColor), piecePosition);
+		case "B":
+			return new BishopPiece(getOppositeColor(pieceColor), piecePosition);
+		case "Q":
+			return new QueenPiece(getOppositeColor(pieceColor), piecePosition);
+		case "K":
+			return new KingPiece(getOppositeColor(pieceColor), piecePosition, true, true);
+		default:
+			return null;
+		}
+	}
+	
+	private PieceColor getOppositeColor(PieceColor color)
+	{
+		return color.isWhite() ? PieceColor.BLACK : PieceColor.WHITE;
 	}
 	
 	public ChessMoveLog getMoveLog()

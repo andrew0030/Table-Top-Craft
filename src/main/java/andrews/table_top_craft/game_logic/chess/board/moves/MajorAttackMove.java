@@ -20,6 +20,12 @@ public class MajorAttackMove extends AttackMove
 	@Override
 	public String toString()
 	{
-		return this.movedPiece.getPieceType() + BoardUtils.getPositionAtCoordinate(this.destinationCoordinate);
+		return this.movedPiece.getPieceType() + "x" + BoardUtils.getPositionAtCoordinate(this.destinationCoordinate);
+	}
+	
+	@Override
+	public String saveToNBT()
+	{
+		return "major_attack/" + getColorForPiece(this.movedPiece) + "/" + this.movedPiece.getPiecePosition() + "/" + this.movedPiece.getPieceType().toString() + "/" + this.destinationCoordinate + "/" + this.attackedPiece.getPiecePosition() + "/" + this.attackedPiece.getPieceType().toString();
 	}
 }

@@ -1,0 +1,25 @@
+{
+    "type": "minecraft:crafting_shaped",
+    "pattern": [
+        "BWB",
+        "PPP",
+        "PGP"
+    ],
+    "key": {
+        "B": {
+            "item": "minecraft:brown_terracotta"
+        },
+        "W": {
+            "item": "minecraft:white_terracotta"
+        },
+        "G": {
+            "item": "minecraft:glowstone"
+        },
+        "P": {
+            "item": "minecraft:oak_planks"
+        }
+    },
+    "result": {
+        "item": "table_top_craft:oak_chess"
+    }
+}

@@ -39,4 +39,10 @@ public final class PawnEnPassantAttackMove extends PawnAttackMove
 		builder.setMoveMaker(this.board.getCurrentChessPlayer().getOpponent().getPieceColor());
 		return builder.build();
 	}
+	
+	@Override
+	public String saveToNBT()
+	{
+		return "pawn_enpassant/" + getColorForPiece(this.movedPiece) + "/" + this.movedPiece.getPiecePosition() + "/" + this.destinationCoordinate + "/" + this.attackedPiece.getPiecePosition();
+	}
 }

@@ -38,8 +38,8 @@ public class MessageServerSetColors
 	{
 		int colorType = buf.readInt();
 		BlockPos pos = buf.readBlockPos();
-		String color = buf.readString();
-		String color2 = buf.readString();
+		String color = buf.readString(32767);
+		String color2 = buf.readString(32767);
 		return new MessageServerSetColors(colorType, pos, color, color2);
 	}
 	

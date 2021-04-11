@@ -24,15 +24,13 @@ public class MiniMax implements MoveStrategy
 	@Override
 	public BaseMove execute(Board board)
 	{
-		final long startTime = System.currentTimeMillis();
+//		final long startTime = System.currentTimeMillis();
 		BaseMove bestMove = null;
 		int highestSeenValue = Integer.MIN_VALUE;
 		int lowestSeenValue = Integer.MAX_VALUE;
 		int currentValue;
 		
-		System.out.println(board.getCurrentChessPlayer() + " is thinking with depth: " + this.searchDepth);//TODO remove
-		
-		int numMoves = board.getCurrentChessPlayer().getLegalMoves().size();
+//		int numMoves = board.getCurrentChessPlayer().getLegalMoves().size();
 		for(final BaseMove move : board.getCurrentChessPlayer().getLegalMoves())
 		{
 			final MoveTransition moveTransition = board.getCurrentChessPlayer().makeMove(move);
@@ -54,7 +52,7 @@ public class MiniMax implements MoveStrategy
 				}
 			}
 		}
-		final long executionTime = System.currentTimeMillis() - startTime;
+//		final long executionTime = System.currentTimeMillis() - startTime;
 		return bestMove;
 	}
 	
@@ -94,7 +92,7 @@ public class MiniMax implements MoveStrategy
 		return highestSeenValue;
 	}
 	
-	private static boolean isEndGameScenario(final Board board)//TODO add 3 moves draw
+	private static boolean isEndGameScenario(final Board board)
 	{
 		return board.getCurrentChessPlayer().isInCheckMate() || board.getCurrentChessPlayer().isInStaleMate();
 	}

@@ -1,6 +1,7 @@
 package andrews.table_top_craft.game_logic.chess.board.moves;
 
 import andrews.table_top_craft.game_logic.chess.board.Board;
+import andrews.table_top_craft.game_logic.chess.board.BoardUtils;
 import andrews.table_top_craft.game_logic.chess.board.Board.Builder;
 import andrews.table_top_craft.game_logic.chess.pieces.BasePiece;
 import andrews.table_top_craft.game_logic.chess.pieces.PawnPiece;
@@ -66,6 +67,12 @@ public class PawnPromotion extends BaseMove
 	@Override
 	public String toString()
 	{
-		return "";//TODO replace with something
+		return BoardUtils.getPositionAtCoordinate(this.destinationCoordinate) + "=Q";
+	}
+	
+	@Override
+	public String saveToNBT()
+	{
+		return "pawn_promotion/" + getColorForPiece(this.promotedPawn) + "/" + this.promotedPawn.getPiecePosition() + "/" + this.decoratedMove.getDestinationCoordinate();
 	}
 }

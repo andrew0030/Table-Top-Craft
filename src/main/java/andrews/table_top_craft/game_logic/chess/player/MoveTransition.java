@@ -36,7 +36,7 @@ public class MoveTransition
 		return this.transitionBoard;
 	}
 	
-	public BaseMove getMove()//TODO remove or replace
+	public BaseMove getMove()
 	{
 		return this.move;
 	}

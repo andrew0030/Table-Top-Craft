@@ -113,7 +113,7 @@ public class ChessBoardTilesColorScreen extends Screen
 		// The Menu Title
 		this.font.drawString(matrixStack, this.colorSelectionText, ((this.width / 2) - (this.font.getStringWidth(this.colorSelectionText) / 2)), y + 6, 4210752);
 		// The preview String
-		this.font.drawString(matrixStack, this.previewColorText, x + 49, y + 16, 0x000000);
+		this.font.drawString(matrixStack, this.previewColorText, x + 88 - (this.font.getStringWidth(this.previewColorText) / 2), y + 16, 0x000000);
 		// The color descriptions above the sliders
 		this.font.drawString(matrixStack, this.whiteTileSettingsText, x + 5, y + 83, 0x000000);
 		this.font.drawString(matrixStack, this.blackTileSettingsText, x + 5, y + 132, 0x000000);

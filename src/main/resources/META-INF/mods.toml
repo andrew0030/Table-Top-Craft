@@ -5,7 +5,7 @@ logoFile="logo.png"
 license="GNU Lesser General Public License v3.0"
 [[mods]]
 	modId="table_top_craft"
-	version="1.16-1.0.0"
+	version="1.16-1.1.0"
 	displayName="Table Top Craft"
 	displayURL="https://www.curseforge.com/minecraft/mc-mods/table-top-craft"
 	authors="andrew0030"

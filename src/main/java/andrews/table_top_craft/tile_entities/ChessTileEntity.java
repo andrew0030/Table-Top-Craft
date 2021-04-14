@@ -130,7 +130,9 @@ public class ChessTileEntity extends TileEntity
 					}
 				}
 			}
-			builder.setLength(builder.length() - 1);
+			// We HAVE to check if the String is empty, otherwise the game will crash if we try to modify it
+			if(builder.length() >= 2)
+				builder.setLength(builder.length() - 1);
 			
 			chessNBT.putString("FirstMoves", builder.toString());
 			chessNBT.putBoolean("IsWhiteCastled", this.board.getWhiteChessPlayer().isCastled());

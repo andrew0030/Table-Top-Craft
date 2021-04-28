@@ -53,7 +53,7 @@ public class ChessBlock extends HorizontalBlock
 	{	
 		Properties properties = Block.Properties.create(Material.WOOD);
 		properties.hardnessAndResistance(2.0F);
-		properties.setLightLevel(value -> 14);
+//		properties.setLightLevel(value -> 14);
 		properties.harvestTool(ToolType.AXE);
 		properties.notSolid();
 		properties.sound(SoundType.WOOD);

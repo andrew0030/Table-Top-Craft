@@ -1,22 +1,24 @@
 package andrews.table_top_craft.util.obj;
 
+import java.awt.Color;
 import java.io.ByteArrayOutputStream;
 import java.io.IOException;
 import java.io.InputStream;
 import java.util.ArrayList;
 
 import org.apache.commons.compress.utils.IOUtils;
-import org.lwjgl.opengl.GL11;
 
-import com.google.common.collect.ImmutableList;
+import com.mojang.blaze3d.matrix.MatrixStack;
+import com.mojang.blaze3d.vertex.IVertexBuilder;
 
-import net.minecraft.client.renderer.Tessellator;
-import net.minecraft.client.renderer.vertex.DefaultVertexFormats;
-import net.minecraft.client.renderer.vertex.VertexFormat;
-import net.minecraft.client.renderer.vertex.VertexFormatElement;
+import andrews.table_top_craft.util.Reference;
+import andrews.table_top_craft.util.TTCRenderTypes;
+import net.minecraft.client.Minecraft;
+import net.minecraft.client.renderer.IRenderTypeBuffer;
+import net.minecraft.client.renderer.texture.DynamicTexture;
+import net.minecraft.client.renderer.texture.NativeImage;
 import net.minecraft.util.ResourceLocation;
 import net.minecraft.util.math.vector.Vector2f;
-import net.minecraft.util.math.vector.Vector3d;
 import net.minecraft.util.math.vector.Vector3f;
 import net.minecraftforge.api.distmarker.Dist;
 import net.minecraftforge.api.distmarker.OnlyIn;
@@ -24,14 +26,26 @@ import net.minecraftforge.api.distmarker.OnlyIn;
 @OnlyIn(Dist.CLIENT)
 public class ObjModel
 {
-	public static final VertexFormat POSITION_TEX_NORMAL = new VertexFormat(ImmutableList.<VertexFormatElement>builder().add(DefaultVertexFormats.POSITION_3F).add(DefaultVertexFormats.TEX_2F).add(DefaultVertexFormats.NORMAL_3B).build());
-    private Vector3d[] v;
+    private Vector3f[] v;
     private Vector2f[] vt;
     private Vector3f[] vn;
     private Face[] faces;
-    private int modelList = -1;
+//    private int modelList = -1;
     
-    private ObjModel(Vector3d[] v, Vector2f[] vt, Vector3f[] vn, Face[] faces)
+    static final NativeImage image = new NativeImage(NativeImage.PixelFormat.RGBA, 1, 1, true);
+    static final DynamicTexture texture = new DynamicTexture(image);
+    static ResourceLocation resourceLocation = null;
+    
+    //on static init
+    static
+    {
+    	//this needs to be called every time resource manager reloads (I think)
+//        texture.loadTexture(Minecraft.getInstance().getResourceManager());
+        //before rendering vbo
+        image.setPixelRGBA(0, 0, new Color(255, 255, 255).getRGB());
+    }
+    
+    private ObjModel(Vector3f[] v, Vector2f[] vt, Vector3f[] vn, Face[] faces)
     {
         this.v = v;
         this.vt = vt;
@@ -39,31 +53,38 @@ public class ObjModel
         this.faces = faces;
     }
     
-    public void render()
+    public void render(MatrixStack stack, IRenderTypeBuffer buffer, int combinedLightIn, float red, float green, float blue)
     {
-        if(modelList == -1)
-        {
-            modelList = GL11.glGenLists(1);
-            GL11.glNewList(modelList, GL11.GL_COMPILE);
-            renderModel();
-            GL11.glEndList();
-        }
-        GL11.glCallList(modelList);
+//        if(modelList == -1)
+//        {
+//            modelList = GL11.glGenLists(1);
+//            
+//            GL11.glNewList(modelList, GL11.GL_COMPILE);
+            renderModel(stack, buffer, combinedLightIn, red, green, blue);
+//            GL11.glEndList();
+//        }
+//        GL11.glCallList(modelList);
     }
     
-    private void renderModel()
+    private void renderModel(MatrixStack stack, IRenderTypeBuffer buffer, int combinedLightIn, float red, float green, float blue)
     {
-        Tessellator tess = Tessellator.getInstance();
-        tess.getBuffer().begin(GL11.GL_TRIANGLES, POSITION_TEX_NORMAL);
+    	image.setPixelRGBA(0, 0, new Color(blue, green, red).getRGB());
+    	texture.updateDynamicTexture();
+    	if(resourceLocation == null)
+    		resourceLocation = Minecraft.getInstance().getTextureManager().getDynamicTextureLocation("table_top_craft_dummy", texture);
+    	
+    	
+    	
+    	IVertexBuilder ivertexbuilder = buffer.getBuffer(TTCRenderTypes.getChessPieceSolid(resourceLocation));
         try
         {
             for(int i = 0; i < faces.length; i++)
             {
                 Face face = faces[i];
                 
-                Vector3d v1 = v[face.v1 - 1];
-                Vector3d v2 = v[face.v2 - 1];
-                Vector3d v3 = v[face.v3 - 1];
+                Vector3f v1 = v[face.v1 - 1];
+                Vector3f v2 = v[face.v2 - 1];
+                Vector3f v3 = v[face.v3 - 1];
                 
                 Vector2f vt1 = vt[face.vt1 - 1];
                 Vector2f vt2 = vt[face.vt2 - 1];
@@ -73,27 +94,25 @@ public class ObjModel
                 Vector3f vn2 = vn[face.vn2 - 1];
                 Vector3f vn3 = vn[face.vn3 - 1];
                 
-                tess.getBuffer().pos(-v1.x, -v1.y, v1.z);
-                tess.getBuffer().tex(vt1.x, -vt1.y);
-                tess.getBuffer().normal(-vn1.getX(), -vn1.getY(), vn1.getZ());
-                tess.getBuffer().endVertex();
-                
-                tess.getBuffer().pos(-v2.x, -v2.y, v2.z);
-                tess.getBuffer().tex(vt2.x, -vt2.y);
-                tess.getBuffer().normal(-vn2.getX(), -vn2.getY(), vn2.getZ());
-                tess.getBuffer().endVertex();
-                
-                tess.getBuffer().pos(-v3.x, -v3.y, v3.z);
-                tess.getBuffer().tex(vt3.x, -vt3.y);
-                tess.getBuffer().normal(-vn3.getX(), -vn3.getY(), vn3.getZ());
-                tess.getBuffer().endVertex();
+                addVertex(stack, ivertexbuilder, v1.getX(), v1.getY(), v1.getZ(), red, green, blue, 1F, vt1.x, -vt1.y, combinedLightIn, vn1.getX(), vn1.getY(), vn1.getZ());
+                addVertex(stack, ivertexbuilder, v2.getX(), v2.getY(), v2.getZ(), red, green, blue, 1F, vt2.x, -vt2.y, combinedLightIn, vn2.getX(), vn2.getY(), vn2.getZ());
+                addVertex(stack, ivertexbuilder, v3.getX(), v3.getY(), v3.getZ(), red, green, blue, 1F, vt3.x, -vt3.y, combinedLightIn, vn3.getX(), vn3.getY(), vn3.getZ());
             }
         }
         catch(Exception e)
         {
             e.printStackTrace();
         }
-        tess.draw();
+    }
+    
+    private void addVertex(MatrixStack stack, IVertexBuilder builder, float x, float y, float z, float r, float g, float b, float alpha, float u, float v, int lightmapUV, float nx, float ny, float nz)
+    {
+    	builder.pos(stack.getLast().getMatrix(), x, y, z)
+    		   .color(1F, 1F, 1F, 1F)
+    		   .tex(u, v)
+    		   .lightmap(lightmapUV)
+    		   .normal(stack.getLast().getNormal(), nx, ny, nz)
+    		   .endVertex();   
     }
     
     public static ObjModel loadModel(ResourceLocation resourceLocation)
@@ -102,7 +121,7 @@ public class ObjModel
         String modelString = new String(modelData);
         String[] modelLines = modelString.split("\\r?\\n");
         
-        ArrayList<Vector3d> vList = new ArrayList<Vector3d>();
+        ArrayList<Vector3f> vList = new ArrayList<Vector3f>();
         ArrayList<Vector2f> vtList = new ArrayList<Vector2f>();
         ArrayList<Vector3f> vnList = new ArrayList<Vector3f>();
         ArrayList<Face> faceList = new ArrayList<Face>();
@@ -113,7 +132,7 @@ public class ObjModel
             String[] lineSpit = line.split(" ");
             if(lineSpit[0].equals("v"))
             {
-                vList.add(new Vector3d(Double.parseDouble(lineSpit[1]), Double.parseDouble(lineSpit[2]), Double.parseDouble(lineSpit[3])));
+                vList.add(new Vector3f(Float.parseFloat(lineSpit[1]), Float.parseFloat(lineSpit[2]), Float.parseFloat(lineSpit[3])));
             }
             if(lineSpit[0].equals("vt"))
             {
@@ -129,7 +148,7 @@ public class ObjModel
             }
         }
         
-        Vector3d[] vArray = vList.toArray(new Vector3d[vList.size()]);
+        Vector3f[] vArray = vList.toArray(new Vector3f[vList.size()]);
         Vector2f[] vtArray = vtList.toArray(new Vector2f[vtList.size()]);
         Vector3f[] vnArray = vnList.toArray(new Vector3f[vnList.size()]);
         Face[] faces = faceList.toArray(new Face[faceList.size()]);
@@ -142,7 +161,7 @@ public class ObjModel
         InputStream input = null;
         ByteArrayOutputStream output = null;
         try {
-            input = ObjModel.class.getClassLoader().getResourceAsStream("assets/table_top_craft/" + resourceLocation.getPath());
+            input = ObjModel.class.getClassLoader().getResourceAsStream("assets/" + Reference.MODID + "/" + resourceLocation.getPath());
             if(input != null)
             {
                 output = new ByteArrayOutputStream();
@@ -150,10 +169,6 @@ public class ObjModel
                 output.flush();
                 byte[] data = output.toByteArray();
                 return data;
-            }
-            else
-            {
-//                DakimakuraMod.getLogger().error(String.format("Error extracting file %s.", resourceLocation.toString()));
             }
         }
         catch(IOException e)

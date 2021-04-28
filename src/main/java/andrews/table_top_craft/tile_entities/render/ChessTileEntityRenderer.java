@@ -5,14 +5,21 @@ import java.util.Collection;
 import java.util.Collections;
 import java.util.List;
 
+import org.lwjgl.opengl.GL11;
+
 import com.google.common.collect.ImmutableList;
 import com.mojang.blaze3d.matrix.MatrixStack;
+import com.mojang.blaze3d.systems.RenderSystem;
 import com.mojang.blaze3d.vertex.IVertexBuilder;
 
+import andrews.table_top_craft.game_logic.chess.PieceColor;
 import andrews.table_top_craft.game_logic.chess.board.Board;
 import andrews.table_top_craft.game_logic.chess.board.BoardUtils;
 import andrews.table_top_craft.game_logic.chess.board.moves.BaseMove;
+import andrews.table_top_craft.game_logic.chess.pieces.BasePiece.PieceType;
+import andrews.table_top_craft.game_logic.chess.player.BlackChessPlayer;
 import andrews.table_top_craft.game_logic.chess.player.MoveTransition;
+import andrews.table_top_craft.game_logic.chess.player.WhiteChessPlayer;
 import andrews.table_top_craft.objects.blocks.ChessBlock;
 import andrews.table_top_craft.tile_entities.ChessTileEntity;
 import andrews.table_top_craft.tile_entities.model.chess.ChessBoardPlateModel;
@@ -21,11 +28,17 @@ import andrews.table_top_craft.tile_entities.model.chess.ChessTilesInfoModel;
 import andrews.table_top_craft.util.NBTColorSaving;
 import andrews.table_top_craft.util.Reference;
 import andrews.table_top_craft.util.TTCRenderTypes;
+import andrews.table_top_craft.util.obj.models.ChessObjModel;
 import net.minecraft.block.BlockState;
+import net.minecraft.client.Minecraft;
+import net.minecraft.client.renderer.BufferBuilder;
 import net.minecraft.client.renderer.IRenderTypeBuffer;
 import net.minecraft.client.renderer.RenderType;
+import net.minecraft.client.renderer.WorldRenderer;
 import net.minecraft.client.renderer.tileentity.TileEntityRenderer;
 import net.minecraft.client.renderer.tileentity.TileEntityRendererDispatcher;
+import net.minecraft.client.renderer.vertex.DefaultVertexFormats;
+import net.minecraft.client.renderer.vertex.VertexBuffer;
 import net.minecraft.util.Direction;
 import net.minecraft.util.ResourceLocation;
 import net.minecraft.util.math.vector.Vector3f;
@@ -38,7 +51,9 @@ public class ChessTileEntityRenderer extends TileEntityRenderer<ChessTileEntity>
     private static final ResourceLocation PLATE_BLACK_TILES_TEXTURE = new ResourceLocation(Reference.MODID, "textures/tile/chess/plate_black_tiles.png");
     private static final float CHESS_SCALE = 0.125F;
     private final float CHESS_PIECE_SCALE = 0.1F;
-	
+    
+    private static final ChessObjModel CHESS_PIECE_MODEL = new ChessObjModel();
+    
     //Chess Models
     private final ChessHighlightModel highlightModel;
     private final ChessTilesInfoModel tilesInfoModel;
@@ -83,6 +98,7 @@ public class ChessTileEntityRenderer extends TileEntityRenderer<ChessTileEntity>
 		case EAST:
 			matrixStackIn.rotate(Vector3f.YN.rotationDegrees(90.0F));
 		}
+		
 		// Renders the Custom Plate if needed
 		if(tileEntityIn.getUseCustomPlate())
 			renderChessBoardPlate(matrixStackIn, bufferIn, combinedLightIn, combinedOverlayIn, tileEntityIn);
@@ -94,6 +110,11 @@ public class ChessTileEntityRenderer extends TileEntityRenderer<ChessTileEntity>
 		if(tileEntityIn.getBoard() != null)
 		{
 			board = tileEntityIn.getBoard();
+			WhiteChessPlayer whiteChessPlayer = (WhiteChessPlayer) board.getWhiteChessPlayer();
+			BlackChessPlayer blackChessPlayer = (BlackChessPlayer) board.getBlackChessPlayer();
+			boolean isWhiteInCheckmate = whiteChessPlayer.isInCheckMate();
+			boolean isBlackInCheckmate = blackChessPlayer.isInCheckMate();
+			
 			matrixStackIn.push();
 			matrixStackIn.translate(0.5D, 0.9D, 0.5D);
 			matrixStackIn.scale(1.0F, -1.0F, -1.0F);
@@ -117,12 +138,88 @@ public class ChessTileEntityRenderer extends TileEntityRenderer<ChessTileEntity>
 			// Moves the Piece to the first Tile on the Board
 			matrixStackIn.translate(CHESS_SCALE * 3, 0.0D, CHESS_SCALE * -4);
 			
+//	TODO		int light = WorldRenderer.getPackedLightmapCoords(tileEntityIn.getWorld(), tileEntityIn.getWorld().getBlockState(tileEntityIn.getPos()), tileEntityIn.getPos());
+//			CHESS_PIECE_MODEL.render(matrixStackIn, bufferIn, light);
+			
+			
+			
 			int currentCoordinate = -1;
 			for(int rank = 0; rank < BoardUtils.NUM_TILES_PER_ROW; rank++)
 			{
 				for(int column = 0; column < BoardUtils.NUM_TILES_PER_ROW; column++)
 				{
 					currentCoordinate++;
+					
+					
+					
+					//TODO ______________________________________________________________________________________________________________________
+					
+					boolean isSelectedPiece = false;
+					
+					// Sets the piece to selected if it is indeed selected
+					if(board.getTile(currentCoordinate) == tileEntityIn.getSourceTile() && tileEntityIn.getHumanMovedPiece() != null)
+						isSelectedPiece = true;
+					
+					// Render all the Pieces
+					if(board.getTile(currentCoordinate).isTileOccupied())
+					{
+						PieceColor pieceColor = board.getTile(currentCoordinate).getPiece().getPieceColor();
+						PieceType pieceType = board.getTile(currentCoordinate).getPiece().getPieceType();
+						
+						matrixStackIn.push();
+						// Offsets the Piece that is about to be rendered to the current Tile
+						matrixStackIn.translate(CHESS_SCALE * -column, 0.0D, CHESS_SCALE * rank);
+						
+						float wR = (1F / 255F) * NBTColorSaving.getRed(tileEntityIn.getWhitePiecesColor());
+						float wG = (1F / 255F) * NBTColorSaving.getGreen(tileEntityIn.getWhitePiecesColor());
+						float wB = (1F / 255F) * NBTColorSaving.getBlue(tileEntityIn.getWhitePiecesColor());
+						float bR = (1F / 255F) * NBTColorSaving.getRed(tileEntityIn.getBlackPiecesColor());
+						float bG = (1F / 255F) * NBTColorSaving.getGreen(tileEntityIn.getBlackPiecesColor());
+						float bB = (1F / 255F) * NBTColorSaving.getBlue(tileEntityIn.getBlackPiecesColor());
+						
+//						if(isSelectedPiece)
+//						{
+//							RenderSystem.polygonMode(GL11.GL_FRONT_AND_BACK, GL11.GL_LINE);
+//							RenderSystem.lineWidth(2F);
+//						}
+						
+						matrixStackIn.push();
+						
+						// Move the Pieces down to the board surface
+						matrixStackIn.translate(0D, (1 / 16D) * 2.4D, 0D);
+						
+						// The dance the Pieces do when you check mate the enemy
+						if(isWhiteInCheckmate)
+						{
+							if(pieceColor.isBlack())
+							{
+								matrixStackIn.translate(0.0F, (float) Math.abs(Math.sin((Minecraft.getInstance().player.ticksExisted + getPartialTicks()) / 2.5)) * -0.05F, 0F);
+								matrixStackIn.rotate(Vector3f.ZN.rotationDegrees((float) Math.cos((Minecraft.getInstance().player.ticksExisted + getPartialTicks()) / 2.5) * 10));
+							}
+						}
+//						if(isBlackInCheckmate)
+//						{
+//							if(pieceColor.isWhite())
+//							{
+//								GL11.glTranslatef(0.0F, (float) Math.abs(Math.sin((Minecraft.getInstance().player.ticksExisted + getPartialTicks()) / 2.5)) * 0.05F, 0F);
+//								GL11.glRotatef((float) Math.cos((Minecraft.getInstance().player.ticksExisted + getPartialTicks()) / 2.5) * 10, 0, 0, 1);
+//							}
+//						}
+						
+						CHESS_PIECE_MODEL.render(matrixStackIn, bufferIn, combinedLightIn, pieceType, pieceColor, wR, wG, wB, bR, bG, bB);
+						matrixStackIn.pop();
+						
+//						if(isSelectedPiece)
+//							RenderSystem.polygonMode(GL11.GL_FRONT_AND_BACK, GL11.GL_FILL);
+						matrixStackIn.pop();
+					}
+					
+					
+					//TODO ____________________________________________________________________________________________________________________________________________________________
+					
+					
+					
+					
 					
 					matrixStackIn.push();
 					// Offsets the Piece that is about to be rendered to the current Tile
@@ -186,6 +283,11 @@ public class ChessTileEntityRenderer extends TileEntityRenderer<ChessTileEntity>
 			}
 			matrixStackIn.pop();
 		}
+	}
+	
+	private static float getPartialTicks()
+	{
+		return Minecraft.getInstance().isGamePaused() ? Minecraft.getInstance().renderPartialTicksPaused : Minecraft.getInstance().getRenderPartialTicks();
 	}
 
 	/**

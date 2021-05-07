@@ -1,6 +1,5 @@
 package andrews.table_top_craft.util.obj;
 
-import java.awt.Color;
 import java.io.ByteArrayOutputStream;
 import java.io.IOException;
 import java.io.InputStream;
@@ -9,15 +8,12 @@ import java.util.ArrayList;
 import org.apache.commons.compress.utils.IOUtils;
 
 import com.mojang.blaze3d.matrix.MatrixStack;
-import com.mojang.blaze3d.vertex.IVertexBuilder;
 
 import andrews.table_top_craft.util.Reference;
-import andrews.table_top_craft.util.TTCRenderTypes;
-import net.minecraft.client.Minecraft;
-import net.minecraft.client.renderer.IRenderTypeBuffer;
-import net.minecraft.client.renderer.texture.DynamicTexture;
-import net.minecraft.client.renderer.texture.NativeImage;
+import net.minecraft.client.renderer.BufferBuilder;
 import net.minecraft.util.ResourceLocation;
+import net.minecraft.util.math.vector.Matrix3f;
+import net.minecraft.util.math.vector.Matrix4f;
 import net.minecraft.util.math.vector.Vector2f;
 import net.minecraft.util.math.vector.Vector3f;
 import net.minecraftforge.api.distmarker.Dist;
@@ -30,11 +26,6 @@ public class ObjModel
     private Vector2f[] vt;
     private Vector3f[] vn;
     private Face[] faces;
-//    private int modelList = -1;
-    
-    static final NativeImage image = new NativeImage(NativeImage.PixelFormat.RGBA, 1, 1, true);
-    static final DynamicTexture texture = new DynamicTexture(image);
-    static ResourceLocation resourceLocation = null;
     
     //on static init
     static
@@ -42,7 +33,7 @@ public class ObjModel
     	//this needs to be called every time resource manager reloads (I think)
 //        texture.loadTexture(Minecraft.getInstance().getResourceManager());
         //before rendering vbo
-        image.setPixelRGBA(0, 0, new Color(255, 255, 255).getRGB());
+//        image.setPixelRGBA(0, 0, new Color(255, 255, 255).getRGB());
     }
     
     private ObjModel(Vector3f[] v, Vector2f[] vt, Vector3f[] vn, Face[] faces)
@@ -53,29 +44,8 @@ public class ObjModel
         this.faces = faces;
     }
     
-    public void render(MatrixStack stack, IRenderTypeBuffer buffer, int combinedLightIn, float red, float green, float blue)
-    {
-//        if(modelList == -1)
-//        {
-//            modelList = GL11.glGenLists(1);
-//            
-//            GL11.glNewList(modelList, GL11.GL_COMPILE);
-            renderModel(stack, buffer, combinedLightIn, red, green, blue);
-//            GL11.glEndList();
-//        }
-//        GL11.glCallList(modelList);
-    }
-    
-    private void renderModel(MatrixStack stack, IRenderTypeBuffer buffer, int combinedLightIn, float red, float green, float blue)
-    {
-    	image.setPixelRGBA(0, 0, new Color(blue, green, red).getRGB());
-    	texture.updateDynamicTexture();
-    	if(resourceLocation == null)
-    		resourceLocation = Minecraft.getInstance().getTextureManager().getDynamicTextureLocation("table_top_craft_dummy", texture);
-    	
-    	
-    	
-    	IVertexBuilder ivertexbuilder = buffer.getBuffer(TTCRenderTypes.getChessPieceSolid(resourceLocation));
+    public void render(MatrixStack stack, BufferBuilder buffer)
+    {    	
         try
         {
             for(int i = 0; i < faces.length; i++)
@@ -94,9 +64,9 @@ public class ObjModel
                 Vector3f vn2 = vn[face.vn2 - 1];
                 Vector3f vn3 = vn[face.vn3 - 1];
                 
-                addVertex(stack, ivertexbuilder, v1.getX(), v1.getY(), v1.getZ(), red, green, blue, 1F, vt1.x, -vt1.y, combinedLightIn, vn1.getX(), vn1.getY(), vn1.getZ());
-                addVertex(stack, ivertexbuilder, v2.getX(), v2.getY(), v2.getZ(), red, green, blue, 1F, vt2.x, -vt2.y, combinedLightIn, vn2.getX(), vn2.getY(), vn2.getZ());
-                addVertex(stack, ivertexbuilder, v3.getX(), v3.getY(), v3.getZ(), red, green, blue, 1F, vt3.x, -vt3.y, combinedLightIn, vn3.getX(), vn3.getY(), vn3.getZ());
+                addVertex(stack, buffer, v1.getX(), v1.getY(), v1.getZ(), vt1.x, -vt1.y, vn1.getX(), vn1.getY(), vn1.getZ());
+                addVertex(stack, buffer, v2.getX(), v2.getY(), v2.getZ(), vt2.x, -vt2.y, vn2.getX(), vn2.getY(), vn2.getZ());
+                addVertex(stack, buffer, v3.getX(), v3.getY(), v3.getZ(), vt3.x, -vt3.y, vn3.getX(), vn3.getY(), vn3.getZ());
             }
         }
         catch(Exception e)
@@ -105,15 +75,38 @@ public class ObjModel
         }
     }
     
-    private void addVertex(MatrixStack stack, IVertexBuilder builder, float x, float y, float z, float r, float g, float b, float alpha, float u, float v, int lightmapUV, float nx, float ny, float nz)
+    private void addVertex(MatrixStack stack, BufferBuilder builder, float x, float y, float z, float u, float v, float nx, float ny, float nz)
     {
-    	builder.pos(stack.getLast().getMatrix(), x, y, z)
-    		   .color(1F, 1F, 1F, 1F)
-    		   .tex(u, v)
-    		   .lightmap(lightmapUV)
-    		   .normal(stack.getLast().getNormal(), nx, ny, nz)
-    		   .endVertex();   
+    	pos(builder, stack.getLast().getMatrix(), x, y, z)
+    	.color(1F, 1F, 1F, 1F)
+    	.tex(u, v)
+    	.lightmap(0, 240); // These values are full brightness
+    	normal(builder, stack.getLast().getNormal(), nx, ny, nz)
+    	.endVertex();   
     }
+    
+	private static BufferBuilder pos(BufferBuilder bufferBuilder, Matrix4f matrix4f, float x, float y, float z)
+	{
+		// Calling 'bufferBuilder.pos(matrix4f, x, y, z)' allocates a Vector4f
+		// To avoid allocating so many short lived vectors we do the transform ourselves instead
+		float w = 1.0F;
+		float tx = matrix4f.m00 * x + matrix4f.m01 * y + matrix4f.m02 * z + matrix4f.m03 * w;
+		float ty = matrix4f.m10 * x + matrix4f.m11 * y + matrix4f.m12 * z + matrix4f.m13 * w;
+		float tz = matrix4f.m20 * x + matrix4f.m21 * y + matrix4f.m22 * z + matrix4f.m23 * w;
+		
+		return (BufferBuilder) bufferBuilder.pos(tx, ty, tz);
+	}
+	
+	private static BufferBuilder normal(BufferBuilder bufferBuilder, Matrix3f matrix3f, float x, float y, float z)
+	{
+		// Calling 'bufferBuilder.normal(matrix3f, x, y, z)' allocates a Vector3f
+		// To avoid allocating so many short lived vectors we do the transform ourselves instead
+	    float nx = matrix3f.m00 * x + matrix3f.m01 * y + matrix3f.m02 * z;
+	    float ny = matrix3f.m10 * x + matrix3f.m11 * y + matrix3f.m12 * z;
+	    float nz = matrix3f.m20 * x + matrix3f.m21 * y + matrix3f.m22 * z;
+	      
+	    return (BufferBuilder) bufferBuilder.normal(nx, ny, nz);
+	}
     
     public static ObjModel loadModel(ResourceLocation resourceLocation)
     {

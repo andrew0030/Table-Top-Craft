@@ -2,13 +2,9 @@ package andrews.table_top_craft.util;
 
 import org.lwjgl.opengl.GL11;
 
-import com.google.common.collect.ImmutableList;
-
 import net.minecraft.client.renderer.RenderState;
 import net.minecraft.client.renderer.RenderType;
 import net.minecraft.client.renderer.vertex.DefaultVertexFormats;
-import net.minecraft.client.renderer.vertex.VertexFormat;
-import net.minecraft.client.renderer.vertex.VertexFormatElement;
 import net.minecraft.util.ResourceLocation;
 
 public class TTCRenderTypes extends RenderState

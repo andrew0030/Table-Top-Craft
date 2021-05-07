@@ -1,50 +1,17 @@
 package andrews.table_top_craft.events;
 
-import java.util.ArrayList;
-import java.util.Collections;
-import java.util.Comparator;
-import java.util.List;
-
-import org.lwjgl.opengl.GL11;
-
-import com.google.common.primitives.Ints;
-import com.mojang.blaze3d.systems.RenderSystem;
-
-import andrews.table_top_craft.game_logic.chess.PieceColor;
-import andrews.table_top_craft.game_logic.chess.board.Board;
-import andrews.table_top_craft.game_logic.chess.board.BoardUtils;
-import andrews.table_top_craft.game_logic.chess.board.ChessMoveLog;
-import andrews.table_top_craft.game_logic.chess.board.moves.BaseMove;
-import andrews.table_top_craft.game_logic.chess.pieces.BasePiece;
-import andrews.table_top_craft.game_logic.chess.pieces.BasePiece.PieceType;
-import andrews.table_top_craft.game_logic.chess.player.BlackChessPlayer;
-import andrews.table_top_craft.game_logic.chess.player.WhiteChessPlayer;
-import andrews.table_top_craft.objects.blocks.ChessBlock;
-import andrews.table_top_craft.tile_entities.ChessTileEntity;
-import andrews.table_top_craft.util.NBTColorSaving;
 import andrews.table_top_craft.util.Reference;
-import andrews.table_top_craft.util.obj.models.ChessObjModel;
-import net.minecraft.block.BlockState;
-import net.minecraft.client.Minecraft;
-import net.minecraft.client.settings.PointOfView;
-import net.minecraft.tileentity.TileEntity;
-import net.minecraft.util.Direction;
-import net.minecraft.util.ResourceLocation;
-import net.minecraft.util.math.BlockPos;
-import net.minecraft.util.math.vector.Vector3d;
 import net.minecraftforge.api.distmarker.Dist;
-import net.minecraftforge.client.event.RenderWorldLastEvent;
-import net.minecraftforge.eventbus.api.SubscribeEvent;
 import net.minecraftforge.fml.common.Mod;
 
 @Mod.EventBusSubscriber(modid = Reference.MODID, value = Dist.CLIENT)
 public class LastTickEvent
 {
-	private static final ResourceLocation TEXTURE = new ResourceLocation(Reference.MODID, "textures/tile/chess/pieces.png");
-	private static final ChessObjModel CHESS_PIECE_MODEL = new ChessObjModel();
-	private static final float CHESS_SCALE = 0.125F;
-	private static final float MC_SCALE = 0.0625F;
-	
+//	private static final ResourceLocation TEXTURE = new ResourceLocation(Reference.MODID, "textures/tile/chess/pieces.png");
+//	private static final ChessObjModel CHESS_PIECE_MODEL = new ChessObjModel();
+//	private static final float CHESS_SCALE = 0.125F;
+//	private static final float MC_SCALE = 0.0625F;
+//	
 //	@SubscribeEvent
 //	public static void onRenderWorldLast(RenderWorldLastEvent event)
 //	{
@@ -284,9 +251,9 @@ public class LastTickEvent
 //			GL11.glPopMatrix();
 //		}
 //	}
-	
-	private static float getPartialTicks()
-	{
-		return Minecraft.getInstance().isGamePaused() ? Minecraft.getInstance().renderPartialTicksPaused : Minecraft.getInstance().getRenderPartialTicks();
-	}
+//	
+//	private static float getPartialTicks()
+//	{
+//		return Minecraft.getInstance().isGamePaused() ? Minecraft.getInstance().renderPartialTicksPaused : Minecraft.getInstance().getRenderPartialTicks();
+//	}
 }

@@ -3,7 +3,7 @@
     "pattern": [
         "BWB",
         "PPP",
-        "PGP"
+        "P P"
     ],
     "key": {
         "B": {
@@ -11,9 +11,6 @@
         },
         "W": {
             "item": "minecraft:white_terracotta"
-        },
-        "G": {
-            "item": "minecraft:glowstone"
         },
         "P": {
             "item": "minecraft:oak_planks"

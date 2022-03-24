@@ -27,14 +27,14 @@ public class ObjModel
     private Vector3f[] vn;
     private Face[] faces;
     
-    //on static init
-    static
-    {
+    //on static init TODO remove if not needed
+//    static
+//    {
     	//this needs to be called every time resource manager reloads (I think)
 //        texture.loadTexture(Minecraft.getInstance().getResourceManager());
         //before rendering vbo
 //        image.setPixelRGBA(0, 0, new Color(255, 255, 255).getRGB());
-    }
+//    }
     
     private ObjModel(Vector3f[] v, Vector2f[] vt, Vector3f[] vn, Face[] faces)
     {

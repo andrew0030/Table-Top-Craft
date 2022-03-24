@@ -4,11 +4,13 @@ import java.awt.Color;
 import java.util.ArrayList;
 import java.util.Collection;
 import java.util.Collections;
+import java.util.Comparator;
 import java.util.List;
 
 import org.lwjgl.opengl.GL11;
 
 import com.google.common.collect.ImmutableList;
+import com.google.common.primitives.Ints;
 import com.mojang.blaze3d.matrix.MatrixStack;
 import com.mojang.blaze3d.systems.RenderSystem;
 import com.mojang.blaze3d.vertex.IVertexBuilder;
@@ -17,7 +19,9 @@ import andrews.table_top_craft.events.DrawScreenEvent;
 import andrews.table_top_craft.game_logic.chess.PieceColor;
 import andrews.table_top_craft.game_logic.chess.board.Board;
 import andrews.table_top_craft.game_logic.chess.board.BoardUtils;
+import andrews.table_top_craft.game_logic.chess.board.ChessMoveLog;
 import andrews.table_top_craft.game_logic.chess.board.moves.BaseMove;
+import andrews.table_top_craft.game_logic.chess.pieces.BasePiece;
 import andrews.table_top_craft.game_logic.chess.pieces.BasePiece.PieceType;
 import andrews.table_top_craft.game_logic.chess.player.BlackChessPlayer;
 import andrews.table_top_craft.game_logic.chess.player.MoveTransition;
@@ -40,11 +44,7 @@ import net.minecraft.client.renderer.tileentity.TileEntityRenderer;
 import net.minecraft.client.renderer.tileentity.TileEntityRendererDispatcher;
 import net.minecraft.client.renderer.vertex.DefaultVertexFormats;
 import net.minecraft.client.renderer.vertex.VertexBuffer;
-import net.minecraft.potion.Effect;
-import net.minecraft.potion.EffectInstance;
-import net.minecraft.potion.EffectType;
 import net.minecraft.potion.Effects;
-import net.minecraft.potion.Potions;
 import net.minecraft.util.Direction;
 import net.minecraft.util.ResourceLocation;
 import net.minecraft.util.math.vector.Vector3f;
@@ -76,7 +76,6 @@ public class ChessTileEntityRenderer extends TileEntityRenderer<ChessTileEntity>
 		chessBoardPlateModel = new ChessBoardPlateModel();
 	}
 	
-	@SuppressWarnings("deprecation")
 	@Override
 	public void render(ChessTileEntity tileEntityIn, float partialTicks, MatrixStack matrixStackIn, IRenderTypeBuffer bufferIn, int combinedLightIn, int combinedOverlayIn)
 	{	
@@ -147,23 +146,13 @@ public class ChessTileEntityRenderer extends TileEntityRenderer<ChessTileEntity>
 			matrixStackIn.translate(CHESS_SCALE / 2D, 0.0D, CHESS_SCALE / 2D);
 			// Moves the Piece to the first Tile on the Board
 			matrixStackIn.translate(CHESS_SCALE * 3, 0.0D, CHESS_SCALE * -4);
-			
-//	TODO		int light = WorldRenderer.getPackedLightmapCoords(tileEntityIn.getWorld(), tileEntityIn.getWorld().getBlockState(tileEntityIn.getPos()), tileEntityIn.getPos());
-//			CHESS_PIECE_MODEL.render(matrixStackIn, bufferIn, light);
-			
-			
-			
+
 			int currentCoordinate = -1;
 			for(int rank = 0; rank < BoardUtils.NUM_TILES_PER_ROW; rank++)
 			{
 				for(int column = 0; column < BoardUtils.NUM_TILES_PER_ROW; column++)
 				{
 					currentCoordinate++;
-					
-					
-					
-					//TODO ______________________________________________________________________________________________________________________
-					
 					boolean isSelectedPiece = false;
 					
 					// Sets the piece to selected if it is indeed selected
@@ -220,78 +209,8 @@ public class ChessTileEntityRenderer extends TileEntityRenderer<ChessTileEntity>
 							}
 						}
 						
-						
-				    	image.setPixelRGBA(0, 0, getColorWithAppliedLight(new Color(pieceColor.isWhite() ? wB : bB,
-				    																pieceColor.isWhite() ? wG : bG,
-				    																pieceColor.isWhite() ? wR : bR),
-				    																combinedLightIn));
-				    	texture.updateDynamicTexture();
-				    	if(resourceLocation == null)
-				    		resourceLocation = Minecraft.getInstance().getTextureManager().getDynamicTextureLocation("table_top_craft_dummy", texture);
-						
-						// The RenderType for the chess pieces (the texture is just a dummy texture)
-						RenderType type = TTCRenderTypes.getChessPieceSolid(resourceLocation);
-						type.setupRenderState();
-						switch(pieceType)
-						{
-						default:
-						case PAWN:
-							VertexBuffer pawnBuffer = DrawScreenEvent.pawnBuffer;
-							matrixStackIn.push();
-							pawnBuffer.bindBuffer();
-							DefaultVertexFormats.BLOCK.setupBufferState(0L);
-							RenderSystem.shadeModel(GL11.GL_FLAT);
-							pawnBuffer.draw(matrixStackIn.getLast().getMatrix(), GL11.GL_TRIANGLES);
-							VertexBuffer.unbindBuffer();
-							RenderSystem.clearCurrentColor();
-							matrixStackIn.pop();
-							break;
-						case ROOK:
-							VertexBuffer rookBuffer = DrawScreenEvent.rookBuffer;
-							matrixStackIn.push();
-							rookBuffer.bindBuffer();
-							DefaultVertexFormats.BLOCK.setupBufferState(0L);
-							rookBuffer.draw(matrixStackIn.getLast().getMatrix(), GL11.GL_TRIANGLES);
-							VertexBuffer.unbindBuffer();
-							matrixStackIn.pop();
-							break;
-						case BISHOP:
-							VertexBuffer bishopBuffer = DrawScreenEvent.bishopBuffer;
-							matrixStackIn.push();
-							bishopBuffer.bindBuffer();
-							DefaultVertexFormats.BLOCK.setupBufferState(0L);
-							bishopBuffer.draw(matrixStackIn.getLast().getMatrix(), GL11.GL_TRIANGLES);
-							VertexBuffer.unbindBuffer();
-							matrixStackIn.pop();
-							break;
-						case KNIGHT:
-							VertexBuffer knightBuffer = DrawScreenEvent.knightBuffer;
-							matrixStackIn.push();
-							knightBuffer.bindBuffer();
-							DefaultVertexFormats.BLOCK.setupBufferState(0L);
-							knightBuffer.draw(matrixStackIn.getLast().getMatrix(), GL11.GL_TRIANGLES);
-							VertexBuffer.unbindBuffer();
-							matrixStackIn.pop();
-							break;
-						case KING:
-							VertexBuffer kingBuffer = DrawScreenEvent.kingBuffer;
-							matrixStackIn.push();
-							kingBuffer.bindBuffer();
-							DefaultVertexFormats.BLOCK.setupBufferState(0L);
-							kingBuffer.draw(matrixStackIn.getLast().getMatrix(), GL11.GL_TRIANGLES);
-							VertexBuffer.unbindBuffer();
-							matrixStackIn.pop();
-							break;
-						case QUEEN:
-							VertexBuffer queenBuffer = DrawScreenEvent.queenBuffer;
-							matrixStackIn.push();
-							queenBuffer.bindBuffer();
-							DefaultVertexFormats.BLOCK.setupBufferState(0L);
-							queenBuffer.draw(matrixStackIn.getLast().getMatrix(), GL11.GL_TRIANGLES);
-							VertexBuffer.unbindBuffer();
-							matrixStackIn.pop();
-						}
-						type.clearRenderState();
+						// Renders The Chess Piece
+						renderPiece(matrixStackIn, pieceType, pieceColor, combinedLightIn, wR, wG, wB, bR, bG, bB);
 
 						matrixStackIn.pop();
 						matrixStackIn.pop();
@@ -301,12 +220,6 @@ public class ChessTileEntityRenderer extends TileEntityRenderer<ChessTileEntity>
 					{
 						RenderSystem.polygonMode(GL11.GL_FRONT_AND_BACK, GL11.GL_FILL);
 					}
-					
-					//TODO ____________________________________________________________________________________________________________________________________________________________
-					
-					
-					
-					
 					
 					matrixStackIn.push();
 					// Offsets the Piece that is about to be rendered to the current Tile
@@ -368,8 +281,190 @@ public class ChessTileEntityRenderer extends TileEntityRenderer<ChessTileEntity>
 					matrixStackIn.pop();
 				}
 			}
+			
+			renderTakenPieces(matrixStackIn, tileEntityIn.getMoveLog(), tileEntityIn, combinedLightIn);
+			
 			matrixStackIn.pop();
 		}
+	}
+	
+	private void renderTakenPieces(MatrixStack stack, ChessMoveLog moveLog, ChessTileEntity chessTileEntity, int combinedLightIn)
+	{
+		final List<BasePiece> whiteTakenPieces = new ArrayList<>();
+		final List<BasePiece> blackTakenPieces = new ArrayList<>();
+		
+		for(final BaseMove move : moveLog.getMoves())
+		{
+			if(move.isAttack())
+			{
+				final BasePiece takenPiece = move.getAttackedPiece();
+				
+				if(takenPiece.getPieceColor().isWhite())
+				{
+					whiteTakenPieces.add(takenPiece);
+				}
+				else if(takenPiece.getPieceColor().isBlack())
+				{
+					blackTakenPieces.add(takenPiece);
+				}
+				else
+				{
+					throw new RuntimeException("Attemted to get a Piece that had no PieceColor");
+				}
+			}
+		}
+		
+		// Sorts all White Taken Pieces depending on their Value
+		Collections.sort(whiteTakenPieces, new Comparator<BasePiece>()
+		{
+			@Override
+			public int compare(BasePiece piece1, BasePiece piece2)
+			{
+				return Ints.compare(piece2.getPieceValue(), piece1.getPieceValue());
+			}
+		});
+		
+		// Sorts all Black Taken Pieces depending on their Value
+		Collections.sort(blackTakenPieces, new Comparator<BasePiece>()
+		{
+			@Override
+			public int compare(BasePiece piece1, BasePiece piece2)
+			{
+				return Ints.compare(piece2.getPieceValue(), piece1.getPieceValue());
+			}
+		});
+		
+		stack.push();
+		// Moves the pieces down into the taken Pieces area
+		stack.translate(CHESS_SCALE * -6.5D, 0.556D, CHESS_SCALE * 0.3D);
+		renderTakenPiecesFigures(stack, chessTileEntity, whiteTakenPieces, true, combinedLightIn);
+		renderTakenPiecesFigures(stack, chessTileEntity, blackTakenPieces, false, combinedLightIn);
+		stack.pop();
+	}
+	
+	private void renderTakenPiecesFigures(MatrixStack stack, ChessTileEntity chessTileEntity, final List<BasePiece> pieceList, final boolean isWhite, int combinedLightIn)
+	{
+		int currentCoordinate = -1;
+		int currentRank = 0;
+		for(final BasePiece piece : pieceList)
+		{
+			if(isWhite)
+			{
+				if(currentCoordinate < 7)
+				{
+					currentCoordinate++;
+				}
+				else
+				{
+					currentCoordinate = 0;
+					currentRank += 1;
+				}
+			}
+			else
+			{	
+				if(currentCoordinate < 7)
+				{
+					currentCoordinate++;
+				}
+				else
+				{
+					currentCoordinate = 0;
+					currentRank += 1;
+				}
+			}
+			
+			stack.push();
+			// Rotates the Pieces if they are white so they face the player
+			if(isWhite)
+				stack.rotate(Vector3f.YN.rotationDegrees(180F));
+			
+			if(!isWhite)
+				stack.translate((CHESS_SCALE * 0.855D) * 7D, 0.0D, 0.8D);
+			stack.translate((CHESS_SCALE * 0.855D) * -currentCoordinate, 0.0D, CHESS_SCALE * -currentRank);
+			float wR = (1F / 255F) * NBTColorSaving.getRed(chessTileEntity.getWhitePiecesColor());
+			float wG = (1F / 255F) * NBTColorSaving.getGreen(chessTileEntity.getWhitePiecesColor());
+			float wB = (1F / 255F) * NBTColorSaving.getBlue(chessTileEntity.getWhitePiecesColor());
+			float bR = (1F / 255F) * NBTColorSaving.getRed(chessTileEntity.getBlackPiecesColor());
+			float bG = (1F / 255F) * NBTColorSaving.getGreen(chessTileEntity.getBlackPiecesColor());
+			float bB = (1F / 255F) * NBTColorSaving.getBlue(chessTileEntity.getBlackPiecesColor());
+			
+			renderPiece(stack, piece.getPieceType(), piece.getPieceColor(), combinedLightIn, wR, wG, wB, bR, bG, bB);
+			
+			stack.pop();
+		}
+	}
+	
+	private void renderPiece(MatrixStack matrixStackIn, PieceType pieceType, PieceColor pieceColor, int combinedLightIn, float wR, float wG, float wB, float bR, float bG, float bB)
+	{
+		image.setPixelRGBA(0, 0, getColorWithAppliedLight(new Color(pieceColor.isWhite() ? wB : bB,
+																	pieceColor.isWhite() ? wG : bG,
+																	pieceColor.isWhite() ? wR : bR),
+																	combinedLightIn));
+		texture.updateDynamicTexture();
+		if(resourceLocation == null)
+			resourceLocation = Minecraft.getInstance().getTextureManager().getDynamicTextureLocation("table_top_craft_dummy", texture);
+		
+		// The RenderType for the chess pieces (the texture is just a dummy texture)
+		RenderType type = TTCRenderTypes.getChessPieceSolid(resourceLocation);
+		type.setupRenderState();
+		switch(pieceType)
+		{
+		default:
+		case PAWN:
+			VertexBuffer pawnBuffer = DrawScreenEvent.pawnBuffer;
+			matrixStackIn.push();
+			pawnBuffer.bindBuffer();
+			DefaultVertexFormats.BLOCK.setupBufferState(0L);
+			pawnBuffer.draw(matrixStackIn.getLast().getMatrix(), GL11.GL_TRIANGLES);
+			VertexBuffer.unbindBuffer();
+			matrixStackIn.pop();
+			break;
+		case ROOK:
+			VertexBuffer rookBuffer = DrawScreenEvent.rookBuffer;
+			matrixStackIn.push();
+			rookBuffer.bindBuffer();
+			DefaultVertexFormats.BLOCK.setupBufferState(0L);
+			rookBuffer.draw(matrixStackIn.getLast().getMatrix(), GL11.GL_TRIANGLES);
+			VertexBuffer.unbindBuffer();
+			matrixStackIn.pop();
+			break;
+		case BISHOP:
+			VertexBuffer bishopBuffer = DrawScreenEvent.bishopBuffer;
+			matrixStackIn.push();
+			bishopBuffer.bindBuffer();
+			DefaultVertexFormats.BLOCK.setupBufferState(0L);
+			bishopBuffer.draw(matrixStackIn.getLast().getMatrix(), GL11.GL_TRIANGLES);
+			VertexBuffer.unbindBuffer();
+			matrixStackIn.pop();
+			break;
+		case KNIGHT:
+			VertexBuffer knightBuffer = DrawScreenEvent.knightBuffer;
+			matrixStackIn.push();
+			knightBuffer.bindBuffer();
+			DefaultVertexFormats.BLOCK.setupBufferState(0L);
+			knightBuffer.draw(matrixStackIn.getLast().getMatrix(), GL11.GL_TRIANGLES);
+			VertexBuffer.unbindBuffer();
+			matrixStackIn.pop();
+			break;
+		case KING:
+			VertexBuffer kingBuffer = DrawScreenEvent.kingBuffer;
+			matrixStackIn.push();
+			kingBuffer.bindBuffer();
+			DefaultVertexFormats.BLOCK.setupBufferState(0L);
+			kingBuffer.draw(matrixStackIn.getLast().getMatrix(), GL11.GL_TRIANGLES);
+			VertexBuffer.unbindBuffer();
+			matrixStackIn.pop();
+			break;
+		case QUEEN:
+			VertexBuffer queenBuffer = DrawScreenEvent.queenBuffer;
+			matrixStackIn.push();
+			queenBuffer.bindBuffer();
+			DefaultVertexFormats.BLOCK.setupBufferState(0L);
+			queenBuffer.draw(matrixStackIn.getLast().getMatrix(), GL11.GL_TRIANGLES);
+			VertexBuffer.unbindBuffer();
+			matrixStackIn.pop();
+		}
+		type.clearRenderState();
 	}
 	
 	private int getColorWithAppliedLight(Color color, int light)

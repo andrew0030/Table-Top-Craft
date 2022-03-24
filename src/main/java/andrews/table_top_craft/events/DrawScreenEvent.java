@@ -12,11 +12,12 @@ import net.minecraft.client.renderer.BufferBuilder;
 import net.minecraft.client.renderer.vertex.VertexBuffer;
 import net.minecraft.client.renderer.vertex.VertexFormat;
 import net.minecraft.util.ResourceLocation;
+import net.minecraftforge.api.distmarker.Dist;
 import net.minecraftforge.client.event.GuiScreenEvent;
 import net.minecraftforge.eventbus.api.SubscribeEvent;
 import net.minecraftforge.fml.common.Mod;
 
-@Mod.EventBusSubscriber(modid = Reference.MODID)
+@Mod.EventBusSubscriber(modid = Reference.MODID, value = Dist.CLIENT)
 public class DrawScreenEvent
 {
 	// The texture path is just a dummy texture used as a placeholder

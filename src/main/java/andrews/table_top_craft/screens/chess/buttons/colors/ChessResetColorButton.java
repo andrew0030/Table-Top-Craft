@@ -104,12 +104,12 @@ public class ChessResetColorButton extends Button
 		case PIECES:
 			if(optionalRedSlider != null && optionalGreenSlider != null && optionalBlueSlider != null)
 			{
-				redSlider.setValue(180F);
-				greenSlider.setValue(170F);
+				redSlider.setValue(210F);
+				greenSlider.setValue(188F);
 				blueSlider.setValue(161F);
-				optionalRedSlider.setValue(46F);
-				optionalGreenSlider.setValue(46F);
-				optionalBlueSlider.setValue(46F);
+				optionalRedSlider.setValue(51F);
+				optionalGreenSlider.setValue(51F);
+				optionalBlueSlider.setValue(51F);
 				// We need to update the sliders so the text that displays the value is correct
 				optionalRedSlider.updateSlider();
 				optionalGreenSlider.updateSlider();

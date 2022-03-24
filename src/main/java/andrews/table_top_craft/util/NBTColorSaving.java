@@ -19,12 +19,12 @@ public class NBTColorSaving
 	
 	public static String createWhitePiecesColor()
 	{
-		return "180/170/161/255";
+		return "210/188/161/255";
 	}
 	
 	public static String createBlackPiecesColor()
 	{
-		return "46/46/46/255";
+		return "51/51/51/255";
 	}
 	
 	public static String createLegalMoveColor()

@@ -1,42 +1,31 @@
 package andrews.table_top_craft.util.obj;
 
+import andrews.table_top_craft.util.Reference;
+import com.mojang.blaze3d.vertex.BufferBuilder;
+import com.mojang.blaze3d.vertex.PoseStack;
+import com.mojang.math.Matrix3f;
+import com.mojang.math.Matrix4f;
+import com.mojang.math.Vector3f;
+import net.minecraft.resources.ResourceLocation;
+import net.minecraft.world.phys.Vec2;
+import net.minecraftforge.api.distmarker.Dist;
+import net.minecraftforge.api.distmarker.OnlyIn;
+import org.apache.commons.compress.utils.IOUtils;
+
 import java.io.ByteArrayOutputStream;
 import java.io.IOException;
 import java.io.InputStream;
 import java.util.ArrayList;
 
-import org.apache.commons.compress.utils.IOUtils;
-
-import com.mojang.blaze3d.matrix.MatrixStack;
-
-import andrews.table_top_craft.util.Reference;
-import net.minecraft.client.renderer.BufferBuilder;
-import net.minecraft.util.ResourceLocation;
-import net.minecraft.util.math.vector.Matrix3f;
-import net.minecraft.util.math.vector.Matrix4f;
-import net.minecraft.util.math.vector.Vector2f;
-import net.minecraft.util.math.vector.Vector3f;
-import net.minecraftforge.api.distmarker.Dist;
-import net.minecraftforge.api.distmarker.OnlyIn;
-
 @OnlyIn(Dist.CLIENT)
 public class ObjModel
 {
-    private Vector3f[] v;
-    private Vector2f[] vt;
-    private Vector3f[] vn;
-    private Face[] faces;
+    private final Vector3f[] v;
+    private final Vec2[] vt;
+    private final Vector3f[] vn;
+    private final Face[] faces;
     
-    //on static init TODO remove if not needed
-//    static
-//    {
-    	//this needs to be called every time resource manager reloads (I think)
-//        texture.loadTexture(Minecraft.getInstance().getResourceManager());
-        //before rendering vbo
-//        image.setPixelRGBA(0, 0, new Color(255, 255, 255).getRGB());
-//    }
-    
-    private ObjModel(Vector3f[] v, Vector2f[] vt, Vector3f[] vn, Face[] faces)
+    private ObjModel(Vector3f[] v, Vec2[] vt, Vector3f[] vn, Face[] faces)
     {
         this.v = v;
         this.vt = vt;
@@ -44,29 +33,27 @@ public class ObjModel
         this.faces = faces;
     }
     
-    public void render(MatrixStack stack, BufferBuilder buffer)
+    public void render(PoseStack stack, BufferBuilder buffer)
     {    	
         try
         {
-            for(int i = 0; i < faces.length; i++)
+            for(Face face : faces)
             {
-                Face face = faces[i];
-                
                 Vector3f v1 = v[face.v1 - 1];
                 Vector3f v2 = v[face.v2 - 1];
                 Vector3f v3 = v[face.v3 - 1];
-                
-                Vector2f vt1 = vt[face.vt1 - 1];
-                Vector2f vt2 = vt[face.vt2 - 1];
-                Vector2f vt3 = vt[face.vt3 - 1];
-                
+
+                Vec2 vt1 = vt[face.vt1 - 1];
+                Vec2 vt2 = vt[face.vt2 - 1];
+                Vec2 vt3 = vt[face.vt3 - 1];
+
                 Vector3f vn1 = vn[face.vn1 - 1];
                 Vector3f vn2 = vn[face.vn2 - 1];
                 Vector3f vn3 = vn[face.vn3 - 1];
-                
-                addVertex(stack, buffer, v1.getX(), v1.getY(), v1.getZ(), vt1.x, -vt1.y, vn1.getX(), vn1.getY(), vn1.getZ());
-                addVertex(stack, buffer, v2.getX(), v2.getY(), v2.getZ(), vt2.x, -vt2.y, vn2.getX(), vn2.getY(), vn2.getZ());
-                addVertex(stack, buffer, v3.getX(), v3.getY(), v3.getZ(), vt3.x, -vt3.y, vn3.getX(), vn3.getY(), vn3.getZ());
+
+                addVertex(stack, buffer, v1.x(), v1.y(), v1.z(), vt1.x, -vt1.y, vn1.x(), vn1.y(), vn1.z());
+                addVertex(stack, buffer, v2.x(), v2.y(), v2.z(), vt2.x, -vt2.y, vn2.x(), vn2.y(), vn2.z());
+                addVertex(stack, buffer, v3.x(), v3.y(), v3.z(), vt3.x, -vt3.y, vn3.x(), vn3.y(), vn3.z());
             }
         }
         catch(Exception e)
@@ -75,32 +62,32 @@ public class ObjModel
         }
     }
     
-    private void addVertex(MatrixStack stack, BufferBuilder builder, float x, float y, float z, float u, float v, float nx, float ny, float nz)
+    private void addVertex(PoseStack stack, BufferBuilder builder, float x, float y, float z, float u, float v, float nx, float ny, float nz)
     {
-    	pos(builder, stack.getLast().getMatrix(), x, y, z)
+    	pos(builder, stack.last().pose(), x, y, z)
     	.color(1F, 1F, 1F, 1F)
-    	.tex(u, v)
-    	.lightmap(0, 240); // These values are full brightness
-    	normal(builder, stack.getLast().getNormal(), nx, ny, nz)
+    	.uv(u, v)
+    	.uv2(0, 240); // These values are full brightness
+    	normal(builder, stack.last().normal(), nx, ny, nz)
     	.endVertex();   
     }
     
 	private static BufferBuilder pos(BufferBuilder bufferBuilder, Matrix4f matrix4f, float x, float y, float z)
 	{
 		// Calling 'bufferBuilder.pos(matrix4f, x, y, z)' allocates a Vector4f
-		// To avoid allocating so many short lived vectors we do the transform ourselves instead
+		// To avoid allocating so many short-lived vectors we do the transform ourselves instead
 		float w = 1.0F;
 		float tx = matrix4f.m00 * x + matrix4f.m01 * y + matrix4f.m02 * z + matrix4f.m03 * w;
 		float ty = matrix4f.m10 * x + matrix4f.m11 * y + matrix4f.m12 * z + matrix4f.m13 * w;
 		float tz = matrix4f.m20 * x + matrix4f.m21 * y + matrix4f.m22 * z + matrix4f.m23 * w;
 		
-		return (BufferBuilder) bufferBuilder.pos(tx, ty, tz);
+		return (BufferBuilder) bufferBuilder.vertex(tx, ty, tz);//TODO this was pos() make sure it works
 	}
 	
 	private static BufferBuilder normal(BufferBuilder bufferBuilder, Matrix3f matrix3f, float x, float y, float z)
 	{
 		// Calling 'bufferBuilder.normal(matrix3f, x, y, z)' allocates a Vector3f
-		// To avoid allocating so many short lived vectors we do the transform ourselves instead
+		// To avoid allocating so many short-lived vectors we do the transform ourselves instead
 	    float nx = matrix3f.m00 * x + matrix3f.m01 * y + matrix3f.m02 * z;
 	    float ny = matrix3f.m10 * x + matrix3f.m11 * y + matrix3f.m12 * z;
 	    float nz = matrix3f.m20 * x + matrix3f.m21 * y + matrix3f.m22 * z;
@@ -115,34 +102,33 @@ public class ObjModel
         String[] modelLines = modelString.split("\\r?\\n");
         
         ArrayList<Vector3f> vList = new ArrayList<Vector3f>();
-        ArrayList<Vector2f> vtList = new ArrayList<Vector2f>();
+        ArrayList<Vec2> vtList = new ArrayList<Vec2>();
         ArrayList<Vector3f> vnList = new ArrayList<Vector3f>();
         ArrayList<Face> faceList = new ArrayList<Face>();
-        
-        for(int i = 0; i < modelLines.length; i++)
+
+        for(String line : modelLines)
         {
-            String line = modelLines[i];
             String[] lineSpit = line.split(" ");
-            if(lineSpit[0].equals("v"))
+            if (lineSpit[0].equals("v"))
             {
                 vList.add(new Vector3f(Float.parseFloat(lineSpit[1]), Float.parseFloat(lineSpit[2]), Float.parseFloat(lineSpit[3])));
             }
-            if(lineSpit[0].equals("vt"))
+            if (lineSpit[0].equals("vt"))
             {
-                vtList.add(new Vector2f(Float.parseFloat(lineSpit[1]), Float.parseFloat(lineSpit[2])));
+                vtList.add(new Vec2(Float.parseFloat(lineSpit[1]), Float.parseFloat(lineSpit[2])));
             }
-            if(lineSpit[0].equals("vn"))
+            if (lineSpit[0].equals("vn"))
             {
                 vnList.add(new Vector3f(Float.parseFloat(lineSpit[1]), Float.parseFloat(lineSpit[2]), Float.parseFloat(lineSpit[3])));
             }
-            if(lineSpit[0].equals("f"))
+            if (lineSpit[0].equals("f"))
             {
                 faceList.add(new Face(lineSpit[1], lineSpit[2], lineSpit[3]));
             }
         }
         
         Vector3f[] vArray = vList.toArray(new Vector3f[vList.size()]);
-        Vector2f[] vtArray = vtList.toArray(new Vector2f[vtList.size()]);
+        Vec2[] vtArray = vtList.toArray(new Vec2[vtList.size()]);
         Vector3f[] vnArray = vnList.toArray(new Vector3f[vnList.size()]);
         Face[] faces = faceList.toArray(new Face[faceList.size()]);
         
@@ -160,8 +146,7 @@ public class ObjModel
                 output = new ByteArrayOutputStream();
                 IOUtils.copy(input, output);
                 output.flush();
-                byte[] data = output.toByteArray();
-                return data;
+                return output.toByteArray();
             }
         }
         catch(IOException e)

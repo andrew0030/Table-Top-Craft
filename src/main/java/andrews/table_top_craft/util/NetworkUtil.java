@@ -9,17 +9,12 @@ import andrews.table_top_craft.network.server.MessageServerShowAvailableMoves;
 import andrews.table_top_craft.network.server.MessageServerShowPreviousMove;
 import andrews.table_top_craft.network.server.MessageServerShowTileInfo;
 import andrews.table_top_craft.network.server.MessageServerUseCustomPlate;
-import net.minecraft.util.math.BlockPos;
+import net.minecraft.core.BlockPos;
 import net.minecraftforge.api.distmarker.Dist;
 import net.minecraftforge.api.distmarker.OnlyIn;
 
 public class NetworkUtil
 {
-	/**
-	 * Sends a message to the server that the player pressed the new chess game button
-	 * @param bufflonEntity - The Bufflon Entity that owns the Inventory
-	 * @param shouldSit - Whether or not the entity should sit
-	 */
 	@OnlyIn(Dist.CLIENT)
 	public static void newChessGameMessage(BlockPos pos)
 	{
@@ -52,9 +47,9 @@ public class NetworkUtil
 	
 	/**
 	 * Sends a message to the server that the player pressed the set color button
-	 * @param colorType - The color that will be set, 0 for tile info, 1 for legal move
-	 * @param pos - The BlockPos of the ChessTileEntity
-	 * @param color - The Color
+	 * @param colorType The color that will be set, 0 for tile info, 1 for legal move
+	 * @param pos The BlockPos of the ChessTileEntity
+	 * @param color The Color
 	 */
 	@OnlyIn(Dist.CLIENT)
 	public static void setColorMessage(int colorType, BlockPos pos, String color)
@@ -70,10 +65,10 @@ public class NetworkUtil
 	
 	/**
 	 * Sends a message to the server that the player pressed the set colors button
-	 * @param colorType - The colors that will be set, 0 for board tiles, 1 for pieces
-	 * @param pos - The BlockPos of the ChessTileEntity
-	 * @param color - The first Color for the White side
-	 * @param color2 - The second Color for the Black side
+	 * @param colorType The colors that will be set, 0 for board tiles, 1 for pieces
+	 * @param pos The BlockPos of the ChessTileEntity
+	 * @param color The first Color for the White side
+	 * @param color2 The second Color for the Black side
 	 */
 	@OnlyIn(Dist.CLIENT)
 	public static void setColorsMessage(int colorType, BlockPos pos, String color, String color2)

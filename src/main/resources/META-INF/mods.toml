@@ -1,26 +1,27 @@
 modLoader="javafml"
-loaderVersion="[34,)"
+loaderVersion="[40,)"
 issueTrackerURL="https://github.com/andrew0030/Table-Top-Craft/issues"
 logoFile="logo.png"
 license="GNU Lesser General Public License v3.0"
+
 [[mods]]
-	modId="table_top_craft"
-	version="1.16-1.2.0"
-	displayName="Table Top Craft"
-	displayURL="https://www.curseforge.com/minecraft/mc-mods/table-top-craft"
-	authors="andrew0030"
-	description='''Table Top Craft is a Mod that adds playable table top games to Minecraft.'''
+    modId="table_top_craft"
+    version="1.18.2-2.0.0"
+    displayName="Table Top Craft"
+    displayURL="https://www.curseforge.com/minecraft/mc-mods/table-top-craft"
+    authors="andrew0030"
+    description='''Table Top Craft is a Mod that adds playable table top games to Minecraft.'''
 
 [[dependencies.table_top_craft]]
     modId="forge"
     mandatory=true
-    versionRange="[34.1.21,)"
+    versionRange="[40,)"
     ordering="NONE"
     side="BOTH"
 
 [[dependencies.table_top_craft]]
     modId="minecraft"
     mandatory=true
-    versionRange="[1.16.3,1.17)"
+    versionRange="[1.18.2,1.19)"
     ordering="NONE"
     side="BOTH"

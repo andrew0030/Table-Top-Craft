@@ -1,6 +1,5 @@
 package andrews.table_top_craft.screens.chess.buttons.colors;
 
-import com.mojang.blaze3d.matrix.MatrixStack;
 import com.mojang.blaze3d.systems.RenderSystem;
 
 import andrews.table_top_craft.screens.chess.sliders.ChessAlphaColorSlider;
@@ -11,20 +10,20 @@ import andrews.table_top_craft.tile_entities.ChessTileEntity;
 import andrews.table_top_craft.util.NBTColorSaving;
 import andrews.table_top_craft.util.NetworkUtil;
 import andrews.table_top_craft.util.Reference;
+import com.mojang.blaze3d.vertex.PoseStack;
 import net.minecraft.client.Minecraft;
-import net.minecraft.client.gui.FontRenderer;
-import net.minecraft.client.gui.widget.button.Button;
-import net.minecraft.util.ResourceLocation;
-import net.minecraft.util.text.StringTextComponent;
-import net.minecraft.util.text.TranslationTextComponent;
-import net.minecraftforge.fml.client.gui.GuiUtils;
+import net.minecraft.client.gui.Font;
+import net.minecraft.client.gui.components.Button;
+import net.minecraft.network.chat.TextComponent;
+import net.minecraft.network.chat.TranslatableComponent;
+import net.minecraft.resources.ResourceLocation;
 
 public class ChessConfirmColorButton extends Button
 {
 	private static final ResourceLocation TEXTURE = new ResourceLocation(Reference.MODID + ":textures/gui/buttons/chess_menu_buttons.png");
-	private final String buttonText = new TranslationTextComponent("gui.table_top_craft.chess.confirm_color").getString();
-	private final String buttonText2 = new TranslationTextComponent("gui.table_top_craft.chess.confirm_colors").getString();
-	private final FontRenderer fontRenderer;
+	private final String buttonText = new TranslatableComponent("gui.table_top_craft.chess.confirm_color").getString();
+	private final String buttonText2 = new TranslatableComponent("gui.table_top_craft.chess.confirm_colors").getString();
+	private final Font fontRenderer;
 	private static ChessTileEntity chessTileEntity;
 	private static final int buttonWidth = 82;
 	private static final int buttonHeight = 13;
@@ -41,8 +40,8 @@ public class ChessConfirmColorButton extends Button
 	
 	public ChessConfirmColorButton(ColorMenuType colorMenu, ChessTileEntity tileEntity, ChessRedColorSlider red, ChessGreenColorSlider green, ChessBlueColorSlider blue, int xPos, int yPos) 
 	{
-		super(xPos, yPos, buttonWidth, buttonHeight, new StringTextComponent(""), (button) -> { handleButtonPress(); });
-		this.fontRenderer = Minecraft.getInstance().fontRenderer;
+		super(xPos, yPos, buttonWidth, buttonHeight, new TextComponent(""), (button) -> { handleButtonPress(); });
+		this.fontRenderer = Minecraft.getInstance().font;
 		colorMenuType = colorMenu;
 		chessTileEntity = tileEntity;
 		redSlider = red;
@@ -65,25 +64,24 @@ public class ChessConfirmColorButton extends Button
 	}
 	
 	@Override
-	public void renderButton(MatrixStack matrixStack, int mouseX, int mouseY, float partialTicks)
-	{	
-		this.isHovered = false;
-		if(mouseX >= x && mouseX < x + width && mouseY >= y && mouseY < y + height || this.isFocused())
-			this.isHovered = true;
+	public void renderButton(PoseStack poseStack, int mouseX, int mouseY, float partialTicks)
+	{
+		this.isHovered = mouseX >= x && mouseX < x + width && mouseY >= y && mouseY < y + height || this.isFocused();
 		
 		this.u = 0;
 		if(this.isHovered)
 			this.u = 82;
 		
-		//Renders the Button
-		Minecraft.getInstance().getRenderManager().textureManager.bindTexture(TEXTURE);
-		matrixStack.push();
+		// Renders the Button
+		RenderSystem.setShaderColor(1.0f, 1.0f, 1.0f, 1.0f);
+		RenderSystem.setShaderTexture(0, TEXTURE);
+		poseStack.pushPose();
 		RenderSystem.enableBlend();
-		GuiUtils.drawTexturedModalRect(matrixStack, x, y, u, v, width, height, 0);
+		this.blit(poseStack, x, y, u, v, width, height);
 		RenderSystem.disableBlend();
-		matrixStack.pop();
+		poseStack.popPose();
 		boolean useText2 = (optionalRedSlider != null && optionalGreenSlider != null && optionalBlueSlider != null);
-		this.fontRenderer.drawString(matrixStack, useText2 ? this.buttonText2 : this.buttonText, x + ((this.width / 2) - (this.fontRenderer.getStringWidth(useText2 ? this.buttonText2 : this.buttonText) / 2)), y + 3, 0x000000);
+		this.fontRenderer.draw(poseStack, useText2 ? this.buttonText2 : this.buttonText, x + ((this.width / 2) - (this.fontRenderer.width(useText2 ? this.buttonText2 : this.buttonText) / 2)), y + 3, 0x000000);
 	}
 	
 	/**
@@ -95,35 +93,35 @@ public class ChessConfirmColorButton extends Button
 		{
 		default:
 		case TILE_INFO:
-			NetworkUtil.setColorMessage(0, chessTileEntity.getPos(), NBTColorSaving.saveColor(redSlider.getValueInt(), greenSlider.getValueInt(), blueSlider.getValueInt()));
+			NetworkUtil.setColorMessage(0, chessTileEntity.getBlockPos(), NBTColorSaving.saveColor(redSlider.getValueInt(), greenSlider.getValueInt(), blueSlider.getValueInt()));
 			break;
 		case BOARD_PLATE:
 			if(optionalRedSlider != null && optionalGreenSlider != null && optionalBlueSlider != null)
-				NetworkUtil.setColorsMessage(0, chessTileEntity.getPos(), NBTColorSaving.saveColor(redSlider.getValueInt(), greenSlider.getValueInt(), blueSlider.getValueInt()), NBTColorSaving.saveColor(optionalRedSlider.getValueInt(), optionalGreenSlider.getValueInt(), optionalBlueSlider.getValueInt()));
+				NetworkUtil.setColorsMessage(0, chessTileEntity.getBlockPos(), NBTColorSaving.saveColor(redSlider.getValueInt(), greenSlider.getValueInt(), blueSlider.getValueInt()), NBTColorSaving.saveColor(optionalRedSlider.getValueInt(), optionalGreenSlider.getValueInt(), optionalBlueSlider.getValueInt()));
 			break;
 		case PIECES:
 			if(optionalRedSlider != null && optionalGreenSlider != null && optionalBlueSlider != null)
-				NetworkUtil.setColorsMessage(1, chessTileEntity.getPos(), NBTColorSaving.saveColor(redSlider.getValueInt(), greenSlider.getValueInt(), blueSlider.getValueInt()), NBTColorSaving.saveColor(optionalRedSlider.getValueInt(), optionalGreenSlider.getValueInt(), optionalBlueSlider.getValueInt()));
+				NetworkUtil.setColorsMessage(1, chessTileEntity.getBlockPos(), NBTColorSaving.saveColor(redSlider.getValueInt(), greenSlider.getValueInt(), blueSlider.getValueInt()), NBTColorSaving.saveColor(optionalRedSlider.getValueInt(), optionalGreenSlider.getValueInt(), optionalBlueSlider.getValueInt()));
 			break;
 		case LEGAL_MOVE:
 			if(alphaSlider != null)
-				NetworkUtil.setColorMessage(1, chessTileEntity.getPos(), NBTColorSaving.saveColor(redSlider.getValueInt(), greenSlider.getValueInt(), blueSlider.getValueInt(), alphaSlider.getValueInt()));
+				NetworkUtil.setColorMessage(1, chessTileEntity.getBlockPos(), NBTColorSaving.saveColor(redSlider.getValueInt(), greenSlider.getValueInt(), blueSlider.getValueInt(), alphaSlider.getValueInt()));
 			break;
 		case INVALID_MOVE:
 			if(alphaSlider != null)
-				NetworkUtil.setColorMessage(2, chessTileEntity.getPos(), NBTColorSaving.saveColor(redSlider.getValueInt(), greenSlider.getValueInt(), blueSlider.getValueInt(), alphaSlider.getValueInt()));
+				NetworkUtil.setColorMessage(2, chessTileEntity.getBlockPos(), NBTColorSaving.saveColor(redSlider.getValueInt(), greenSlider.getValueInt(), blueSlider.getValueInt(), alphaSlider.getValueInt()));
 			break;
 		case ATTACK_MOVE:
 			if(alphaSlider != null)
-				NetworkUtil.setColorMessage(3, chessTileEntity.getPos(), NBTColorSaving.saveColor(redSlider.getValueInt(), greenSlider.getValueInt(), blueSlider.getValueInt(), alphaSlider.getValueInt()));
+				NetworkUtil.setColorMessage(3, chessTileEntity.getBlockPos(), NBTColorSaving.saveColor(redSlider.getValueInt(), greenSlider.getValueInt(), blueSlider.getValueInt(), alphaSlider.getValueInt()));
 			break;
 		case PREVIOUS_MOVE:
 			if(alphaSlider != null)
-				NetworkUtil.setColorMessage(4, chessTileEntity.getPos(), NBTColorSaving.saveColor(redSlider.getValueInt(), greenSlider.getValueInt(), blueSlider.getValueInt(), alphaSlider.getValueInt()));
+				NetworkUtil.setColorMessage(4, chessTileEntity.getBlockPos(), NBTColorSaving.saveColor(redSlider.getValueInt(), greenSlider.getValueInt(), blueSlider.getValueInt(), alphaSlider.getValueInt()));
 			break;
 		case CASTLE_MOVE:
 			if(alphaSlider != null)
-				NetworkUtil.setColorMessage(5, chessTileEntity.getPos(), NBTColorSaving.saveColor(redSlider.getValueInt(), greenSlider.getValueInt(), blueSlider.getValueInt(), alphaSlider.getValueInt()));
+				NetworkUtil.setColorMessage(5, chessTileEntity.getBlockPos(), NBTColorSaving.saveColor(redSlider.getValueInt(), greenSlider.getValueInt(), blueSlider.getValueInt(), alphaSlider.getValueInt()));
 		}
 	}
 	

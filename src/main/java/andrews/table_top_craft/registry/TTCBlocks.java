@@ -7,13 +7,13 @@ import com.google.common.base.Supplier;
 import andrews.table_top_craft.TableTopCraft;
 import andrews.table_top_craft.objects.blocks.ChessBlock;
 import andrews.table_top_craft.util.Reference;
-import net.minecraft.block.Block;
-import net.minecraft.item.BlockItem;
-import net.minecraft.item.Item;
-import net.minecraft.item.ItemGroup;
-import net.minecraftforge.fml.RegistryObject;
+import net.minecraft.world.item.BlockItem;
+import net.minecraft.world.item.CreativeModeTab;
+import net.minecraft.world.item.Item;
+import net.minecraft.world.level.block.Block;
 import net.minecraftforge.registries.DeferredRegister;
 import net.minecraftforge.registries.ForgeRegistries;
+import net.minecraftforge.registries.RegistryObject;
 
 public class TTCBlocks
 {
@@ -28,10 +28,10 @@ public class TTCBlocks
 	public static final RegistryObject<Block> CRIMSON_CHESS		= createBlock("crimson_chess", () -> new ChessBlock(), TableTopCraft.TABLE_TOP_CRAFT_GROUP);
 	public static final RegistryObject<Block> WARPED_CHESS		= createBlock("warped_chess", () -> new ChessBlock(), TableTopCraft.TABLE_TOP_CRAFT_GROUP);
 	
-	public static <B extends Block> RegistryObject<B> createBlock(String name, Supplier<? extends B> supplier, @Nullable ItemGroup group)
+	public static <B extends Block> RegistryObject<B> createBlock(String name, Supplier<? extends B> supplier, @Nullable CreativeModeTab group)
 	{
 		RegistryObject<B> block = TTCBlocks.BLOCKS.register(name, supplier);
-		TTCItems.ITEMS.register(name, () -> new BlockItem(block.get(), new Item.Properties().maxStackSize(1).group(group)));
+		TTCItems.ITEMS.register(name, () -> new BlockItem(block.get(), new Item.Properties().stacksTo(1).tab(group)));
 		return block;
 	}
 }

@@ -3,29 +3,29 @@ package andrews.table_top_craft.network.server;
 import java.util.function.Supplier;
 
 import andrews.table_top_craft.tile_entities.ChessTileEntity;
-import net.minecraft.entity.player.PlayerEntity;
-import net.minecraft.network.PacketBuffer;
-import net.minecraft.tileentity.TileEntity;
-import net.minecraft.util.math.BlockPos;
-import net.minecraft.world.World;
+import net.minecraft.core.BlockPos;
+import net.minecraft.network.FriendlyByteBuf;
+import net.minecraft.world.entity.player.Player;
+import net.minecraft.world.level.Level;
+import net.minecraft.world.level.block.entity.BlockEntity;
 import net.minecraftforge.fml.LogicalSide;
-import net.minecraftforge.fml.network.NetworkEvent;
+import net.minecraftforge.network.NetworkEvent;
 
 public class MessageServerShowPreviousMove
 {
-	private BlockPos pos;
+	private final BlockPos pos;
 	
 	public MessageServerShowPreviousMove(BlockPos pos)
 	{
         this.pos = pos;
     }
 	
-	public void serialize(PacketBuffer buf)
+	public void serialize(FriendlyByteBuf buf)
 	{
 		buf.writeBlockPos(pos);
 	}
 	
-	public static MessageServerShowPreviousMove deserialize(PacketBuffer buf)
+	public static MessageServerShowPreviousMove deserialize(FriendlyByteBuf buf)
 	{
 		BlockPos pos = buf.readBlockPos();
 		return new MessageServerShowPreviousMove(pos);
@@ -34,30 +34,22 @@ public class MessageServerShowPreviousMove
 	public static void handle(MessageServerShowPreviousMove message, Supplier<NetworkEvent.Context> ctx)
 	{
 		NetworkEvent.Context context = ctx.get();
-		PlayerEntity player = context.getSender();
-		World world = player.getEntityWorld();
+		Player player = context.getSender();
+		Level level = player.getLevel();
 		BlockPos chessPos = message.pos;
 		
 		if(context.getDirection().getReceptionSide() == LogicalSide.SERVER)
 		{
 			context.enqueueWork(() ->
 			{
-				if(world != null)
+				if(level != null)
 				{
-					TileEntity tileentity = world.getTileEntity(chessPos);
+					BlockEntity blockEntity = level.getBlockEntity(chessPos);
 					// We make sure the TileEntity is a ChessTileEntity
-					if(tileentity instanceof ChessTileEntity)
+					if(blockEntity instanceof ChessTileEntity chessTileEntity)
 			        {
-						ChessTileEntity chessTileEntity = (ChessTileEntity)tileentity;
-						if(chessTileEntity.getShowPreviousMove())
-						{
-							chessTileEntity.setShowPreviousMove(false);
-						}
-						else
-						{
-							chessTileEntity.setShowPreviousMove(true);
-						}
-						world.notifyBlockUpdate(message.pos, world.getBlockState(chessPos), world.getBlockState(chessPos), 2);
+						chessTileEntity.setShowPreviousMove(!chessTileEntity.getShowPreviousMove());
+						level.sendBlockUpdated(message.pos, level.getBlockState(chessPos), level.getBlockState(chessPos), 2);
 			        }
 				}
 			});

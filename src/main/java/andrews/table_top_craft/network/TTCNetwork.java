@@ -9,9 +9,9 @@ import andrews.table_top_craft.network.server.MessageServerShowPreviousMove;
 import andrews.table_top_craft.network.server.MessageServerShowTileInfo;
 import andrews.table_top_craft.network.server.MessageServerUseCustomPlate;
 import andrews.table_top_craft.util.Reference;
-import net.minecraft.util.ResourceLocation;
-import net.minecraftforge.fml.network.NetworkRegistry;
-import net.minecraftforge.fml.network.simple.SimpleChannel;
+import net.minecraft.resources.ResourceLocation;
+import net.minecraftforge.network.NetworkRegistry;
+import net.minecraftforge.network.simple.SimpleChannel;
 
 public class TTCNetwork
 {
@@ -29,9 +29,9 @@ public static final String NETWORK_PROTOCOL = "1";
 	public static void setupMessages()
 	{
 		int id = -1;
-		//Client Messages
+		// Client Messages
 		
-		//Server Messages
+		// Server Messages
 		CHANNEL.messageBuilder(MessageServerNewChessGame.class, id++)
 		.encoder(MessageServerNewChessGame::serialize).decoder(MessageServerNewChessGame::deserialize)
 		.consumer(MessageServerNewChessGame::handle)

@@ -1,12 +1,11 @@
 package andrews.table_top_craft.util.obj.models;
 
-import com.mojang.blaze3d.matrix.MatrixStack;
-
 import andrews.table_top_craft.game_logic.chess.pieces.BasePiece.PieceType;
 import andrews.table_top_craft.util.Reference;
 import andrews.table_top_craft.util.obj.ObjModel;
-import net.minecraft.client.renderer.BufferBuilder;
-import net.minecraft.util.ResourceLocation;
+import com.mojang.blaze3d.vertex.BufferBuilder;
+import com.mojang.blaze3d.vertex.PoseStack;
+import net.minecraft.resources.ResourceLocation;
 import net.minecraftforge.api.distmarker.Dist;
 import net.minecraftforge.api.distmarker.OnlyIn;
 
@@ -39,39 +38,27 @@ public class ChessObjModel
 	
 	/**
 	 * Renders the ObjModel
-	 * @param stack - The MatrixStack
-	 * @param buffer - The IRenderTypeBuffer
-	 * @param pieceType - The Chess Piece Type
+	 * @param stack The MatrixStack
+	 * @param buffer The IRenderTypeBuffer
+	 * @param pieceType The Chess Piece Type
 	 */
-	public void render(MatrixStack stack, BufferBuilder buffer, PieceType pieceType)
+	public void render(PoseStack stack, BufferBuilder buffer, PieceType pieceType)
 	{	
-		stack.push();
+		stack.pushPose();
 		// We scale the Piece and invert the rendering
 		stack.scale(1F, -1F, -1F);
 		stack.scale(0.1F, 0.1F, 0.1F);
 		
 		// We render a Piece depending on the PiceType
-		switch(pieceType)
+		switch (pieceType)
 		{
-		default:
-		case PAWN:
-			PAWN_MODEL.render(stack, buffer);
-			break;
-		case ROOK:
-			ROOK_MODEL.render(stack, buffer);
-			break;
-		case BISHOP:
-			BISHOP_MODEL.render(stack, buffer);
-			break;
-		case KNIGHT:
-			KNIGHT_MODEL.render(stack, buffer);
-			break;
-		case KING:
-			KING_MODEL.render(stack, buffer);
-			break;
-		case QUEEN:
-			QUEEN_MODEL.render(stack, buffer);
+			case PAWN -> PAWN_MODEL.render(stack, buffer);
+			case ROOK -> ROOK_MODEL.render(stack, buffer);
+			case BISHOP -> BISHOP_MODEL.render(stack, buffer);
+			case KNIGHT -> KNIGHT_MODEL.render(stack, buffer);
+			case KING -> KING_MODEL.render(stack, buffer);
+			case QUEEN -> QUEEN_MODEL.render(stack, buffer);
 		}
-		stack.pop();
+		stack.popPose();
 	}
 }

@@ -1,17 +1,15 @@
 package andrews.table_top_craft.screens.chess.buttons.settings;
 
-import com.mojang.blaze3d.matrix.MatrixStack;
 import com.mojang.blaze3d.systems.RenderSystem;
 
 import andrews.table_top_craft.game_logic.chess.board.ChessMoveLog;
 import andrews.table_top_craft.screens.chess.menus.ChessBoardSettingsScreen;
 import andrews.table_top_craft.tile_entities.ChessTileEntity;
 import andrews.table_top_craft.util.Reference;
-import net.minecraft.client.Minecraft;
-import net.minecraft.client.gui.widget.button.Button;
-import net.minecraft.util.ResourceLocation;
-import net.minecraft.util.text.StringTextComponent;
-import net.minecraftforge.fml.client.gui.GuiUtils;
+import com.mojang.blaze3d.vertex.PoseStack;
+import net.minecraft.client.gui.components.Button;
+import net.minecraft.network.chat.TextComponent;
+import net.minecraft.resources.ResourceLocation;
 
 public class ChessMoveLogUpButton extends Button
 {
@@ -25,18 +23,16 @@ public class ChessMoveLogUpButton extends Button
 	
 	public ChessMoveLogUpButton(int xPos, int yPos, ChessBoardSettingsScreen currentScreen, ChessTileEntity tileEntity) 
 	{
-		super(xPos, yPos, buttonWidth, buttonHeight, new StringTextComponent(""), (button) -> { handleButtonPress(); });
+		super(xPos, yPos, buttonWidth, buttonHeight, new TextComponent(""), (button) -> { handleButtonPress(); });
 		screen = currentScreen;
 		if(tileEntity.getMoveLog() != null)
 			moveLog = tileEntity.getMoveLog();
 	}
 	
 	@Override
-	public void renderButton(MatrixStack matrixStack, int mouseX, int mouseY, float partialTicks)
+	public void renderButton(PoseStack poseStack, int mouseX, int mouseY, float partialTicks)
 	{
-		this.isHovered = false;
-		if(mouseX >= x && mouseX < x + width && mouseY >= y && mouseY < y + height || this.isFocused())
-			this.isHovered = true;
+		this.isHovered = mouseX >= x && mouseX < x + width && mouseY >= y && mouseY < y + height || this.isFocused();
 		
 		this.u = 0;
 		if(this.isHovered)
@@ -49,13 +45,14 @@ public class ChessMoveLogUpButton extends Button
 			this.u = 24;
 		}
 		
-		//Renders the Button
-		Minecraft.getInstance().getRenderManager().textureManager.bindTexture(TEXTURE);
-		matrixStack.push();
+		// Renders the Button
+		RenderSystem.setShaderColor(1.0f, 1.0f, 1.0f, 1.0f);
+		RenderSystem.setShaderTexture(0, TEXTURE);
+		poseStack.pushPose();
 		RenderSystem.enableBlend();
-		GuiUtils.drawTexturedModalRect(matrixStack, x, y, u, v, width, height, 0);
+		this.blit(poseStack, x, y, u, v, width, height);
 		RenderSystem.disableBlend();
-		matrixStack.pop();
+		poseStack.popPose();
 	}
 	
 	/**

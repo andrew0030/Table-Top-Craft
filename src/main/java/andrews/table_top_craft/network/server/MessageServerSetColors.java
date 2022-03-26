@@ -3,20 +3,20 @@ package andrews.table_top_craft.network.server;
 import java.util.function.Supplier;
 
 import andrews.table_top_craft.tile_entities.ChessTileEntity;
-import net.minecraft.entity.player.PlayerEntity;
-import net.minecraft.network.PacketBuffer;
-import net.minecraft.tileentity.TileEntity;
-import net.minecraft.util.math.BlockPos;
-import net.minecraft.world.World;
+import net.minecraft.core.BlockPos;
+import net.minecraft.network.FriendlyByteBuf;
+import net.minecraft.world.entity.player.Player;
+import net.minecraft.world.level.Level;
+import net.minecraft.world.level.block.entity.BlockEntity;
 import net.minecraftforge.fml.LogicalSide;
-import net.minecraftforge.fml.network.NetworkEvent;
+import net.minecraftforge.network.NetworkEvent;
 
 public class MessageServerSetColors
 {
-	private int colorType;
-	private BlockPos pos;
-	private String color;
-	private String color2;
+	private final int colorType;
+	private final BlockPos pos;
+	private final String color;
+	private final String color2;
 	
 	public MessageServerSetColors(int colorType, BlockPos pos, String color, String color2)
 	{
@@ -26,28 +26,28 @@ public class MessageServerSetColors
         this.color2 = color2;
     }
 	
-	public void serialize(PacketBuffer buf)
+	public void serialize(FriendlyByteBuf buf)
 	{
 		buf.writeInt(colorType);
 		buf.writeBlockPos(pos);
-		buf.writeString(color);
-		buf.writeString(color2);
+		buf.writeUtf(color);
+		buf.writeUtf(color2);
 	}
 	
-	public static MessageServerSetColors deserialize(PacketBuffer buf)
+	public static MessageServerSetColors deserialize(FriendlyByteBuf buf)
 	{
 		int colorType = buf.readInt();
 		BlockPos pos = buf.readBlockPos();
-		String color = buf.readString(32767);
-		String color2 = buf.readString(32767);
+		String color = buf.readUtf(32767);
+		String color2 = buf.readUtf(32767);
 		return new MessageServerSetColors(colorType, pos, color, color2);
 	}
 	
 	public static void handle(MessageServerSetColors message, Supplier<NetworkEvent.Context> ctx)
 	{
 		NetworkEvent.Context context = ctx.get();
-		PlayerEntity player = context.getSender();
-		World world = player.getEntityWorld();
+		Player player = context.getSender();
+		Level level = player.getLevel();
 		BlockPos chessPos = message.pos;
 		String color = message.color;
 		String color2 = message.color2;
@@ -56,25 +56,26 @@ public class MessageServerSetColors
 		{
 			context.enqueueWork(() ->
 			{
-				if(world != null)
+				if(level != null)
 				{
-					TileEntity tileentity = world.getTileEntity(chessPos);
+					BlockEntity blockEntity = level.getBlockEntity(chessPos);
 					// We make sure the TileEntity is a ChessTileEntity
-					if(tileentity instanceof ChessTileEntity)
+					if(blockEntity instanceof ChessTileEntity chessTileEntity)
 			        {
-						ChessTileEntity chessTileEntity = (ChessTileEntity)tileentity;
-						switch(message.colorType)
+						switch (message.colorType)
 						{
-						default:
-						case 0:
-							chessTileEntity.setWhiteTilesColor(color);
-							chessTileEntity.setBlackTilesColor(color2);
-							break;
-						case 1:
-							chessTileEntity.setWhitePiecesColor(color);
-							chessTileEntity.setBlackPiecesColor(color2);
+							case 0 ->
+							{
+								chessTileEntity.setWhiteTilesColor(color);
+								chessTileEntity.setBlackTilesColor(color2);
+							}
+							case 1 ->
+							{
+								chessTileEntity.setWhitePiecesColor(color);
+								chessTileEntity.setBlackPiecesColor(color2);
+							}
 						}
-						world.notifyBlockUpdate(message.pos, world.getBlockState(chessPos), world.getBlockState(chessPos), 2);
+						level.sendBlockUpdated(message.pos, level.getBlockState(chessPos), level.getBlockState(chessPos), 2);
 			        }
 				}
 			});

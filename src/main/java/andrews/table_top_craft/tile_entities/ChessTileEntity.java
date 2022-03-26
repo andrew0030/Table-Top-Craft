@@ -24,21 +24,24 @@ import andrews.table_top_craft.game_logic.chess.pieces.QueenPiece;
 import andrews.table_top_craft.game_logic.chess.pieces.RookPiece;
 import andrews.table_top_craft.registry.TTCTileEntities;
 import andrews.table_top_craft.util.NBTColorSaving;
-import net.minecraft.block.BlockState;
-import net.minecraft.nbt.CompoundNBT;
-import net.minecraft.nbt.ListNBT;
-import net.minecraft.network.NetworkManager;
-import net.minecraft.network.play.server.SUpdateTileEntityPacket;
-import net.minecraft.tileentity.TileEntity;
-import net.minecraftforge.common.util.Constants.NBT;
+import net.minecraft.core.BlockPos;
+import net.minecraft.nbt.CompoundTag;
+import net.minecraft.nbt.ListTag;
+import net.minecraft.nbt.Tag;
+import net.minecraft.network.Connection;
+import net.minecraft.network.protocol.Packet;
+import net.minecraft.network.protocol.game.ClientGamePacketListener;
+import net.minecraft.network.protocol.game.ClientboundBlockEntityDataPacket;
+import net.minecraft.world.level.block.entity.BlockEntity;
+import net.minecraft.world.level.block.state.BlockState;
 
-public class ChessTileEntity extends TileEntity
+public class ChessTileEntity extends BlockEntity
 {
 	private Board board;
 	private BaseChessTile sourceTile;
 	private BaseChessTile destinationTile;
 	private BasePiece humanMovedPiece;
-	private ChessMoveLog moveLog;
+	private final ChessMoveLog moveLog;
 	
 	private boolean showTileInfo;
 	private boolean showAvailableMoves;
@@ -56,69 +59,76 @@ public class ChessTileEntity extends TileEntity
 	private String previousMoveColor;
 	private String castleMoveColor;
 
-	public ChessTileEntity()
+	public ChessTileEntity(BlockPos pos, BlockState state)
 	{
-		super(TTCTileEntities.CHESS.get());
+		super(TTCTileEntities.CHESS.get(), pos, state);
 		moveLog = new ChessMoveLog();
 	}
-	
-	//Used to synchronize the TileEntity with the client onBlockUpdate
+
+	//TODO remove if not needed
+//	public ChessTileEntity(BlockEntityType<?> blockEntityType, BlockPos pos, BlockState state)
+//	{
+//		super(blockEntityType, pos, state);
+//		moveLog = new ChessMoveLog();
+//	}
+
+	// Used to synchronize the BlockEntity with the client when the chunk it is in is loaded
 	@Override
-	public SUpdateTileEntityPacket getUpdatePacket()
+	public CompoundTag getUpdateTag()
 	{
-		CompoundNBT compound = new CompoundNBT();
+		CompoundTag compound = new CompoundTag();
 		this.saveToNBT(compound);
-		return new SUpdateTileEntityPacket(this.getPos(), -1, compound);
+		return compound;
 	}
-	
-	//Used to synchronize the TileEntity with the client onBlockUpdate
+
+	// Used to synchronize the BlockEntity with the client when the chunk it is in is loaded
 	@Override
-	public void onDataPacket(NetworkManager net, SUpdateTileEntityPacket pkt)
+	public void handleUpdateTag(CompoundTag compound)
 	{
-		CompoundNBT compound = pkt.getNbtCompound();
-	    this.loadFromNBT(compound);
+		this.loadFromNBT(compound);
 	}
-	
-	//Used to synchronize the TileEntity with the client when the chunk it is in is loaded
+
+	// Used to synchronize the BlockEntity with the client when the chunk it is in is loaded
 	@Override
-	public CompoundNBT getUpdateTag()
+	public Packet<ClientGamePacketListener> getUpdatePacket()
 	{
-		return this.write(new CompoundNBT());
+		// Will get tag from #getUpdateTag
+		return ClientboundBlockEntityDataPacket.create(this);
 	}
-	
-	//Used to synchronize the TileEntity with the client when the chunk it is in is loaded
+
+	// Used to synchronize the BlockEntity with the client onBlockUpdate
 	@Override
-	public void handleUpdateTag(BlockState state, CompoundNBT compound)
+	public void onDataPacket(Connection net, ClientboundBlockEntityDataPacket pkt)
 	{
-		this.read(state, compound);
-	}
-	
-	@Override
-	public CompoundNBT write(CompoundNBT compound)
-	{
-		super.write(compound);
-		return this.saveToNBT(compound);
+		this.loadFromNBT(pkt.getTag());
 	}
 	
 	@Override
-	public void read(BlockState state, CompoundNBT compound)
+	public void saveAdditional(CompoundTag compound)
 	{
-		super.read(state, compound);
+		super.saveAdditional(compound);
+		this.saveToNBT(compound);
+	}
+	
+	@Override
+	public void load(CompoundTag compound)
+	{
+		super.load(compound);
 		this.loadFromNBT(compound);
 	}
 	
 	/**
-	 * Used to load data from the NBT
+	 * Used to save data to the NBT
 	 */
-	private CompoundNBT saveToNBT(CompoundNBT compound)
+	private void saveToNBT(CompoundTag compound)
 	{
-		CompoundNBT chessNBT = new CompoundNBT();
+		CompoundTag chessNBT = new CompoundTag();
 		if(this.board != null)
 		{
 			// We save the Board FEN
 			chessNBT.putString("BoardFEN", FenUtil.createFENFromGame(this.board));
 			
-			// We also save a List of all piecea that are on their first move as this information is not saved otherwise
+			// We also save a List of all pieces that are on their first move as this information is not saved otherwise
 			final StringBuilder builder = new StringBuilder();
 			for(int i = 0; i < BoardUtils.NUM_TILES; i++)
 			{
@@ -126,7 +136,7 @@ public class ChessTileEntity extends TileEntity
 				{
 					if(this.board.getTile(i).getPiece().isFirstMove())
 					{
-						builder.append(i + "/");
+						builder.append(i).append("/");
 					}
 				}
 			}
@@ -141,19 +151,19 @@ public class ChessTileEntity extends TileEntity
 		
 		if(this.moveLog != null)
 		{
-			ListNBT chessMoves = new ListNBT();
+			ListTag chessMoves = new ListTag();
 			for(int i = 0; i < this.moveLog.size(); i++)
 			{
-				CompoundNBT chessMove = new CompoundNBT();
+				CompoundTag chessMove = new CompoundTag();
 				chessMove.putString("Move" + (i + 1), moveLog.getMoves().get(i).saveToNBT());
 				chessMoves.add(chessMove);
 			}
 			chessNBT.put("MoveLog", chessMoves);
 		}
-		chessNBT.putInt("ShowTileInfo", this.showTileInfo == false ? 0 : 1);
-		chessNBT.putInt("ShowAvailableMoves", this.showAvailableMoves == false ? 0 : 1);
-		chessNBT.putInt("ShowPreviousMove", this.showPreviousMove == false ? 0 : 1);
-		chessNBT.putInt("UseCustomPlate", this.useCustomPlate == false ? 0 : 1);
+		chessNBT.putInt("ShowTileInfo", !this.showTileInfo ? 0 : 1);
+		chessNBT.putInt("ShowAvailableMoves", !this.showAvailableMoves ? 0 : 1);
+		chessNBT.putInt("ShowPreviousMove", !this.showPreviousMove ? 0 : 1);
+		chessNBT.putInt("UseCustomPlate", !this.useCustomPlate ? 0 : 1);
 		chessNBT.putString("TileInfoColor", getTileInfoColor());
 		chessNBT.putString("WhiteTilesColor", getWhiteTilesColor());
 		chessNBT.putString("BlackTilesColor", getBlackTilesColor());
@@ -169,31 +179,29 @@ public class ChessTileEntity extends TileEntity
 		if(this.humanMovedPiece != null)
 			chessNBT.putInt("HumanMovedPiece", this.getHumanMovedPiece().getPiecePosition());
 		compound.put("ChessValues", chessNBT);
-		return compound;
 	}
 	
 	/**
 	 * Used to load data from the NBT
 	 */
-	private void loadFromNBT(CompoundNBT compound)
+	private void loadFromNBT(CompoundTag compound)
 	{
-		CompoundNBT chessNBT = compound.getCompound("ChessValues");
-		if(chessNBT.contains("BoardFEN", NBT.TAG_STRING) && chessNBT.contains("FirstMoves", NBT.TAG_STRING))
+		CompoundTag chessNBT = compound.getCompound("ChessValues");
+		if(chessNBT.contains("BoardFEN", Tag.TAG_STRING) && chessNBT.contains("FirstMoves", Tag.TAG_STRING))
 		{
 			boolean isWhiteCastled = chessNBT.getBoolean("IsWhiteCastled");
 			boolean isBlackCastled = chessNBT.getBoolean("IsBlackCastled");
 			this.board = FenUtil.createGameFromFEN(chessNBT.getString("BoardFEN"), chessNBT.getString("FirstMoves"), isWhiteCastled, isBlackCastled);
 		}
-		
-		
+
 		if(chessNBT.contains("MoveLog"))
 		{
-			ListNBT listNBT = chessNBT.getList("MoveLog", NBT.TAG_COMPOUND);
+			ListTag listNBT = chessNBT.getList("MoveLog", Tag.TAG_COMPOUND);
 			moveLog.clear();
 			for(int i = 0; i < listNBT.size(); i++)
 			{
-				CompoundNBT compoundnbt = listNBT.getCompound(i);
-				String move = compoundnbt.getString("Move" + (i + 1));
+				CompoundTag compoundTag = listNBT.getCompound(i);
+				String move = compoundTag.getString("Move" + (i + 1));
 				String[] moveInfo = move.split("/");
 				PieceColor pieceColor = PieceColor.WHITE;
 				if(moveInfo[1].equals("B"))
@@ -232,59 +240,52 @@ public class ChessTileEntity extends TileEntity
 				}
 			}
 		}
-		if(chessNBT.contains("ShowTileInfo", NBT.TAG_INT))
-			this.showTileInfo = chessNBT.getInt("ShowTileInfo") == 0 ? false : true;
-		if(chessNBT.contains("ShowAvailableMoves", NBT.TAG_INT))
-			this.showAvailableMoves = chessNBT.getInt("ShowAvailableMoves") == 0 ? false : true;
-		if(chessNBT.contains("ShowPreviousMove", NBT.TAG_INT))
-			this.showPreviousMove = chessNBT.getInt("ShowPreviousMove") == 0 ? false : true;
-		if(chessNBT.contains("TileInfoColor", NBT.TAG_STRING))
+		if(chessNBT.contains("ShowTileInfo", Tag.TAG_INT))
+			this.showTileInfo = chessNBT.getInt("ShowTileInfo") != 0;
+		if(chessNBT.contains("ShowAvailableMoves", Tag.TAG_INT))
+			this.showAvailableMoves = chessNBT.getInt("ShowAvailableMoves") != 0;
+		if(chessNBT.contains("ShowPreviousMove", Tag.TAG_INT))
+			this.showPreviousMove = chessNBT.getInt("ShowPreviousMove") != 0;
+		if(chessNBT.contains("TileInfoColor", Tag.TAG_STRING))
 			this.tileInfoColor = chessNBT.getString("TileInfoColor");
-		if(chessNBT.contains("UseCustomPlate", NBT.TAG_INT))
-			this.useCustomPlate = chessNBT.getInt("UseCustomPlate") == 0 ? false : true;
-		if(chessNBT.contains("WhiteTilesColor", NBT.TAG_STRING))
+		if(chessNBT.contains("UseCustomPlate", Tag.TAG_INT))
+			this.useCustomPlate = chessNBT.getInt("UseCustomPlate") != 0;
+		if(chessNBT.contains("WhiteTilesColor", Tag.TAG_STRING))
 			this.whiteTilesColor = chessNBT.getString("WhiteTilesColor");
-		if(chessNBT.contains("BlackTilesColor", NBT.TAG_STRING))
+		if(chessNBT.contains("BlackTilesColor", Tag.TAG_STRING))
 			this.blackTilesColor = chessNBT.getString("BlackTilesColor");
-		if(chessNBT.contains("WhitePiecesColor", NBT.TAG_STRING))
+		if(chessNBT.contains("WhitePiecesColor", Tag.TAG_STRING))
 			this.whitePiecesColor = chessNBT.getString("WhitePiecesColor");
-		if(chessNBT.contains("BlackPiecesColor", NBT.TAG_STRING))
+		if(chessNBT.contains("BlackPiecesColor", Tag.TAG_STRING))
 			this.blackPiecesColor = chessNBT.getString("BlackPiecesColor");
-		if(chessNBT.contains("LegalMoveColor", NBT.TAG_STRING))
+		if(chessNBT.contains("LegalMoveColor", Tag.TAG_STRING))
 			this.legalMoveColor = chessNBT.getString("LegalMoveColor");
-		if(chessNBT.contains("InvalidMoveColor", NBT.TAG_STRING))
+		if(chessNBT.contains("InvalidMoveColor", Tag.TAG_STRING))
 			this.invalidMoveColor = chessNBT.getString("InvalidMoveColor");
-		if(chessNBT.contains("AttackMoveColor", NBT.TAG_STRING))
+		if(chessNBT.contains("AttackMoveColor", Tag.TAG_STRING))
 			this.attackMoveColor = chessNBT.getString("AttackMoveColor");
-		if(chessNBT.contains("PreviousMoveColor", NBT.TAG_STRING))
+		if(chessNBT.contains("PreviousMoveColor", Tag.TAG_STRING))
 			this.previousMoveColor = chessNBT.getString("PreviousMoveColor");
-		if(chessNBT.contains("CastleMoveColor", NBT.TAG_STRING))
+		if(chessNBT.contains("CastleMoveColor", Tag.TAG_STRING))
 			this.castleMoveColor = chessNBT.getString("CastleMoveColor");
-		if(chessNBT.contains("SourceTile", NBT.TAG_INT))
+		if(chessNBT.contains("SourceTile", Tag.TAG_INT))
 			this.sourceTile = getBoard().getTile(chessNBT.getInt("SourceTile"));
-		if(chessNBT.contains("HumanMovedPiece", NBT.TAG_INT))
+		if(chessNBT.contains("HumanMovedPiece", Tag.TAG_INT))
 			this.humanMovedPiece = getBoard().getTile(chessNBT.getInt("HumanMovedPiece")).getPiece();
 	}
 	
 	private BasePiece getPieceFromType(String pieceType, PieceColor pieceColor, int piecePosition)
 	{
-		switch(pieceType)
+		return switch (pieceType)
 		{
-		case "P":
-			return new PawnPiece(getOppositeColor(pieceColor), piecePosition);
-		case "R":
-			return new RookPiece(getOppositeColor(pieceColor), piecePosition);
-		case "N":
-			return new KnightPiece(getOppositeColor(pieceColor), piecePosition);
-		case "B":
-			return new BishopPiece(getOppositeColor(pieceColor), piecePosition);
-		case "Q":
-			return new QueenPiece(getOppositeColor(pieceColor), piecePosition);
-		case "K":
-			return new KingPiece(getOppositeColor(pieceColor), piecePosition, true, true);
-		default:
-			return null;
-		}
+			case "P" -> new PawnPiece(getOppositeColor(pieceColor), piecePosition);
+			case "R" -> new RookPiece(getOppositeColor(pieceColor), piecePosition);
+			case "N" -> new KnightPiece(getOppositeColor(pieceColor), piecePosition);
+			case "B" -> new BishopPiece(getOppositeColor(pieceColor), piecePosition);
+			case "Q" -> new QueenPiece(getOppositeColor(pieceColor), piecePosition);
+			case "K" -> new KingPiece(getOppositeColor(pieceColor), piecePosition, true, true);
+			default -> null;
+		};
 	}
 	
 	private PieceColor getOppositeColor(PieceColor color)
@@ -440,7 +441,7 @@ public class ChessTileEntity extends TileEntity
 	public void setBoard(Board board)
 	{
 		this.board = board;
-		markDirty();
+		setChanged();//TODO markdirty replacement?
 	}
 	
 	public Board getBoard()

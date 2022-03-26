@@ -57,8 +57,7 @@ public class NBTColorSaving
 		String[] values = color.split("/");
 		try
 		{
-			int red = Integer.parseInt(values[0]);
-			return red;
+			return Integer.parseInt(values[0]);
 		}
 		catch(Exception e)
 		{
@@ -82,8 +81,7 @@ public class NBTColorSaving
 		String[] values = color.split("/");
 		try
 		{
-			int green = Integer.parseInt(values[1]);
-			return green;
+			return Integer.parseInt(values[1]);
 		}
 		catch(Exception e)
 		{
@@ -97,8 +95,7 @@ public class NBTColorSaving
 		String[] values = color.split("/");
 		try
 		{
-			int blue = Integer.parseInt(values[2]);
-			return blue;
+			return Integer.parseInt(values[2]);
 		}
 		catch(Exception e)
 		{
@@ -112,8 +109,7 @@ public class NBTColorSaving
 		String[] values = color.split("/");
 		try
 		{
-			int alpha = Integer.parseInt(values[3]);
-			return alpha;
+			return Integer.parseInt(values[3]);
 		}
 		catch(Exception e)
 		{

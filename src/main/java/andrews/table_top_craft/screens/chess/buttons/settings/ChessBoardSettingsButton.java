@@ -2,25 +2,24 @@ package andrews.table_top_craft.screens.chess.buttons.settings;
 
 import java.util.Arrays;
 
-import com.mojang.blaze3d.matrix.MatrixStack;
 import com.mojang.blaze3d.systems.RenderSystem;
 
 import andrews.table_top_craft.screens.chess.menus.ChessBoardSettingsScreen;
 import andrews.table_top_craft.tile_entities.ChessTileEntity;
 import andrews.table_top_craft.util.Reference;
+import com.mojang.blaze3d.vertex.PoseStack;
 import net.minecraft.client.Minecraft;
-import net.minecraft.client.gui.FontRenderer;
-import net.minecraft.client.gui.widget.button.Button;
-import net.minecraft.util.ResourceLocation;
-import net.minecraft.util.text.StringTextComponent;
-import net.minecraft.util.text.TranslationTextComponent;
-import net.minecraftforge.fml.client.gui.GuiUtils;
+import net.minecraft.client.gui.Font;
+import net.minecraft.client.gui.components.Button;
+import net.minecraft.network.chat.TextComponent;
+import net.minecraft.network.chat.TranslatableComponent;
+import net.minecraft.resources.ResourceLocation;
 
 public class ChessBoardSettingsButton extends Button
 {
 	private static final ResourceLocation TEXTURE = new ResourceLocation(Reference.MODID + ":textures/gui/buttons/chess_menu_buttons.png");
-	private final TranslationTextComponent buttonText = new TranslationTextComponent("gui.table_top_craft.chess.button.settings");
-	private final FontRenderer fontRenderer;
+	private final TranslatableComponent buttonText = new TranslatableComponent("gui.table_top_craft.chess.button.settings");
+	private final Font fontRenderer;
 	private static ChessTileEntity chessTileEntity;
 	private static final int buttonWidth = 24;
 	private static final int buttonHeight = 24;
@@ -29,32 +28,29 @@ public class ChessBoardSettingsButton extends Button
 	
 	public ChessBoardSettingsButton(ChessTileEntity tileEntity, int xPos, int yPos) 
 	{
-		super(xPos, yPos, buttonWidth, buttonHeight, new StringTextComponent(""), (button) -> { handleButtonPress(); });
-		this.fontRenderer = Minecraft.getInstance().fontRenderer;
+		super(xPos, yPos, buttonWidth, buttonHeight, new TextComponent(""), (button) -> { handleButtonPress(); });
+		this.fontRenderer = Minecraft.getInstance().font;
 		chessTileEntity = tileEntity;
 	}
 	
 	@Override
-	public void renderButton(MatrixStack matrixStack, int mouseX, int mouseY, float partialTicks)
+	public void renderButton(PoseStack poseStack, int mouseX, int mouseY, float partialTicks)
 	{
-		this.active = true;
-		if(Minecraft.getInstance().currentScreen instanceof ChessBoardSettingsScreen)
-			this.active = false;
+		this.active = !(Minecraft.getInstance().screen instanceof ChessBoardSettingsScreen);
+
+		this.isHovered = mouseX >= x && mouseX < x + width && mouseY >= y && mouseY < y + height || this.isFocused();
 		
-		this.isHovered = false;
-		if(mouseX >= x && mouseX < x + width && mouseY >= y && mouseY < y + height || this.isFocused())
-			this.isHovered = true;
-		
-		//Renders the Button
-		Minecraft.getInstance().getRenderManager().textureManager.bindTexture(TEXTURE);
-		matrixStack.push();
+		// Renders the Button
+		RenderSystem.setShaderColor(1.0f, 1.0f, 1.0f, 1.0f);
+		RenderSystem.setShaderTexture(0, TEXTURE);
+		poseStack.pushPose();
 		RenderSystem.enableBlend();
-		GuiUtils.drawTexturedModalRect(matrixStack, x, y, u, v, width, height, 0);
+		this.blit(poseStack, x, y, u, v, width, height);
 		RenderSystem.disableBlend();
-		matrixStack.pop();
-		//This is used to render a tooltip
+		poseStack.popPose();
+		// This is used to render a tooltip
 		if(isHovered)
-			Minecraft.getInstance().currentScreen.renderToolTip(matrixStack, Arrays.asList(this.buttonText.func_241878_f()), x - (15 + this.fontRenderer.getStringWidth(this.buttonText.getString())), y + 20, this.fontRenderer);
+			Minecraft.getInstance().screen.renderTooltip(poseStack, Arrays.asList(this.buttonText.getVisualOrderText()), x - (15 + this.fontRenderer.width(this.buttonText.getString())), y + 20, this.fontRenderer);
 	}
 	
 	/**
@@ -62,6 +58,6 @@ public class ChessBoardSettingsButton extends Button
 	 */
 	private static void handleButtonPress()
 	{
-		Minecraft.getInstance().displayGuiScreen(new ChessBoardSettingsScreen(chessTileEntity));
+		Minecraft.getInstance().setScreen(new ChessBoardSettingsScreen(chessTileEntity));
 	}
 }

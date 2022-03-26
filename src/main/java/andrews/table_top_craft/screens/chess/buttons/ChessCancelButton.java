@@ -1,28 +1,27 @@
 package andrews.table_top_craft.screens.chess.buttons;
 
-import com.mojang.blaze3d.matrix.MatrixStack;
 import com.mojang.blaze3d.systems.RenderSystem;
 
 import andrews.table_top_craft.screens.chess.menus.ChessBoardSettingsScreen;
 import andrews.table_top_craft.screens.chess.menus.ChessColorSettingsScreen;
 import andrews.table_top_craft.tile_entities.ChessTileEntity;
 import andrews.table_top_craft.util.Reference;
+import com.mojang.blaze3d.vertex.PoseStack;
 import net.minecraft.client.Minecraft;
-import net.minecraft.client.gui.FontRenderer;
-import net.minecraft.client.gui.widget.button.Button;
-import net.minecraft.util.ResourceLocation;
-import net.minecraft.util.text.StringTextComponent;
-import net.minecraft.util.text.TranslationTextComponent;
-import net.minecraftforge.fml.client.gui.GuiUtils;
+import net.minecraft.client.gui.Font;
+import net.minecraft.client.gui.components.Button;
+import net.minecraft.network.chat.TextComponent;
+import net.minecraft.network.chat.TranslatableComponent;
+import net.minecraft.resources.ResourceLocation;
 
 public class ChessCancelButton extends Button
 {
 	private static final ResourceLocation TEXTURE = new ResourceLocation(Reference.MODID + ":textures/gui/buttons/chess_menu_buttons.png");
-	private final String buttonCancelText = new TranslationTextComponent("gui.table_top_craft.chess.cancel").getString();
-	private final String buttonBackText = new TranslationTextComponent("gui.table_top_craft.chess.back").getString();
+	private final String buttonCancelText = new TranslatableComponent("gui.table_top_craft.chess.cancel").getString();
+	private final String buttonBackText = new TranslatableComponent("gui.table_top_craft.chess.back").getString();
 	private static ChessCancelMenuTarget targetScreen;
 	private final ChessCancelButtonText targetText;
-	private final FontRenderer fontRenderer;
+	private final Font fontRenderer;
 	private static ChessTileEntity chessTileEntity;
 	private static final int buttonWidth = 82;
 	private static final int buttonHeight = 13;
@@ -31,39 +30,34 @@ public class ChessCancelButton extends Button
 	
 	public ChessCancelButton(ChessTileEntity tileEntity, ChessCancelMenuTarget target, ChessCancelButtonText targetText, int xPos, int yPos) 
 	{
-		super(xPos, yPos, buttonWidth, buttonHeight, new StringTextComponent(""), (button) -> { handleButtonPress(); });
-		this.fontRenderer = Minecraft.getInstance().fontRenderer;
+		super(xPos, yPos, buttonWidth, buttonHeight, new TextComponent(""), (button) -> { handleButtonPress(); });
+		this.fontRenderer = Minecraft.getInstance().font;
 		chessTileEntity = tileEntity;
 		targetScreen = target;
 		this.targetText = targetText;
 	}
 	
 	@Override
-	public void renderButton(MatrixStack matrixStack, int mouseX, int mouseY, float partialTicks)
-	{	
-		this.isHovered = false;
-		if(mouseX >= x && mouseX < x + width && mouseY >= y && mouseY < y + height || this.isFocused())
-			this.isHovered = true;
+	public void renderButton(PoseStack poseStack, int mouseX, int mouseY, float partialTicks)
+	{
+		this.isHovered = mouseX >= x && mouseX < x + width && mouseY >= y && mouseY < y + height || this.isFocused();
 		
 		this.u = 0;
 		if(this.isHovered)
 			this.u = 82;
 		
-		//Renders the Button
-		Minecraft.getInstance().getRenderManager().textureManager.bindTexture(TEXTURE);
-		matrixStack.push();
+		// Renders the Button
+		RenderSystem.setShaderColor(1.0f, 1.0f, 1.0f, 1.0f);
+		RenderSystem.setShaderTexture(0, TEXTURE);
+		poseStack.pushPose();
 		RenderSystem.enableBlend();
-		GuiUtils.drawTexturedModalRect(matrixStack, x, y, u, v, width, height, 0);
+		this.blit(poseStack, x, y, u, v, width, height);
 		RenderSystem.disableBlend();
-		matrixStack.pop();
-		switch(this.targetText)
+		poseStack.popPose();
+		switch (this.targetText)
 		{
-		default:
-		case CANCEL:
-			this.fontRenderer.drawString(matrixStack, this.buttonCancelText, x + ((this.width / 2) - (this.fontRenderer.getStringWidth(this.buttonCancelText) / 2)), y + 3, 0x000000);
-			break;
-		case BACK:
-			this.fontRenderer.drawString(matrixStack, this.buttonBackText, x + ((this.width / 2) - (this.fontRenderer.getStringWidth(this.buttonBackText) / 2)), y + 3, 0x000000);	
+			case CANCEL -> this.fontRenderer.draw(poseStack, this.buttonCancelText, x + ((this.width / 2) - (this.fontRenderer.width(this.buttonCancelText) / 2)), y + 3, 0x000000);
+			case BACK -> this.fontRenderer.draw(poseStack, this.buttonBackText, x + ((this.width / 2) - (this.fontRenderer.width(this.buttonBackText) / 2)), y + 3, 0x000000);
 		}
 	}
 	
@@ -72,14 +66,10 @@ public class ChessCancelButton extends Button
 	 */
 	private static void handleButtonPress()
 	{
-		switch(targetScreen)
+		switch (targetScreen)
 		{
-		default:
-		case CHESS_BOARD_SETTINGS:
-			Minecraft.getInstance().displayGuiScreen(new ChessBoardSettingsScreen(chessTileEntity));
-			break;
-		case CHESS_BOARD_COLORS:
-			Minecraft.getInstance().displayGuiScreen(new ChessColorSettingsScreen(chessTileEntity));
+			case CHESS_BOARD_SETTINGS -> Minecraft.getInstance().setScreen(new ChessBoardSettingsScreen(chessTileEntity));
+			case CHESS_BOARD_COLORS -> Minecraft.getInstance().setScreen(new ChessColorSettingsScreen(chessTileEntity));
 		}
 	}
 	

@@ -5,7 +5,7 @@ import andrews.table_top_craft.game_logic.chess.board.moves.BaseMove;
 import andrews.table_top_craft.game_logic.chess.pieces.BasePiece;
 import andrews.table_top_craft.game_logic.chess.pieces.BasePiece.PieceType;
 import andrews.table_top_craft.game_logic.chess.player.BaseChessPlayer;
-import net.minecraft.util.text.TranslationTextComponent;
+import net.minecraft.network.chat.TranslatableComponent;
 
 public final class StandardBoardEvaluator implements BoardEvaluator
 {
@@ -30,21 +30,21 @@ public final class StandardBoardEvaluator implements BoardEvaluator
 	public String evaluationDetails(final Board board, final int depth)
 	{
 		// White Team
-		String whiteMobility = new TranslationTextComponent("gui.table_top_craft.chess.evaluation.white.mobility", mobility(board.getWhiteChessPlayer())).getString();
-		String whiteKingThreats = new TranslationTextComponent("gui.table_top_craft.chess.evaluation.white.king_threats", kingThreats(board.getWhiteChessPlayer(), depth)).getString();
-		String whitePossibleAttacks = new TranslationTextComponent("gui.table_top_craft.chess.evaluation.white.possible_attacks", attacks(board.getWhiteChessPlayer())).getString();
-		String whiteCastled = new TranslationTextComponent("gui.table_top_craft.chess.evaluation.white.castled", castle(board.getWhiteChessPlayer())).getString();
-		String whitePieceValue = new TranslationTextComponent("gui.table_top_craft.chess.evaluation.white.piece_value", pieceEvaluations(board.getWhiteChessPlayer())).getString();
-		String whitePawnStructure = new TranslationTextComponent("gui.table_top_craft.chess.evaluation.white.pawn_structure", pawnStructure(board.getWhiteChessPlayer())).getString();
+		String whiteMobility = new TranslatableComponent("gui.table_top_craft.chess.evaluation.white.mobility", mobility(board.getWhiteChessPlayer())).getString();
+		String whiteKingThreats = new TranslatableComponent("gui.table_top_craft.chess.evaluation.white.king_threats", kingThreats(board.getWhiteChessPlayer(), depth)).getString();
+		String whitePossibleAttacks = new TranslatableComponent("gui.table_top_craft.chess.evaluation.white.possible_attacks", attacks(board.getWhiteChessPlayer())).getString();
+		String whiteCastled = new TranslatableComponent("gui.table_top_craft.chess.evaluation.white.castled", castle(board.getWhiteChessPlayer())).getString();
+		String whitePieceValue = new TranslatableComponent("gui.table_top_craft.chess.evaluation.white.piece_value", pieceEvaluations(board.getWhiteChessPlayer())).getString();
+		String whitePawnStructure = new TranslatableComponent("gui.table_top_craft.chess.evaluation.white.pawn_structure", pawnStructure(board.getWhiteChessPlayer())).getString();
 		// Black Team
-		String blackMobility = new TranslationTextComponent("gui.table_top_craft.chess.evaluation.black.mobility", mobility(board.getBlackChessPlayer())).getString();
-		String blackKingThreats = new TranslationTextComponent("gui.table_top_craft.chess.evaluation.black.king_threats", kingThreats(board.getBlackChessPlayer(), depth)).getString();
-		String blackPossibleAttacks = new TranslationTextComponent("gui.table_top_craft.chess.evaluation.black.possible_attacks", attacks(board.getBlackChessPlayer())).getString();
-		String blackCastled = new TranslationTextComponent("gui.table_top_craft.chess.evaluation.black.castled", castle(board.getBlackChessPlayer())).getString();
-		String blackPieceValue = new TranslationTextComponent("gui.table_top_craft.chess.evaluation.black.piece_value", pieceEvaluations(board.getBlackChessPlayer())).getString();
-		String blackPawnStructure = new TranslationTextComponent("gui.table_top_craft.chess.evaluation.black.pawn_structure", pawnStructure(board.getBlackChessPlayer())).getString();
+		String blackMobility = new TranslatableComponent("gui.table_top_craft.chess.evaluation.black.mobility", mobility(board.getBlackChessPlayer())).getString();
+		String blackKingThreats = new TranslatableComponent("gui.table_top_craft.chess.evaluation.black.king_threats", kingThreats(board.getBlackChessPlayer(), depth)).getString();
+		String blackPossibleAttacks = new TranslatableComponent("gui.table_top_craft.chess.evaluation.black.possible_attacks", attacks(board.getBlackChessPlayer())).getString();
+		String blackCastled = new TranslatableComponent("gui.table_top_craft.chess.evaluation.black.castled", castle(board.getBlackChessPlayer())).getString();
+		String blackPieceValue = new TranslatableComponent("gui.table_top_craft.chess.evaluation.black.piece_value", pieceEvaluations(board.getBlackChessPlayer())).getString();
+		String blackPawnStructure = new TranslatableComponent("gui.table_top_craft.chess.evaluation.black.pawn_structure", pawnStructure(board.getBlackChessPlayer())).getString();
 		// Final Score
-		String finalScore = new TranslationTextComponent("gui.table_top_craft.chess.evaluation.final_score", evaluate(board, depth)).getString();
+		String finalScore = new TranslatableComponent("gui.table_top_craft.chess.evaluation.final_score", evaluate(board, depth)).getString();
         return
         	whiteMobility + "\n" +
         	whiteKingThreats + "\n" +

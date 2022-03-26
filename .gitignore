@@ -20,4 +20,6 @@ build
 # other
 eclipse
 run
-SetupWorkspace.bat
+
+# Files from Forge MDK
+forge*changelog.txt

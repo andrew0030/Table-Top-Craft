@@ -7,19 +7,24 @@ import java.util.Collections;
 import java.util.Comparator;
 import java.util.List;
 
+import andrews.table_top_craft.util.obj.models.ChessObjModel;
 import com.mojang.blaze3d.platform.NativeImage;
+import com.mojang.blaze3d.shaders.Uniform;
 import com.mojang.blaze3d.vertex.DefaultVertexFormat;
 import com.mojang.blaze3d.vertex.PoseStack;
 import com.mojang.blaze3d.vertex.VertexBuffer;
 import com.mojang.blaze3d.vertex.VertexConsumer;
 import com.mojang.math.Vector3f;
 import net.minecraft.client.renderer.MultiBufferSource;
+import net.minecraft.client.renderer.ShaderInstance;
 import net.minecraft.client.renderer.blockentity.BlockEntityRenderer;
 import net.minecraft.client.renderer.blockentity.BlockEntityRendererProvider;
+import net.minecraft.core.BlockPos;
 import net.minecraft.core.Direction;
 import net.minecraft.resources.ResourceLocation;
 import net.minecraft.world.effect.MobEffects;
 import net.minecraft.world.level.block.state.BlockState;
+import net.minecraft.world.phys.Vec3;
 import org.lwjgl.opengl.GL11;
 
 import com.google.common.collect.ImmutableList;
@@ -77,7 +82,7 @@ public class ChessTileEntityRenderer implements BlockEntityRenderer<ChessTileEnt
 	
 	@Override
 	public void render(ChessTileEntity tileEntityIn, float partialTicks, PoseStack poseStack, MultiBufferSource bufferIn, int combinedLightIn, int combinedOverlayIn)
-	{	
+	{
 		Board board;
 		Direction facing = Direction.NORTH;
 	    if(tileEntityIn.hasLevel())
@@ -209,7 +214,7 @@ public class ChessTileEntityRenderer implements BlockEntityRenderer<ChessTileEnt
 						}
 						
 						// Renders The Chess Piece
-						renderPiece(poseStack, pieceType, pieceColor, combinedLightIn, wR, wG, wB, bR, bG, bB);
+						renderPiece(tileEntityIn, poseStack, pieceType, pieceColor, combinedLightIn, wR, wG, wB, bR, bG, bB);
 
 						poseStack.popPose();
 						poseStack.popPose();
@@ -372,13 +377,13 @@ public class ChessTileEntityRenderer implements BlockEntityRenderer<ChessTileEnt
 			float bG = (1F / 255F) * NBTColorSaving.getGreen(chessTileEntity.getBlackPiecesColor());
 			float bB = (1F / 255F) * NBTColorSaving.getBlue(chessTileEntity.getBlackPiecesColor());
 			
-			renderPiece(stack, piece.getPieceType(), piece.getPieceColor(), combinedLightIn, wR, wG, wB, bR, bG, bB);
+			renderPiece(chessTileEntity, stack, piece.getPieceType(), piece.getPieceColor(), combinedLightIn, wR, wG, wB, bR, bG, bB);
 			
 			stack.popPose();
 		}
 	}
 	
-	private void renderPiece(PoseStack poseStack, PieceType pieceType, PieceColor pieceColor, int combinedLightIn, float wR, float wG, float wB, float bR, float bG, float bB)
+	private void renderPiece(ChessTileEntity chessTileEntity, PoseStack poseStack, PieceType pieceType, PieceColor pieceColor, int combinedLightIn, float wR, float wG, float wB, float bR, float bG, float bB)
 	{
 		image.setPixelRGBA(0, 0, getColorWithAppliedLight(new Color(pieceColor.isWhite() ? wB : bB,
 																	pieceColor.isWhite() ? wG : bG,
@@ -395,58 +400,78 @@ public class ChessTileEntityRenderer implements BlockEntityRenderer<ChessTileEnt
 		{
 		default:
 		case PAWN:
-			VertexBuffer pawnBuffer = DrawScreenEvent.pawnBuffer;
 			poseStack.pushPose();
-			pawnBuffer.bind();
-			DefaultVertexFormat.BLOCK.setupBufferState();//TODO removed (0L) from here and every chess piece bellow, make sure it works!
-			pawnBuffer.draw();//TODO removed (poseStack.last().pose(), GL11.GL_TRIANGLES), make sure it works!
-			VertexBuffer.unbind();
+			VertexBuffer pawnBuffer = DrawScreenEvent.pawnBuffer;
+			ShaderInstance shaderinstance = RenderSystem.getShader();
+			if (shaderinstance.MODEL_VIEW_MATRIX != null) shaderinstance.MODEL_VIEW_MATRIX.set(poseStack.last().pose());
+			if (shaderinstance.PROJECTION_MATRIX != null) shaderinstance.PROJECTION_MATRIX.set(RenderSystem.getProjectionMatrix());
+			if (shaderinstance.COLOR_MODULATOR != null) shaderinstance.COLOR_MODULATOR.set(RenderSystem.getShaderColor());
+			if (shaderinstance.FOG_START != null) shaderinstance.FOG_START.set(RenderSystem.getShaderFogStart());
+			if (shaderinstance.FOG_END != null) shaderinstance.FOG_END.set(RenderSystem.getShaderFogEnd());
+			if (shaderinstance.FOG_COLOR != null) shaderinstance.FOG_COLOR.set(RenderSystem.getShaderFogColor());
+			if (shaderinstance.TEXTURE_MATRIX != null) shaderinstance.TEXTURE_MATRIX.set(RenderSystem.getTextureMatrix());
+			if (shaderinstance.GAME_TIME != null) shaderinstance.GAME_TIME.set(RenderSystem.getShaderGameTime());
+
+			Uniform uniform = shaderinstance.CHUNK_OFFSET;
+			BlockPos blockpos = chessTileEntity.getBlockPos();
+			Vec3 camera = Minecraft.getInstance().getEntityRenderDispatcher().camera.getPosition();
+			uniform.set((float)((double)blockpos.getX() - camera.x), (float)((double)blockpos.getY() - camera.y), (float)((double)blockpos.getZ() - camera.z));
+
+			//TODO transforming seems to also not do anything
+//			poseStack.translate(
+//					-Minecraft.getInstance().getEntityRenderDispatcher().camera.getPosition().x,
+//					-Minecraft.getInstance().getEntityRenderDispatcher().camera.getPosition().y,
+//					-Minecraft.getInstance().getEntityRenderDispatcher().camera.getPosition().z
+//			);
+
+			poseStack.scale(100.0F, 100.0F, 100.0F);//TODO why tf does this not do anything
+			pawnBuffer.drawChunkLayer();
 			poseStack.popPose();
 			break;
 		case ROOK:
-			VertexBuffer rookBuffer = DrawScreenEvent.rookBuffer;
-			poseStack.pushPose();
-			rookBuffer.bind();
-			DefaultVertexFormat.BLOCK.setupBufferState();
-			rookBuffer.draw();
-			VertexBuffer.unbind();
-			poseStack.popPose();
+//			VertexBuffer rookBuffer = DrawScreenEvent.rookBuffer;
+//			poseStack.pushPose();
+//			rookBuffer.bind();
+//			DefaultVertexFormat.BLOCK.setupBufferState();//TODO removed (0L) from here and every chess piece bellow, make sure it works!
+//			rookBuffer.draw();//TODO removed (poseStack.last().pose(), GL11.GL_TRIANGLES), make sure it works!
+//			VertexBuffer.unbind();
+//			poseStack.popPose();
 			break;
 		case BISHOP:
-			VertexBuffer bishopBuffer = DrawScreenEvent.bishopBuffer;
-			poseStack.pushPose();
-			bishopBuffer.bind();
-			DefaultVertexFormat.BLOCK.setupBufferState();
-			bishopBuffer.draw();
-			VertexBuffer.unbind();
-			poseStack.popPose();
+//			VertexBuffer bishopBuffer = DrawScreenEvent.bishopBuffer;
+//			poseStack.pushPose();
+//			bishopBuffer.bind();
+//			DefaultVertexFormat.BLOCK.setupBufferState();
+//			bishopBuffer.draw();
+//			VertexBuffer.unbind();
+//			poseStack.popPose();
 			break;
 		case KNIGHT:
-			VertexBuffer knightBuffer = DrawScreenEvent.knightBuffer;
-			poseStack.pushPose();
-			knightBuffer.bind();
-			DefaultVertexFormat.BLOCK.setupBufferState();
-			knightBuffer.draw();
-			VertexBuffer.unbind();
-			poseStack.popPose();
+//			VertexBuffer knightBuffer = DrawScreenEvent.knightBuffer;
+//			poseStack.pushPose();
+//			knightBuffer.bind();
+//			DefaultVertexFormat.BLOCK.setupBufferState();
+//			knightBuffer.draw();
+//			VertexBuffer.unbind();
+//			poseStack.popPose();
 			break;
 		case KING:
-			VertexBuffer kingBuffer = DrawScreenEvent.kingBuffer;
-			poseStack.pushPose();
-			kingBuffer.bind();
-			DefaultVertexFormat.BLOCK.setupBufferState();
-			kingBuffer.draw();
-			VertexBuffer.unbind();
-			poseStack.popPose();
+//			VertexBuffer kingBuffer = DrawScreenEvent.kingBuffer;
+//			poseStack.pushPose();
+//			kingBuffer.bind();
+//			DefaultVertexFormat.BLOCK.setupBufferState();
+//			kingBuffer.draw();
+//			VertexBuffer.unbind();
+//			poseStack.popPose();
 			break;
 		case QUEEN:
-			VertexBuffer queenBuffer = DrawScreenEvent.queenBuffer;
-			poseStack.pushPose();
-			queenBuffer.bind();
-			DefaultVertexFormat.BLOCK.setupBufferState();
-			queenBuffer.draw();
-			VertexBuffer.unbind();
-			poseStack.popPose();
+//			VertexBuffer queenBuffer = DrawScreenEvent.queenBuffer;
+//			poseStack.pushPose();
+//			queenBuffer.bind();
+//			DefaultVertexFormat.BLOCK.setupBufferState();
+//			queenBuffer.draw();
+//			VertexBuffer.unbind();
+//			poseStack.popPose();
 		}
 		type.clearRenderState();
 	}

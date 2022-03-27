@@ -42,13 +42,14 @@ public class TTCRenderTypes extends RenderStateShard
 				.setCullState(NO_CULL)
 				.setWriteMaskState(COLOR_WRITE)
 				.createCompositeState(outline);
-		return RenderType.create(Reference.MODID + ":emmisive_translucent", DefaultVertexFormat.NEW_ENTITY, VertexFormat.Mode.QUADS, 256, true, true, state);
+		return RenderType.create(Reference.MODID + ":emmisive_translucent", DefaultVertexFormat.NEW_ENTITY, VertexFormat.Mode.QUADS, RenderType.TRANSIENT_BUFFER_SIZE, true, true, state);
 	};
 
 	/*
 	public static RenderType getChessPieceSolid(ResourceLocation texture)
 	{
-		RenderType.State state = RenderType.State.getBuilder().texture(new RenderState.TextureState(texture, false, false))
+		RenderType.State state = RenderType.State.getBuilder()
+															  .texture(new RenderState.TextureState(texture, false, false))
 															  .texturing(DEFAULT_TEXTURING)
 															  .transparency(NO_TRANSPARENCY)
 															  .diffuseLighting(DIFFUSE_LIGHTING_ENABLED)
@@ -61,11 +62,13 @@ public class TTCRenderTypes extends RenderStateShard
 	public static RenderType getChessPieceSolid(ResourceLocation texture)
 	{
 		RenderType.CompositeState state = RenderType.CompositeState.builder()
-				.setTextureState(new RenderStateShard.TextureStateShard(texture, false, false))
-				.setLightmapState(LIGHTMAP)
 				.setShaderState(RENDERTYPE_SOLID_SHADER)
-				.setTextureState(BLOCK_SHEET_MIPPED)
-				.createCompositeState(true);
-		return RenderType.create(Reference.MODID + ":chess_piece_solid", DefaultVertexFormat.BLOCK, VertexFormat.Mode.TRIANGLES, 256, true, false, state);
+				.setTextureState(new RenderStateShard.TextureStateShard(texture, false, false)) //ok
+				.setTexturingState(DEFAULT_TEXTURING)											//ok
+				.setTransparencyState(NO_TRANSPARENCY)											//ok
+				//.diffuseLighting(DIFFUSE_LIGHTING_ENABLED)
+				.setLightmapState(LIGHTMAP)														//ok
+				.createCompositeState(true);													//ok
+		return RenderType.create(Reference.MODID + ":chess_piece_solid", DefaultVertexFormat.BLOCK, VertexFormat.Mode.QUADS, RenderType.BIG_BUFFER_SIZE, true, false, state);
 	};
 }

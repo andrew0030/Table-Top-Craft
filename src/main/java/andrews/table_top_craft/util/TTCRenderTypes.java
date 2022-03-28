@@ -1,8 +1,11 @@
 package andrews.table_top_craft.util;
 
+import andrews.table_top_craft.TableTopCraft;
+import andrews.table_top_craft.events.RegisterModShadersEvent;
 import com.mojang.blaze3d.vertex.DefaultVertexFormat;
 import com.mojang.blaze3d.vertex.VertexFormat;
 import net.minecraft.Util;
+import net.minecraft.client.renderer.GameRenderer;
 import net.minecraft.client.renderer.RenderStateShard;
 import net.minecraft.resources.ResourceLocation;
 import org.lwjgl.opengl.GL11;
@@ -13,6 +16,8 @@ import java.util.function.BiFunction;
 
 public class TTCRenderTypes extends RenderStateShard
 {
+	private static final RenderStateShard.ShaderStateShard RENDERTYPE_SOLID_BLOCK_ENTITY_SHADER = new RenderStateShard.ShaderStateShard(TableTopCraft::getSolidBlockEntityShader);
+
 	public TTCRenderTypes(String nameIn, Runnable setupTaskIn, Runnable clearTaskIn)
 	{
 		super(nameIn, setupTaskIn, clearTaskIn);
@@ -62,13 +67,20 @@ public class TTCRenderTypes extends RenderStateShard
 	public static RenderType getChessPieceSolid(ResourceLocation texture)
 	{
 		RenderType.CompositeState state = RenderType.CompositeState.builder()
-				.setShaderState(RENDERTYPE_SOLID_SHADER)
-				.setTextureState(new RenderStateShard.TextureStateShard(texture, false, false)) //ok
-				.setTexturingState(DEFAULT_TEXTURING)											//ok
-				.setTransparencyState(NO_TRANSPARENCY)											//ok
-				//.diffuseLighting(DIFFUSE_LIGHTING_ENABLED)
-				.setLightmapState(LIGHTMAP)														//ok
-				.createCompositeState(true);													//ok
-		return RenderType.create(Reference.MODID + ":chess_piece_solid", DefaultVertexFormat.BLOCK, VertexFormat.Mode.QUADS, RenderType.BIG_BUFFER_SIZE, true, false, state);
+				.setShaderState(RENDERTYPE_SOLID_BLOCK_ENTITY_SHADER)
+				.setTextureState(new RenderStateShard.TextureStateShard(texture, false, false))
+				.setTransparencyState(NO_TRANSPARENCY)
+				.setLightmapState(LIGHTMAP)
+				.setOverlayState(OVERLAY)
+				.createCompositeState(true);
+		return RenderType.create(Reference.MODID + ":chess_piece_solid", DefaultVertexFormat.BLOCK, VertexFormat.Mode.TRIANGLES, RenderType.TRANSIENT_BUFFER_SIZE, true, false, state);
+
+//		RenderType.CompositeState state = RenderType.CompositeState.builder()
+//				.setShaderState(RENDERTYPE_SOLID_SHADER)
+//				.setTextureState(new RenderStateShard.TextureStateShard(texture, false, false))
+//				.setLightmapState(LIGHTMAP)
+//				.createCompositeState(true);
+//
+//		return RenderType.create(Reference.MODID + ":chess_piece_solid", DefaultVertexFormat.BLOCK, VertexFormat.Mode.TRIANGLES, RenderType.TRANSIENT_BUFFER_SIZE, true, false, state);
 	};
 }

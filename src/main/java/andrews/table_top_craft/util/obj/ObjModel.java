@@ -3,6 +3,7 @@ package andrews.table_top_craft.util.obj;
 import andrews.table_top_craft.util.Reference;
 import com.mojang.blaze3d.vertex.BufferBuilder;
 import com.mojang.blaze3d.vertex.PoseStack;
+import com.mojang.blaze3d.vertex.VertexConsumer;
 import com.mojang.math.Matrix3f;
 import com.mojang.math.Matrix4f;
 import com.mojang.math.Vector3f;
@@ -17,7 +18,6 @@ import java.io.IOException;
 import java.io.InputStream;
 import java.util.ArrayList;
 
-@OnlyIn(Dist.CLIENT)
 public class ObjModel
 {
     private final Vector3f[] v;
@@ -33,7 +33,7 @@ public class ObjModel
         this.faces = faces;
     }
     
-    public void render(PoseStack stack, BufferBuilder buffer)
+    public void render(PoseStack stack, VertexConsumer buffer)
     {    	
         try
         {
@@ -62,7 +62,7 @@ public class ObjModel
         }
     }
     
-    private void addVertex(PoseStack stack, BufferBuilder builder, float x, float y, float z, float u, float v, float nx, float ny, float nz)
+    private void addVertex(PoseStack stack, VertexConsumer builder, float x, float y, float z, float u, float v, float nx, float ny, float nz)
     {
     	pos(builder, stack.last().pose(), x, y, z)
     	.color(1F, 1F, 1F, 1F)
@@ -72,7 +72,7 @@ public class ObjModel
     	.endVertex();   
     }
     
-	private static BufferBuilder pos(BufferBuilder bufferBuilder, Matrix4f matrix4f, float x, float y, float z)
+	private static VertexConsumer pos(VertexConsumer bufferBuilder, Matrix4f matrix4f, float x, float y, float z)
 	{
 		// Calling 'bufferBuilder.pos(matrix4f, x, y, z)' allocates a Vector4f
 		// To avoid allocating so many short-lived vectors we do the transform ourselves instead
@@ -84,7 +84,7 @@ public class ObjModel
 		return (BufferBuilder) bufferBuilder.vertex(tx, ty, tz);//TODO this was pos() make sure it works
 	}
 	
-	private static BufferBuilder normal(BufferBuilder bufferBuilder, Matrix3f matrix3f, float x, float y, float z)
+	private static VertexConsumer normal(VertexConsumer bufferBuilder, Matrix3f matrix3f, float x, float y, float z)
 	{
 		// Calling 'bufferBuilder.normal(matrix3f, x, y, z)' allocates a Vector3f
 		// To avoid allocating so many short-lived vectors we do the transform ourselves instead

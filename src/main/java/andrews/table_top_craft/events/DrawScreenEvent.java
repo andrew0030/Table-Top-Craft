@@ -21,7 +21,7 @@ public class DrawScreenEvent
 	// The texture path is just a dummy texture used as a placeholder
 	public static final VertexFormat chessVertexFormat = TTCRenderTypes.getChessPieceSolid(new ResourceLocation(Reference.MODID, "textures/tile/chess/pieces.png")).format();
 	// Initializes the models
-	private static final ChessObjModel CHESS_PIECE_MODEL = new ChessObjModel();
+	public static final ChessObjModel CHESS_PIECE_MODEL = new ChessObjModel();
 	// The model buffers, used to render the VOBs
 	public static VertexBuffer pawnBuffer;
 	public static VertexBuffer rookBuffer;

@@ -32,7 +32,7 @@ void main() {
     vec3 pos = Position + ChunkOffset;
     gl_Position = ProjMat * ModelViewMat * vec4(pos, 1.0);
 
-    vertexDistance = cylindrical_distance(ModelViewMat, IViewRotMat * Position);
+    vertexDistance = fog_distance(ModelViewMat, IViewRotMat * Position, 0);//replaced cylindrical_distance with fog_distance and added 0
     vertexColor = minecraft_mix_light(Light0_Direction, Light1_Direction, Normal, Color);
     lightMapColor = texelFetch(Sampler2, UV2 / 16, 0);
     overlayColor = texelFetch(Sampler1, UV1, 0);

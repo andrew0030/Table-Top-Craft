@@ -64,6 +64,14 @@ public class ChessBlock extends HorizontalDirectionalBlock implements EntityBloc
 	}
 
 	@Override
+	public void onPlace(BlockState state, Level level, BlockPos pos, BlockState oldState, boolean isMoving)
+	{
+		if(level.getBlockEntity(pos) instanceof ChessTileEntity chessTileEntity)
+			if(chessTileEntity.getUseCustomPlate())
+				level.setBlockAndUpdate(pos, state.setValue(ChessBlock.SHOW_PLATE, false));
+	}
+
+	@Override
 	protected void createBlockStateDefinition(StateDefinition.Builder<Block, BlockState> builder)
 	{
 		builder.add(FACING, SHOW_PLATE);

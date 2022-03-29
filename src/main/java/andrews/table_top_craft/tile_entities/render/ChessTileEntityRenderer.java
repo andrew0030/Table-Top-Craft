@@ -12,6 +12,7 @@ import com.mojang.blaze3d.platform.NativeImage;
 import com.mojang.blaze3d.shaders.Uniform;
 import com.mojang.blaze3d.vertex.*;
 import com.mojang.math.Matrix4f;
+import com.mojang.math.Quaternion;
 import com.mojang.math.Vector3f;
 import net.minecraft.client.renderer.MultiBufferSource;
 import net.minecraft.client.renderer.ShaderInstance;
@@ -577,14 +578,17 @@ public class ChessTileEntityRenderer implements BlockEntityRenderer<ChessTileEnt
 		float blackG = (1F / 255F) * NBTColorSaving.getGreen(chessTileEntity.getBlackTilesColor());
 		float blackB = (1F / 255F) * NBTColorSaving.getBlue(chessTileEntity.getBlackTilesColor());
 		
-		VertexConsumer builderBoardPlateWhiteTiles = bufferIn.getBuffer(RenderType.entityCutoutNoCull(PLATE_WHITE_TILES_TEXTURE));
+		// this is gonna need a custom render type, most likely
+		VertexConsumer builderBoardPlateWhiteTiles = bufferIn.getBuffer(RenderType.entityCutout(PLATE_WHITE_TILES_TEXTURE));
 		poseStack.pushPose();
-		poseStack.translate(0.0F, -1.35D, 0.0F);
+		poseStack.mulPose(new Quaternion(180, 270, 0, true));
+		poseStack.translate(0.0F, -1.65D, 0.0F);
 		chessBoardPlateModel.renderToBuffer(poseStack, builderBoardPlateWhiteTiles, combinedLightIn, combinedOverlayIn, whiteR, whiteG, whiteB, 1.0F);
 		poseStack.popPose();
-		VertexConsumer builderBoardPlateBlackTiles = bufferIn.getBuffer(RenderType.entityCutoutNoCull(PLATE_BLACK_TILES_TEXTURE));
+		VertexConsumer builderBoardPlateBlackTiles = bufferIn.getBuffer(RenderType.entityCutout(PLATE_BLACK_TILES_TEXTURE));
 		poseStack.pushPose();
-		poseStack.translate(0.0F, -1.35D, 0.0F);
+		poseStack.mulPose(new Quaternion(180, 270, 0, true));
+		poseStack.translate(0.0F, -1.65D, 0.0F);
 		chessBoardPlateModel.renderToBuffer(poseStack, builderBoardPlateBlackTiles, combinedLightIn, combinedOverlayIn, blackR, blackG, blackB, 1.0F);
 		poseStack.popPose();
 	}

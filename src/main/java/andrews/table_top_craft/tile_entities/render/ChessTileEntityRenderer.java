@@ -11,6 +11,7 @@ import andrews.table_top_craft.util.obj.models.ChessObjModel;
 import com.mojang.blaze3d.platform.NativeImage;
 import com.mojang.blaze3d.shaders.Uniform;
 import com.mojang.blaze3d.vertex.*;
+import com.mojang.math.Matrix4f;
 import com.mojang.math.Vector3f;
 import net.minecraft.client.renderer.MultiBufferSource;
 import net.minecraft.client.renderer.ShaderInstance;
@@ -382,10 +383,7 @@ public class ChessTileEntityRenderer implements BlockEntityRenderer<ChessTileEnt
 	
 	private void renderPiece(MultiBufferSource bufferIn, ChessTileEntity chessTileEntity, PoseStack poseStack, PieceType pieceType, PieceColor pieceColor, int combinedLightIn, float wR, float wG, float wB, float bR, float bG, float bB)
 	{
-		image.setPixelRGBA(0, 0, getColorWithAppliedLight(new Color(pieceColor.isWhite() ? wB : bB,
-																	pieceColor.isWhite() ? wG : bG,
-																	pieceColor.isWhite() ? wR : bR),
-																	combinedLightIn));
+		image.setPixelRGBA(0, 0, 16777215);
 		texture.upload();
 		if(resourceLocation == null)
 			resourceLocation = Minecraft.getInstance().getTextureManager().register("table_top_craft_dummy", texture);
@@ -397,41 +395,21 @@ public class ChessTileEntityRenderer implements BlockEntityRenderer<ChessTileEnt
 		{
 		default:
 		case PAWN:
-//			poseStack.pushPose();
-//			VertexBuffer pawnBuffer = DrawScreenEvent.pawnBuffer;
-//			ShaderInstance shaderinstance = RenderSystem.getShader();
-//			if (shaderinstance.MODEL_VIEW_MATRIX != null) shaderinstance.MODEL_VIEW_MATRIX.set(poseStack.last().pose());
-//			if (shaderinstance.PROJECTION_MATRIX != null) shaderinstance.PROJECTION_MATRIX.set(RenderSystem.getProjectionMatrix());
-//			if (shaderinstance.COLOR_MODULATOR != null) shaderinstance.COLOR_MODULATOR.set(RenderSystem.getShaderColor());
-//			if (shaderinstance.FOG_START != null) shaderinstance.FOG_START.set(RenderSystem.getShaderFogStart());
-//			if (shaderinstance.FOG_END != null) shaderinstance.FOG_END.set(RenderSystem.getShaderFogEnd());
-//			if (shaderinstance.FOG_COLOR != null) shaderinstance.FOG_COLOR.set(RenderSystem.getShaderFogColor());
-//			if (shaderinstance.TEXTURE_MATRIX != null) shaderinstance.TEXTURE_MATRIX.set(RenderSystem.getTextureMatrix());
-//			if (shaderinstance.GAME_TIME != null) shaderinstance.GAME_TIME.set(RenderSystem.getShaderGameTime());
-//
-//			Uniform uniform = shaderinstance.CHUNK_OFFSET;
-//			BlockPos blockpos = chessTileEntity.getBlockPos();
-//			Vec3 camera = Minecraft.getInstance().getEntityRenderDispatcher().camera.getPosition();
-//			uniform.set((float)((double)blockpos.getX() - camera.x), (float)((double)blockpos.getY() - camera.y), (float)((double)blockpos.getZ() - camera.z));
-
-			//TODO transforming seems to also not do anything
-//			poseStack.translate(
-//					-Minecraft.getInstance().getEntityRenderDispatcher().camera.getPosition().x,
-//					-Minecraft.getInstance().getEntityRenderDispatcher().camera.getPosition().y,
-//					-Minecraft.getInstance().getEntityRenderDispatcher().camera.getPosition().z
-//			);
-
-//			poseStack.scale(100.0F, 100.0F, 100.0F);//TODO why tf does this not do anything
-//			pawnBuffer.drawChunkLayer();
-//			poseStack.popPose();
-
-
-
-
 			poseStack.pushPose();
-			VertexConsumer consumer =  bufferIn.getBuffer(TTCRenderTypes.getChessPieceSolid(resourceLocation));
-			ChessObjModel CHESS_PIECE_MODEL = DrawScreenEvent.CHESS_PIECE_MODEL;
-			CHESS_PIECE_MODEL.render(poseStack, consumer, PieceType.PAWN);
+			VertexBuffer pawnBuffer = DrawScreenEvent.pawnBuffer;
+			ShaderInstance shaderinstance = RenderSystem.getShader();
+
+			RenderSystem.setShaderColor(pieceColor.isWhite() ? wR : bR, pieceColor.isWhite() ? wG : bG, pieceColor.isWhite() ? wB : bB, 1f);
+			RenderSystem.disableTexture();
+			// ideally, it'd be drawChunkLayer
+			// however this works, and I'm afraid to change it
+			pawnBuffer.drawWithShader(
+					poseStack.last().pose(),
+					RenderSystem.getProjectionMatrix(),
+					shaderinstance
+			);
+			RenderSystem.enableTexture();
+			RenderSystem.setShaderColor(1f, 1f, 1f, 1f);
 			poseStack.popPose();
 
 			break;

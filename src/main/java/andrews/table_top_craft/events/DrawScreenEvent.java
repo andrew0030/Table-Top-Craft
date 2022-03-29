@@ -49,10 +49,10 @@ public class DrawScreenEvent
 			BufferBuilder pawnBuilder = new BufferBuilder(RenderType.TRANSIENT_BUFFER_SIZE);
 			pawnBuilder.begin(VertexFormat.Mode.TRIANGLES, chessVertexFormat);
 			CHESS_PIECE_MODEL.render(new PoseStack(), pawnBuilder, PieceType.PAWN);
-			pawnBuilder.end();
+			pawnBuilder.end(); // no longer adding new vertexes to the buffer
 			pawnBuffer = new VertexBuffer();
-			pawnBuffer.upload(pawnBuilder);
-			pawnBuilder.clear();
+			pawnBuffer.upload(pawnBuilder); // uploads the model the to GPU
+			pawnBuilder.clear(); // frees up unneeded memory
 		}
 		
 		if(rookBuffer == null)

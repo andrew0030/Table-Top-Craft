@@ -82,6 +82,12 @@ public class ChessTileEntityRenderer implements BlockEntityRenderer<ChessTileEnt
 	@Override
 	public void render(ChessTileEntity tileEntityIn, float partialTicks, PoseStack poseStack, MultiBufferSource bufferIn, int combinedLightIn, int combinedOverlayIn)
 	{
+		if(resourceLocation == null) {
+			image.setPixelRGBA(0, 0, 16777215);
+			texture.upload();
+			resourceLocation = Minecraft.getInstance().getTextureManager().register("table_top_craft_dummy", texture);
+		}
+		
 		Board board;
 		Direction facing = Direction.NORTH;
 	    if(tileEntityIn.hasLevel())
@@ -213,7 +219,13 @@ public class ChessTileEntityRenderer implements BlockEntityRenderer<ChessTileEnt
 						}
 						
 						// Renders The Chess Piece
+						
+						RenderType type = TTCRenderTypes.getChessPieceSolid(resourceLocation);
+						type.setupRenderState();
+						BufferHelpers.setupRender(RenderSystem.getShader());
 						renderPiece(bufferIn, tileEntityIn, poseStack, pieceType, pieceColor, combinedLightIn, wR, wG, wB, bR, bG, bB);
+//						BufferHelpers.teardownRender();
+						type.clearRenderState();
 
 						poseStack.popPose();
 						poseStack.popPose();
@@ -347,8 +359,19 @@ public class ChessTileEntityRenderer implements BlockEntityRenderer<ChessTileEnt
 	
 	private void renderTakenPiecesFigures(MultiBufferSource bufferIn, PoseStack stack, ChessTileEntity chessTileEntity, final List<BasePiece> pieceList, final boolean isWhite, int combinedLightIn)
 	{
+		RenderType type = TTCRenderTypes.getChessPieceSolid(resourceLocation);
+		type.setupRenderState();
+		BufferHelpers.setupRender(RenderSystem.getShader());
 		int currentCoordinate = -1;
 		int currentRank = 0;
+		/* GiantLuigi4: I decided to move this color lookup out of the loop */
+		/* reason: reduce redundant lookups, very minimal impact on performance, but it's smth */
+		float wR = (1F / 255F) * NBTColorSaving.getRed(chessTileEntity.getWhitePiecesColor());
+		float wG = (1F / 255F) * NBTColorSaving.getGreen(chessTileEntity.getWhitePiecesColor());
+		float wB = (1F / 255F) * NBTColorSaving.getBlue(chessTileEntity.getWhitePiecesColor());
+		float bR = (1F / 255F) * NBTColorSaving.getRed(chessTileEntity.getBlackPiecesColor());
+		float bG = (1F / 255F) * NBTColorSaving.getGreen(chessTileEntity.getBlackPiecesColor());
+		float bB = (1F / 255F) * NBTColorSaving.getBlue(chessTileEntity.getBlackPiecesColor());
 		for(final BasePiece piece : pieceList)
 		{
 			if(currentCoordinate < 7)
@@ -360,7 +383,7 @@ public class ChessTileEntityRenderer implements BlockEntityRenderer<ChessTileEnt
 				currentCoordinate = 0;
 				currentRank += 1;
 			}
-
+			
 			stack.pushPose();
 			// Rotates the Pieces if they are white so they face the player
 			if(isWhite)
@@ -369,50 +392,30 @@ public class ChessTileEntityRenderer implements BlockEntityRenderer<ChessTileEnt
 			if(!isWhite)
 				stack.translate((CHESS_SCALE * 0.855D) * 7D, 0.0D, 0.8D);
 			stack.translate((CHESS_SCALE * 0.855D) * -currentCoordinate, 0.0D, CHESS_SCALE * -currentRank);
-			float wR = (1F / 255F) * NBTColorSaving.getRed(chessTileEntity.getWhitePiecesColor());
-			float wG = (1F / 255F) * NBTColorSaving.getGreen(chessTileEntity.getWhitePiecesColor());
-			float wB = (1F / 255F) * NBTColorSaving.getBlue(chessTileEntity.getWhitePiecesColor());
-			float bR = (1F / 255F) * NBTColorSaving.getRed(chessTileEntity.getBlackPiecesColor());
-			float bG = (1F / 255F) * NBTColorSaving.getGreen(chessTileEntity.getBlackPiecesColor());
-			float bB = (1F / 255F) * NBTColorSaving.getBlue(chessTileEntity.getBlackPiecesColor());
 			
 			renderPiece(bufferIn, chessTileEntity, stack, piece.getPieceType(), piece.getPieceColor(), combinedLightIn, wR, wG, wB, bR, bG, bB);
 			
 			stack.popPose();
 		}
+		type.clearRenderState();
 	}
 	
 	private void renderPiece(MultiBufferSource bufferIn, ChessTileEntity chessTileEntity, PoseStack poseStack, PieceType pieceType, PieceColor pieceColor, int combinedLightIn, float wR, float wG, float wB, float bR, float bG, float bB)
 	{
-		image.setPixelRGBA(0, 0, 16777215);
-		texture.upload();
-		if(resourceLocation == null)
-			resourceLocation = Minecraft.getInstance().getTextureManager().register("table_top_craft_dummy", texture);
-		
 		// The RenderType for the chess pieces (the texture is just a dummy texture)
-		RenderType type = TTCRenderTypes.getChessPieceSolid(resourceLocation);
-		type.setupRenderState();
+		ShaderInstance shaderinstance = RenderSystem.getShader();
+		RenderSystem.setShaderColor(pieceColor.isWhite() ? wR : bR, pieceColor.isWhite() ? wG : bG, pieceColor.isWhite() ? wB : bB, 1f);
+		BufferHelpers.updateColor(shaderinstance);
+		RenderSystem.disableTexture();
+		poseStack.pushPose();
+		if (shaderinstance.MODEL_VIEW_MATRIX != null) shaderinstance.MODEL_VIEW_MATRIX.set(poseStack.last().pose());
+		if (shaderinstance.PROJECTION_MATRIX != null) shaderinstance.PROJECTION_MATRIX.set(RenderSystem.getProjectionMatrix());
 		switch(pieceType)
 		{
 		default:
 		case PAWN:
-			poseStack.pushPose();
 			VertexBuffer pawnBuffer = DrawScreenEvent.pawnBuffer;
-			ShaderInstance shaderinstance = RenderSystem.getShader();
-
-			RenderSystem.setShaderColor(pieceColor.isWhite() ? wR : bR, pieceColor.isWhite() ? wG : bG, pieceColor.isWhite() ? wB : bB, 1f);
-			RenderSystem.disableTexture();
-			// ideally, it'd be drawChunkLayer
-			// however this works, and I'm afraid to change it
-			pawnBuffer.drawWithShader(
-					poseStack.last().pose(),
-					RenderSystem.getProjectionMatrix(),
-					shaderinstance
-			);
-			RenderSystem.enableTexture();
-			RenderSystem.setShaderColor(1f, 1f, 1f, 1f);
-			poseStack.popPose();
-
+			BufferHelpers.draw(pawnBuffer, shaderinstance);
 			break;
 		case ROOK:
 //			VertexBuffer rookBuffer = DrawScreenEvent.rookBuffer;
@@ -459,7 +462,8 @@ public class ChessTileEntityRenderer implements BlockEntityRenderer<ChessTileEnt
 //			VertexBuffer.unbind();
 //			poseStack.popPose();
 		}
-		type.clearRenderState();
+		RenderSystem.enableTexture();
+		poseStack.popPose();
 	}
 	
 	private int getColorWithAppliedLight(Color color, int light)

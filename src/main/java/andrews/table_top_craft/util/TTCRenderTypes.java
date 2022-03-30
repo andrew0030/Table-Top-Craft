@@ -23,46 +23,19 @@ public class TTCRenderTypes extends RenderStateShard
 		super(nameIn, setupTaskIn, clearTaskIn);
 	}
 
-	/*
-	public static RenderType getEmissiveTransluscent(ResourceLocation texture, boolean outline)
-	{
-		RenderType.State state = RenderType.State.getBuilder().texture(new RenderState.TextureState(texture, false, false))
-															  .transparency(TRANSLUCENT_TRANSPARENCY)
-															  .diffuseLighting(DIFFUSE_LIGHTING_DISABLED)
-															  .alpha(DEFAULT_ALPHA)
-															  .cull(CULL_DISABLED)
-															  .lightmap(LIGHTMAP_ENABLED)
-															  .overlay(OVERLAY_ENABLED)
-															  .build(outline);
-		return RenderType.makeType(Reference.MODID + ":emmisive_translucent", DefaultVertexFormats.ENTITY, 7, 256, true, true, state);
-	}
-	 */
-
+	//TODO #############################################################################################
+	//TODO # Figure out how to apply the block light to this, for some reason its glowing in the dark! #
+	//TODO #############################################################################################
 	public static RenderType getEmissiveTransluscent(ResourceLocation texture, boolean outline)
 	{
 		RenderType.CompositeState state = RenderType.CompositeState.builder()
-				.setShaderState(NEW_ENTITY_SHADER)
+				.setShaderState(POSITION_COLOR_TEX_LIGHTMAP_SHADER)
 				.setTextureState(new RenderStateShard.TextureStateShard(texture, false, false))
 				.setTransparencyState(TRANSLUCENT_TRANSPARENCY)
 				.setCullState(NO_CULL)
-				.setWriteMaskState(COLOR_WRITE)
 				.createCompositeState(outline);
-		return RenderType.create(Reference.MODID + ":emmisive_translucent", DefaultVertexFormat.NEW_ENTITY, VertexFormat.Mode.QUADS, RenderType.TRANSIENT_BUFFER_SIZE, true, true, state);
+		return RenderType.create(Reference.MODID + ":emmisive_translucent", DefaultVertexFormat.BLOCK, VertexFormat.Mode.QUADS, RenderType.TRANSIENT_BUFFER_SIZE, true, true, state);
 	};
-
-	/*
-	public static RenderType getChessPieceSolid(ResourceLocation texture)
-	{
-		RenderType.State state = RenderType.State.getBuilder()
-															  .texture(new RenderState.TextureState(texture, false, false))
-															  .texturing(DEFAULT_TEXTURING)
-															  .transparency(NO_TRANSPARENCY)
-															  .diffuseLighting(DIFFUSE_LIGHTING_ENABLED)
-															  .lightmap(LIGHTMAP_ENABLED)
-															  .build(true);
-		return RenderType.makeType(Reference.MODID + ":chess_piece_solid", DefaultVertexFormats.BLOCK, GL11.GL_TRIANGLES, 2097152, true, false, state);
-	}
-	 */
 
 	public static RenderType getChessPieceSolid(ResourceLocation texture)
 	{
@@ -74,13 +47,5 @@ public class TTCRenderTypes extends RenderStateShard
 				.setOverlayState(OVERLAY)
 				.createCompositeState(true);
 		return RenderType.create(Reference.MODID + ":chess_piece_solid", DefaultVertexFormat.BLOCK, VertexFormat.Mode.TRIANGLES, RenderType.TRANSIENT_BUFFER_SIZE, true, false, state);
-
-//		RenderType.CompositeState state = RenderType.CompositeState.builder()
-//				.setShaderState(RENDERTYPE_SOLID_SHADER)
-//				.setTextureState(new RenderStateShard.TextureStateShard(texture, false, false))
-//				.setLightmapState(LIGHTMAP)
-//				.createCompositeState(true);
-//
-//		return RenderType.create(Reference.MODID + ":chess_piece_solid", DefaultVertexFormat.BLOCK, VertexFormat.Mode.TRIANGLES, RenderType.TRANSIENT_BUFFER_SIZE, true, false, state);
 	};
 }

@@ -352,16 +352,17 @@ public class ChessTileEntityRenderer implements BlockEntityRenderer<ChessTileEnt
 		stack.pushPose();
 		// Moves the pieces down into the taken Pieces area
 		stack.translate(CHESS_SCALE * -6.5D, 0.556D, CHESS_SCALE * 0.3D);
+		RenderType type = TTCRenderTypes.getChessPieceSolid(resourceLocation);
+		type.setupRenderState();
+		BufferHelpers.setupRender(RenderSystem.getShader());
 		renderTakenPiecesFigures(bufferIn, stack, chessTileEntity, whiteTakenPieces, true, combinedLightIn);
 		renderTakenPiecesFigures(bufferIn, stack, chessTileEntity, blackTakenPieces, false, combinedLightIn);
+		type.clearRenderState();
 		stack.popPose();
 	}
 	
 	private void renderTakenPiecesFigures(MultiBufferSource bufferIn, PoseStack stack, ChessTileEntity chessTileEntity, final List<BasePiece> pieceList, final boolean isWhite, int combinedLightIn)
 	{
-		RenderType type = TTCRenderTypes.getChessPieceSolid(resourceLocation);
-		type.setupRenderState();
-		BufferHelpers.setupRender(RenderSystem.getShader());
 		int currentCoordinate = -1;
 		int currentRank = 0;
 		/* GiantLuigi4: I decided to move this color lookup out of the loop */
@@ -397,7 +398,6 @@ public class ChessTileEntityRenderer implements BlockEntityRenderer<ChessTileEnt
 			
 			stack.popPose();
 		}
-		type.clearRenderState();
 	}
 	
 	private void renderPiece(MultiBufferSource bufferIn, ChessTileEntity chessTileEntity, PoseStack poseStack, PieceType pieceType, PieceColor pieceColor, int combinedLightIn, float wR, float wG, float wB, float bR, float bG, float bB)
@@ -406,7 +406,6 @@ public class ChessTileEntityRenderer implements BlockEntityRenderer<ChessTileEnt
 		ShaderInstance shaderinstance = RenderSystem.getShader();
 		RenderSystem.setShaderColor(pieceColor.isWhite() ? wR : bR, pieceColor.isWhite() ? wG : bG, pieceColor.isWhite() ? wB : bB, 1f);
 		BufferHelpers.updateColor(shaderinstance);
-		RenderSystem.disableTexture();
 		poseStack.pushPose();
 		if (shaderinstance.MODEL_VIEW_MATRIX != null) shaderinstance.MODEL_VIEW_MATRIX.set(poseStack.last().pose());
 		if (shaderinstance.PROJECTION_MATRIX != null) shaderinstance.PROJECTION_MATRIX.set(RenderSystem.getProjectionMatrix());
@@ -437,7 +436,6 @@ public class ChessTileEntityRenderer implements BlockEntityRenderer<ChessTileEnt
 			VertexBuffer queenBuffer = DrawScreenEvent.queenBuffer;
 			BufferHelpers.draw(queenBuffer, shaderinstance);
 		}
-		RenderSystem.enableTexture();
 		poseStack.popPose();
 	}
 	

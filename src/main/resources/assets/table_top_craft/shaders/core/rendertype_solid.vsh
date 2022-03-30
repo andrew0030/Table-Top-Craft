@@ -32,8 +32,13 @@ void main() {
     vec3 pos = Position + ChunkOffset;
     gl_Position = ProjMat * ModelViewMat * vec4(pos, 1.0);
 
+    // for whatever reason, the normals are inversed
+    Normal = Normal * vec3(-1);
+
+    vec4 transformed = vec4(pos, 1.0) * ModelViewMat;
+//    vertexDistance = transformed.length();
     vertexDistance = fog_distance(ModelViewMat, IViewRotMat * Position, 0);//replaced cylindrical_distance with fog_distance and added 0
-    vertexColor = minecraft_mix_light(Light0_Direction, Light1_Direction, Normal, Color);
+    vertexColor = minecraft_mix_light(Light0_Direction, Light1_Direction, Normal, vec4(1));
     lightMapColor = texelFetch(Sampler2, UV2 / 16, 0);
     overlayColor = texelFetch(Sampler1, UV1, 0);
     texCoord0 = UV0;

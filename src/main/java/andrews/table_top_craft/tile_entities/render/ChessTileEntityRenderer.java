@@ -14,6 +14,7 @@ import com.mojang.blaze3d.vertex.*;
 import com.mojang.math.Matrix4f;
 import com.mojang.math.Quaternion;
 import com.mojang.math.Vector3f;
+import net.minecraft.client.renderer.LightTexture;
 import net.minecraft.client.renderer.MultiBufferSource;
 import net.minecraft.client.renderer.ShaderInstance;
 import net.minecraft.client.renderer.blockentity.BlockEntityRenderer;
@@ -98,6 +99,8 @@ public class ChessTileEntityRenderer implements BlockEntityRenderer<ChessTileEnt
 	        	 facing = blockstate.getValue(ChessBlock.FACING);
 	         }
 	    }
+		int lightU = LightTexture.block(combinedLightIn);
+		int lightV = LightTexture.sky(combinedLightIn);
 	    
 		poseStack.pushPose();
 		poseStack.translate(0.5D, 0.9D, 0.5D);
@@ -155,7 +158,7 @@ public class ChessTileEntityRenderer implements BlockEntityRenderer<ChessTileEnt
 			poseStack.translate(CHESS_SCALE / 2D, 0.0D, CHESS_SCALE / 2D);
 			// Moves the Piece to the first Tile on the Board
 			poseStack.translate(CHESS_SCALE * 3, 0.0D, CHESS_SCALE * -4);
-
+			
 			int currentCoordinate = -1;
 			for(int rank = 0; rank < BoardUtils.NUM_TILES_PER_ROW; rank++)
 			{
@@ -222,7 +225,7 @@ public class ChessTileEntityRenderer implements BlockEntityRenderer<ChessTileEnt
 						
 						RenderType type = TTCRenderTypes.getChessPieceSolid(resourceLocation);
 						type.setupRenderState();
-						BufferHelpers.setupRender(RenderSystem.getShader());
+						BufferHelpers.setupRender(RenderSystem.getShader(), lightU, lightV);
 						renderPiece(bufferIn, tileEntityIn, poseStack, pieceType, pieceColor, combinedLightIn, wR, wG, wB, bR, bG, bB);
 //						BufferHelpers.teardownRender();
 						type.clearRenderState();
@@ -297,13 +300,13 @@ public class ChessTileEntityRenderer implements BlockEntityRenderer<ChessTileEnt
 				}
 			}
 			
-			renderTakenPieces(bufferIn, poseStack, tileEntityIn.getMoveLog(), tileEntityIn, combinedLightIn);
+			renderTakenPieces(bufferIn, poseStack, tileEntityIn.getMoveLog(), tileEntityIn, combinedLightIn, lightU, lightV);
 
 			poseStack.popPose();
 		}
 	}
 	
-	private void renderTakenPieces(MultiBufferSource bufferIn, PoseStack stack, ChessMoveLog moveLog, ChessTileEntity chessTileEntity, int combinedLightIn)
+	private void renderTakenPieces(MultiBufferSource bufferIn, PoseStack stack, ChessMoveLog moveLog, ChessTileEntity chessTileEntity, int combinedLightIn, int lightU, int lightV)
 	{
 		final List<BasePiece> whiteTakenPieces = new ArrayList<>();
 		final List<BasePiece> blackTakenPieces = new ArrayList<>();
@@ -329,6 +332,7 @@ public class ChessTileEntityRenderer implements BlockEntityRenderer<ChessTileEnt
 			}
 		}
 		
+		/* GiantLuigi4: hey just so you know, you probably will want to move this sorting out of render code */
 		// Sorts all White Taken Pieces depending on their Value
 		Collections.sort(whiteTakenPieces, new Comparator<BasePiece>()
 		{//TODO check if replacing the Collections.sort() with List.sort() works the same
@@ -354,7 +358,7 @@ public class ChessTileEntityRenderer implements BlockEntityRenderer<ChessTileEnt
 		stack.translate(CHESS_SCALE * -6.5D, 0.556D, CHESS_SCALE * 0.3D);
 		RenderType type = TTCRenderTypes.getChessPieceSolid(resourceLocation);
 		type.setupRenderState();
-		BufferHelpers.setupRender(RenderSystem.getShader());
+		BufferHelpers.setupRender(RenderSystem.getShader(), lightU, lightV);
 		renderTakenPiecesFigures(bufferIn, stack, chessTileEntity, whiteTakenPieces, true, combinedLightIn);
 		renderTakenPiecesFigures(bufferIn, stack, chessTileEntity, blackTakenPieces, false, combinedLightIn);
 		type.clearRenderState();

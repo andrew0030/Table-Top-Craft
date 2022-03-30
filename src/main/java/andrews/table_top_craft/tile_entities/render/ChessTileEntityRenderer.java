@@ -283,16 +283,16 @@ public class ChessTileEntityRenderer implements BlockEntityRenderer<ChessTileEnt
 						{
 							if(pieceColor.isBlack())
 							{
-								poseStack.translate(0.0F, (float) Math.abs(Math.sin((localPlayerTickCount + getPartialTicks()) / 2.5)) * -0.05F, 0F);
-								poseStack.mulPose(Vector3f.ZN.rotationDegrees((float) Math.cos((localPlayerTickCount + getPartialTicks()) / 2.5) * 10));
+								poseStack.translate(0.0F, (float) Math.abs(Math.sin((localPlayerTickCount + partialTicks) / 2.5)) * -0.05F, 0F);
+								poseStack.mulPose(Vector3f.ZN.rotationDegrees((float) Math.cos((localPlayerTickCount + partialTicks) / 2.5) * 10));
 							}
 						}
 						if(isBlackInCheckmate)
 						{
 							if(pieceColor.isWhite())
 							{
-								poseStack.translate(0.0F, (float) Math.abs(Math.sin((localPlayerTickCount + getPartialTicks()) / 2.5)) * -0.05F, 0F);
-								poseStack.mulPose(Vector3f.ZN.rotationDegrees((float) Math.cos((localPlayerTickCount + getPartialTicks()) / 2.5) * 10));
+								poseStack.translate(0.0F, (float) Math.abs(Math.sin((localPlayerTickCount + partialTicks) / 2.5)) * -0.05F, 0F);
+								poseStack.mulPose(Vector3f.ZN.rotationDegrees((float) Math.cos((localPlayerTickCount + partialTicks) / 2.5) * 10));
 							}
 						}
 						
@@ -477,11 +477,6 @@ public class ChessTileEntityRenderer implements BlockEntityRenderer<ChessTileEnt
 		}
 		
 	    return new Color(colorRed, colorGreen, colorBlue).getRGB();
-	}
-
-	private static float getPartialTicks()
-	{
-		return Minecraft.getInstance().isPaused() ? Minecraft.getInstance().pausePartialTick : Minecraft.getInstance().getFrameTime();
 	}
 
 	/**

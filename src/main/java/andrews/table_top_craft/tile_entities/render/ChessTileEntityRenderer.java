@@ -418,49 +418,24 @@ public class ChessTileEntityRenderer implements BlockEntityRenderer<ChessTileEnt
 			BufferHelpers.draw(pawnBuffer, shaderinstance);
 			break;
 		case ROOK:
-//			VertexBuffer rookBuffer = DrawScreenEvent.rookBuffer;
-//			poseStack.pushPose();
-//			rookBuffer.bind();
-//			DefaultVertexFormat.BLOCK.setupBufferState();//TODO removed (0L) from here and every chess piece bellow, make sure it works!
-//			rookBuffer.draw();//TODO removed (poseStack.last().pose(), GL11.GL_TRIANGLES), make sure it works!
-//			VertexBuffer.unbind();
-//			poseStack.popPose();
+			VertexBuffer rookBuffer = DrawScreenEvent.rookBuffer;
+			BufferHelpers.draw(rookBuffer, shaderinstance);
 			break;
 		case BISHOP:
-//			VertexBuffer bishopBuffer = DrawScreenEvent.bishopBuffer;
-//			poseStack.pushPose();
-//			bishopBuffer.bind();
-//			DefaultVertexFormat.BLOCK.setupBufferState();
-//			bishopBuffer.draw();
-//			VertexBuffer.unbind();
-//			poseStack.popPose();
+			VertexBuffer bishopBuffer = DrawScreenEvent.bishopBuffer;
+			BufferHelpers.draw(bishopBuffer, shaderinstance);
 			break;
 		case KNIGHT:
-//			VertexBuffer knightBuffer = DrawScreenEvent.knightBuffer;
-//			poseStack.pushPose();
-//			knightBuffer.bind();
-//			DefaultVertexFormat.BLOCK.setupBufferState();
-//			knightBuffer.draw();
-//			VertexBuffer.unbind();
-//			poseStack.popPose();
+			VertexBuffer knightBuffer = DrawScreenEvent.knightBuffer;
+			BufferHelpers.draw(knightBuffer, shaderinstance);
 			break;
 		case KING:
-//			VertexBuffer kingBuffer = DrawScreenEvent.kingBuffer;
-//			poseStack.pushPose();
-//			kingBuffer.bind();
-//			DefaultVertexFormat.BLOCK.setupBufferState();
-//			kingBuffer.draw();
-//			VertexBuffer.unbind();
-//			poseStack.popPose();
+			VertexBuffer kingBuffer = DrawScreenEvent.kingBuffer;
+			BufferHelpers.draw(kingBuffer, shaderinstance);
 			break;
 		case QUEEN:
-//			VertexBuffer queenBuffer = DrawScreenEvent.queenBuffer;
-//			poseStack.pushPose();
-//			queenBuffer.bind();
-//			DefaultVertexFormat.BLOCK.setupBufferState();
-//			queenBuffer.draw();
-//			VertexBuffer.unbind();
-//			poseStack.popPose();
+			VertexBuffer queenBuffer = DrawScreenEvent.queenBuffer;
+			BufferHelpers.draw(queenBuffer, shaderinstance);
 		}
 		RenderSystem.enableTexture();
 		poseStack.popPose();

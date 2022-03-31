@@ -5,7 +5,6 @@ import com.mojang.blaze3d.shaders.Uniform;
 import com.mojang.blaze3d.systems.RenderSystem;
 import com.mojang.blaze3d.vertex.BufferUploader;
 import com.mojang.blaze3d.vertex.VertexBuffer;
-import com.mojang.blaze3d.vertex.VertexFormat;
 import com.mojang.math.Matrix4f;
 import net.minecraft.client.Minecraft;
 import net.minecraft.client.renderer.ShaderInstance;
@@ -15,19 +14,27 @@ public class BufferHelpers {
 		Uniform uniform = pShaderInstance.getUniform("LightUV");
 		RenderSystem.assertOnRenderThread();
 		BufferUploader.reset();
+
+//		RenderSystem.setShaderTexture(1, );
+		Minecraft.getInstance().gameRenderer.lightTexture().turnOnLightLayer();
 		
 		for (int i = 0; i < 12; ++i) {
 			int j = RenderSystem.getShaderTexture(i);
 			pShaderInstance.setSampler("Sampler" + i, j);
 		}
 		
+		// ok so I invert the light values on the CPU so that I can then invert them again on the GPU
+		// because for some reason that makes it work, however
+		// if I just give the GPU the values as is and handle them as is, it does not work
 		if (uniform != null) uniform.set((float) lightU, ilghtV);
-		if (pShaderInstance.INVERSE_VIEW_ROTATION_MATRIX != null) pShaderInstance.INVERSE_VIEW_ROTATION_MATRIX.set(RenderSystem.getInverseViewRotationMatrix());
+		if (pShaderInstance.INVERSE_VIEW_ROTATION_MATRIX != null)
+			pShaderInstance.INVERSE_VIEW_ROTATION_MATRIX.set(RenderSystem.getInverseViewRotationMatrix());
 		if (pShaderInstance.COLOR_MODULATOR != null) pShaderInstance.COLOR_MODULATOR.set(RenderSystem.getShaderColor());
 		if (pShaderInstance.FOG_START != null) pShaderInstance.FOG_START.set(RenderSystem.getShaderFogStart());
 		if (pShaderInstance.FOG_END != null) pShaderInstance.FOG_END.set(RenderSystem.getShaderFogEnd());
 		if (pShaderInstance.FOG_COLOR != null) pShaderInstance.FOG_COLOR.set(RenderSystem.getShaderFogColor());
-		if (pShaderInstance.FOG_SHAPE != null) pShaderInstance.FOG_SHAPE.set(RenderSystem.getShaderFogShape().getIndex());
+		if (pShaderInstance.FOG_SHAPE != null)
+			pShaderInstance.FOG_SHAPE.set(RenderSystem.getShaderFogShape().getIndex());
 		if (pShaderInstance.TEXTURE_MATRIX != null) pShaderInstance.TEXTURE_MATRIX.set(RenderSystem.getTextureMatrix());
 		if (pShaderInstance.GAME_TIME != null) pShaderInstance.GAME_TIME.set(RenderSystem.getShaderGameTime());
 //		if (pShaderInstance.LINE_WIDTH != null && (this.modae == VertexFormat.Mode.LINES || this.mode == VertexFormat.Mode.LINE_STRIP))
@@ -37,6 +44,11 @@ public class BufferHelpers {
 			pShaderInstance.SCREEN_SIZE.set((float) window.getWidth(), (float) window.getHeight());
 		}
 //		RenderSystem.setupShaderLights(pShaderInstance);
+		if (pShaderInstance.LIGHT0_DIRECTION != null)
+			pShaderInstance.LIGHT0_DIRECTION.set(-0.076762624f, 0.23993096f, 0.96622086f);
+		
+		if (pShaderInstance.LIGHT1_DIRECTION != null)
+			pShaderInstance.LIGHT1_DIRECTION.set(0.076762624f, 0.99261355f, 0.07660231f);
 	}
 	
 	public static void setMatrix(Matrix4f mat, ShaderInstance pShaderInstance) {

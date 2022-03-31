@@ -5,6 +5,8 @@ import com.mojang.blaze3d.shaders.Uniform;
 import com.mojang.blaze3d.systems.RenderSystem;
 import com.mojang.blaze3d.vertex.BufferUploader;
 import com.mojang.blaze3d.vertex.VertexBuffer;
+import com.mojang.blaze3d.vertex.VertexFormat;
+import com.mojang.math.Matrix4f;
 import com.mojang.math.Matrix4f;
 import net.minecraft.client.Minecraft;
 import net.minecraft.client.renderer.ShaderInstance;
@@ -23,12 +25,8 @@ public class BufferHelpers {
 			pShaderInstance.setSampler("Sampler" + i, j);
 		}
 		
-		// ok so I invert the light values on the CPU so that I can then invert them again on the GPU
-		// because for some reason that makes it work, however
-		// if I just give the GPU the values as is and handle them as is, it does not work
 		if (uniform != null) uniform.set((float) lightU, ilghtV);
-		if (pShaderInstance.INVERSE_VIEW_ROTATION_MATRIX != null)
-			pShaderInstance.INVERSE_VIEW_ROTATION_MATRIX.set(RenderSystem.getInverseViewRotationMatrix());
+		if (pShaderInstance.INVERSE_VIEW_ROTATION_MATRIX != null) pShaderInstance.INVERSE_VIEW_ROTATION_MATRIX.set(RenderSystem.getInverseViewRotationMatrix());
 		if (pShaderInstance.COLOR_MODULATOR != null) pShaderInstance.COLOR_MODULATOR.set(RenderSystem.getShaderColor());
 		if (pShaderInstance.FOG_START != null) pShaderInstance.FOG_START.set(RenderSystem.getShaderFogStart());
 		if (pShaderInstance.FOG_END != null) pShaderInstance.FOG_END.set(RenderSystem.getShaderFogEnd());

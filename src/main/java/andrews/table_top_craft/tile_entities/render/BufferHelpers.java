@@ -5,11 +5,10 @@ import com.mojang.blaze3d.shaders.Uniform;
 import com.mojang.blaze3d.systems.RenderSystem;
 import com.mojang.blaze3d.vertex.BufferUploader;
 import com.mojang.blaze3d.vertex.VertexBuffer;
-import com.mojang.blaze3d.vertex.VertexFormat;
-import com.mojang.math.Matrix4f;
 import com.mojang.math.Matrix4f;
 import net.minecraft.client.Minecraft;
 import net.minecraft.client.renderer.ShaderInstance;
+import net.minecraft.world.phys.Vec3;
 
 public class BufferHelpers {
 	public static void setupRender(ShaderInstance pShaderInstance, int lightU, int ilghtV /* GiantLuigi4 (Jason): no I will not correct this typo */) {
@@ -43,10 +42,9 @@ public class BufferHelpers {
 		}
 //		RenderSystem.setupShaderLights(pShaderInstance);
 		if (pShaderInstance.LIGHT0_DIRECTION != null)
-			pShaderInstance.LIGHT0_DIRECTION.set(-0.076762624f, 0.23993096f, 0.96622086f);
-		
+			pShaderInstance.LIGHT0_DIRECTION.set(0.457495710997814F, 0.7624928516630234F, -0.457495710997814F);
 		if (pShaderInstance.LIGHT1_DIRECTION != null)
-			pShaderInstance.LIGHT1_DIRECTION.set(0.076762624f, 0.99261355f, 0.07660231f);
+			pShaderInstance.LIGHT1_DIRECTION.set(-0.27617238536949695F, 0.9205746178983233F, 0.27617238536949695F);
 	}
 	
 	public static void setMatrix(Matrix4f mat, ShaderInstance pShaderInstance) {

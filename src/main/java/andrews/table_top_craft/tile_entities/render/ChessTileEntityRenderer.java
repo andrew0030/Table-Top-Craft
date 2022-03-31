@@ -1,36 +1,5 @@
 package andrews.table_top_craft.tile_entities.render;
 
-import java.awt.Color;
-import java.util.ArrayList;
-import java.util.Collection;
-import java.util.Collections;
-import java.util.Comparator;
-import java.util.List;
-
-import andrews.table_top_craft.util.obj.models.ChessObjModel;
-import com.mojang.blaze3d.platform.NativeImage;
-import com.mojang.blaze3d.shaders.Uniform;
-import com.mojang.blaze3d.vertex.*;
-import com.mojang.math.Matrix4f;
-import com.mojang.math.Quaternion;
-import com.mojang.math.Vector3f;
-import net.minecraft.client.renderer.LightTexture;
-import net.minecraft.client.renderer.MultiBufferSource;
-import net.minecraft.client.renderer.ShaderInstance;
-import net.minecraft.client.renderer.blockentity.BlockEntityRenderer;
-import net.minecraft.client.renderer.blockentity.BlockEntityRendererProvider;
-import net.minecraft.core.BlockPos;
-import net.minecraft.core.Direction;
-import net.minecraft.resources.ResourceLocation;
-import net.minecraft.world.effect.MobEffects;
-import net.minecraft.world.level.block.state.BlockState;
-import net.minecraft.world.phys.Vec3;
-import org.lwjgl.opengl.GL11;
-
-import com.google.common.collect.ImmutableList;
-import com.google.common.primitives.Ints;
-import com.mojang.blaze3d.systems.RenderSystem;
-
 import andrews.table_top_craft.events.DrawScreenEvent;
 import andrews.table_top_craft.game_logic.chess.PieceColor;
 import andrews.table_top_craft.game_logic.chess.board.Board;
@@ -69,12 +38,9 @@ import net.minecraft.client.renderer.blockentity.BlockEntityRendererProvider;
 import net.minecraft.client.renderer.texture.DynamicTexture;
 import net.minecraft.core.Direction;
 import net.minecraft.resources.ResourceLocation;
-import net.minecraft.world.effect.MobEffects;
 import net.minecraft.world.level.block.state.BlockState;
 import org.lwjgl.opengl.GL11;
 
-import java.awt.*;
-import java.util.List;
 import java.util.*;
 
 public class ChessTileEntityRenderer implements BlockEntityRenderer<ChessTileEntity> {
@@ -127,11 +93,27 @@ public class ChessTileEntityRenderer implements BlockEntityRenderer<ChessTileEnt
 	    }
 		int lightU = LightTexture.block(combinedLightIn);
 		int lightV = LightTexture.sky(combinedLightIn);
-	 
+
+		// We make sure the color has been reset to avoid funky business
+		RenderSystem.setShaderColor(1.0F, 1.0F, 1.0F, 1.0F);
+
 		poseStack.pushPose();
 		poseStack.translate(0.5D, 0.9D, 0.5D);
 		poseStack.scale(1.0F, -1.0F, -1.0F);
-		poseStack.mulPose(facing.getRotation());
+		switch(facing)
+		{
+			default:
+			case NORTH:
+				poseStack.mulPose(Vector3f.YN.rotationDegrees(180.0F));
+				break;
+			case SOUTH:
+				break;
+			case WEST:
+				poseStack.mulPose(Vector3f.YN.rotationDegrees(270.0F));
+				break;
+			case EAST:
+				poseStack.mulPose(Vector3f.YN.rotationDegrees(90.0F));
+		}
 		
 		// Renders the Custom Plate if needed
 		if(tileEntityIn.getUseCustomPlate())
@@ -152,7 +134,20 @@ public class ChessTileEntityRenderer implements BlockEntityRenderer<ChessTileEnt
 			poseStack.pushPose();
 			poseStack.translate(0.5D, 0.9D, 0.5D);
 			poseStack.scale(1.0F, -1.0F, -1.0F);
-			poseStack.mulPose(facing.getRotation());
+			switch(facing)
+			{
+				default:
+				case NORTH:
+					poseStack.mulPose(Vector3f.YN.rotationDegrees(180.0F));
+					break;
+				case SOUTH:
+					break;
+				case WEST:
+					poseStack.mulPose(Vector3f.YN.rotationDegrees(270.0F));
+					break;
+				case EAST:
+					poseStack.mulPose(Vector3f.YN.rotationDegrees(90.0F));
+			}
 			
 			// Moves the Piece away from the center of the Board, onto the center of a tile
 			poseStack.translate(CHESS_SCALE / 2D, 0.0D, CHESS_SCALE / 2D);
@@ -294,7 +289,7 @@ public class ChessTileEntityRenderer implements BlockEntityRenderer<ChessTileEnt
 						}
 						
 						// Renders The Chess Piece
-						renderPiece(bufferIn, tileEntityIn, poseStack, pieceType, pieceColor, combinedLightIn, wR, wG, wB, bR, bG, bB);
+						renderPiece(poseStack, pieceType, pieceColor, wR, wG, wB, bR, bG, bB);
 						
 						poseStack.popPose();
 						poseStack.popPose();
@@ -309,7 +304,7 @@ public class ChessTileEntityRenderer implements BlockEntityRenderer<ChessTileEnt
 			// Renders the taken pieces in the piece storage bellow the chess plate
 			// Moves the pieces down into the taken Pieces area
 			poseStack.translate(CHESS_SCALE * -6.5D, 0.556D, CHESS_SCALE * 0.3D);
-			renderTakenPieces(bufferIn, poseStack, tileEntityIn.getMoveLog(), tileEntityIn, combinedLightIn, lightU, lightV);
+			renderTakenPieces(poseStack, tileEntityIn.getMoveLog(), tileEntityIn);
 			/* clear render state */
 			type.clearRenderState();
 			poseStack.popPose();
@@ -317,16 +312,8 @@ public class ChessTileEntityRenderer implements BlockEntityRenderer<ChessTileEnt
 		}
 	}
 	
-	private static float getPartialTicks()
+	private void renderTakenPieces(PoseStack stack, ChessMoveLog moveLog, ChessTileEntity chessTileEntity)
 	{
-		return Minecraft.getInstance().getFrameTime();
-	}
-	
-	private void renderTakenPieces(MultiBufferSource bufferIn, PoseStack stack, ChessMoveLog moveLog, ChessTileEntity chessTileEntity, int combinedLightIn, int lightU, int lightV)
-	{
-//		final List<BasePiece> whiteTakenPieces = new ArrayList<>(); TODO remove after optimizing!
-//		final List<BasePiece> blackTakenPieces = new ArrayList<>();
-		
 		for(final BaseMove move : moveLog.getMoves())
 		{
 			if(move.isAttack())
@@ -369,8 +356,8 @@ public class ChessTileEntityRenderer implements BlockEntityRenderer<ChessTileEnt
 			}
 		});
 		
-		renderTakenPiecesFigures(bufferIn, stack, chessTileEntity, whiteTakenPieces, true, combinedLightIn);
-		renderTakenPiecesFigures(bufferIn, stack, chessTileEntity, blackTakenPieces, false, combinedLightIn);
+		renderTakenPiecesFigures(stack, chessTileEntity, whiteTakenPieces, true);
+		renderTakenPiecesFigures(stack, chessTileEntity, blackTakenPieces, false);
 		
 		// We have to clear the lists, otherwise we end up with the endless army of endlessness
 		/* GiantLuigi4: lol */
@@ -378,7 +365,7 @@ public class ChessTileEntityRenderer implements BlockEntityRenderer<ChessTileEnt
 		blackTakenPieces.clear();
 	}
 	
-	private void renderTakenPiecesFigures(MultiBufferSource bufferIn, PoseStack stack, ChessTileEntity chessTileEntity, final List<BasePiece> pieceList, final boolean isWhite, int combinedLightIn)
+	private void renderTakenPiecesFigures(PoseStack stack, ChessTileEntity chessTileEntity, final List<BasePiece> pieceList, final boolean isWhite)
 	{
 		int currentCoordinate = -1;
 		int currentRank = 0;
@@ -411,13 +398,13 @@ public class ChessTileEntityRenderer implements BlockEntityRenderer<ChessTileEnt
 				stack.translate((CHESS_SCALE * 0.855D) * 7D, 0.0D, 0.8D);
 			stack.translate((CHESS_SCALE * 0.855D) * -currentCoordinate, 0.0D, CHESS_SCALE * -currentRank);
 			
-			renderPiece(bufferIn, chessTileEntity, stack, piece.getPieceType(), piece.getPieceColor(), combinedLightIn, wR, wG, wB, bR, bG, bB);
+			renderPiece(stack, piece.getPieceType(), piece.getPieceColor(), wR, wG, wB, bR, bG, bB);
 			
 			stack.popPose();
 		}
 	}
 	
-	private void renderPiece(MultiBufferSource bufferIn, ChessTileEntity chessTileEntity, PoseStack poseStack, PieceType pieceType, PieceColor pieceColor, int combinedLightIn, float wR, float wG, float wB, float bR, float bG, float bB)
+	private void renderPiece(PoseStack poseStack, PieceType pieceType, PieceColor pieceColor, float wR, float wG, float wB, float bR, float bG, float bB)
 	{
 		// The RenderType for the chess pieces (the texture is just a dummy texture)
 		ShaderInstance shaderinstance = RenderSystem.getShader();
@@ -454,24 +441,6 @@ public class ChessTileEntityRenderer implements BlockEntityRenderer<ChessTileEnt
 			BufferHelpers.draw(queenBuffer, shaderinstance);
 		}
 		poseStack.popPose();
-	}
-	
-	private int getColorWithAppliedLight(Color color, int light)
-	{
-		int colorRed = color.getRed();
-		int colorGreen = color.getGreen();
-		int colorBlue = color.getBlue();
-		
-		// We make sure the players doesn't have night vision, because otherwise the pieces would look dark while everything else is lit
-		if(!Minecraft.getInstance().player.hasEffect(MobEffects.NIGHT_VISION))
-		{
-			float brightnessMod = Math.max(0.06F, Math.max((light >> 16) / 240F, (light & 0xFF) / 240F));
-			colorRed *= brightnessMod;
-			colorGreen *= brightnessMod;
-			colorBlue *= brightnessMod;
-		}
-		
-	    return new Color(colorRed, colorGreen, colorBlue).getRGB();
 	}
 	
 	/**

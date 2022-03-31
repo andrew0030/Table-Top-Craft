@@ -10,6 +10,7 @@ import andrews.table_top_craft.screens.chess.buttons.colors.ChessBoardPreviousMo
 import andrews.table_top_craft.screens.chess.buttons.colors.ChessBoardTilesColorButton;
 import andrews.table_top_craft.screens.chess.buttons.colors.ChessTileInfoColorsButton;
 import andrews.table_top_craft.screens.chess.buttons.colors.ChessUseCustomPlateButton;
+import andrews.table_top_craft.screens.chess.buttons.pieces.ChessBoardPieceSettingsButton;
 import andrews.table_top_craft.screens.chess.buttons.settings.ChessBoardSettingsButton;
 import andrews.table_top_craft.tile_entities.ChessTileEntity;
 import andrews.table_top_craft.util.Reference;
@@ -52,6 +53,8 @@ public class ChessColorSettingsScreen extends Screen
 		// The Buttons in the Gui Menu
 		this.addRenderableWidget(new ChessBoardSettingsButton(this.chessTileEntity, x - 24, y + 16));
 		this.addRenderableWidget(new ChessBoardColorSettingsButton(this.chessTileEntity, x - 24, y + 42));
+		this.addRenderableWidget(new ChessBoardPieceSettingsButton(this.chessTileEntity, x - 24, y + 68));
+
 		this.addRenderableWidget(new ChessTileInfoColorsButton(this.chessTileEntity, x + 5, y + 20));
 		this.addRenderableWidget(new ChessUseCustomPlateButton(this.chessTileEntity, x + 5, y + 35));
 		this.addRenderableWidget(new ChessBoardTilesColorButton(this.chessTileEntity, x + 5, y + 50));

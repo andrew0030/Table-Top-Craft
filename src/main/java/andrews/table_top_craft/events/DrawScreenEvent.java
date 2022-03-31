@@ -35,17 +35,6 @@ public class DrawScreenEvent
 	{	
 		if(pawnBuffer == null)
 		{
-//			BufferBuilder pawnBuilder = new BufferBuilder(8342);
-//			pawnBuilder.begin(VertexFormat.Mode.TRIANGLES, chessVertexFormat);
-//			CHESS_PIECE_MODEL.render(new PoseStack(), pawnBuilder, PieceType.PAWN);
-//			pawnBuilder.end();
-//			 pawnBuffer = new VertexBuffer(chessVertexFormat); TODO make sure this works
-//			pawnBuffer = new VertexBuffer();
-//			if(pawnBuilder != null)
-//			{
-//				pawnBuffer.upload(pawnBuilder);
-//			}
-
 			BufferBuilder pawnBuilder = new BufferBuilder(RenderType.TRANSIENT_BUFFER_SIZE);
 			pawnBuilder.begin(VertexFormat.Mode.TRIANGLES, chessVertexFormat);
 			CHESS_PIECE_MODEL.render(new PoseStack(), pawnBuilder, PieceType.PAWN);

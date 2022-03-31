@@ -2,6 +2,7 @@ package andrews.table_top_craft.screens.chess.menus;
 
 import andrews.table_top_craft.game_logic.chess.PieceColor;
 import andrews.table_top_craft.screens.chess.buttons.colors.ChessBoardColorSettingsButton;
+import andrews.table_top_craft.screens.chess.buttons.pieces.ChessBoardPieceSettingsButton;
 import andrews.table_top_craft.screens.chess.buttons.settings.ChessBoardSettingsButton;
 import andrews.table_top_craft.screens.chess.buttons.settings.ChessCopyFENButton;
 import andrews.table_top_craft.screens.chess.buttons.settings.ChessEvaluateBoardButton;
@@ -62,6 +63,7 @@ public class ChessBoardSettingsScreen extends Screen
 		// The Buttons in the Gui Menu
 		this.addRenderableWidget(new ChessBoardSettingsButton(this.chessTileEntity, x - 24, y + 16));
 		this.addRenderableWidget(new ChessBoardColorSettingsButton(this.chessTileEntity, x - 24, y + 42));
+		this.addRenderableWidget(new ChessBoardPieceSettingsButton(this.chessTileEntity, x - 24, y + 68));
 		
 		this.addRenderableWidget(new ChessNewGameButton(this.chessTileEntity.getBlockPos(), x + 5, y + 16));
 		this.addRenderableWidget(new ChessEvaluateBoardButton(this.chessTileEntity, x + 90, y + 16));

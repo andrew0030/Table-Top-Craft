@@ -30,7 +30,7 @@ public class ChessPieceFigureTileEntityRenderer implements BlockEntityRenderer<C
     private static final DynamicTexture texture = new DynamicTexture(image);
     private static ResourceLocation resourceLocation = null;
     // Chess Piece Stand texture and model
-    public static final ResourceLocation EYE_TEXTURE = new ResourceLocation(Reference.MODID, "textures/tile/chess_piece_figure/chess_piece_figure.png");
+    public static final ResourceLocation CHESS_PIECE_FIGURE_TEXTURE = new ResourceLocation(Reference.MODID, "textures/tile/chess_piece_figure/chess_piece_figure.png");
     private static ChessPieceFigureStandModel chessPieceFigureStandModel;
 
     static
@@ -58,7 +58,7 @@ public class ChessPieceFigureTileEntityRenderer implements BlockEntityRenderer<C
         poseStack.pushPose();
             poseStack.translate(0.5D, 1.5D, 0.5D);
             poseStack.scale(1.0F, -1.0F, -1.0F);
-            VertexConsumer vertexconsumer = bufferSource.getBuffer(RenderType.entitySolid(EYE_TEXTURE));
+            VertexConsumer vertexconsumer = bufferSource.getBuffer(RenderType.entitySolid(CHESS_PIECE_FIGURE_TEXTURE));
             chessPieceFigureStandModel.renderToBuffer(poseStack, vertexconsumer, packedLight, packedOverlay, 1.0F, 1.0F, 1.0F, 1.0F);
         poseStack.popPose();
 
@@ -77,6 +77,7 @@ public class ChessPieceFigureTileEntityRenderer implements BlockEntityRenderer<C
         poseStack.pushPose();
             poseStack.translate(8 * 0.0625F, 2 * 0.0625F, 8 * 0.0625F);
             poseStack.mulPose(Vector3f.YN.rotationDegrees(rotation * 22.5F));
+//            poseStack.mulPose(Vector3f.YN.rotationDegrees(Minecraft.getInstance().player.tickCount)); TODO replace with actual system
             // We invert the model because Minecraft renders shit inside out.
             poseStack.scale(3.0F, -3.0F, -3.0F);
             poseStack.pushPose();
@@ -89,8 +90,33 @@ public class ChessPieceFigureTileEntityRenderer implements BlockEntityRenderer<C
                 poseStack.pushPose();
                     if (shaderinstance.MODEL_VIEW_MATRIX != null) shaderinstance.MODEL_VIEW_MATRIX.set(poseStack.last().pose());
                     if (shaderinstance.PROJECTION_MATRIX != null) shaderinstance.PROJECTION_MATRIX.set(RenderSystem.getProjectionMatrix());
-                    VertexBuffer pawnBuffer = DrawScreenEvent.pawnBuffer;
-                    BufferHelpers.draw(pawnBuffer, shaderinstance);
+                    switch (blockEntity.getPieceType())
+                    {
+                        case 1 -> {
+                            VertexBuffer pawnBuffer = DrawScreenEvent.pawnBuffer;
+                            BufferHelpers.draw(pawnBuffer, shaderinstance);
+                        }
+                        case 2 -> {
+                            VertexBuffer rookBuffer = DrawScreenEvent.rookBuffer;
+                            BufferHelpers.draw(rookBuffer, shaderinstance);
+                        }
+                        case 3 -> {
+                            VertexBuffer bishopBuffer = DrawScreenEvent.bishopBuffer;
+                            BufferHelpers.draw(bishopBuffer, shaderinstance);
+                        }
+                        case 4 -> {
+                            VertexBuffer knightBuffer = DrawScreenEvent.knightBuffer;
+                            BufferHelpers.draw(knightBuffer, shaderinstance);
+                        }
+                        case 5 -> {
+                            VertexBuffer kingBuffer = DrawScreenEvent.kingBuffer;
+                            BufferHelpers.draw(kingBuffer, shaderinstance);
+                        }
+                        case 6 -> {
+                            VertexBuffer queenBuffer = DrawScreenEvent.queenBuffer;
+                            BufferHelpers.draw(queenBuffer, shaderinstance);
+                        }
+                    }
                 poseStack.popPose();
                 type.clearRenderState();
             poseStack.popPose();

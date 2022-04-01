@@ -23,6 +23,8 @@ import net.minecraft.client.renderer.texture.DynamicTexture;
 import net.minecraft.resources.ResourceLocation;
 import net.minecraft.world.level.block.state.BlockState;
 
+import javax.annotation.Nullable;
+
 public class ChessPieceFigureTileEntityRenderer implements BlockEntityRenderer<ChessPieceFigureBlockEntity>
 {
     // Dynamic Texture
@@ -49,10 +51,10 @@ public class ChessPieceFigureTileEntityRenderer implements BlockEntityRenderer<C
     @Override
     public void render(ChessPieceFigureBlockEntity blockEntity, float partialTicks, PoseStack poseStack, MultiBufferSource bufferSource, int packedLight, int packedOverlay)
     {
-        renderChessPieceFigure(blockEntity, poseStack, bufferSource, packedLight, packedOverlay);
+        renderChessPieceFigure(blockEntity, poseStack, bufferSource, true, partialTicks, packedLight, packedOverlay);
     }
 
-    public static void renderChessPieceFigure(ChessPieceFigureBlockEntity blockEntity, PoseStack poseStack, MultiBufferSource bufferSource, int packedLight, int packedOverlay)
+    public static void renderChessPieceFigure(ChessPieceFigureBlockEntity blockEntity, PoseStack poseStack, MultiBufferSource bufferSource, boolean isInLevel, float partialTicks, int packedLight, int packedOverlay)
     {
         // Renders the Stand for the "Chess Piece Figure" block
         poseStack.pushPose();
@@ -77,7 +79,8 @@ public class ChessPieceFigureTileEntityRenderer implements BlockEntityRenderer<C
         poseStack.pushPose();
             poseStack.translate(8 * 0.0625F, 2 * 0.0625F, 8 * 0.0625F);
             poseStack.mulPose(Vector3f.YN.rotationDegrees(rotation * 22.5F));
-//            poseStack.mulPose(Vector3f.YN.rotationDegrees(Minecraft.getInstance().player.tickCount)); TODO replace with actual system
+            if(isInLevel && blockEntity.getRotateChessPieceFigure())
+                poseStack.mulPose(Vector3f.YN.rotationDegrees(Minecraft.getInstance().player.tickCount + partialTicks));
             // We invert the model because Minecraft renders shit inside out.
             poseStack.scale(3.0F, -3.0F, -3.0F);
             poseStack.pushPose();

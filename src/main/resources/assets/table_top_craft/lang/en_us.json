@@ -18,6 +18,7 @@
 	"gui.table_top_craft.chess.board_colors": "Chess Board Colors",
 	"gui.table_top_craft.chess.board_pieces": "Chess Board Pieces",
 	"gui.table_top_craft.chess.board_evaluator": "Chess Board Evaluator",
+	"gui.table_top_craft.piece_figure.piece_settings": "Chess Piece Figure Settings",
 	"gui.table_top_craft.chess.fen_loader": "FEN Loader",
 	"gui.table_top_craft.chess.move_log": "Move Log",
 	"gui.table_top_craft.chess.move_log.white": "White",

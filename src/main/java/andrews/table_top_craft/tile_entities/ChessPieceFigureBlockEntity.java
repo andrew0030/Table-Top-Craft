@@ -25,6 +25,7 @@ public class ChessPieceFigureBlockEntity extends BlockEntity
 {
     private final Random rand = new Random();
     private int pieceType;
+    private boolean rotateChessPieceFigure;
 
     public ChessPieceFigureBlockEntity(BlockPos pos, BlockState state)
     {
@@ -82,6 +83,7 @@ public class ChessPieceFigureBlockEntity extends BlockEntity
     private void saveToNBT(CompoundTag compound)
     {
         compound.putInt("PieceType", this.getPieceType());
+        compound.putInt("RotateChessPieceFigure", !this.rotateChessPieceFigure ? 0 : 1);
     }
 
     /**
@@ -90,6 +92,8 @@ public class ChessPieceFigureBlockEntity extends BlockEntity
     private void loadFromNBT(CompoundTag compound)
     {
         pieceType = compound.getInt("PieceType");
+        if(compound.contains("RotateChessPieceFigure", Tag.TAG_INT))
+            this.rotateChessPieceFigure = compound.getInt("RotateChessPieceFigure") != 0;
     }
 
     public int getPieceType()
@@ -115,5 +119,15 @@ public class ChessPieceFigureBlockEntity extends BlockEntity
     {
         pieceType = type;
         setChanged();
+    }
+
+    public void setRotateChessPieceFigure(boolean rotateChessPieceFigure)
+    {
+        this.rotateChessPieceFigure = rotateChessPieceFigure;
+    }
+
+    public boolean getRotateChessPieceFigure()
+    {
+        return this.rotateChessPieceFigure;
     }
 }

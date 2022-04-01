@@ -37,12 +37,12 @@ public class TTCBlockEntityWithoutLevelRenderer extends BlockEntityWithoutLevelR
                 // We have to set the Piece type, otherwise nothing will render!
                 chessPieceFigureBlockEntity.setPieceType(1); // TODO get this value from the item
                 poseStack.pushPose();
-                ChessPieceFigureTileEntityRenderer.renderChessPieceFigure(chessPieceFigureBlockEntity, poseStack, buffer, packedLight, packedOverlay);
+                ChessPieceFigureTileEntityRenderer.renderChessPieceFigure(chessPieceFigureBlockEntity, poseStack, buffer, false, 0.0F, packedLight, packedOverlay);
                 poseStack.popPose();
             }
-            catch (NullPointerException e)
+            catch (Exception e)
             {
-                System.err.println("Tried to render chess piece inside inventory, but RenderType was still null!");
+                System.err.println(e.getMessage());
             }
         }
     }

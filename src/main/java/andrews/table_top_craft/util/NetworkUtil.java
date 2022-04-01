@@ -1,14 +1,7 @@
 package andrews.table_top_craft.util;
 
 import andrews.table_top_craft.network.TTCNetwork;
-import andrews.table_top_craft.network.server.MessageServerLoadFEN;
-import andrews.table_top_craft.network.server.MessageServerNewChessGame;
-import andrews.table_top_craft.network.server.MessageServerSetColor;
-import andrews.table_top_craft.network.server.MessageServerSetColors;
-import andrews.table_top_craft.network.server.MessageServerShowAvailableMoves;
-import andrews.table_top_craft.network.server.MessageServerShowPreviousMove;
-import andrews.table_top_craft.network.server.MessageServerShowTileInfo;
-import andrews.table_top_craft.network.server.MessageServerUseCustomPlate;
+import andrews.table_top_craft.network.server.*;
 import net.minecraft.core.BlockPos;
 import net.minecraftforge.api.distmarker.Dist;
 import net.minecraftforge.api.distmarker.OnlyIn;
@@ -74,5 +67,11 @@ public class NetworkUtil
 	public static void setColorsMessage(int colorType, BlockPos pos, String color, String color2)
 	{
 		TTCNetwork.CHANNEL.sendToServer(new MessageServerSetColors(colorType, pos, color, color2));
+	}
+
+	@OnlyIn(Dist.CLIENT)
+	public static void rotateChessPieceFigure(BlockPos pos)
+	{
+		TTCNetwork.CHANNEL.sendToServer(new MessageServerRotateChessPieceFigure(pos));
 	}
 }

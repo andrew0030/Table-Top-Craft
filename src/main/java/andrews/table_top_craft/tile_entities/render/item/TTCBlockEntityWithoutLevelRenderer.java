@@ -12,6 +12,9 @@ import net.minecraft.client.renderer.MultiBufferSource;
 import net.minecraft.client.renderer.block.model.ItemTransforms;
 import net.minecraft.client.renderer.blockentity.BlockEntityRenderDispatcher;
 import net.minecraft.core.BlockPos;
+import net.minecraft.nbt.CompoundTag;
+import net.minecraft.nbt.Tag;
+import net.minecraft.world.item.BlockItem;
 import net.minecraft.world.item.ItemStack;
 
 public class TTCBlockEntityWithoutLevelRenderer extends BlockEntityWithoutLevelRenderer
@@ -34,8 +37,13 @@ public class TTCBlockEntityWithoutLevelRenderer extends BlockEntityWithoutLevelR
         {
             try
             {
-                // We have to set the Piece type, otherwise nothing will render!
-                chessPieceFigureBlockEntity.setPieceType(1); // TODO get this value from the item
+                // We get the Piece Type from the item, if there is none we just render a Pawn
+                CompoundTag compoundTag = BlockItem.getBlockEntityData(itemStack);
+                if(compoundTag != null && compoundTag.contains("PieceType", Tag.TAG_INT))
+                    chessPieceFigureBlockEntity.setPieceType(compoundTag.getInt("PieceType"));
+                else
+                    chessPieceFigureBlockEntity.setPieceType(1);
+
                 poseStack.pushPose();
                 ChessPieceFigureTileEntityRenderer.renderChessPieceFigure(chessPieceFigureBlockEntity, poseStack, buffer, false, 0.0F, packedLight, packedOverlay);
                 poseStack.popPose();

@@ -9,12 +9,12 @@ public class NBTColorSaving
 	
 	public static String createWhiteTilesColor()
 	{
-		return "159/140/110/255";
+		return "208/177/141/255";
 	}
 	
 	public static String createBlackTilesColor()
 	{
-		return "108/62/38/255";
+		return "139/86/57/255";
 	}
 	
 	public static String createWhitePiecesColor()
@@ -52,6 +52,16 @@ public class NBTColorSaving
 		return "125/1/255/100";
 	}
 	
+	public static String saveColor(int red, int green, int blue)
+	{
+		return Integer.toString(red) + "/" + Integer.toString(green) + "/" + Integer.toString(blue) + "/1";
+	}
+	
+	public static String saveColor(int red, int green, int blue, int alpha)
+	{
+		return Integer.toString(red) + "/" + Integer.toString(green) + "/" + Integer.toString(blue) + "/" + Integer.toString(alpha);
+	}
+
 	public static int getRed(String color)
 	{
 		String[] values = color.split("/");
@@ -64,16 +74,6 @@ public class NBTColorSaving
 			System.out.println(e);
 		}
 		return 255;
-	}
-	
-	public static String saveColor(int red, int green, int blue)
-	{
-		return Integer.toString(red) + "/" + Integer.toString(green) + "/" + Integer.toString(blue) + "/1";
-	}
-	
-	public static String saveColor(int red, int green, int blue, int alpha)
-	{
-		return Integer.toString(red) + "/" + Integer.toString(green) + "/" + Integer.toString(blue) + "/" + Integer.toString(alpha);
 	}
 	
 	public static int getGreen(String color)

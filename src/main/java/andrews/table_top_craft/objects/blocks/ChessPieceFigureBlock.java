@@ -1,14 +1,28 @@
 package andrews.table_top_craft.objects.blocks;
 
+import andrews.table_top_craft.registry.TTCBlocks;
 import andrews.table_top_craft.screens.chess.menus.ChessBoardSettingsScreen;
 import andrews.table_top_craft.screens.piece_figure.menus.ChessPieceFigureSettingsScreen;
 import andrews.table_top_craft.tile_entities.ChessPieceFigureBlockEntity;
 import andrews.table_top_craft.tile_entities.ChessTileEntity;
+import net.minecraft.ChatFormatting;
 import net.minecraft.core.BlockPos;
+import net.minecraft.core.NonNullList;
+import net.minecraft.nbt.CompoundTag;
+import net.minecraft.nbt.Tag;
+import net.minecraft.network.chat.Component;
+import net.minecraft.network.chat.MutableComponent;
+import net.minecraft.network.chat.TextComponent;
+import net.minecraft.network.chat.TranslatableComponent;
 import net.minecraft.util.Mth;
+import net.minecraft.world.ContainerHelper;
 import net.minecraft.world.InteractionHand;
 import net.minecraft.world.InteractionResult;
+import net.minecraft.world.entity.item.ItemEntity;
 import net.minecraft.world.entity.player.Player;
+import net.minecraft.world.item.BlockItem;
+import net.minecraft.world.item.ItemStack;
+import net.minecraft.world.item.TooltipFlag;
 import net.minecraft.world.item.context.BlockPlaceContext;
 import net.minecraft.world.level.BlockGetter;
 import net.minecraft.world.level.Level;
@@ -16,6 +30,7 @@ import net.minecraft.world.level.block.Block;
 import net.minecraft.world.level.block.EntityBlock;
 import net.minecraft.world.level.block.SoundType;
 import net.minecraft.world.level.block.entity.BlockEntity;
+import net.minecraft.world.level.block.entity.ShulkerBoxBlockEntity;
 import net.minecraft.world.level.block.state.BlockState;
 import net.minecraft.world.level.block.state.StateDefinition;
 import net.minecraft.world.level.block.state.properties.BlockStateProperties;
@@ -24,6 +39,9 @@ import net.minecraft.world.level.material.Material;
 import net.minecraft.world.phys.BlockHitResult;
 import net.minecraft.world.phys.shapes.CollisionContext;
 import net.minecraft.world.phys.shapes.VoxelShape;
+
+import javax.annotation.Nullable;
+import java.util.List;
 
 public class ChessPieceFigureBlock extends Block implements EntityBlock
 {
@@ -54,6 +72,54 @@ public class ChessPieceFigureBlock extends Block implements EntityBlock
     public BlockState getStateForPlacement(BlockPlaceContext pContext)
     {
         return this.defaultBlockState().setValue(ROTATION, Mth.floor((double) (pContext.getRotation() * 16.0F / 360.0F) + 0.5D) & 15);
+    }
+
+    /**
+     * Called before the Block is set to air in the world. Called regardless of if the player's tool can actually collect
+     * this block
+     */
+    @Override
+    public void playerWillDestroy(Level level, BlockPos pos, BlockState state, Player player)
+    {
+        BlockEntity blockentity = level.getBlockEntity(pos);
+        if (blockentity instanceof ChessPieceFigureBlockEntity chessPieceFigureBlockEntity)
+        {
+            if (!level.isClientSide && player.isCreative())// && !chessPieceFigureBlockEntity.isEmpty()
+            {
+                ItemStack itemstack = new ItemStack(TTCBlocks.CHESS_PIECE_FIGURE.get().asItem());
+                blockentity.saveToItem(itemstack);
+//                if (shulkerboxblockentity.hasCustomName()) {
+//                    itemstack.setHoverName(shulkerboxblockentity.getCustomName());
+//                }
+
+                ItemEntity itementity = new ItemEntity(level, (double)pos.getX() + 0.5D, (double)pos.getY() + 0.5D, (double)pos.getZ() + 0.5D, itemstack);
+                itementity.setDefaultPickUpDelay();
+                level.addFreshEntity(itementity);
+            }
+        }
+        super.playerWillDestroy(level, pos, state, player);
+    }
+
+    @Override
+    public void appendHoverText(ItemStack stack, @Nullable BlockGetter level, List<Component> tooltip, TooltipFlag flag)
+    {
+        super.appendHoverText(stack, level, tooltip, flag);
+        CompoundTag compoundtag = BlockItem.getBlockEntityData(stack);
+        if (compoundtag != null)
+        {
+            if (compoundtag.contains("PieceType", Tag.TAG_INT))
+            {
+                switch (compoundtag.getInt("PieceType"))
+                {
+                    case 1 -> tooltip.add(new TextComponent("Piece Type: Pawn").withStyle(ChatFormatting.DARK_GRAY));//TODO replace with text component
+                    case 2 -> tooltip.add(new TextComponent("Piece Type: Rook").withStyle(ChatFormatting.DARK_GRAY));
+                    case 3 -> tooltip.add(new TextComponent("Piece Type: Bishop").withStyle(ChatFormatting.DARK_GRAY));
+                    case 4 -> tooltip.add(new TextComponent("Piece Type: Knight").withStyle(ChatFormatting.DARK_GRAY));
+                    case 5 -> tooltip.add(new TextComponent("Piece Type: King").withStyle(ChatFormatting.DARK_GRAY));
+                    case 6 -> tooltip.add(new TextComponent("Piece Type: Queen").withStyle(ChatFormatting.DARK_GRAY));
+                }
+            }
+        }
     }
 
     @Override

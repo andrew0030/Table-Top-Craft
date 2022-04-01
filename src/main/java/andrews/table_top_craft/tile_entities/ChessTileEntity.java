@@ -65,13 +65,6 @@ public class ChessTileEntity extends BlockEntity
 		moveLog = new ChessMoveLog();
 	}
 
-	//TODO remove if not needed
-//	public ChessTileEntity(BlockEntityType<?> blockEntityType, BlockPos pos, BlockState state)
-//	{
-//		super(blockEntityType, pos, state);
-//		moveLog = new ChessMoveLog();
-//	}
-
 	// Used to synchronize the BlockEntity with the client when the chunk it is in is loaded
 	@Override
 	public CompoundTag getUpdateTag()

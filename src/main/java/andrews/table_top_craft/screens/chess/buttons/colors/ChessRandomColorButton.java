@@ -81,19 +81,11 @@ public class ChessRandomColorButton extends Button
 			redSlider.setValue(rand.nextInt(255) + 1);
 			greenSlider.setValue(rand.nextInt(255) + 1);
 			blueSlider.setValue(rand.nextInt(255) + 1);
-			// We need to update the sliders so the text that displays the value is correct
-			redSlider.updateSlider();
-			greenSlider.updateSlider();
-			blueSlider.updateSlider();
 			if(optionalRedSlider != null && optionalGreenSlider != null && optionalBlueSlider != null)
 			{
 				optionalRedSlider.setValue(rand.nextInt(255) + 1);
 				optionalGreenSlider.setValue(rand.nextInt(255) + 1);
 				optionalBlueSlider.setValue(rand.nextInt(255) + 1);
-				// We need to update the sliders so the text that displays the value is correct
-				optionalRedSlider.updateSlider();
-				optionalGreenSlider.updateSlider();
-				optionalBlueSlider.updateSlider();
 			}
 		}
 		catch(Exception e)

@@ -92,10 +92,6 @@ public class ChessResetColorButton extends Button
 				optionalRedSlider.setValue(108F);
 				optionalGreenSlider.setValue(62F);
 				optionalBlueSlider.setValue(38F);
-				// We need to update the sliders so the text that displays the value is correct
-				optionalRedSlider.updateSlider();
-				optionalGreenSlider.updateSlider();
-				optionalBlueSlider.updateSlider();
 			}
 			break;
 		case PIECES:
@@ -107,10 +103,6 @@ public class ChessResetColorButton extends Button
 				optionalRedSlider.setValue(51F);
 				optionalGreenSlider.setValue(51F);
 				optionalBlueSlider.setValue(51F);
-				// We need to update the sliders so the text that displays the value is correct
-				optionalRedSlider.updateSlider();
-				optionalGreenSlider.updateSlider();
-				optionalBlueSlider.updateSlider();
 			}
 			break;
 		case LEGAL_MOVE:
@@ -138,10 +130,6 @@ public class ChessResetColorButton extends Button
 			greenSlider.setValue(1F);
 			blueSlider.setValue(255F);
 		}
-		// We need to update the sliders so the text that displays the value is correct
-		redSlider.updateSlider();
-		greenSlider.updateSlider();
-		blueSlider.updateSlider();
 	}
 	
 	public enum DefaultColorType

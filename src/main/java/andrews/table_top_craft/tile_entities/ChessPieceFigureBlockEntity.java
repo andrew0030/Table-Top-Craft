@@ -124,6 +124,7 @@ public class ChessPieceFigureBlockEntity extends BlockEntity
     public void setRotateChessPieceFigure(boolean rotateChessPieceFigure)
     {
         this.rotateChessPieceFigure = rotateChessPieceFigure;
+        setChanged();
     }
 
     public boolean getRotateChessPieceFigure()

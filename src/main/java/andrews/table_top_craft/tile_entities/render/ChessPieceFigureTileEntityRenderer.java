@@ -1,6 +1,7 @@
 package andrews.table_top_craft.tile_entities.render;
 
 import andrews.table_top_craft.events.DrawScreenEvent;
+import andrews.table_top_craft.game_logic.chess.pieces.BasePiece;
 import andrews.table_top_craft.objects.blocks.ChessPieceFigureBlock;
 import andrews.table_top_craft.tile_entities.ChessPieceFigureBlockEntity;
 import andrews.table_top_craft.tile_entities.model.piece_figure.ChessPieceFigureStandModel;
@@ -22,8 +23,6 @@ import net.minecraft.client.renderer.blockentity.BlockEntityRendererProvider;
 import net.minecraft.client.renderer.texture.DynamicTexture;
 import net.minecraft.resources.ResourceLocation;
 import net.minecraft.world.level.block.state.BlockState;
-
-import javax.annotation.Nullable;
 
 public class ChessPieceFigureTileEntityRenderer implements BlockEntityRenderer<ChessPieceFigureBlockEntity>
 {
@@ -51,10 +50,10 @@ public class ChessPieceFigureTileEntityRenderer implements BlockEntityRenderer<C
     @Override
     public void render(ChessPieceFigureBlockEntity blockEntity, float partialTicks, PoseStack poseStack, MultiBufferSource bufferSource, int packedLight, int packedOverlay)
     {
-        renderChessPieceFigure(blockEntity, poseStack, bufferSource, true, partialTicks, packedLight, packedOverlay);
+        renderChessPieceFigure(blockEntity, poseStack, bufferSource, true, false, partialTicks, packedLight, packedOverlay);
     }
 
-    public static void renderChessPieceFigure(ChessPieceFigureBlockEntity blockEntity, PoseStack poseStack, MultiBufferSource bufferSource, boolean isInLevel, float partialTicks, int packedLight, int packedOverlay)
+    public static void renderChessPieceFigure(ChessPieceFigureBlockEntity blockEntity, PoseStack poseStack, MultiBufferSource bufferSource, boolean isInLevel, boolean isInGui, float partialTicks, int packedLight, int packedOverlay)
     {
         // Renders the Stand for the "Chess Piece Figure" block
         poseStack.pushPose();
@@ -64,65 +63,104 @@ public class ChessPieceFigureTileEntityRenderer implements BlockEntityRenderer<C
             chessPieceFigureStandModel.renderToBuffer(poseStack, vertexconsumer, packedLight, packedOverlay, 1.0F, 1.0F, 1.0F, 1.0F);
         poseStack.popPose();
 
-        int rotation = 0;
-        if(blockEntity.hasLevel())
-        {
-            BlockState blockstate = blockEntity.getLevel().getBlockState(blockEntity.getBlockPos());
-            if(blockstate.getBlock() instanceof ChessPieceFigureBlock)
+        // For the GUI we have to render using a VertexConsumer, this is less efficient, but seems to
+        // be the only way to get them to render inside GUIs
+//        if (isInGui)
+//        {
+//            RenderType type1 = TTCRenderTypes.getChessPieceSolid(resourceLocation);
+//            type1.setupRenderState();
+//            poseStack.pushPose();
+//            poseStack.translate(8 * 0.0625F, 2 * 0.0625F, 8 * 0.0625F);
+//            poseStack.scale(5.0F, -5.0F, -5.0F);
+//            poseStack.mulPose(Vector3f.YN.rotationDegrees(90F));
+//            VertexConsumer consumer = bufferSource.getBuffer(TTCRenderTypes.getChessPieceSolid(resourceLocation));
+//            switch (blockEntity.getPieceType())
+//            {
+//                case 1 -> {
+//                    DrawScreenEvent.CHESS_PIECE_MODEL.render(poseStack, consumer, BasePiece.PieceType.PAWN);
+//                }
+//                case 2 -> {
+//                    DrawScreenEvent.CHESS_PIECE_MODEL.render(poseStack, consumer, BasePiece.PieceType.ROOK);
+//                }
+//                case 3 -> {
+//                    DrawScreenEvent.CHESS_PIECE_MODEL.render(poseStack, consumer, BasePiece.PieceType.BISHOP);
+//                }
+//                case 4 -> {
+//                    DrawScreenEvent.CHESS_PIECE_MODEL.render(poseStack, consumer, BasePiece.PieceType.KNIGHT);
+//                }
+//                case 5 -> {
+//                    DrawScreenEvent.CHESS_PIECE_MODEL.render(poseStack, consumer, BasePiece.PieceType.KING);
+//                }
+//                case 6 -> {
+//                    DrawScreenEvent.CHESS_PIECE_MODEL.render(poseStack, consumer, BasePiece.PieceType.QUEEN);
+//                }
+//            }
+//            poseStack.popPose();
+//            type1.clearRenderState();
+//        }
+//        else
+//        {
+            int rotation = 0;
+            if (blockEntity.hasLevel())
             {
-                rotation = blockstate.getValue(ChessPieceFigureBlock.ROTATION);
+                BlockState blockstate = blockEntity.getLevel().getBlockState(blockEntity.getBlockPos());
+                if (blockstate.getBlock() instanceof ChessPieceFigureBlock)
+                {
+                    rotation = blockstate.getValue(ChessPieceFigureBlock.ROTATION);
+                }
             }
-        }
-        int lightU = LightTexture.block(packedLight);
-        int lightV = LightTexture.sky(packedLight);
+            int lightU = LightTexture.block(packedLight);
+            int lightV = LightTexture.sky(packedLight);
 
-        poseStack.pushPose();
+            poseStack.pushPose();
             poseStack.translate(8 * 0.0625F, 2 * 0.0625F, 8 * 0.0625F);
             poseStack.mulPose(Vector3f.YN.rotationDegrees(rotation * 22.5F));
-            if(isInLevel && blockEntity.getRotateChessPieceFigure())
+            if (isInLevel && blockEntity.getRotateChessPieceFigure())
                 poseStack.mulPose(Vector3f.YN.rotationDegrees(Minecraft.getInstance().player.tickCount + partialTicks));
             // We invert the model because Minecraft renders shit inside out.
             poseStack.scale(3.0F, -3.0F, -3.0F);
             poseStack.pushPose();
-                RenderType type = TTCRenderTypes.getChessPieceSolid(resourceLocation);
-                type.setupRenderState();
-                BufferHelpers.setupRender(RenderSystem.getShader(), lightU, lightV);
-                ShaderInstance shaderinstance = RenderSystem.getShader();
-                RenderSystem.setShaderColor(210 / 255F, 188 / 255F, 161 / 255F, 1.0F);
-                BufferHelpers.updateColor(shaderinstance);
-                poseStack.pushPose();
-                    if (shaderinstance.MODEL_VIEW_MATRIX != null) shaderinstance.MODEL_VIEW_MATRIX.set(poseStack.last().pose());
-                    if (shaderinstance.PROJECTION_MATRIX != null) shaderinstance.PROJECTION_MATRIX.set(RenderSystem.getProjectionMatrix());
-                    switch (blockEntity.getPieceType())
-                    {
-                        case 1 -> {
-                            VertexBuffer pawnBuffer = DrawScreenEvent.pawnBuffer;
-                            BufferHelpers.draw(pawnBuffer, shaderinstance);
-                        }
-                        case 2 -> {
-                            VertexBuffer rookBuffer = DrawScreenEvent.rookBuffer;
-                            BufferHelpers.draw(rookBuffer, shaderinstance);
-                        }
-                        case 3 -> {
-                            VertexBuffer bishopBuffer = DrawScreenEvent.bishopBuffer;
-                            BufferHelpers.draw(bishopBuffer, shaderinstance);
-                        }
-                        case 4 -> {
-                            VertexBuffer knightBuffer = DrawScreenEvent.knightBuffer;
-                            BufferHelpers.draw(knightBuffer, shaderinstance);
-                        }
-                        case 5 -> {
-                            VertexBuffer kingBuffer = DrawScreenEvent.kingBuffer;
-                            BufferHelpers.draw(kingBuffer, shaderinstance);
-                        }
-                        case 6 -> {
-                            VertexBuffer queenBuffer = DrawScreenEvent.queenBuffer;
-                            BufferHelpers.draw(queenBuffer, shaderinstance);
-                        }
-                    }
-                poseStack.popPose();
-                type.clearRenderState();
+            RenderType type = TTCRenderTypes.getChessPieceSolid(resourceLocation);
+            type.setupRenderState();
+            BufferHelpers.setupRender(RenderSystem.getShader(), lightU, lightV);
+            ShaderInstance shaderinstance = RenderSystem.getShader();
+            RenderSystem.setShaderColor(210 / 255F, 188 / 255F, 161 / 255F, 1.0F);
+            BufferHelpers.updateColor(shaderinstance);
+            poseStack.pushPose();
+            if (shaderinstance.MODEL_VIEW_MATRIX != null) shaderinstance.MODEL_VIEW_MATRIX.set(poseStack.last().pose());
+            if (shaderinstance.PROJECTION_MATRIX != null)
+                shaderinstance.PROJECTION_MATRIX.set(RenderSystem.getProjectionMatrix());
+            switch (blockEntity.getPieceType())
+            {
+                case 1 -> {
+                    VertexBuffer pawnBuffer = DrawScreenEvent.pawnBuffer;
+                    BufferHelpers.draw(pawnBuffer, shaderinstance);
+                }
+                case 2 -> {
+                    VertexBuffer rookBuffer = DrawScreenEvent.rookBuffer;
+                    BufferHelpers.draw(rookBuffer, shaderinstance);
+                }
+                case 3 -> {
+                    VertexBuffer bishopBuffer = DrawScreenEvent.bishopBuffer;
+                    BufferHelpers.draw(bishopBuffer, shaderinstance);
+                }
+                case 4 -> {
+                    VertexBuffer knightBuffer = DrawScreenEvent.knightBuffer;
+                    BufferHelpers.draw(knightBuffer, shaderinstance);
+                }
+                case 5 -> {
+                    VertexBuffer kingBuffer = DrawScreenEvent.kingBuffer;
+                    BufferHelpers.draw(kingBuffer, shaderinstance);
+                }
+                case 6 -> {
+                    VertexBuffer queenBuffer = DrawScreenEvent.queenBuffer;
+                    BufferHelpers.draw(queenBuffer, shaderinstance);
+                }
+            }
             poseStack.popPose();
-        poseStack.popPose();
-    }
+            type.clearRenderState();
+            poseStack.popPose();
+            poseStack.popPose();
+        }
+//    }
 }

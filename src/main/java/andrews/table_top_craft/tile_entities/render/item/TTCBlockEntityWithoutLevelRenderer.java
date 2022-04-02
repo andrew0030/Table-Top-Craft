@@ -4,7 +4,6 @@ import andrews.table_top_craft.registry.TTCBlocks;
 import andrews.table_top_craft.tile_entities.ChessPieceFigureBlockEntity;
 import andrews.table_top_craft.tile_entities.render.ChessPieceFigureTileEntityRenderer;
 import com.mojang.blaze3d.vertex.PoseStack;
-import com.mojang.math.Vector3f;
 import net.minecraft.client.Minecraft;
 import net.minecraft.client.model.geom.EntityModelSet;
 import net.minecraft.client.renderer.BlockEntityWithoutLevelRenderer;
@@ -44,9 +43,7 @@ public class TTCBlockEntityWithoutLevelRenderer extends BlockEntityWithoutLevelR
                 else
                     chessPieceFigureBlockEntity.setPieceType(1);
 
-                poseStack.pushPose();
-                ChessPieceFigureTileEntityRenderer.renderChessPieceFigure(chessPieceFigureBlockEntity, poseStack, buffer, false, 0.0F, packedLight, packedOverlay);
-                poseStack.popPose();
+                ChessPieceFigureTileEntityRenderer.renderChessPieceFigure(chessPieceFigureBlockEntity, poseStack, buffer, false, type.equals(ItemTransforms.TransformType.GUI), 0.0F, packedLight, packedOverlay);
             }
             catch (Exception e)
             {

@@ -51,4 +51,10 @@ public class TTCBlockEntityWithoutLevelRenderer extends BlockEntityWithoutLevelR
             }
         }
     }
+
+    private float getPartialTicks()
+    {
+        Minecraft mc = Minecraft.getInstance();
+        return mc.isPaused() ?mc.pausePartialTick : mc.getFrameTime();
+    }
 }

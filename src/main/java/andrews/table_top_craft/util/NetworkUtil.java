@@ -76,8 +76,8 @@ public class NetworkUtil
 	}
 
 	@OnlyIn(Dist.CLIENT)
-	public static void doChessBoardInteraction(BlockPos pos, byte chessRank, byte chessColumn)
+	public static void doChessBoardInteraction(BlockPos pos, byte tileCoordinate)
 	{
-		TTCNetwork.CHANNEL.sendToServer(new MessageServerDoChessBoardInteraction(pos, chessRank, chessColumn));
+		TTCNetwork.CHANNEL.sendToServer(new MessageServerDoChessBoardInteraction(pos, tileCoordinate));
 	}
 }

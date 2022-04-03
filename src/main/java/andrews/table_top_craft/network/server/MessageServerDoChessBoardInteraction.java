@@ -18,29 +18,25 @@ import java.util.function.Supplier;
 public class MessageServerDoChessBoardInteraction
 {
     private final BlockPos pos;
-    private final byte chessRank;
-    private final byte chessColumn;
+    private final byte tileCoordinate;
 
-    public MessageServerDoChessBoardInteraction(BlockPos pos, byte chessRank, byte chessColumn)
+    public MessageServerDoChessBoardInteraction(BlockPos pos, byte tileCoordinate)
     {
         this.pos = pos;
-        this.chessRank = chessRank;
-        this.chessColumn = chessColumn;
+        this.tileCoordinate = tileCoordinate;
     }
 
     public void serialize(FriendlyByteBuf buf)
     {
         buf.writeBlockPos(pos);
-        buf.writeByte(chessRank);
-        buf.writeByte(chessColumn);
+        buf.writeByte(tileCoordinate);
     }
 
     public static MessageServerDoChessBoardInteraction deserialize(FriendlyByteBuf buf)
     {
         BlockPos pos = buf.readBlockPos();
-        byte chessRank = buf.readByte();
-        byte chessColumn = buf.readByte();
-        return new MessageServerDoChessBoardInteraction(pos, chessRank, chessColumn);
+        byte tileCoordinate = buf.readByte();
+        return new MessageServerDoChessBoardInteraction(pos, tileCoordinate);
     }
 
     public static void handle(MessageServerDoChessBoardInteraction message, Supplier<NetworkEvent.Context> ctx)
@@ -49,8 +45,7 @@ public class MessageServerDoChessBoardInteraction
         Player player = context.getSender();
         Level level = player.getLevel();
         BlockPos pos = message.pos;
-        byte chessRank = message.chessRank;
-        byte chessColumn = message.chessColumn;
+        byte tileCoordinate = message.tileCoordinate;
 
         if(context.getDirection().getReceptionSide() == LogicalSide.SERVER)
         {
@@ -66,7 +61,7 @@ public class MessageServerDoChessBoardInteraction
                         // We do not continue the game logic if there is no Chess
                         if(chessTileEntity.getBoard() == null)
                             return;
-                        BaseChessTile chessTile = chessTileEntity.getBoard().getTile((8 - chessRank) * 8 + chessColumn);
+                        BaseChessTile chessTile = chessTileEntity.getBoard().getTile(tileCoordinate);
 
                         // Checks if a Tile has already been selected
                         if(chessTileEntity.getSourceTile() == null)

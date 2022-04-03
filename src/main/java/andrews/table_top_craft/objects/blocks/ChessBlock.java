@@ -109,9 +109,9 @@ public class ChessBlock extends HorizontalDirectionalBlock implements EntityBloc
 						Direction facing = state.getValue(FACING);
 						int chessRank = getChessRank(raycast.getLocation(), facing) + 1;
 						int chessColumn = getChessColumn(raycast.getLocation(), facing);
-
+						byte tileCoordinate = (byte) Mth.clamp(((8 - chessRank) * 8 + chessColumn), 0, 63);
 						if(level.isClientSide)
-							NetworkUtil.doChessBoardInteraction(pos, (byte) Mth.clamp(chessRank, -128, 127), (byte) Mth.clamp(chessColumn, -128, 127));
+							NetworkUtil.doChessBoardInteraction(pos, tileCoordinate);
 					}
 				}
 			}

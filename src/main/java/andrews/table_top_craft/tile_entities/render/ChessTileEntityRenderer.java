@@ -499,7 +499,6 @@ public class ChessTileEntityRenderer implements BlockEntityRenderer<ChessTileEnt
 	
 	private void renderTilesInfo(PoseStack poseStack, MultiBufferSource bufferIn, int combinedLightIn, int combinedOverlayIn, ChessTileEntity chessTileEntity)
 	{
-//		RenderSystem.setShaderColor(1.0F, 1.0F, 1.0F, 1.0F); TODO maybe remove or add back if needed
 		VertexConsumer builderTilesInfo = bufferIn.getBuffer(TTCRenderTypes.getEmissiveTransluscent(TILES_INFO_TEXTURE, false));
 
 		float red = NBTColorSaving.getRed(chessTileEntity.getTileInfoColor()) / 255F;

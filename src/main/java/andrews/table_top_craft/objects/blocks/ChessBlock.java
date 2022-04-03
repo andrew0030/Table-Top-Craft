@@ -6,6 +6,7 @@ import andrews.table_top_craft.game_logic.chess.board.tiles.BaseChessTile;
 import andrews.table_top_craft.game_logic.chess.player.MoveTransition;
 import andrews.table_top_craft.screens.chess.menus.ChessBoardSettingsScreen;
 import andrews.table_top_craft.tile_entities.ChessTileEntity;
+import andrews.table_top_craft.util.NetworkUtil;
 import net.minecraft.core.BlockPos;
 import net.minecraft.core.Direction;
 import net.minecraft.util.Mth;
@@ -108,51 +109,9 @@ public class ChessBlock extends HorizontalDirectionalBlock implements EntityBloc
 						Direction facing = state.getValue(FACING);
 						int chessRank = getChessRank(raycast.getLocation(), facing) + 1;
 						int chessColumn = getChessColumn(raycast.getLocation(), facing);
-						BlockEntity blockEntity = level.getBlockEntity(pos);
 
-						// We make sure the TileEntity is a ChessTileEntity
-						if(blockEntity instanceof ChessTileEntity chessTileEntity)
-						{
-							// We do not continue the game logic if there is no Chess
-							if(chessTileEntity.getBoard() == null)
-								return InteractionResult.SUCCESS;
-							BaseChessTile chessTile = chessTileEntity.getBoard().getTile((8 - chessRank) * 8 + chessColumn);
-
-							// Checks if a Tile has allready been selected
-							if(chessTileEntity.getSourceTile() == null)
-							{
-								if(chessTile.isTileOccupied())
-								{
-									if(chessTile.getPiece().getPieceColor() == chessTileEntity.getBoard().getCurrentChessPlayer().getPieceColor())
-									{
-										chessTileEntity.setSourceTile(chessTile);
-										chessTileEntity.setHumanMovedPiece(chessTile.getPiece());
-										level.sendBlockUpdated(pos, level.getBlockState(pos), level.getBlockState(pos), 2);
-										if(chessTileEntity.getHumanMovedPiece() == null)
-											chessTileEntity.setSourceTile(null);
-
-										chessTileEntity.setChanged();//TODO make sure this is working it used to be markdirty
-									}
-								}
-							}
-							else // Gets Called when a Tile is all ready selected
-							{
-								chessTileEntity.setDestinationTile(chessTile);
-								final BaseMove move = MoveFactory.createMove(chessTileEntity.getBoard(), chessTileEntity.getSourceTile().getTileCoordinate(), chessTileEntity.getDestinationTile().getTileCoordinate());
-								final MoveTransition transition = chessTileEntity.getBoard().getCurrentChessPlayer().makeMove(move);
-								if(transition.getMoveStatus().isDone())
-								{
-									chessTileEntity.setBoard(transition.getTransitionBoard());
-									// Adds the move to the MoveLog
-									chessTileEntity.getMoveLog().addMove(move);
-									// Syncs the TileEntity
-									level.sendBlockUpdated(pos, level.getBlockState(pos), level.getBlockState(pos), 2);
-								}
-								chessTileEntity.setSourceTile(null);
-								chessTileEntity.setDestinationTile(null);
-								chessTileEntity.setHumanMovedPiece(null);
-							}
-						}
+						if(level.isClientSide)
+							NetworkUtil.doChessBoardInteraction(pos, (byte) Mth.clamp(chessRank, -128, 127), (byte) Mth.clamp(chessColumn, -128, 127));
 					}
 				}
 			}

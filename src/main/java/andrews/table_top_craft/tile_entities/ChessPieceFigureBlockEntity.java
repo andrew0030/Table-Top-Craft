@@ -1,23 +1,18 @@
 package andrews.table_top_craft.tile_entities;
 
-import andrews.table_top_craft.game_logic.chess.PieceColor;
-import andrews.table_top_craft.game_logic.chess.board.BoardUtils;
-import andrews.table_top_craft.game_logic.chess.board.moves.*;
-import andrews.table_top_craft.game_logic.chess.pgn.FenUtil;
-import andrews.table_top_craft.game_logic.chess.pieces.KingPiece;
-import andrews.table_top_craft.game_logic.chess.pieces.PawnPiece;
-import andrews.table_top_craft.game_logic.chess.pieces.RookPiece;
 import andrews.table_top_craft.registry.TTCTileEntities;
 import net.minecraft.core.BlockPos;
 import net.minecraft.nbt.CompoundTag;
-import net.minecraft.nbt.ListTag;
 import net.minecraft.nbt.Tag;
 import net.minecraft.network.Connection;
 import net.minecraft.network.protocol.Packet;
 import net.minecraft.network.protocol.game.ClientGamePacketListener;
 import net.minecraft.network.protocol.game.ClientboundBlockEntityDataPacket;
+import net.minecraft.world.level.block.Block;
 import net.minecraft.world.level.block.entity.BlockEntity;
 import net.minecraft.world.level.block.state.BlockState;
+import net.minecraft.world.phys.AABB;
+import net.minecraft.world.phys.shapes.VoxelShape;
 
 import java.util.Random;
 
@@ -30,6 +25,12 @@ public class ChessPieceFigureBlockEntity extends BlockEntity
     public ChessPieceFigureBlockEntity(BlockPos pos, BlockState state)
     {
         super(TTCTileEntities.CHESS_PIECE_FIGURE.get(), pos, state);
+    }
+
+    @Override
+    public AABB getRenderBoundingBox()
+    {
+        return super.getRenderBoundingBox().expandTowards(0.0D, 0.6D, 0.0D);
     }
 
     // Used to synchronize the BlockEntity with the client when the chunk it is in is loaded

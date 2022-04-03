@@ -30,7 +30,7 @@ public class ChessTilesInfoModel extends Model
 
         PartDefinition root = partdefinition.addOrReplaceChild("root", CubeListBuilder.create(), PartPose.offset(0.0F, 0.0F, 0.0F));
 
-        PartDefinition base = root.addOrReplaceChild("base", CubeListBuilder.create().texOffs(-20, 0).addBox(-10.0F, 0.0F, -10.0F, 20.0F, 0.0F, 20.0F, new CubeDeformation(0.0F)), PartPose.offset(0.0F, 24.0F, 0.0F));
+        PartDefinition base = root.addOrReplaceChild("base", CubeListBuilder.create().texOffs(-20, 0).addBox(-10.0F, -1.0F, -10.0F, 20.0F, 1.0F, 20.0F, new CubeDeformation(0.0F)), PartPose.offset(0.0F, 24.0F, 0.0F));
 
         return LayerDefinition.create(meshdefinition, 64, 64);
     }

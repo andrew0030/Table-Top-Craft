@@ -74,4 +74,10 @@ public class NetworkUtil
 	{
 		TTCNetwork.CHANNEL.sendToServer(new MessageServerRotateChessPieceFigure(pos));
 	}
+
+	@OnlyIn(Dist.CLIENT)
+	public static void doChessBoardInteraction(BlockPos pos, byte chessRank, byte chessColumn)
+	{
+		TTCNetwork.CHANNEL.sendToServer(new MessageServerDoChessBoardInteraction(pos, chessRank, chessColumn));
+	}
 }

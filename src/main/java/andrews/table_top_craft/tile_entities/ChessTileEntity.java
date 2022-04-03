@@ -34,6 +34,7 @@ import net.minecraft.network.protocol.game.ClientGamePacketListener;
 import net.minecraft.network.protocol.game.ClientboundBlockEntityDataPacket;
 import net.minecraft.world.level.block.entity.BlockEntity;
 import net.minecraft.world.level.block.state.BlockState;
+import net.minecraft.world.phys.AABB;
 
 public class ChessTileEntity extends BlockEntity
 {
@@ -63,6 +64,12 @@ public class ChessTileEntity extends BlockEntity
 	{
 		super(TTCTileEntities.CHESS.get(), pos, state);
 		moveLog = new ChessMoveLog();
+	}
+
+	@Override
+	public AABB getRenderBoundingBox()
+	{
+		return super.getRenderBoundingBox().expandTowards(0.0D, 0.4D, 0.0D);
 	}
 
 	// Used to synchronize the BlockEntity with the client when the chunk it is in is loaded

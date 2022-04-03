@@ -78,5 +78,11 @@ public static final String NETWORK_PROTOCOL = "1";
 		.decoder(MessageServerRotateChessPieceFigure::deserialize)
 		.consumer(MessageServerRotateChessPieceFigure::handle)
 		.add();
+
+		CHANNEL.messageBuilder(MessageServerDoChessBoardInteraction.class, id++)
+		.encoder(MessageServerDoChessBoardInteraction::serialize)
+		.decoder(MessageServerDoChessBoardInteraction::deserialize)
+		.consumer(MessageServerDoChessBoardInteraction::handle)
+		.add();
 	}
 }

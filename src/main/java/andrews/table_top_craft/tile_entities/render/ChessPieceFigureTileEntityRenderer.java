@@ -12,6 +12,8 @@ import com.mojang.blaze3d.systems.RenderSystem;
 import com.mojang.blaze3d.vertex.PoseStack;
 import com.mojang.blaze3d.vertex.VertexBuffer;
 import com.mojang.blaze3d.vertex.VertexConsumer;
+import com.mojang.math.Matrix4f;
+import com.mojang.math.Quaternion;
 import com.mojang.math.Vector3f;
 import net.minecraft.client.Minecraft;
 import net.minecraft.client.renderer.LightTexture;
@@ -56,6 +58,7 @@ public class ChessPieceFigureTileEntityRenderer implements BlockEntityRenderer<C
     public static void renderChessPieceFigure(ChessPieceFigureBlockEntity blockEntity, PoseStack poseStack, MultiBufferSource bufferSource, boolean isInLevel, boolean isInGui, float partialTicks, int packedLight, int packedOverlay)
     {
         // Renders the Stand for the "Chess Piece Figure" block
+        Matrix4f initialMatrix = poseStack.last().pose();
         poseStack.pushPose();
             poseStack.translate(0.5D, 1.5D, 0.5D);
             poseStack.scale(1.0F, -1.0F, -1.0F);
@@ -115,7 +118,7 @@ public class ChessPieceFigureTileEntityRenderer implements BlockEntityRenderer<C
             poseStack.pushPose();
             poseStack.translate(8 * 0.0625F, 2 * 0.0625F, 8 * 0.0625F);
             poseStack.mulPose(Vector3f.YN.rotationDegrees(rotation * 22.5F));
-            if (isInLevel && blockEntity.getRotateChessPieceFigure())
+            if (blockEntity.getRotateChessPieceFigure())
                 poseStack.mulPose(Vector3f.YN.rotationDegrees(Minecraft.getInstance().player.tickCount + partialTicks));
             // We invert the model because Minecraft renders shit inside out.
             poseStack.scale(3.0F, -3.0F, -3.0F);
@@ -127,7 +130,31 @@ public class ChessPieceFigureTileEntityRenderer implements BlockEntityRenderer<C
             RenderSystem.setShaderColor(210 / 255F, 188 / 255F, 161 / 255F, 1.0F);
             BufferHelpers.updateColor(shaderinstance);
             poseStack.pushPose();
-            if (shaderinstance.MODEL_VIEW_MATRIX != null) shaderinstance.MODEL_VIEW_MATRIX.set(poseStack.last().pose());
+            if (shaderinstance.MODEL_VIEW_MATRIX != null) {
+                if (isInGui) {
+//                    PoseStack stack = new PoseStack();
+//                    stack.setIdentity();
+                    Matrix4f mat4f = RenderSystem.getModelViewMatrix().copy();
+//                    mat4f.multiply(
+//                            Matrix4f.createScaleMatrix(3, -3, -3)
+//                    );
+                    PoseStack stk = new PoseStack();
+                    stk.last().pose().multiply(mat4f);
+                    stk.last().pose().multiply(initialMatrix);
+                    stk.translate(8 * 0.0625F, 2 * 0.0625F, 8 * 0.0625F);
+                    stk.mulPose(Vector3f.YN.rotationDegrees(rotation * 22.5F));
+                    if (blockEntity.getRotateChessPieceFigure())
+                        stk.mulPose(Vector3f.YN.rotationDegrees(Minecraft.getInstance().player.tickCount + partialTicks));
+                    // to make it be like it is in world, change this to be 3's instead of 4's
+                    stk.scale(4, -4, -4);
+                    // elsewise it faces backwards
+                    stk.mulPose(new Quaternion(0, -90, 0, true));
+                    shaderinstance.MODEL_VIEW_MATRIX.set(stk.last().pose());
+                } else {
+                    shaderinstance.MODEL_VIEW_MATRIX.set(poseStack.last().pose());
+                }
+//                shaderinstance.MODEL_VIEW_MATRIX.set(RenderSystem.getModelViewMatrix());
+            }
             if (shaderinstance.PROJECTION_MATRIX != null)
                 shaderinstance.PROJECTION_MATRIX.set(RenderSystem.getProjectionMatrix());
             switch (blockEntity.getPieceType())

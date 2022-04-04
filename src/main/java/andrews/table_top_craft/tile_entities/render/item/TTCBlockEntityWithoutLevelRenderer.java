@@ -38,12 +38,18 @@ public class TTCBlockEntityWithoutLevelRenderer extends BlockEntityWithoutLevelR
             {
                 // We get the Piece Type from the item, if there is none we just render a Pawn
                 CompoundTag compoundTag = BlockItem.getBlockEntityData(itemStack);
+                // We get and set Piece Type
                 if(compoundTag != null && compoundTag.contains("PieceType", Tag.TAG_INT))
                     chessPieceFigureBlockEntity.setPieceType(compoundTag.getInt("PieceType"));
                 else
                     chessPieceFigureBlockEntity.setPieceType(1);
+                // We get and set Rotation
+                if(compoundTag != null && compoundTag.contains("RotateChessPieceFigure", Tag.TAG_INT))
+                    chessPieceFigureBlockEntity.setRotateChessPieceFigure(compoundTag.getInt("RotateChessPieceFigure") != 0);
+                else
+                    chessPieceFigureBlockEntity.setRotateChessPieceFigure(false);
 
-                ChessPieceFigureTileEntityRenderer.renderChessPieceFigure(chessPieceFigureBlockEntity, poseStack, buffer, false, type.equals(ItemTransforms.TransformType.GUI), 0.0F, packedLight, packedOverlay);
+                ChessPieceFigureTileEntityRenderer.renderChessPieceFigure(chessPieceFigureBlockEntity, poseStack, buffer, false, type.equals(ItemTransforms.TransformType.GUI), getPartialTicks(), packedLight, packedOverlay);
             }
             catch (Exception e)
             {

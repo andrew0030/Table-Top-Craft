@@ -4,6 +4,7 @@ import andrews.table_top_craft.registry.TTCBlocks;
 import andrews.table_top_craft.screens.piece_figure.menus.ChessPieceFigureSettingsScreen;
 import andrews.table_top_craft.tile_entities.ChessPieceFigureBlockEntity;
 import andrews.table_top_craft.util.Reference;
+import andrews.table_top_craft.util.TranslationHelper;
 import net.minecraft.ChatFormatting;
 import net.minecraft.core.BlockPos;
 import net.minecraft.nbt.CompoundTag;
@@ -122,14 +123,24 @@ public class ChessPieceFigureBlock extends Block implements EntityBlock
         {
             if (compoundtag.contains("PieceType", Tag.TAG_INT))
             {
+                String pieceTypePath = "tooltip.table_top_craft.chess_piece_figure.piece_type";
                 switch (compoundtag.getInt("PieceType"))
                 {
-                    case 1 -> tooltip.add(new TextComponent("Piece Type: Pawn").withStyle(ChatFormatting.DARK_GRAY));//TODO replace with text component
-                    case 2 -> tooltip.add(new TextComponent("Piece Type: Rook").withStyle(ChatFormatting.DARK_GRAY));
-                    case 3 -> tooltip.add(new TextComponent("Piece Type: Bishop").withStyle(ChatFormatting.DARK_GRAY));
-                    case 4 -> tooltip.add(new TextComponent("Piece Type: Knight").withStyle(ChatFormatting.DARK_GRAY));
-                    case 5 -> tooltip.add(new TextComponent("Piece Type: King").withStyle(ChatFormatting.DARK_GRAY));
-                    case 6 -> tooltip.add(new TextComponent("Piece Type: Queen").withStyle(ChatFormatting.DARK_GRAY));
+                    case 1 -> TranslationHelper.getToolTipWithTextFromLang(tooltip, pieceTypePath, "tooltip.table_top_craft.chess_piece_figure.type.pawn", stack);
+                    case 2 -> TranslationHelper.getToolTipWithTextFromLang(tooltip, pieceTypePath, "tooltip.table_top_craft.chess_piece_figure.type.rook", stack);
+                    case 3 -> TranslationHelper.getToolTipWithTextFromLang(tooltip, pieceTypePath, "tooltip.table_top_craft.chess_piece_figure.type.bishop", stack);
+                    case 4 -> TranslationHelper.getToolTipWithTextFromLang(tooltip, pieceTypePath, "tooltip.table_top_craft.chess_piece_figure.type.knight", stack);
+                    case 5 -> TranslationHelper.getToolTipWithTextFromLang(tooltip, pieceTypePath, "tooltip.table_top_craft.chess_piece_figure.type.king", stack);
+                    case 6 -> TranslationHelper.getToolTipWithTextFromLang(tooltip, pieceTypePath, "tooltip.table_top_craft.chess_piece_figure.type.queen", stack);
+                }
+            }
+            if(compoundtag.contains("RotateChessPieceFigure", Tag.TAG_INT))
+            {
+                String shouldRotatePath = "tooltip.table_top_craft.chess_piece_figure.should_rotate";
+                switch (compoundtag.getInt("RotateChessPieceFigure"))
+                {
+                    case 0 -> TranslationHelper.getToolTipWithTextFromLang(tooltip, shouldRotatePath, "tooltip.table_top_craft.chess_piece_figure.toggle.disabled", stack);
+                    case 1 -> TranslationHelper.getToolTipWithTextFromLang(tooltip, shouldRotatePath, "tooltip.table_top_craft.chess_piece_figure.toggle.enabled", stack);
                 }
             }
         }

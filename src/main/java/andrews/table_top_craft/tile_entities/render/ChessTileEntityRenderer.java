@@ -214,7 +214,7 @@ public class ChessTileEntityRenderer implements BlockEntityRenderer<ChessTileEnt
 						}
 						
 						// Renders The Chess Piece
-						renderPiece(poseStack, pieceType, pieceColor, wR, wG, wB, bR, bG, bB);
+						renderPiece(poseStack, tileEntityIn.getPieceSet(), pieceType, pieceColor, wR, wG, wB, bR, bG, bB);
 						
 						poseStack.popPose(); // # Move Piece to Board surface and victory dance #
 						poseStack.popPose(); // # X and Z Position on Chess Board #
@@ -382,13 +382,13 @@ public class ChessTileEntityRenderer implements BlockEntityRenderer<ChessTileEnt
 				stack.translate((CHESS_SCALE * 0.855D) * 7D, 0.0D, 0.8D);
 			stack.translate((CHESS_SCALE * 0.855D) * -currentCoordinate, 0.0D, CHESS_SCALE * -currentRank);
 			
-			renderPiece(stack, piece.getPieceType(), piece.getPieceColor(), wR, wG, wB, bR, bG, bB);
+			renderPiece(stack, chessTileEntity.getPieceSet(), piece.getPieceType(), piece.getPieceColor(), wR, wG, wB, bR, bG, bB);
 			
 			stack.popPose();
 		}
 	}
 	
-	private void renderPiece(PoseStack poseStack, PieceType pieceType, PieceColor pieceColor, float wR, float wG, float wB, float bR, float bG, float bB)
+	private void renderPiece(PoseStack poseStack, int pieceModelSet, PieceType pieceType, PieceColor pieceColor, float wR, float wG, float wB, float bR, float bG, float bB)
 	{
 		// The RenderType for the chess pieces (the texture is just a dummy texture)
 		ShaderInstance shaderinstance = RenderSystem.getShader();
@@ -397,32 +397,65 @@ public class ChessTileEntityRenderer implements BlockEntityRenderer<ChessTileEnt
 		poseStack.pushPose();
 		if (shaderinstance.MODEL_VIEW_MATRIX != null) shaderinstance.MODEL_VIEW_MATRIX.set(poseStack.last().pose());
 		if (shaderinstance.PROJECTION_MATRIX != null) shaderinstance.PROJECTION_MATRIX.set(RenderSystem.getProjectionMatrix());
-		switch(pieceType)
+		switch (pieceModelSet)
 		{
-		default:
-		case PAWN:
-			VertexBuffer pawnBuffer = DrawScreenEvent.pawnBuffer;
-			BufferHelpers.draw(pawnBuffer, shaderinstance);
-			break;
-		case ROOK:
-			VertexBuffer rookBuffer = DrawScreenEvent.rookBuffer;
-			BufferHelpers.draw(rookBuffer, shaderinstance);
-			break;
-		case BISHOP:
-			VertexBuffer bishopBuffer = DrawScreenEvent.bishopBuffer;
-			BufferHelpers.draw(bishopBuffer, shaderinstance);
-			break;
-		case KNIGHT:
-			VertexBuffer knightBuffer = DrawScreenEvent.knightBuffer;
-			BufferHelpers.draw(knightBuffer, shaderinstance);
-			break;
-		case KING:
-			VertexBuffer kingBuffer = DrawScreenEvent.kingBuffer;
-			BufferHelpers.draw(kingBuffer, shaderinstance);
-			break;
-		case QUEEN:
-			VertexBuffer queenBuffer = DrawScreenEvent.queenBuffer;
-			BufferHelpers.draw(queenBuffer, shaderinstance);
+			case 0:
+				switch(pieceType)
+				{
+				default:
+				case PAWN:
+					VertexBuffer pawnBuffer = DrawScreenEvent.pawnBuffer;
+					BufferHelpers.draw(pawnBuffer, shaderinstance);
+					break;
+				case ROOK:
+					VertexBuffer rookBuffer = DrawScreenEvent.rookBuffer;
+					BufferHelpers.draw(rookBuffer, shaderinstance);
+					break;
+				case BISHOP:
+					VertexBuffer bishopBuffer = DrawScreenEvent.bishopBuffer;
+					BufferHelpers.draw(bishopBuffer, shaderinstance);
+					break;
+				case KNIGHT:
+					VertexBuffer knightBuffer = DrawScreenEvent.knightBuffer;
+					BufferHelpers.draw(knightBuffer, shaderinstance);
+					break;
+				case KING:
+					VertexBuffer kingBuffer = DrawScreenEvent.kingBuffer;
+					BufferHelpers.draw(kingBuffer, shaderinstance);
+					break;
+				case QUEEN:
+					VertexBuffer queenBuffer = DrawScreenEvent.queenBuffer;
+					BufferHelpers.draw(queenBuffer, shaderinstance);
+				}
+				break;
+			case 1:
+				switch(pieceType)
+				{
+					default:
+					case PAWN:
+						VertexBuffer classicPawnBuffer = DrawScreenEvent.classicPawnBuffer;
+						BufferHelpers.draw(classicPawnBuffer, shaderinstance);
+						break;
+					case ROOK:
+						VertexBuffer classicRookBuffer = DrawScreenEvent.classicRookBuffer;
+						BufferHelpers.draw(classicRookBuffer, shaderinstance);
+						break;
+					case BISHOP:
+						VertexBuffer classicBishopBuffer = DrawScreenEvent.classicBishopBuffer;
+						BufferHelpers.draw(classicBishopBuffer, shaderinstance);
+						break;
+					case KNIGHT:
+						VertexBuffer classicKnightBuffer = DrawScreenEvent.classicKnightBuffer;
+						BufferHelpers.draw(classicKnightBuffer, shaderinstance);
+						break;
+					case KING:
+						VertexBuffer classicKingBuffer = DrawScreenEvent.classicKingBuffer;
+						BufferHelpers.draw(classicKingBuffer, shaderinstance);
+						break;
+					case QUEEN:
+						VertexBuffer classicQueenBuffer = DrawScreenEvent.classicQueenBuffer;
+						BufferHelpers.draw(classicQueenBuffer, shaderinstance);
+				}
 		}
 		poseStack.popPose();
 		// We reset the shader color to avoid funny business during the next render call

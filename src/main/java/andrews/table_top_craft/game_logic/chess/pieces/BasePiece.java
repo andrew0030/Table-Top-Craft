@@ -232,4 +232,11 @@ public abstract class BasePiece
 		 */
 		public abstract boolean isRook();
 	}
+
+	public enum PieceModelSet
+	{
+		STANDARD,
+		CLASSIC,
+		PANDORAS_CREATURES;
+	}
 }

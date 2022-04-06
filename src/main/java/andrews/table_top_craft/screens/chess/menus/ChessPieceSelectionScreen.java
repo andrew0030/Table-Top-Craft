@@ -1,15 +1,7 @@
 package andrews.table_top_craft.screens.chess.menus;
 
-import andrews.table_top_craft.screens.chess.buttons.colors.ChessBoardAttackMoveColorButton;
-import andrews.table_top_craft.screens.chess.buttons.colors.ChessBoardCastleMoveColorButton;
+import andrews.table_top_craft.game_logic.chess.pieces.BasePiece.PieceModelSet;
 import andrews.table_top_craft.screens.chess.buttons.colors.ChessBoardColorSettingsButton;
-import andrews.table_top_craft.screens.chess.buttons.colors.ChessBoardInvalidMoveColorButton;
-import andrews.table_top_craft.screens.chess.buttons.colors.ChessBoardLegalMoveColorButton;
-import andrews.table_top_craft.screens.chess.buttons.colors.ChessBoardPieceColorsButton;
-import andrews.table_top_craft.screens.chess.buttons.colors.ChessBoardPreviousMoveColorButton;
-import andrews.table_top_craft.screens.chess.buttons.colors.ChessBoardTilesColorButton;
-import andrews.table_top_craft.screens.chess.buttons.colors.ChessTileInfoColorsButton;
-import andrews.table_top_craft.screens.chess.buttons.colors.ChessUseCustomPlateButton;
 import andrews.table_top_craft.screens.chess.buttons.pieces.ChessBoardPieceModelSelectionButton;
 import andrews.table_top_craft.screens.chess.buttons.pieces.ChessBoardPieceSettingsButton;
 import andrews.table_top_craft.screens.chess.buttons.settings.ChessBoardSettingsButton;
@@ -56,9 +48,9 @@ public class ChessPieceSelectionScreen extends Screen
         this.addRenderableWidget(new ChessBoardColorSettingsButton(this.chessTileEntity, x - 24, y + 42));
         this.addRenderableWidget(new ChessBoardPieceSettingsButton(this.chessTileEntity, x - 24, y + 68));
 
-        this.addRenderableWidget(new ChessBoardPieceModelSelectionButton(this.chessTileEntity, x + 5, y + 30));
-        this.addRenderableWidget(new ChessBoardPieceModelSelectionButton(this.chessTileEntity, x + 5, y + 84));
-        this.addRenderableWidget(new ChessBoardPieceModelSelectionButton(this.chessTileEntity, x + 5, y + 138));
+        this.addRenderableWidget(new ChessBoardPieceModelSelectionButton(this.chessTileEntity, PieceModelSet.STANDARD, x + 5, y + 30));
+        this.addRenderableWidget(new ChessBoardPieceModelSelectionButton(this.chessTileEntity, PieceModelSet.CLASSIC, x + 5, y + 84));
+//        this.addRenderableWidget(new ChessBoardPieceModelSelectionButton(this.chessTileEntity, PieceModelSet.STANDARD, x + 5, y + 138));//TODO replace with 3rd option
     }
 
     @Override

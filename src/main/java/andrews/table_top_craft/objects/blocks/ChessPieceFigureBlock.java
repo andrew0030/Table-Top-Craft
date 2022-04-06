@@ -124,17 +124,21 @@ public class ChessPieceFigureBlock extends Block implements EntityBlock
         CompoundTag compoundtag = BlockItem.getBlockEntityData(stack);
         if (compoundtag != null)
         {
+            if (compoundtag.contains("PieceSet", Tag.TAG_INT))
+            {
+                tooltip.add(new TextComponent("§7Piece Set: " + compoundtag.getInt("PieceSet")));//TODO replace with lang file text
+            }
             if (compoundtag.contains("PieceType", Tag.TAG_INT))
             {
                 String pieceTypePath = "tooltip.table_top_craft.chess_piece_figure.piece_type";
                 switch (compoundtag.getInt("PieceType"))
                 {
-                    case 1 -> TranslationHelper.getToolTipWithTextFromLang(tooltip, pieceTypePath, "tooltip.table_top_craft.chess_piece_figure.type.pawn", stack);
-                    case 2 -> TranslationHelper.getToolTipWithTextFromLang(tooltip, pieceTypePath, "tooltip.table_top_craft.chess_piece_figure.type.rook", stack);
-                    case 3 -> TranslationHelper.getToolTipWithTextFromLang(tooltip, pieceTypePath, "tooltip.table_top_craft.chess_piece_figure.type.bishop", stack);
-                    case 4 -> TranslationHelper.getToolTipWithTextFromLang(tooltip, pieceTypePath, "tooltip.table_top_craft.chess_piece_figure.type.knight", stack);
-                    case 5 -> TranslationHelper.getToolTipWithTextFromLang(tooltip, pieceTypePath, "tooltip.table_top_craft.chess_piece_figure.type.king", stack);
-                    case 6 -> TranslationHelper.getToolTipWithTextFromLang(tooltip, pieceTypePath, "tooltip.table_top_craft.chess_piece_figure.type.queen", stack);
+                    case 1 -> TranslationHelper.getToolTipWithTextFromLang(tooltip, pieceTypePath, "tooltip.table_top_craft.chess_piece_figure.type.pawn");
+                    case 2 -> TranslationHelper.getToolTipWithTextFromLang(tooltip, pieceTypePath, "tooltip.table_top_craft.chess_piece_figure.type.rook");
+                    case 3 -> TranslationHelper.getToolTipWithTextFromLang(tooltip, pieceTypePath, "tooltip.table_top_craft.chess_piece_figure.type.bishop");
+                    case 4 -> TranslationHelper.getToolTipWithTextFromLang(tooltip, pieceTypePath, "tooltip.table_top_craft.chess_piece_figure.type.knight");
+                    case 5 -> TranslationHelper.getToolTipWithTextFromLang(tooltip, pieceTypePath, "tooltip.table_top_craft.chess_piece_figure.type.king");
+                    case 6 -> TranslationHelper.getToolTipWithTextFromLang(tooltip, pieceTypePath, "tooltip.table_top_craft.chess_piece_figure.type.queen");
                 }
             }
             if(compoundtag.contains("RotateChessPieceFigure", Tag.TAG_INT))
@@ -142,8 +146,8 @@ public class ChessPieceFigureBlock extends Block implements EntityBlock
                 String shouldRotatePath = "tooltip.table_top_craft.chess_piece_figure.should_rotate";
                 switch (compoundtag.getInt("RotateChessPieceFigure"))
                 {
-                    case 0 -> TranslationHelper.getToolTipWithTextFromLang(tooltip, shouldRotatePath, "tooltip.table_top_craft.chess_piece_figure.toggle.disabled", stack);
-                    case 1 -> TranslationHelper.getToolTipWithTextFromLang(tooltip, shouldRotatePath, "tooltip.table_top_craft.chess_piece_figure.toggle.enabled", stack);
+                    case 0 -> TranslationHelper.getToolTipWithTextFromLang(tooltip, shouldRotatePath, "tooltip.table_top_craft.chess_piece_figure.toggle.disabled");
+                    case 1 -> TranslationHelper.getToolTipWithTextFromLang(tooltip, shouldRotatePath, "tooltip.table_top_craft.chess_piece_figure.toggle.enabled");
                 }
             }
             if(compoundtag.contains("PieceColor", Tag.TAG_STRING))
@@ -164,6 +168,7 @@ public class ChessPieceFigureBlock extends Block implements EntityBlock
 
                 tooltip.add(new TextComponent(pieceColorText + colorDescriptionText));
             }
+            TranslationHelper.addEnchantmentSeparationLine(tooltip, stack);
         }
         else
         {
@@ -171,6 +176,7 @@ public class ChessPieceFigureBlock extends Block implements EntityBlock
             tooltip.add(new TextComponent("§7Values havent been"));
             tooltip.add(new TextComponent("§7generated, place in"));
             tooltip.add(new TextComponent("§7world to generate"));
+            TranslationHelper.addEnchantmentSeparationLine(tooltip, stack);
         }
     }
 

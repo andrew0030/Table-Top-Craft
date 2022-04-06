@@ -1,6 +1,5 @@
 package andrews.table_top_craft;
 
-import andrews.table_top_craft.events.RegisterModShadersEvent;
 import andrews.table_top_craft.network.TTCNetwork;
 import andrews.table_top_craft.registry.TTCBlocks;
 import andrews.table_top_craft.registry.TTCItems;

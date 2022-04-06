@@ -68,6 +68,7 @@ public class MessageServerSetColor
 							case 5 -> chessTileEntity.setCastleMoveColor(color);
 						}
 						level.sendBlockUpdated(message.pos, level.getBlockState(chessPos), level.getBlockState(chessPos), 2);
+						chessTileEntity.setChanged();
 			        }
 					else if(blockEntity instanceof ChessPieceFigureBlockEntity chessPieceFigureBlockEntity)
 					{
@@ -77,6 +78,7 @@ public class MessageServerSetColor
 //						}
 						chessPieceFigureBlockEntity.setPieceColor(color);
 						level.sendBlockUpdated(message.pos, level.getBlockState(chessPos), level.getBlockState(chessPos), 2);
+						chessPieceFigureBlockEntity.setChanged();
 					}
 				}
 			});

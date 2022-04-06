@@ -80,4 +80,10 @@ public class NetworkUtil
 	{
 		TTCNetwork.CHANNEL.sendToServer(new MessageServerDoChessBoardInteraction(pos, tileCoordinate));
 	}
+
+	@OnlyIn(Dist.CLIENT)
+	public static void setChessPieceSet(BlockPos pos, int pieceSet)
+	{
+		TTCNetwork.CHANNEL.sendToServer(new MessageServerSetPieceSet(pos, pieceSet));
+	}
 }

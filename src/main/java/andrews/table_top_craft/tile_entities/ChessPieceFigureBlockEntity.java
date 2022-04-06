@@ -23,6 +23,7 @@ public class ChessPieceFigureBlockEntity extends BlockEntity
     private int pieceType;
     private boolean rotateChessPieceFigure;
     private String pieceColor;
+    private int pieceSet;
 
     public ChessPieceFigureBlockEntity(BlockPos pos, BlockState state)
     {
@@ -88,6 +89,7 @@ public class ChessPieceFigureBlockEntity extends BlockEntity
         compound.putInt("PieceType", this.getPieceType());
         compound.putInt("RotateChessPieceFigure", !this.rotateChessPieceFigure ? 0 : 1);
         compound.putString("PieceColor", getPieceColor());
+        compound.putInt("PieceSet", this.getPieceSet());
     }
 
     /**
@@ -100,6 +102,8 @@ public class ChessPieceFigureBlockEntity extends BlockEntity
             this.rotateChessPieceFigure = compound.getInt("RotateChessPieceFigure") != 0;
         if(compound.contains("PieceColor", Tag.TAG_STRING))
             this.pieceColor = compound.getString("PieceColor");
+        if(compound.contains("PieceSet", Tag.TAG_INT))
+            this.pieceSet = compound.getInt("PieceSet");
     }
 
     public int getPieceType()
@@ -124,6 +128,29 @@ public class ChessPieceFigureBlockEntity extends BlockEntity
     public void setPieceType(int type)
     {
         pieceType = type;
+        setChanged();
+    }
+
+    public int getPieceSet()
+    {
+        if(pieceSet == 0)
+        {
+            if(!this.level.isClientSide)
+            {
+                this.setPieceSet(rand.nextInt(2) + 1);
+                System.out.println(pieceType); // TODO remove this debug text line
+            }
+            return pieceSet;
+        }
+        else
+        {
+            return pieceSet;
+        }
+    }
+
+    public void setPieceSet(int pieceSet)
+    {
+        this.pieceSet = pieceSet;
         setChanged();
     }
 

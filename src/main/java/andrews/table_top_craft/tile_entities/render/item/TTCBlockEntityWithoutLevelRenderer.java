@@ -54,6 +54,11 @@ public class TTCBlockEntityWithoutLevelRenderer extends BlockEntityWithoutLevelR
                     chessPieceFigureBlockEntity.setPieceColor(compoundTag.getString("PieceColor"));
                 else
                     chessPieceFigureBlockEntity.setPieceColor(NBTColorSaving.createWhitePiecesColor());
+                // We get and set the Piece Set
+                if(compoundTag != null && compoundTag.contains("PieceSet", Tag.TAG_INT))
+                    chessPieceFigureBlockEntity.setPieceSet(compoundTag.getInt("PieceSet"));
+                else
+                    chessPieceFigureBlockEntity.setPieceSet(1);
 
                 //TODO properly fix transform type for GUI, HEAD and THIRD_PERSON_X_HAND!
                 ChessPieceFigureTileEntityRenderer.renderChessPieceFigure(chessPieceFigureBlockEntity, poseStack, buffer, type.equals(ItemTransforms.TransformType.GUI), isHeldOrHead(type), getPartialTicks(), packedLight, packedOverlay);

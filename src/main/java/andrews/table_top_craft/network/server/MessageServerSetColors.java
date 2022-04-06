@@ -76,6 +76,7 @@ public class MessageServerSetColors
 							}
 						}
 						level.sendBlockUpdated(message.pos, level.getBlockState(chessPos), level.getBlockState(chessPos), 2);
+						chessTileEntity.setChanged();
 			        }
 				}
 			});

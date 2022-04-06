@@ -36,6 +36,8 @@ import net.minecraft.world.level.block.entity.BlockEntity;
 import net.minecraft.world.level.block.state.BlockState;
 import net.minecraft.world.phys.AABB;
 
+import java.util.Random;
+
 public class ChessTileEntity extends BlockEntity
 {
 	private Board board;
@@ -59,6 +61,10 @@ public class ChessTileEntity extends BlockEntity
 	private String attackMoveColor;
 	private String previousMoveColor;
 	private String castleMoveColor;
+
+	private final Random rand = new Random();
+	// The selected Set of Pieces to render
+	private int pieceSet;
 
 	public ChessTileEntity(BlockPos pos, BlockState state)
 	{
@@ -178,6 +184,7 @@ public class ChessTileEntity extends BlockEntity
 			chessNBT.putInt("SourceTile", this.getSourceTile().getTileCoordinate());
 		if(this.humanMovedPiece != null)
 			chessNBT.putInt("HumanMovedPiece", this.getHumanMovedPiece().getPiecePosition());
+		chessNBT.putInt("PieceSet", this.getPieceSet());
 		compound.put("ChessValues", chessNBT);
 	}
 	
@@ -272,6 +279,8 @@ public class ChessTileEntity extends BlockEntity
 			this.sourceTile = getBoard().getTile(chessNBT.getInt("SourceTile"));
 		if(chessNBT.contains("HumanMovedPiece", Tag.TAG_INT))
 			this.humanMovedPiece = getBoard().getTile(chessNBT.getInt("HumanMovedPiece")).getPiece();
+		if(chessNBT.contains("PieceSet", Tag.TAG_INT))
+			this.pieceSet = chessNBT.getInt("PieceSet");
 	}
 	
 	private BasePiece getPieceFromType(String pieceType, PieceColor pieceColor, int piecePosition)
@@ -477,5 +486,16 @@ public class ChessTileEntity extends BlockEntity
 	public BaseChessTile getDestinationTile()
 	{
 		return destinationTile;
+	}
+
+	public int getPieceSet()
+	{
+		return pieceSet;
+	}
+
+	public void setPieceSet(int set)
+	{
+		pieceSet = set;
+		setChanged();
 	}
 }

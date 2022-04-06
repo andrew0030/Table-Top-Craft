@@ -93,6 +93,7 @@ public class ChessPieceFigureSettingsScreen extends Screen
         // Toggle piece rotation text
         this.font.draw(poseStack, this.togglePieceRotationText, x + 20, y + 63, 0x000000);
 
+        previewBlockEntity.setPieceSet(chessPieceFigureBlockEntity.getPieceSet());
         previewBlockEntity.setPieceType(chessPieceFigureBlockEntity.getPieceType());
         previewBlockEntity.setPieceColor(NBTColorSaving.saveColor(redColorSlider.getValueInt(), greenColorSlider.getValueInt(), blueColorSlider.getValueInt()));
         previewBlockEntity.setRotateChessPieceFigure(chessPieceFigureBlockEntity.getRotateChessPieceFigure());

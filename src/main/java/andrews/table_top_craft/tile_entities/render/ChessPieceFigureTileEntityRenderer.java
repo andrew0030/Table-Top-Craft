@@ -129,32 +129,65 @@ public class ChessPieceFigureTileEntityRenderer implements BlockEntityRenderer<C
         }
         if (shaderinstance.PROJECTION_MATRIX != null)
             shaderinstance.PROJECTION_MATRIX.set(RenderSystem.getProjectionMatrix());
-        switch (blockEntity.getPieceType())
+        switch (blockEntity.getPieceSet())
         {
-            case 1 -> {
-                VertexBuffer pawnBuffer = DrawScreenEvent.pawnBuffer;
-                BufferHelpers.draw(pawnBuffer, shaderinstance);
-            }
-            case 2 -> {
-                VertexBuffer rookBuffer = DrawScreenEvent.rookBuffer;
-                BufferHelpers.draw(rookBuffer, shaderinstance);
-            }
-            case 3 -> {
-                VertexBuffer bishopBuffer = DrawScreenEvent.bishopBuffer;
-                BufferHelpers.draw(bishopBuffer, shaderinstance);
-            }
-            case 4 -> {
-                VertexBuffer knightBuffer = DrawScreenEvent.knightBuffer;
-                BufferHelpers.draw(knightBuffer, shaderinstance);
-            }
-            case 5 -> {
-                VertexBuffer kingBuffer = DrawScreenEvent.kingBuffer;
-                BufferHelpers.draw(kingBuffer, shaderinstance);
-            }
-            case 6 -> {
-                VertexBuffer queenBuffer = DrawScreenEvent.queenBuffer;
-                BufferHelpers.draw(queenBuffer, shaderinstance);
-            }
+            case 1:
+                switch (blockEntity.getPieceType())
+                {
+                    case 1 -> {
+                        VertexBuffer pawnBuffer = DrawScreenEvent.pawnBuffer;
+                        BufferHelpers.draw(pawnBuffer, shaderinstance);
+                    }
+                    case 2 -> {
+                        VertexBuffer rookBuffer = DrawScreenEvent.rookBuffer;
+                        BufferHelpers.draw(rookBuffer, shaderinstance);
+                    }
+                    case 3 -> {
+                        VertexBuffer bishopBuffer = DrawScreenEvent.bishopBuffer;
+                        BufferHelpers.draw(bishopBuffer, shaderinstance);
+                    }
+                    case 4 -> {
+                        VertexBuffer knightBuffer = DrawScreenEvent.knightBuffer;
+                        BufferHelpers.draw(knightBuffer, shaderinstance);
+                    }
+                    case 5 -> {
+                        VertexBuffer kingBuffer = DrawScreenEvent.kingBuffer;
+                        BufferHelpers.draw(kingBuffer, shaderinstance);
+                    }
+                    case 6 -> {
+                        VertexBuffer queenBuffer = DrawScreenEvent.queenBuffer;
+                        BufferHelpers.draw(queenBuffer, shaderinstance);
+                    }
+                }
+                break;
+            case 2:
+                switch (blockEntity.getPieceType())
+                {
+                    case 1 -> {
+                        VertexBuffer classicPawnBuffer = DrawScreenEvent.classicPawnBuffer;
+                        BufferHelpers.draw(classicPawnBuffer, shaderinstance);
+                    }
+                    case 2 -> {
+                        VertexBuffer classicRookBuffer = DrawScreenEvent.classicRookBuffer;
+                        BufferHelpers.draw(classicRookBuffer, shaderinstance);
+                    }
+                    case 3 -> {
+                        VertexBuffer classicBishopBuffer = DrawScreenEvent.classicBishopBuffer;
+                        BufferHelpers.draw(classicBishopBuffer, shaderinstance);
+                    }
+                    case 4 -> {
+                        VertexBuffer classicKnightBuffer = DrawScreenEvent.classicKnightBuffer;
+                        BufferHelpers.draw(classicKnightBuffer, shaderinstance);
+                    }
+                    case 5 -> {
+                        VertexBuffer classicKingBuffer = DrawScreenEvent.classicKingBuffer;
+                        BufferHelpers.draw(classicKingBuffer, shaderinstance);
+                    }
+                    case 6 -> {
+                        VertexBuffer classicQueenBuffer = DrawScreenEvent.classicQueenBuffer;
+                        BufferHelpers.draw(classicQueenBuffer, shaderinstance);
+                    }
+                }
         }
         poseStack.popPose();
         poseStack.popPose();

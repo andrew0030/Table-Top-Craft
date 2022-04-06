@@ -54,7 +54,7 @@ public class NBTColorSaving
 	
 	public static String saveColor(int red, int green, int blue)
 	{
-		return Integer.toString(red) + "/" + Integer.toString(green) + "/" + Integer.toString(blue) + "/1";
+		return Integer.toString(red) + "/" + Integer.toString(green) + "/" + Integer.toString(blue) + "/255";
 	}
 	
 	public static String saveColor(int red, int green, int blue, int alpha)

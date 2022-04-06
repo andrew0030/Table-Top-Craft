@@ -10,6 +10,7 @@ import andrews.table_top_craft.screens.chess.buttons.colors.ChessBoardPreviousMo
 import andrews.table_top_craft.screens.chess.buttons.colors.ChessBoardTilesColorButton;
 import andrews.table_top_craft.screens.chess.buttons.colors.ChessTileInfoColorsButton;
 import andrews.table_top_craft.screens.chess.buttons.colors.ChessUseCustomPlateButton;
+import andrews.table_top_craft.screens.chess.buttons.pieces.ChessBoardPieceModelSelectionButton;
 import andrews.table_top_craft.screens.chess.buttons.pieces.ChessBoardPieceSettingsButton;
 import andrews.table_top_craft.screens.chess.buttons.settings.ChessBoardSettingsButton;
 import andrews.table_top_craft.tile_entities.ChessTileEntity;
@@ -25,6 +26,7 @@ import net.minecraft.resources.ResourceLocation;
 public class ChessPieceSelectionScreen extends Screen
 {
     private static final ResourceLocation MENU_TEXTURE = new ResourceLocation(Reference.MODID, "textures/gui/menus/chess_menu.png");
+    private static final ResourceLocation BUTTONS_TEXTURE = new ResourceLocation(Reference.MODID + ":textures/gui/buttons/chess_menu_buttons.png");
     private final String chessBoardColorsText = new TranslatableComponent("gui.table_top_craft.chess.board_pieces").getString();
     private final ChessTileEntity chessTileEntity;
     private final int xSize = 177;
@@ -53,6 +55,10 @@ public class ChessPieceSelectionScreen extends Screen
         this.addRenderableWidget(new ChessBoardSettingsButton(this.chessTileEntity, x - 24, y + 16));
         this.addRenderableWidget(new ChessBoardColorSettingsButton(this.chessTileEntity, x - 24, y + 42));
         this.addRenderableWidget(new ChessBoardPieceSettingsButton(this.chessTileEntity, x - 24, y + 68));
+
+        this.addRenderableWidget(new ChessBoardPieceModelSelectionButton(this.chessTileEntity, x + 5, y + 30));
+        this.addRenderableWidget(new ChessBoardPieceModelSelectionButton(this.chessTileEntity, x + 5, y + 84));
+        this.addRenderableWidget(new ChessBoardPieceModelSelectionButton(this.chessTileEntity, x + 5, y + 138));
     }
 
     @Override
@@ -66,7 +72,15 @@ public class ChessPieceSelectionScreen extends Screen
         this.blit(poseStack, x, y, 0, 0, this.xSize, this.ySize);
         this.blit(poseStack, x, y + 67, 0, 198, 3, 26);
 
+        RenderSystem.setShaderColor(1.0f, 1.0f, 1.0f, 1.0f);
+        RenderSystem.setShaderTexture(0, BUTTONS_TEXTURE);
+        this.blit(poseStack, x + 25, y + (ySize - 21), 36, 89, 23, 16);
+        this.blit(poseStack, x + (xSize - 48), y + (ySize - 21), 36, 105, 23, 16);
+
+        // Menu Text
         this.font.draw(poseStack, this.chessBoardColorsText, ((this.width / 2) - (this.font.width(this.chessBoardColorsText) / 2)), y + 6, 4210752);
+        // Page Number Text
+        this.font.draw(poseStack, new TextComponent("1/1"), ((this.width / 2) - (this.font.width("1/1") / 2)), y + (ySize - 16), 4210752);
 
         // Renders the Buttons we added in init
         super.render(poseStack, mouseX, mouseY, partialTicks);

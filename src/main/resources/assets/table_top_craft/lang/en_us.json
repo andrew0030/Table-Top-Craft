@@ -19,6 +19,7 @@
 	"gui.table_top_craft.chess.board_pieces": "Chess Board Pieces",
 	"gui.table_top_craft.chess.board_evaluator": "Chess Board Evaluator",
 	"gui.table_top_craft.piece_figure.piece_settings": "Chess Piece Figure Settings",
+	"gui.table_top_craft.piece_figure.toggle_rotation": "Toggle Piece Rotation",
 	"gui.table_top_craft.chess.fen_loader": "FEN Loader",
 	"gui.table_top_craft.chess.move_log": "Move Log",
 	"gui.table_top_craft.chess.move_log.white": "White",
@@ -99,5 +100,11 @@
 	"tooltip.table_top_craft.chess_piece_figure.piece_type": "#c7Piece Type: #c6%s",
 	"tooltip.table_top_craft.chess_piece_figure.toggle.enabled": "#caEnabled",
 	"tooltip.table_top_craft.chess_piece_figure.toggle.disabled": "#ccDisabled",
-	"tooltip.table_top_craft.chess_piece_figure.should_rotate": "#c7Piece Rotation: %s"
+	"tooltip.table_top_craft.chess_piece_figure.should_rotate": "#c7Piece Rotation: %s",
+	"tooltip.table_top_craft.chess_piece_figure.piece_color": "#c7Piece Color: #cf",
+
+"_comment6": "Piece Types",
+	"tooltip.table_top_craft.chess.piece_type.standard": "Standard Pieces",
+	"tooltip.table_top_craft.chess.piece_type.classic": "Classic Pieces",
+	"tooltip.table_top_craft.chess.piece_type.pandoras_creatures": "Pandoras Creatures Pieces"
 }

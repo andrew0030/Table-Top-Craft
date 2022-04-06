@@ -2,54 +2,67 @@ package andrews.table_top_craft.screens.chess.buttons.pieces;
 
 import andrews.table_top_craft.registry.TTCBlocks;
 import andrews.table_top_craft.screens.chess.menus.ChessPieceSelectionScreen;
+import andrews.table_top_craft.tile_entities.ChessPieceFigureBlockEntity;
 import andrews.table_top_craft.tile_entities.ChessTileEntity;
 import andrews.table_top_craft.util.Reference;
 import com.mojang.blaze3d.platform.GlStateManager;
 import com.mojang.blaze3d.platform.Lighting;
+import com.mojang.blaze3d.platform.NativeImage;
 import com.mojang.blaze3d.systems.RenderSystem;
 import com.mojang.blaze3d.vertex.PoseStack;
+import com.mojang.math.Vector3f;
 import net.minecraft.client.Minecraft;
 import net.minecraft.client.gui.Font;
 import net.minecraft.client.gui.components.Button;
 import net.minecraft.client.renderer.MultiBufferSource;
 import net.minecraft.client.renderer.block.model.ItemTransforms;
 import net.minecraft.client.renderer.entity.ItemRenderer;
+import net.minecraft.client.renderer.texture.DynamicTexture;
 import net.minecraft.client.renderer.texture.OverlayTexture;
 import net.minecraft.client.renderer.texture.TextureAtlas;
 import net.minecraft.client.resources.model.BakedModel;
+import net.minecraft.core.BlockPos;
 import net.minecraft.network.chat.TextComponent;
 import net.minecraft.network.chat.TranslatableComponent;
 import net.minecraft.resources.ResourceLocation;
+import net.minecraft.util.Mth;
+import net.minecraft.world.item.Item;
 import net.minecraft.world.item.ItemStack;
+import net.minecraft.world.item.Items;
 
 import java.util.Arrays;
 
-public class ChessBoardPieceSettingsButton extends Button
+public class ChessBoardPieceModelSelectionButton extends Button
 {
-    private static final ResourceLocation TEXTURE = new ResourceLocation(Reference.MODID + ":textures/gui/buttons/chess_menu_buttons.png");
-    private final TranslatableComponent buttonText = new TranslatableComponent("gui.table_top_craft.chess.button.pieces");
+    private static final ResourceLocation TEXTURE = new ResourceLocation(Reference.MODID + ":textures/gui/buttons/piece_model_selection_buttons.png");
+    private final TranslatableComponent buttonText = new TranslatableComponent("tooltip.table_top_craft.chess.piece_type.standard");
     private final Font fontRenderer;
     private static ChessTileEntity chessTileEntity;
-    private static final int buttonWidth = 24;
-    private static final int buttonHeight = 24;
-    private int u = 48;
-    private int v = 26;
-    private final ItemStack chessPieceStack;
+    private static final int buttonWidth = 167;
+    private static final int buttonHeight = 37;
+    private int u = 0;
+    private int v = 0;
+    // Chess Pieces on the Button
+    private ChessPieceFigureBlockEntity chessPieceFigureBlockEntity;
+    private ItemStack chessPieceStack;
 
-    public ChessBoardPieceSettingsButton(ChessTileEntity tileEntity, int xPos, int yPos)
+    public ChessBoardPieceModelSelectionButton(ChessTileEntity tileEntity, int xPos, int yPos)
     {
         super(xPos, yPos, buttonWidth, buttonHeight, new TextComponent(""), (button) -> { handleButtonPress(); });
         this.fontRenderer = Minecraft.getInstance().font;
         chessTileEntity = tileEntity;
+        chessPieceFigureBlockEntity = new ChessPieceFigureBlockEntity(BlockPos.ZERO, TTCBlocks.CHESS_PIECE_FIGURE.get().defaultBlockState());
         chessPieceStack = new ItemStack(TTCBlocks.CHESS_PIECE_FIGURE.get().asItem());
     }
 
     @Override
     public void renderButton(PoseStack poseStack, int mouseX, int mouseY, float partialTicks)
     {
-        this.active = !(Minecraft.getInstance().screen instanceof ChessPieceSelectionScreen);
-
         this.isHovered = mouseX >= x && mouseX < x + width && mouseY >= y && mouseY < y + height || this.isFocused();
+
+        this.v = 0;
+        if(this.isHovered)
+            this.v += 37;
 
         // Renders the Button
         RenderSystem.setShaderColor(1.0f, 1.0f, 1.0f, 1.0f);
@@ -60,11 +73,16 @@ public class ChessBoardPieceSettingsButton extends Button
         RenderSystem.disableBlend();
         poseStack.popPose();
 
-        renderChessPiece(poseStack, chessPieceStack, x + 13, y + 8, 27);
-
-        // This is used to render a tooltip
-        if(isHovered)
-            Minecraft.getInstance().screen.renderTooltip(poseStack, Arrays.asList(this.buttonText.getVisualOrderText()), x - (15 + this.fontRenderer.width(this.buttonText.getString())), y + 20, this.fontRenderer);
+        chessPieceFigureBlockEntity.setRotateChessPieceFigure(true);
+        int scale = 32;
+        for(int i = 0; i < 6; i++)
+        {
+            chessPieceFigureBlockEntity.setPieceType(i + 1);
+            chessPieceFigureBlockEntity.saveToItem(chessPieceStack);
+            renderChessPiece(poseStack, chessPieceStack, x + 16 + (27 * i), y + 16, scale);
+        }
+//                                                                                                                ((this.width / 2) - (this.fontRenderer.width(this.buttonText) / 2))
+        Minecraft.getInstance().screen.renderTooltip(poseStack, Arrays.asList(this.buttonText.getVisualOrderText()), x - 8 + ((this.width / 2) - ((this.fontRenderer.width(this.buttonText) + 8) / 2)), y + 1, this.fontRenderer);
     }
 
     private void renderChessPiece(PoseStack poseStack, ItemStack itemStack, int pX, int pY, int size)
@@ -78,11 +96,6 @@ public class ChessBoardPieceSettingsButton extends Button
         RenderSystem.setShaderColor(1.0F, 1.0F, 1.0F, 1.0F);
         poseStack.pushPose();
         poseStack.translate(pX, pY, 100.0F);
-        // If we wanted the model to base scale ratio to be like the one the Blocks in the Level have
-        // We can use HEAD for transform type, and then simply manually move the model, replicating the look of GUI
-//        poseStack.translate(0, 40, 0);
-//        poseStack.mulPose(Vector3f.XN.rotationDegrees(30));
-//        poseStack.mulPose(Vector3f.YP.rotationDegrees(135));
         poseStack.scale(1.0F, -1.0F, 1.0F);
         poseStack.scale(size, size, size);
         RenderSystem.applyModelViewMatrix();

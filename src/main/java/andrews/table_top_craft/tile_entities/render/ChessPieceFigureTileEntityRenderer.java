@@ -5,6 +5,7 @@ import andrews.table_top_craft.game_logic.chess.pieces.BasePiece;
 import andrews.table_top_craft.objects.blocks.ChessPieceFigureBlock;
 import andrews.table_top_craft.tile_entities.ChessPieceFigureBlockEntity;
 import andrews.table_top_craft.tile_entities.model.piece_figure.ChessPieceFigureStandModel;
+import andrews.table_top_craft.util.NBTColorSaving;
 import andrews.table_top_craft.util.Reference;
 import andrews.table_top_craft.util.TTCRenderTypes;
 import com.mojang.blaze3d.platform.NativeImage;
@@ -52,10 +53,10 @@ public class ChessPieceFigureTileEntityRenderer implements BlockEntityRenderer<C
     @Override
     public void render(ChessPieceFigureBlockEntity blockEntity, float partialTicks, PoseStack poseStack, MultiBufferSource bufferSource, int packedLight, int packedOverlay)
     {
-        renderChessPieceFigure(blockEntity, poseStack, bufferSource, false, partialTicks, packedLight, packedOverlay);
+        renderChessPieceFigure(blockEntity, poseStack, bufferSource, false, false, partialTicks, packedLight, packedOverlay);
     }
 
-    public static void renderChessPieceFigure(ChessPieceFigureBlockEntity blockEntity, PoseStack poseStack, MultiBufferSource bufferSource, boolean isInGui, float partialTicks, int packedLight, int packedOverlay)
+    public static void renderChessPieceFigure(ChessPieceFigureBlockEntity blockEntity, PoseStack poseStack, MultiBufferSource bufferSource, boolean isInGui, boolean isHeldOrHead, float partialTicks, int packedLight, int packedOverlay)
     {
         // Renders the Stand for the "Chess Piece Figure" block
         Matrix4f initialMatrix = poseStack.last().pose();
@@ -68,6 +69,7 @@ public class ChessPieceFigureTileEntityRenderer implements BlockEntityRenderer<C
             chessPieceFigureStandModel.renderToBuffer(poseStack, vertexconsumer, packedLight, packedOverlay, 1.0F, 1.0F, 1.0F, 1.0F);
         poseStack.popPose();
 
+        // Gets the rotation the Figure should have when rendered in the world
         int rotation = 0;
         if (blockEntity.hasLevel())
         {
@@ -77,40 +79,47 @@ public class ChessPieceFigureTileEntityRenderer implements BlockEntityRenderer<C
                 rotation = blockstate.getValue(ChessPieceFigureBlock.ROTATION);
             }
         }
+        // The light for the Figure
         int lightU = LightTexture.block(packedLight);
         int lightV = LightTexture.sky(packedLight);
 
         poseStack.pushPose();
+        // Moves the piece to the center and onto the Base Plate
         poseStack.translate(8 * 0.0625F, 2 * 0.0625F, 8 * 0.0625F);
+        // Rotates the piece based on the rotation
         poseStack.mulPose(Vector3f.YN.rotationDegrees(rotation * 22.5F));
+        // Continuously rotates the piece if it was enabled
         if (blockEntity.getRotateChessPieceFigure())
             poseStack.mulPose(Vector3f.YN.rotationDegrees(Minecraft.getInstance().player.tickCount + partialTicks));
         // We invert the model because Minecraft renders shit inside out.
         poseStack.scale(3.0F, -3.0F, -3.0F);
+
         poseStack.pushPose();
         RenderType type = TTCRenderTypes.getChessPieceSolid(resourceLocation);
         type.setupRenderState();
         BufferHelpers.setupRender(RenderSystem.getShader(), lightU, lightV);
         ShaderInstance shaderinstance = RenderSystem.getShader();
-        RenderSystem.setShaderColor(210 / 255F, 188 / 255F, 161 / 255F, 1.0F);
+        // We get the colors the Piece should have
+        float red = NBTColorSaving.getRed(blockEntity.getPieceColor()) / 255F;
+        float green = NBTColorSaving.getGreen(blockEntity.getPieceColor()) / 255F;
+        float blue = NBTColorSaving.getBlue(blockEntity.getPieceColor()) / 255F;
+        // We set the colors
+        RenderSystem.setShaderColor(red, green, blue, 1.0F);
         BufferHelpers.updateColor(shaderinstance);
         poseStack.pushPose();
         if (shaderinstance.MODEL_VIEW_MATRIX != null)
         {
-            if (isInGui)
+            if (isInGui || isHeldOrHead)
             {
                 Matrix4f mat4f = RenderSystem.getModelViewMatrix().copy();
                 PoseStack stk = new PoseStack();
                 stk.last().pose().multiply(mat4f);
                 stk.last().pose().multiply(initialMatrix);
                 stk.translate(8 * 0.0625F, 2 * 0.0625F, 8 * 0.0625F);
-                stk.mulPose(Vector3f.YN.rotationDegrees(rotation * 22.5F));
                 if (blockEntity.getRotateChessPieceFigure())
                     stk.mulPose(Vector3f.YN.rotationDegrees(Minecraft.getInstance().player.tickCount + partialTicks));
-                // to make it be like it is in world, change this to be 3's instead of 4's
-                stk.scale(4, -4, -4);
-                // else wise it faces backwards
-                stk.mulPose(new Quaternion(0, -90, 0, true));
+                // The scale of the Pieces, if rendered in on Head, Third Person Left/Right we make them slightly smaller to fit the ones in the Level
+                stk.scale(isHeldOrHead ? 3 : 4, isHeldOrHead ? -3 : -4, isHeldOrHead ? -3 : -4);
                 shaderinstance.MODEL_VIEW_MATRIX.set(stk.last().pose());
             }
             else
@@ -148,8 +157,8 @@ public class ChessPieceFigureTileEntityRenderer implements BlockEntityRenderer<C
             }
         }
         poseStack.popPose();
-        type.clearRenderState();
         poseStack.popPose();
+        type.clearRenderState();
         poseStack.popPose();
     }
 }

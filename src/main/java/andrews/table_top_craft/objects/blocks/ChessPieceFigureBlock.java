@@ -10,7 +10,9 @@ import net.minecraft.core.BlockPos;
 import net.minecraft.nbt.CompoundTag;
 import net.minecraft.nbt.Tag;
 import net.minecraft.network.chat.Component;
+import net.minecraft.network.chat.TextColor;
 import net.minecraft.network.chat.TextComponent;
+import net.minecraft.network.chat.TranslatableComponent;
 import net.minecraft.resources.ResourceLocation;
 import net.minecraft.util.Mth;
 import net.minecraft.world.InteractionHand;
@@ -37,6 +39,7 @@ import net.minecraft.world.level.material.Material;
 import net.minecraft.world.level.storage.loot.LootContext;
 import net.minecraft.world.level.storage.loot.parameters.LootContextParams;
 import net.minecraft.world.phys.BlockHitResult;
+import net.minecraft.world.phys.HitResult;
 import net.minecraft.world.phys.shapes.CollisionContext;
 import net.minecraft.world.phys.shapes.VoxelShape;
 
@@ -143,7 +146,46 @@ public class ChessPieceFigureBlock extends Block implements EntityBlock
                     case 1 -> TranslationHelper.getToolTipWithTextFromLang(tooltip, shouldRotatePath, "tooltip.table_top_craft.chess_piece_figure.toggle.enabled", stack);
                 }
             }
+            if(compoundtag.contains("PieceColor", Tag.TAG_STRING))
+            {
+                String pieceColorText = new TranslatableComponent("tooltip.table_top_craft.chess_piece_figure.piece_color").getString();
+                String colorDescriptionText = compoundtag.getString("PieceColor");
+                pieceColorText = pieceColorText.replaceAll("#c", "§");
+                colorDescriptionText = colorDescriptionText.substring(0, colorDescriptionText.length() - 4);
+//                String[] colors = colorDescriptionText.split("/");
+//                StringBuilder strBuilder = new StringBuilder();
+//                for(int i = 0; i < colors.length - 1; i++)
+//                {
+//                    strBuilder.append(colors[i]);
+//                    if(colors.length > i + 2)
+//                        strBuilder.append("/");
+//                }
+//                colorDescriptionText = strBuilder.toString();
+
+                tooltip.add(new TextComponent(pieceColorText + colorDescriptionText));
+            }
         }
+        else
+        {
+            // TODO replace with lang file
+            tooltip.add(new TextComponent("§7Values havent been"));
+            tooltip.add(new TextComponent("§7generated, place in"));
+            tooltip.add(new TextComponent("§7world to generate"));
+        }
+    }
+
+    @Override
+    public ItemStack getCloneItemStack(BlockState state, HitResult target, BlockGetter level, BlockPos pos, Player player)
+    {
+        ItemStack stack = super.getCloneItemStack(state, target, level, pos, player);
+        if(level.getBlockEntity(pos) != null)
+        {
+            if(level.getBlockEntity(pos) instanceof ChessPieceFigureBlockEntity chessPieceFigureBlockEntity)
+            {
+                chessPieceFigureBlockEntity.saveToItem(stack);
+            }
+        }
+        return stack;
     }
 
     @Override

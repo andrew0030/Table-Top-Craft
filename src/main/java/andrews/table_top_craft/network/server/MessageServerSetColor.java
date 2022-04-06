@@ -2,6 +2,7 @@ package andrews.table_top_craft.network.server;
 
 import java.util.function.Supplier;
 
+import andrews.table_top_craft.tile_entities.ChessPieceFigureBlockEntity;
 import andrews.table_top_craft.tile_entities.ChessTileEntity;
 import net.minecraft.core.BlockPos;
 import net.minecraft.network.FriendlyByteBuf;
@@ -68,6 +69,15 @@ public class MessageServerSetColor
 						}
 						level.sendBlockUpdated(message.pos, level.getBlockState(chessPos), level.getBlockState(chessPos), 2);
 			        }
+					else if(blockEntity instanceof ChessPieceFigureBlockEntity chessPieceFigureBlockEntity)
+					{
+//						switch(message.colorType)
+//						{
+//							case 6 -> chessPieceFigureBlockEntity.setPieceColor(color);
+//						}
+						chessPieceFigureBlockEntity.setPieceColor(color);
+						level.sendBlockUpdated(message.pos, level.getBlockState(chessPos), level.getBlockState(chessPos), 2);
+					}
 				}
 			});
 			context.setPacketHandled(true);

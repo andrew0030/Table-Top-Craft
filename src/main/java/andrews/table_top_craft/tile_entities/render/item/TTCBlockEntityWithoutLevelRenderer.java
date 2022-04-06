@@ -3,6 +3,7 @@ package andrews.table_top_craft.tile_entities.render.item;
 import andrews.table_top_craft.registry.TTCBlocks;
 import andrews.table_top_craft.tile_entities.ChessPieceFigureBlockEntity;
 import andrews.table_top_craft.tile_entities.render.ChessPieceFigureTileEntityRenderer;
+import andrews.table_top_craft.util.NBTColorSaving;
 import com.mojang.blaze3d.vertex.PoseStack;
 import net.minecraft.client.Minecraft;
 import net.minecraft.client.model.geom.EntityModelSet;
@@ -48,14 +49,25 @@ public class TTCBlockEntityWithoutLevelRenderer extends BlockEntityWithoutLevelR
                     chessPieceFigureBlockEntity.setRotateChessPieceFigure(compoundTag.getInt("RotateChessPieceFigure") != 0);
                 else
                     chessPieceFigureBlockEntity.setRotateChessPieceFigure(false);
+                // We get and set Color
+                if(compoundTag != null && compoundTag.contains("PieceColor", Tag.TAG_STRING))
+                    chessPieceFigureBlockEntity.setPieceColor(compoundTag.getString("PieceColor"));
+                else
+                    chessPieceFigureBlockEntity.setPieceColor(NBTColorSaving.createWhitePiecesColor());
 
-                ChessPieceFigureTileEntityRenderer.renderChessPieceFigure(chessPieceFigureBlockEntity, poseStack, buffer, false, type.equals(ItemTransforms.TransformType.GUI), getPartialTicks(), packedLight, packedOverlay);
+                //TODO properly fix transform type for GUI, HEAD and THIRD_PERSON_X_HAND!
+                ChessPieceFigureTileEntityRenderer.renderChessPieceFigure(chessPieceFigureBlockEntity, poseStack, buffer, type.equals(ItemTransforms.TransformType.GUI), isHeldOrHead(type), getPartialTicks(), packedLight, packedOverlay);
             }
             catch (Exception e)
             {
                 System.err.println(e.getMessage());
             }
         }
+    }
+
+    private boolean isHeldOrHead(ItemTransforms.TransformType type)
+    {
+        return type.equals(ItemTransforms.TransformType.HEAD) || type.equals(ItemTransforms.TransformType.THIRD_PERSON_RIGHT_HAND) || type.equals(ItemTransforms.TransformType.THIRD_PERSON_LEFT_HAND);
     }
 
     private float getPartialTicks()

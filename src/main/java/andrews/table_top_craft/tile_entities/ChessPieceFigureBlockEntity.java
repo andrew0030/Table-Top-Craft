@@ -1,6 +1,7 @@
 package andrews.table_top_craft.tile_entities;
 
 import andrews.table_top_craft.registry.TTCTileEntities;
+import andrews.table_top_craft.util.NBTColorSaving;
 import net.minecraft.core.BlockPos;
 import net.minecraft.nbt.CompoundTag;
 import net.minecraft.nbt.Tag;
@@ -21,6 +22,7 @@ public class ChessPieceFigureBlockEntity extends BlockEntity
     private final Random rand = new Random();
     private int pieceType;
     private boolean rotateChessPieceFigure;
+    private String pieceColor;
 
     public ChessPieceFigureBlockEntity(BlockPos pos, BlockState state)
     {
@@ -85,6 +87,7 @@ public class ChessPieceFigureBlockEntity extends BlockEntity
     {
         compound.putInt("PieceType", this.getPieceType());
         compound.putInt("RotateChessPieceFigure", !this.rotateChessPieceFigure ? 0 : 1);
+        compound.putString("PieceColor", getPieceColor());
     }
 
     /**
@@ -95,6 +98,8 @@ public class ChessPieceFigureBlockEntity extends BlockEntity
         pieceType = compound.getInt("PieceType");
         if(compound.contains("RotateChessPieceFigure", Tag.TAG_INT))
             this.rotateChessPieceFigure = compound.getInt("RotateChessPieceFigure") != 0;
+        if(compound.contains("PieceColor", Tag.TAG_STRING))
+            this.pieceColor = compound.getString("PieceColor");
     }
 
     public int getPieceType()
@@ -131,5 +136,15 @@ public class ChessPieceFigureBlockEntity extends BlockEntity
     public boolean getRotateChessPieceFigure()
     {
         return this.rotateChessPieceFigure;
+    }
+
+    public void setPieceColor(String colorForNBT)
+    {
+        this.pieceColor = colorForNBT;
+    }
+
+    public String getPieceColor()
+    {
+        return this.pieceColor == null ? NBTColorSaving.createWhitePiecesColor() : this.pieceColor;
     }
 }

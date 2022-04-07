@@ -1,5 +1,22 @@
 {
+  "credit": "Made with Blockbench",
   "textures": {
+    "0": "table_top_craft:block/chess_piece_figure_particle",
     "particle": "table_top_craft:block/chess_piece_figure_particle"
-  }
+  },
+  "elements": [
+    {
+      "name": "base",
+      "from": [3, 0, 3],
+      "to": [13, 2, 13],
+      "faces": {
+        "north": {"uv": [3, 0, 13, 2], "texture": "#0"},
+        "east": {"uv": [3, 0, 13, 2], "texture": "#0"},
+        "south": {"uv": [3, 0, 13, 2], "texture": "#0"},
+        "west": {"uv": [3, 0, 13, 2], "texture": "#0"},
+        "up": {"uv": [3, 3, 13, 13], "texture": "#0"},
+        "down": {"uv": [3, 3, 13, 13], "texture": "#0"}
+      }
+    }
+  ]
 }

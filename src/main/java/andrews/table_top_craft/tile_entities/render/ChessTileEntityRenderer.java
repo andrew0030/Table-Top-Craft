@@ -456,6 +456,35 @@ public class ChessTileEntityRenderer implements BlockEntityRenderer<ChessTileEnt
 						VertexBuffer classicQueenBuffer = DrawScreenEvent.classicQueenBuffer;
 						BufferHelpers.draw(classicQueenBuffer, shaderinstance);
 				}
+				break;
+			case 2:
+				switch(pieceType)
+				{
+					default:
+					case PAWN:
+						VertexBuffer pandorasCreaturesPawnBuffer = DrawScreenEvent.pandorasCreaturesPawnBuffer;
+						BufferHelpers.draw(pandorasCreaturesPawnBuffer, shaderinstance);
+						break;
+					case ROOK:
+						VertexBuffer pandorasCreaturesRookBuffer = DrawScreenEvent.pandorasCreaturesRookBuffer;
+						BufferHelpers.draw(pandorasCreaturesRookBuffer, shaderinstance);
+						break;
+					case BISHOP:
+						VertexBuffer pandorasCreaturesBishopBuffer = DrawScreenEvent.pandorasCreaturesBishopBuffer;
+						BufferHelpers.draw(pandorasCreaturesBishopBuffer, shaderinstance);
+						break;
+					case KNIGHT:
+						VertexBuffer pandorasCreaturesKnightBuffer = DrawScreenEvent.pandorasCreaturesKnightBuffer;
+						BufferHelpers.draw(pandorasCreaturesKnightBuffer, shaderinstance);
+						break;
+					case KING:
+						VertexBuffer pandorasCreaturesKingBuffer = DrawScreenEvent.pandorasCreaturesKingBuffer;
+						BufferHelpers.draw(pandorasCreaturesKingBuffer, shaderinstance);
+						break;
+					case QUEEN:
+						VertexBuffer pandorasCreaturesQueenBuffer = DrawScreenEvent.pandorasCreaturesQueenBuffer;
+						BufferHelpers.draw(pandorasCreaturesQueenBuffer, shaderinstance);
+				}
 		}
 		poseStack.popPose();
 		// We reset the shader color to avoid funny business during the next render call

@@ -32,7 +32,7 @@ public class ChessBoardPieceModelSelectionButton extends Button
     private static final ResourceLocation TEXTURE = new ResourceLocation(Reference.MODID + ":textures/gui/buttons/piece_model_selection_buttons.png");
     private final TranslatableComponent buttonText = new TranslatableComponent("tooltip.table_top_craft.chess.piece_type.standard");
     private final TranslatableComponent buttonTextClassic = new TranslatableComponent("tooltip.table_top_craft.chess.piece_type.classic");
-//    private final TranslatableComponent buttonText = new TranslatableComponent("tooltip.table_top_craft.chess.piece_type.standard");
+    private final TranslatableComponent buttonTextPandorasCreatures = new TranslatableComponent("tooltip.table_top_craft.chess.piece_type.pandoras_creatures");
     private final Font fontRenderer;
     private static ChessTileEntity chessTileEntity;
     private static final int buttonWidth = 167;
@@ -40,10 +40,10 @@ public class ChessBoardPieceModelSelectionButton extends Button
     private int u = 0;
     private int v = 0;
     // Chess Pieces on the Button
-    private ChessPieceFigureBlockEntity chessPieceFigureBlockEntity;
-    private ItemStack chessPieceStack;
+    private final ChessPieceFigureBlockEntity chessPieceFigureBlockEntity;
+    private final ItemStack chessPieceStack;
     // Piece Set
-    private PieceModelSet pieceModelSet;
+    private final PieceModelSet pieceModelSet;
 
     public ChessBoardPieceModelSelectionButton(ChessTileEntity tileEntity, PieceModelSet pieceModelSet, int xPos, int yPos)
     {
@@ -80,6 +80,9 @@ public class ChessBoardPieceModelSelectionButton extends Button
                 if(chessTileEntity.getPieceSet() == 1)
                     this.blit(poseStack, x - 1, y - 1, 0, 74, width + 2, height + 2);
                 break;
+            case PANDORAS_CREATURES:
+                if(chessTileEntity.getPieceSet() == 2)
+                    this.blit(poseStack, x - 1, y - 1, 0, 74, width + 2, height + 2);
         }
         RenderSystem.disableBlend();
         poseStack.popPose();
@@ -88,6 +91,7 @@ public class ChessBoardPieceModelSelectionButton extends Button
         {
             case STANDARD -> chessPieceFigureBlockEntity.setPieceSet(1);
             case CLASSIC -> chessPieceFigureBlockEntity.setPieceSet(2);
+            case PANDORAS_CREATURES -> chessPieceFigureBlockEntity.setPieceSet(3);
         }
         chessPieceFigureBlockEntity.setRotateChessPieceFigure(true);
         int scale = 32;
@@ -102,6 +106,7 @@ public class ChessBoardPieceModelSelectionButton extends Button
         {
             case STANDARD -> Minecraft.getInstance().screen.renderTooltip(poseStack, Arrays.asList(this.buttonText.getVisualOrderText()), x - 8 + ((this.width / 2) - ((this.fontRenderer.width(this.buttonText) + 8) / 2)), y + 1, this.fontRenderer);
             case CLASSIC -> Minecraft.getInstance().screen.renderTooltip(poseStack, Arrays.asList(this.buttonTextClassic.getVisualOrderText()), x - 8 + ((this.width / 2) - ((this.fontRenderer.width(this.buttonTextClassic) + 8) / 2)), y + 1, this.fontRenderer);
+            case PANDORAS_CREATURES -> Minecraft.getInstance().screen.renderTooltip(poseStack, Arrays.asList(this.buttonTextPandorasCreatures.getVisualOrderText()), x - 8 + ((this.width / 2) - ((this.fontRenderer.width(this.buttonTextPandorasCreatures) + 8) / 2)), y + 1, this.fontRenderer);
         }
     }
 
@@ -134,6 +139,7 @@ public class ChessBoardPieceModelSelectionButton extends Button
         {
             case STANDARD -> NetworkUtil.setChessPieceSet(chessTileEntity.getBlockPos(), 0);
             case CLASSIC -> NetworkUtil.setChessPieceSet(chessTileEntity.getBlockPos(), 1);
+            case PANDORAS_CREATURES -> NetworkUtil.setChessPieceSet(chessTileEntity.getBlockPos(), 2);
         }
     }
 

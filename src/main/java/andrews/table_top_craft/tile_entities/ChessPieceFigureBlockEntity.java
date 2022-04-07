@@ -137,7 +137,7 @@ public class ChessPieceFigureBlockEntity extends BlockEntity
         {
             if(!this.level.isClientSide)
             {
-                this.setPieceSet(rand.nextInt(2) + 1);
+                this.setPieceSet(rand.nextInt(3) + 1);
                 System.out.println(pieceType); // TODO remove this debug text line
             }
             return pieceSet;

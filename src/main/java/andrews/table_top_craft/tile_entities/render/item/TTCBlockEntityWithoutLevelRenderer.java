@@ -60,7 +60,6 @@ public class TTCBlockEntityWithoutLevelRenderer extends BlockEntityWithoutLevelR
                 else
                     chessPieceFigureBlockEntity.setPieceSet(1);
 
-                //TODO properly fix transform type for GUI, HEAD and THIRD_PERSON_X_HAND!
                 ChessPieceFigureTileEntityRenderer.renderChessPieceFigure(chessPieceFigureBlockEntity, poseStack, buffer, type.equals(ItemTransforms.TransformType.GUI), isHeldOrHead(type), getPartialTicks(), packedLight, packedOverlay);
             }
             catch (Exception e)

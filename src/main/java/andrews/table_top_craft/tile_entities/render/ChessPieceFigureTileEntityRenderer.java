@@ -60,14 +60,17 @@ public class ChessPieceFigureTileEntityRenderer implements BlockEntityRenderer<C
     {
         // Renders the Stand for the "Chess Piece Figure" block
         Matrix4f initialMatrix = poseStack.last().pose();
-        poseStack.pushPose();
+        if(!blockEntity.hasLevel())
+        {
+            poseStack.pushPose();
             poseStack.translate(0.5D, 1.5D, 0.5D);
             poseStack.scale(1.0F, -1.0F, -1.0F);
             if (blockEntity.getRotateChessPieceFigure() && isInGui)
                 poseStack.mulPose(Vector3f.YP.rotationDegrees(Minecraft.getInstance().player.tickCount + partialTicks));
             VertexConsumer vertexconsumer = bufferSource.getBuffer(RenderType.entitySolid(CHESS_PIECE_FIGURE_TEXTURE));
             chessPieceFigureStandModel.renderToBuffer(poseStack, vertexconsumer, packedLight, packedOverlay, 1.0F, 1.0F, 1.0F, 1.0F);
-        poseStack.popPose();
+            poseStack.popPose();
+        }
 
         // Gets the rotation the Figure should have when rendered in the world
         int rotation = 0;
@@ -186,6 +189,35 @@ public class ChessPieceFigureTileEntityRenderer implements BlockEntityRenderer<C
                     case 6 -> {
                         VertexBuffer classicQueenBuffer = DrawScreenEvent.classicQueenBuffer;
                         BufferHelpers.draw(classicQueenBuffer, shaderinstance);
+                    }
+                }
+                break;
+            case 3:
+                switch (blockEntity.getPieceType())
+                {
+                    case 1 -> {
+                        VertexBuffer pandorasCreaturesPawnBuffer = DrawScreenEvent.pandorasCreaturesPawnBuffer;
+                        BufferHelpers.draw(pandorasCreaturesPawnBuffer, shaderinstance);
+                    }
+                    case 2 -> {
+                        VertexBuffer pandorasCreaturesRookBuffer = DrawScreenEvent.pandorasCreaturesRookBuffer;
+                        BufferHelpers.draw(pandorasCreaturesRookBuffer, shaderinstance);
+                    }
+                    case 3 -> {
+                        VertexBuffer pandorasCreaturesBishopBuffer = DrawScreenEvent.pandorasCreaturesBishopBuffer;
+                        BufferHelpers.draw(pandorasCreaturesBishopBuffer, shaderinstance);
+                    }
+                    case 4 -> {
+                        VertexBuffer pandorasCreaturesKnightBuffer = DrawScreenEvent.pandorasCreaturesKnightBuffer;
+                        BufferHelpers.draw(pandorasCreaturesKnightBuffer, shaderinstance);
+                    }
+                    case 5 -> {
+                        VertexBuffer pandorasCreaturesKingBuffer = DrawScreenEvent.pandorasCreaturesKingBuffer;
+                        BufferHelpers.draw(pandorasCreaturesKingBuffer, shaderinstance);
+                    }
+                    case 6 -> {
+                        VertexBuffer pandorasCreaturesQueenBuffer = DrawScreenEvent.pandorasCreaturesQueenBuffer;
+                        BufferHelpers.draw(pandorasCreaturesQueenBuffer, shaderinstance);
                     }
                 }
         }

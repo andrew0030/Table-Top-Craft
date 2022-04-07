@@ -57,6 +57,7 @@ public class MessageServerSetPieceSet
                         {
                             case 0 -> chessTileEntity.setPieceSet(0);
                             case 1 -> chessTileEntity.setPieceSet(1);
+                            case 2 -> chessTileEntity.setPieceSet(2);
                         }
                         level.sendBlockUpdated(message.pos, level.getBlockState(chessPos), level.getBlockState(chessPos), 2);
                         chessTileEntity.setChanged();

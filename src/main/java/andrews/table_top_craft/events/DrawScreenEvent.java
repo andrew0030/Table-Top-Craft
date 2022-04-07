@@ -37,6 +37,13 @@ public class DrawScreenEvent
 	public static VertexBuffer classicKnightBuffer;
 	public static VertexBuffer classicKingBuffer;
 	public static VertexBuffer classicQueenBuffer;
+
+	public static VertexBuffer pandorasCreaturesPawnBuffer;
+	public static VertexBuffer pandorasCreaturesRookBuffer;
+	public static VertexBuffer pandorasCreaturesBishopBuffer;
+	public static VertexBuffer pandorasCreaturesKnightBuffer;
+	public static VertexBuffer pandorasCreaturesKingBuffer;
+	public static VertexBuffer pandorasCreaturesQueenBuffer;
 	
 	@SubscribeEvent
 	public static void setup(final ScreenEvent.DrawScreenEvent event)
@@ -160,6 +167,66 @@ public class DrawScreenEvent
 			chessBuilder.end();
 			classicQueenBuffer = new VertexBuffer();
 			classicQueenBuffer.upload(chessBuilder);
+			chessBuilder.clear();
+		}
+
+		if(pandorasCreaturesPawnBuffer == null)
+		{
+			chessBuilder.begin(VertexFormat.Mode.TRIANGLES, chessVertexFormat);
+			CHESS_PIECE_MODEL.render(new PoseStack(), chessBuilder, PieceType.PAWN, PieceModelSet.PANDORAS_CREATURES);
+			chessBuilder.end(); // no longer adding new vertexes to the buffer
+			pandorasCreaturesPawnBuffer = new VertexBuffer();
+			pandorasCreaturesPawnBuffer.upload(chessBuilder); // uploads the model to the GPU
+			chessBuilder.clear(); // frees up unneeded memory
+		}
+
+		if(pandorasCreaturesRookBuffer == null)
+		{
+			chessBuilder.begin(VertexFormat.Mode.TRIANGLES, chessVertexFormat);
+			CHESS_PIECE_MODEL.render(new PoseStack(), chessBuilder, PieceType.ROOK, PieceModelSet.PANDORAS_CREATURES);
+			chessBuilder.end();
+			pandorasCreaturesRookBuffer = new VertexBuffer();
+			pandorasCreaturesRookBuffer.upload(chessBuilder);
+			chessBuilder.clear();
+		}
+
+		if(pandorasCreaturesBishopBuffer == null)
+		{
+			chessBuilder.begin(VertexFormat.Mode.TRIANGLES, chessVertexFormat);
+			CHESS_PIECE_MODEL.render(new PoseStack(), chessBuilder, PieceType.BISHOP, PieceModelSet.PANDORAS_CREATURES);
+			chessBuilder.end();
+			pandorasCreaturesBishopBuffer = new VertexBuffer();
+			pandorasCreaturesBishopBuffer.upload(chessBuilder);
+			chessBuilder.clear();
+		}
+
+		if(pandorasCreaturesKnightBuffer == null)
+		{
+			chessBuilder.begin(VertexFormat.Mode.TRIANGLES, chessVertexFormat);
+			CHESS_PIECE_MODEL.render(new PoseStack(), chessBuilder, PieceType.KNIGHT, PieceModelSet.PANDORAS_CREATURES);
+			chessBuilder.end();
+			pandorasCreaturesKnightBuffer = new VertexBuffer();
+			pandorasCreaturesKnightBuffer.upload(chessBuilder);
+			chessBuilder.clear();
+		}
+
+		if(pandorasCreaturesKingBuffer == null)
+		{
+			chessBuilder.begin(VertexFormat.Mode.TRIANGLES, chessVertexFormat);
+			CHESS_PIECE_MODEL.render(new PoseStack(), chessBuilder, PieceType.KING, PieceModelSet.PANDORAS_CREATURES);
+			chessBuilder.end();
+			pandorasCreaturesKingBuffer = new VertexBuffer();
+			pandorasCreaturesKingBuffer.upload(chessBuilder);
+			chessBuilder.clear();
+		}
+
+		if(pandorasCreaturesQueenBuffer == null)
+		{
+			chessBuilder.begin(VertexFormat.Mode.TRIANGLES, chessVertexFormat);
+			CHESS_PIECE_MODEL.render(new PoseStack(), chessBuilder, PieceType.QUEEN, PieceModelSet.PANDORAS_CREATURES);
+			chessBuilder.end();
+			pandorasCreaturesQueenBuffer = new VertexBuffer();
+			pandorasCreaturesQueenBuffer.upload(chessBuilder);
 			chessBuilder.clear();
 		}
 	}

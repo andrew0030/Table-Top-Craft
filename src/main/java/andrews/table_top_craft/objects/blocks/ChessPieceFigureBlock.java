@@ -3,17 +3,13 @@ package andrews.table_top_craft.objects.blocks;
 import andrews.table_top_craft.registry.TTCBlocks;
 import andrews.table_top_craft.screens.piece_figure.menus.ChessPieceFigureSettingsScreen;
 import andrews.table_top_craft.tile_entities.ChessPieceFigureBlockEntity;
-import andrews.table_top_craft.util.Reference;
 import andrews.table_top_craft.util.TranslationHelper;
-import net.minecraft.ChatFormatting;
 import net.minecraft.core.BlockPos;
 import net.minecraft.nbt.CompoundTag;
 import net.minecraft.nbt.Tag;
 import net.minecraft.network.chat.Component;
-import net.minecraft.network.chat.TextColor;
 import net.minecraft.network.chat.TextComponent;
 import net.minecraft.network.chat.TranslatableComponent;
-import net.minecraft.resources.ResourceLocation;
 import net.minecraft.util.Mth;
 import net.minecraft.world.InteractionHand;
 import net.minecraft.world.InteractionResult;
@@ -21,16 +17,15 @@ import net.minecraft.world.entity.item.ItemEntity;
 import net.minecraft.world.entity.player.Player;
 import net.minecraft.world.item.BlockItem;
 import net.minecraft.world.item.ItemStack;
-import net.minecraft.world.item.Items;
 import net.minecraft.world.item.TooltipFlag;
 import net.minecraft.world.item.context.BlockPlaceContext;
 import net.minecraft.world.level.BlockGetter;
 import net.minecraft.world.level.Level;
 import net.minecraft.world.level.block.Block;
 import net.minecraft.world.level.block.EntityBlock;
+import net.minecraft.world.level.block.RenderShape;
 import net.minecraft.world.level.block.SoundType;
 import net.minecraft.world.level.block.entity.BlockEntity;
-import net.minecraft.world.level.block.entity.ShulkerBoxBlockEntity;
 import net.minecraft.world.level.block.state.BlockState;
 import net.minecraft.world.level.block.state.StateDefinition;
 import net.minecraft.world.level.block.state.properties.BlockStateProperties;
@@ -69,6 +64,12 @@ public class ChessPieceFigureBlock extends Block implements EntityBlock
         properties.sound(SoundType.STONE);
 
         return properties;
+    }
+
+    @Override
+    public RenderShape getRenderShape(BlockState state)
+    {
+        return RenderShape.MODEL;
     }
 
     @Override
@@ -126,7 +127,13 @@ public class ChessPieceFigureBlock extends Block implements EntityBlock
         {
             if (compoundtag.contains("PieceSet", Tag.TAG_INT))
             {
-                tooltip.add(new TextComponent("§7Piece Set: " + compoundtag.getInt("PieceSet")));//TODO replace with lang file text
+                String pieceSetPath = "tooltip.table_top_craft.chess_piece_figure.piece_set";
+                switch (compoundtag.getInt("PieceSet"))
+                {
+                    case 1 -> TranslationHelper.getToolTipWithTextFromLang(tooltip, pieceSetPath, "tooltip.table_top_craft.chess_piece_figure.set.standard");
+                    case 2 -> TranslationHelper.getToolTipWithTextFromLang(tooltip, pieceSetPath, "tooltip.table_top_craft.chess_piece_figure.set.classic");
+                    case 3 -> TranslationHelper.getToolTipWithTextFromLang(tooltip, pieceSetPath, "tooltip.table_top_craft.chess_piece_figure.set.pandoras_creatures");
+                }
             }
             if (compoundtag.contains("PieceType", Tag.TAG_INT))
             {
@@ -172,10 +179,7 @@ public class ChessPieceFigureBlock extends Block implements EntityBlock
         }
         else
         {
-            // TODO replace with lang file
-            tooltip.add(new TextComponent("§7Values havent been"));
-            tooltip.add(new TextComponent("§7generated, place in"));
-            tooltip.add(new TextComponent("§7world to generate"));
+            TranslationHelper.getTooltipFromLang(tooltip, "tooltip.table_top_craft.chess_piece_figure.data_none");
             TranslationHelper.addEnchantmentSeparationLine(tooltip, stack);
         }
     }

@@ -102,6 +102,11 @@
 	"tooltip.table_top_craft.chess_piece_figure.toggle.disabled": "#ccDisabled",
 	"tooltip.table_top_craft.chess_piece_figure.should_rotate": "#c7Piece Rotation: %s",
 	"tooltip.table_top_craft.chess_piece_figure.piece_color": "#c7Piece Color: #cf",
+	"tooltip.table_top_craft.chess_piece_figure.piece_set": "#c7Piece Set: #ce%s",
+	"tooltip.table_top_craft.chess_piece_figure.set.standard": "Standard",
+	"tooltip.table_top_craft.chess_piece_figure.set.classic": "Classic",
+	"tooltip.table_top_craft.chess_piece_figure.set.pandoras_creatures": "Pandoras Creatures",
+	"tooltip.table_top_craft.chess_piece_figure.data_none": "#c7Values haven't been\n#c7generated, place in\n#c7world to generate",
 
 "_comment6": "Piece Types",
 	"tooltip.table_top_craft.chess.piece_type.standard": "Standard Pieces",

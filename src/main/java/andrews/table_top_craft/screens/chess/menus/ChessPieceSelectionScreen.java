@@ -50,7 +50,7 @@ public class ChessPieceSelectionScreen extends Screen
 
         this.addRenderableWidget(new ChessBoardPieceModelSelectionButton(this.chessTileEntity, PieceModelSet.STANDARD, x + 5, y + 30));
         this.addRenderableWidget(new ChessBoardPieceModelSelectionButton(this.chessTileEntity, PieceModelSet.CLASSIC, x + 5, y + 84));
-//        this.addRenderableWidget(new ChessBoardPieceModelSelectionButton(this.chessTileEntity, PieceModelSet.STANDARD, x + 5, y + 138));//TODO replace with 3rd option
+        this.addRenderableWidget(new ChessBoardPieceModelSelectionButton(this.chessTileEntity, PieceModelSet.PANDORAS_CREATURES, x + 5, y + 138));
     }
 
     @Override

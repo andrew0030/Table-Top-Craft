@@ -86,6 +86,10 @@
 	"gui.table_top_craft.chess.color.black_tiles_settings": "Black Tiles Settings",
 	"gui.table_top_craft.chess.color.white_piece_settings": "White Piece Settings",
 	"gui.table_top_craft.chess.color.black_piece_settings": "Black Piece Settings",
+	"gui.table_top_craft.chess_piece_figure.next_set": "Next Piece Set",
+	"gui.table_top_craft.chess_piece_figure.next_type": "Next Piece Type",
+	"gui.table_top_craft.chess_piece_figure.previous_set": "Previous Piece Set",
+	"gui.table_top_craft.chess_piece_figure.previous_type": "Previous Piece Type",
 	
 "_comment4": "Player Messages",
 	"message.table_top_craft.chess.invalidFEN": "The entered FEN was invalid and the board has been set to default!",

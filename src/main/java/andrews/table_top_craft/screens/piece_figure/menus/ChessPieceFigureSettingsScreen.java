@@ -1,7 +1,10 @@
 package andrews.table_top_craft.screens.piece_figure.menus;
 
 import andrews.table_top_craft.registry.TTCBlocks;
-import andrews.table_top_craft.screens.chess.buttons.ChessCancelButton;
+import andrews.table_top_craft.screens.chess.buttons.pieces.creative_mode.ChessBoardPieceNextSetButton;
+import andrews.table_top_craft.screens.chess.buttons.pieces.creative_mode.ChessBoardPieceNextTypeButton;
+import andrews.table_top_craft.screens.chess.buttons.pieces.creative_mode.ChessBoardPiecePreviousSetButton;
+import andrews.table_top_craft.screens.chess.buttons.pieces.creative_mode.ChessBoardPiecePreviousTypeButton;
 import andrews.table_top_craft.screens.chess.sliders.ChessBlueColorSlider;
 import andrews.table_top_craft.screens.chess.sliders.ChessGreenColorSlider;
 import andrews.table_top_craft.screens.chess.sliders.ChessRedColorSlider;
@@ -68,6 +71,11 @@ public class ChessPieceFigureSettingsScreen extends Screen
         int x = (this.width - this.xSize) / 2;
         int y = (this.height - this.ySize) / 2;
         // The Buttons in the Gui Menu
+        this.addRenderableWidget(new ChessBoardPiecePreviousSetButton(this.chessPieceFigureBlockEntity, x + 5, y + 22));
+        this.addRenderableWidget(new ChessBoardPiecePreviousTypeButton(this.chessPieceFigureBlockEntity, x + 5, y + 38));
+        this.addRenderableWidget(new ChessBoardPieceNextSetButton(this.chessPieceFigureBlockEntity, x + (xSize - 31), y + 22));
+        this.addRenderableWidget(new ChessBoardPieceNextTypeButton(this.chessPieceFigureBlockEntity, x + (xSize - 31), y + 38));
+
         this.addRenderableWidget(new ChessPieceFigureRotateButton(this.chessPieceFigureBlockEntity, x + 5, y + 60));
 
         this.addRenderableWidget(this.redColorSlider = new ChessRedColorSlider(x + 5, y + 74, 167, 12, NBTColorSaving.getRed(this.chessPieceFigureBlockEntity.getPieceColor())));

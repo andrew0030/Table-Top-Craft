@@ -61,8 +61,10 @@ public class ChessBoardPieceModelSelectionButton extends Button
         this.isHovered = mouseX >= x && mouseX < x + width && mouseY >= y && mouseY < y + height || this.isFocused();
 
         this.v = 0;
-        if(this.isHovered)
+        if (this.isHovered && !shouldButtonBeLocked())
             this.v += 37;
+
+        this.active = !shouldButtonBeLocked();
 
         // Renders the Button
         RenderSystem.setShaderColor(1.0f, 1.0f, 1.0f, 1.0f);
@@ -73,15 +75,15 @@ public class ChessBoardPieceModelSelectionButton extends Button
         switch (pieceModelSet)
         {
             case STANDARD:
-                if(chessTileEntity.getPieceSet() == 0)
+                if (chessTileEntity.getPieceSet() == 0)
                     this.blit(poseStack, x - 1, y - 1, 0, 74, width + 2, height + 2);
                 break;
             case CLASSIC:
-                if(chessTileEntity.getPieceSet() == 1)
+                if (chessTileEntity.getPieceSet() == 1)
                     this.blit(poseStack, x - 1, y - 1, 0, 74, width + 2, height + 2);
                 break;
             case PANDORAS_CREATURES:
-                if(chessTileEntity.getPieceSet() == 2)
+                if (chessTileEntity.getPieceSet() == 2)
                     this.blit(poseStack, x - 1, y - 1, 0, 74, width + 2, height + 2);
         }
         RenderSystem.disableBlend();
@@ -95,7 +97,7 @@ public class ChessBoardPieceModelSelectionButton extends Button
         }
         chessPieceFigureBlockEntity.setRotateChessPieceFigure(true);
         int scale = 32;
-        for(int i = 0; i < 6; i++)
+        for (int i = 0; i < 6; i++)
         {
             chessPieceFigureBlockEntity.setPieceType(i + 1);
             chessPieceFigureBlockEntity.saveToItem(chessPieceStack);
@@ -107,6 +109,22 @@ public class ChessBoardPieceModelSelectionButton extends Button
             case STANDARD -> Minecraft.getInstance().screen.renderTooltip(poseStack, Arrays.asList(this.buttonText.getVisualOrderText()), x - 8 + ((this.width / 2) - ((this.fontRenderer.width(this.buttonText) + 8) / 2)), y + 1, this.fontRenderer);
             case CLASSIC -> Minecraft.getInstance().screen.renderTooltip(poseStack, Arrays.asList(this.buttonTextClassic.getVisualOrderText()), x - 8 + ((this.width / 2) - ((this.fontRenderer.width(this.buttonTextClassic) + 8) / 2)), y + 1, this.fontRenderer);
             case PANDORAS_CREATURES -> Minecraft.getInstance().screen.renderTooltip(poseStack, Arrays.asList(this.buttonTextPandorasCreatures.getVisualOrderText()), x - 8 + ((this.width / 2) - ((this.fontRenderer.width(this.buttonTextPandorasCreatures) + 8) / 2)), y + 1, this.fontRenderer);
+        }
+
+        if (shouldButtonBeLocked())
+        {
+            RenderSystem.enableBlend();
+            RenderSystem.setShaderColor(1.0f, 1.0f, 1.0f, 0.85f);
+            RenderSystem.setShaderTexture(0, TEXTURE);
+            this.blit(poseStack, x + 1, y + 11, 0, 113, 165, 15);
+            RenderSystem.setShaderColor(1.0f, 1.0f, 1.0f, 1.0f);
+            RenderSystem.disableBlend();
+
+            poseStack.pushPose();
+            poseStack.translate(0, 0, 200);
+            this.fontRenderer.draw(poseStack, new TextComponent("Locked"), x + (this.width / 4) - (this.fontRenderer.width("Locked") / 2), y + 15, 0xffffff);
+            this.fontRenderer.draw(poseStack, new TextComponent("Locked"), x + ((this.width / 4) * 3) - (this.fontRenderer.width("Locked") / 2), y + 15, 0xffffff);
+            poseStack.popPose();
         }
     }
 
@@ -147,4 +165,9 @@ public class ChessBoardPieceModelSelectionButton extends Button
      * Gets called when the Button gets pressed
      */
     private static void handleButtonPress() {}
+
+    private boolean shouldButtonBeLocked()
+    {
+        return !Minecraft.getInstance().player.isCreative();
+    }
 }

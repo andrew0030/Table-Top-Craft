@@ -90,5 +90,17 @@ public static final String NETWORK_PROTOCOL = "1";
 		.decoder(MessageServerSetPieceSet::deserialize)
 		.consumer(MessageServerSetPieceSet::handle)
 		.add();
+
+		CHANNEL.messageBuilder(MessageServerChangePieceSet.class, id++)
+		.encoder(MessageServerChangePieceSet::serialize)
+		.decoder(MessageServerChangePieceSet::deserialize)
+		.consumer(MessageServerChangePieceSet::handle)
+		.add();
+
+		CHANNEL.messageBuilder(MessageServerChangePieceType.class, id++)
+		.encoder(MessageServerChangePieceType::serialize)
+		.decoder(MessageServerChangePieceType::deserialize)
+		.consumer(MessageServerChangePieceType::handle)
+		.add();
 	}
 }

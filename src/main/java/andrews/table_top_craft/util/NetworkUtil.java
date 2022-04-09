@@ -86,4 +86,16 @@ public class NetworkUtil
 	{
 		TTCNetwork.CHANNEL.sendToServer(new MessageServerSetPieceSet(pos, pieceSet));
 	}
+
+	@OnlyIn(Dist.CLIENT)
+	public static void changePieceSet(BlockPos pos, byte value)
+	{
+		TTCNetwork.CHANNEL.sendToServer(new MessageServerChangePieceSet(pos, value));
+	}
+
+	@OnlyIn(Dist.CLIENT)
+	public static void changePieceType(BlockPos pos, byte value)
+	{
+		TTCNetwork.CHANNEL.sendToServer(new MessageServerChangePieceType(pos, value));
+	}
 }

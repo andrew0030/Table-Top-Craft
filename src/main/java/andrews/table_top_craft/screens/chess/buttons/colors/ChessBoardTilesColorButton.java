@@ -56,6 +56,6 @@ public class ChessBoardTilesColorButton extends Button
 	 */
 	private static void handleButtonPress()
 	{
-		Minecraft.getInstance().setScreen(new ChessBoardTilesColorScreen(chessTileEntity));
+		Minecraft.getInstance().setScreen(new ChessBoardTilesColorScreen(chessTileEntity, false, false));
 	}
 }

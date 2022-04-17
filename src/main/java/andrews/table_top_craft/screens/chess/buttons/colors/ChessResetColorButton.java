@@ -3,12 +3,15 @@ package andrews.table_top_craft.screens.chess.buttons.colors;
 import andrews.table_top_craft.screens.chess.sliders.ChessBlueColorSlider;
 import andrews.table_top_craft.screens.chess.sliders.ChessGreenColorSlider;
 import andrews.table_top_craft.screens.chess.sliders.ChessRedColorSlider;
+import andrews.table_top_craft.screens.piece_figure.util.IColorPicker;
+import andrews.table_top_craft.screens.piece_figure.util.IColorPickerExtended;
 import andrews.table_top_craft.util.Reference;
 import com.mojang.blaze3d.systems.RenderSystem;
 import com.mojang.blaze3d.vertex.PoseStack;
 import net.minecraft.client.Minecraft;
 import net.minecraft.client.gui.Font;
 import net.minecraft.client.gui.components.Button;
+import net.minecraft.client.gui.screens.Screen;
 import net.minecraft.network.chat.TextComponent;
 import net.minecraft.network.chat.TranslatableComponent;
 import net.minecraft.resources.ResourceLocation;
@@ -30,7 +33,10 @@ public class ChessResetColorButton extends Button
 	private static ChessRedColorSlider optionalRedSlider;
 	private static ChessGreenColorSlider optionalGreenSlider;
 	private static ChessBlueColorSlider optionalBlueSlider;
-	
+	private static Screen screen;
+
+	//TODO replace with IColorPicker screen
+	@Deprecated
 	public ChessResetColorButton(DefaultColorType defaultColorType, ChessRedColorSlider red, ChessGreenColorSlider green, ChessBlueColorSlider blue, int xPos, int yPos) 
 	{
 		super(xPos, yPos, buttonWidth, buttonHeight, new TextComponent(""), (button) -> { handleButtonPress(); });
@@ -40,7 +46,9 @@ public class ChessResetColorButton extends Button
 		blueSlider = blue;
 		colorType = defaultColorType;
 	}
-	
+
+	//TODO replace with IColorPicker screen
+	@Deprecated
 	public ChessResetColorButton(DefaultColorType defaultColorType, ChessRedColorSlider red, ChessRedColorSlider optionalRed, ChessGreenColorSlider green, ChessGreenColorSlider optionalGreen, ChessBlueColorSlider blue, ChessBlueColorSlider optionalBlue, int xPos, int yPos) 
 	{
 		this(defaultColorType, red, green, blue, xPos, yPos);
@@ -48,7 +56,15 @@ public class ChessResetColorButton extends Button
 		optionalGreenSlider = optionalGreen;
 		optionalBlueSlider = optionalBlue; 
 	}
-	
+
+	public ChessResetColorButton(DefaultColorType defaultColorType, Screen screenIn, int xPos, int yPos)
+	{
+		super(xPos, yPos, buttonWidth, buttonHeight, new TextComponent(""), (button) -> { handleButtonPress(); });
+		this.fontRenderer = Minecraft.getInstance().font;
+		colorType = defaultColorType;
+		screen = screenIn;
+	}
+
 	@Override
 	public void renderButton(PoseStack poseStack, int mouseX, int mouseY, float partialTicks)
 	{
@@ -75,60 +91,74 @@ public class ChessResetColorButton extends Button
 	 */
 	private static void handleButtonPress()
 	{
-		switch(colorType)
+		if (screen instanceof IColorPicker colorPicker)
 		{
-		default:
-		case TILE_INFO_COLOR:
-			redSlider.setValue(255F);
-			greenSlider.setValue(255F);
-			blueSlider.setValue(255F);
-			break;
-		case BOARD_TILES:
-			if(optionalRedSlider != null && optionalGreenSlider != null && optionalBlueSlider != null)
+			switch (colorType)
 			{
-				redSlider.setValue(159F);
-				greenSlider.setValue(140F);
-				blueSlider.setValue(110F);
-				optionalRedSlider.setValue(108F);
-				optionalGreenSlider.setValue(62F);
-				optionalBlueSlider.setValue(38F);
+				default:
+				case TILE_INFO_COLOR:
+					colorPicker.getRedSlider().setValue(255F);
+					colorPicker.getGreenSlider().setValue(255F);
+					colorPicker.getBlueSlider().setValue(255F);
+					break;
+				case BOARD_TILES:
+					if (screen instanceof IColorPickerExtended colorPickerExtended)
+					{
+						colorPicker.getRedSlider().setValue(208F);
+						colorPicker.getGreenSlider().setValue(177F);
+						colorPicker.getBlueSlider().setValue(141F);
+						colorPickerExtended.getOptionalRedSlider().setValue(139F);
+						colorPickerExtended.getOptionalGreenSlider().setValue(86F);
+						colorPickerExtended.getOptionalBlueSlider().setValue(57F);
+						// Technically this isnt the ideal way to do it because it gets updated twice when the
+						// none optional Color Picker is Active, but it will do the trick.
+						if(colorPickerExtended.isOptionalColorPickerActive())
+							colorPicker.getColorPicker().updateColorPickerFromSliders();
+					}
+					break;
+				case PIECES:
+					if (screen instanceof IColorPickerExtended colorPickerExtended)
+					{
+						colorPicker.getRedSlider().setValue(210F);
+						colorPicker.getGreenSlider().setValue(188F);
+						colorPicker.getBlueSlider().setValue(161F);
+						colorPickerExtended.getOptionalRedSlider().setValue(51F);
+						colorPickerExtended.getOptionalGreenSlider().setValue(51F);
+						colorPickerExtended.getOptionalBlueSlider().setValue(51F);
+						// Technically this isnt the ideal way to do it because it gets updated twice when the
+						// none optional Color Picker is Active, but it will do the trick.
+						if(colorPickerExtended.isOptionalColorPickerActive())
+							colorPicker.getColorPicker().updateColorPickerFromSliders();
+					}
+					break;
+				case LEGAL_MOVE:
+					colorPicker.getRedSlider().setValue(1F);
+					colorPicker.getGreenSlider().setValue(255F);
+					colorPicker.getBlueSlider().setValue(1F);
+					break;
+				case INVALID_MOVE:
+					colorPicker.getRedSlider().setValue(255F);
+					colorPicker.getGreenSlider().setValue(255F);
+					colorPicker.getBlueSlider().setValue(1F);
+					break;
+				case ATTACK_MOVE:
+					colorPicker.getRedSlider().setValue(255F);
+					colorPicker.getGreenSlider().setValue(1F);
+					colorPicker.getBlueSlider().setValue(1F);
+					break;
+				case PREVIOUS_MOVE:
+					colorPicker.getRedSlider().setValue(1F);
+					colorPicker.getGreenSlider().setValue(150F);
+					colorPicker.getBlueSlider().setValue(125F);
+					break;
+				case CASTLE_MOVE:
+					colorPicker.getRedSlider().setValue(125F);
+					colorPicker.getGreenSlider().setValue(1F);
+					colorPicker.getBlueSlider().setValue(255F);
 			}
-			break;
-		case PIECES:
-			if(optionalRedSlider != null && optionalGreenSlider != null && optionalBlueSlider != null)
-			{
-				redSlider.setValue(210F);
-				greenSlider.setValue(188F);
-				blueSlider.setValue(161F);
-				optionalRedSlider.setValue(51F);
-				optionalGreenSlider.setValue(51F);
-				optionalBlueSlider.setValue(51F);
-			}
-			break;
-		case LEGAL_MOVE:
-			redSlider.setValue(1F);
-			greenSlider.setValue(255F);
-			blueSlider.setValue(1F);
-			break;
-		case INVALID_MOVE:
-			redSlider.setValue(255F);
-			greenSlider.setValue(255F);
-			blueSlider.setValue(1F);
-			break;
-		case ATTACK_MOVE:
-			redSlider.setValue(255F);
-			greenSlider.setValue(1F);
-			blueSlider.setValue(1F);
-			break;
-		case PREVIOUS_MOVE:
-			redSlider.setValue(1F);
-			greenSlider.setValue(150F);
-			blueSlider.setValue(125F);
-			break;
-		case CASTLE_MOVE:
-			redSlider.setValue(125F);
-			greenSlider.setValue(1F);
-			blueSlider.setValue(255F);
+
+			if(colorPicker.isColorPickerActive())
+				colorPicker.getColorPicker().updateColorPickerFromSliders();
 		}
 	}
 	

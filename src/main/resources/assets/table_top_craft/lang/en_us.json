@@ -59,6 +59,8 @@
 	"gui.table_top_craft.chess.sliders.green": "Green: ",
 	"gui.table_top_craft.chess.sliders.blue": "Blue: ",
 	"gui.table_top_craft.chess.sliders.alpha": "Alpha: ",
+	"gui.table_top_craft.sliders.saturation": "Saturation: ",
+	"gui.table_top_craft.chess_piece_figure.sliders.scale": "Scale: ",
 	"gui.table_top_craft.chess.color.tile_info": "Tile Info Color Selection",
 	"gui.table_top_craft.chess.color.legal_move": "Legal Move Color Selection",
 	"gui.table_top_craft.chess.color.invalid_move": "Invalid Move Color Selection",
@@ -90,6 +92,8 @@
 	"gui.table_top_craft.chess_piece_figure.next_type": "Next Piece Type",
 	"gui.table_top_craft.chess_piece_figure.previous_set": "Previous Piece Set",
 	"gui.table_top_craft.chess_piece_figure.previous_type": "Previous Piece Type",
+	"gui.table_top_craft.chess_piece_figure.confirm_scale": "Confirm Scale",
+	"gui.table_top_craft.chess_piece_figure.reset_scale": "Reset Scale",
 	
 "_comment4": "Player Messages",
 	"message.table_top_craft.chess.invalidFEN": "The entered FEN was invalid and the board has been set to default!",

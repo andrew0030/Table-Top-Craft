@@ -55,6 +55,6 @@ public class ChessBoardLegalMoveColorButton extends Button
 	 */
 	private static void handleButtonPress()
 	{
-		Minecraft.getInstance().setScreen(new ChessBoardLegalMoveColorScreen(chessTileEntity));
+		Minecraft.getInstance().setScreen(new ChessBoardLegalMoveColorScreen(chessTileEntity, false));
 	}
 }

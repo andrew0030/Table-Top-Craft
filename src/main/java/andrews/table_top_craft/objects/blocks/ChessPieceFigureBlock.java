@@ -13,6 +13,7 @@ import net.minecraft.network.chat.TranslatableComponent;
 import net.minecraft.util.Mth;
 import net.minecraft.world.InteractionHand;
 import net.minecraft.world.InteractionResult;
+import net.minecraft.world.entity.LivingEntity;
 import net.minecraft.world.entity.item.ItemEntity;
 import net.minecraft.world.entity.player.Player;
 import net.minecraft.world.item.BlockItem;
@@ -26,6 +27,7 @@ import net.minecraft.world.level.block.EntityBlock;
 import net.minecraft.world.level.block.RenderShape;
 import net.minecraft.world.level.block.SoundType;
 import net.minecraft.world.level.block.entity.BlockEntity;
+import net.minecraft.world.level.block.entity.ShulkerBoxBlockEntity;
 import net.minecraft.world.level.block.state.BlockState;
 import net.minecraft.world.level.block.state.StateDefinition;
 import net.minecraft.world.level.block.state.properties.BlockStateProperties;
@@ -79,6 +81,23 @@ public class ChessPieceFigureBlock extends Block implements EntityBlock
     }
 
     /**
+     * Called by BlockItem after this block has been placed.
+     */
+    @Override
+    public void setPlacedBy(Level level, BlockPos pos, BlockState state, LivingEntity placer, ItemStack stack)
+    {
+        if(stack.hasCustomHoverName())
+        {
+            BlockEntity blockentity = level.getBlockEntity(pos);
+            if (blockentity instanceof ChessPieceFigureBlockEntity chessPieceFigureBlockEntity)
+            {
+                chessPieceFigureBlockEntity.setPieceName(stack.getHoverName().getString());
+                chessPieceFigureBlockEntity.setChanged();
+            }
+        }
+    }
+
+    /**
      * Called before the Block is set to air in the world. Called regardless of if the player's tool can actually collect
      * this block
      */
@@ -92,9 +111,8 @@ public class ChessPieceFigureBlock extends Block implements EntityBlock
             {
                 ItemStack itemstack = new ItemStack(TTCBlocks.CHESS_PIECE_FIGURE.get().asItem());
                 blockentity.saveToItem(itemstack);
-//                if (shulkerboxblockentity.hasCustomName()) {
-//                    itemstack.setHoverName(shulkerboxblockentity.getCustomName());
-//                }
+                if(chessPieceFigureBlockEntity.getPieceName() != null)
+                    itemstack.setHoverName(new TextComponent(chessPieceFigureBlockEntity.getPieceName()));
 
                 ItemEntity itementity = new ItemEntity(level, (double)pos.getX() + 0.5D, (double)pos.getY() + 0.5D, (double)pos.getZ() + 0.5D, itemstack);
                 itementity.setDefaultPickUpDelay();
@@ -163,15 +181,6 @@ public class ChessPieceFigureBlock extends Block implements EntityBlock
                 String colorDescriptionText = compoundtag.getString("PieceColor");
                 pieceColorText = pieceColorText.replaceAll("#c", "§");
                 colorDescriptionText = colorDescriptionText.substring(0, colorDescriptionText.length() - 4);
-//                String[] colors = colorDescriptionText.split("/");
-//                StringBuilder strBuilder = new StringBuilder();
-//                for(int i = 0; i < colors.length - 1; i++)
-//                {
-//                    strBuilder.append(colors[i]);
-//                    if(colors.length > i + 2)
-//                        strBuilder.append("/");
-//                }
-//                colorDescriptionText = strBuilder.toString();
 
                 tooltip.add(new TextComponent(pieceColorText + colorDescriptionText));
             }
@@ -193,6 +202,8 @@ public class ChessPieceFigureBlock extends Block implements EntityBlock
             if(level.getBlockEntity(pos) instanceof ChessPieceFigureBlockEntity chessPieceFigureBlockEntity)
             {
                 chessPieceFigureBlockEntity.saveToItem(stack);
+                if(chessPieceFigureBlockEntity.getPieceName() != null)
+                    stack.setHoverName(new TextComponent(chessPieceFigureBlockEntity.getPieceName()));
             }
         }
         return stack;

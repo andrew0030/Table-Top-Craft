@@ -55,6 +55,6 @@ public class ChessBoardInvalidMoveColorButton extends Button
 	 */
 	private static void handleButtonPress()
 	{
-		Minecraft.getInstance().setScreen(new ChessBoardInvalidMoveColorScreen(chessTileEntity));
+		Minecraft.getInstance().setScreen(new ChessBoardInvalidMoveColorScreen(chessTileEntity, false));
 	}
 }

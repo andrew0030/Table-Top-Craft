@@ -102,5 +102,11 @@ public static final String NETWORK_PROTOCOL = "1";
 		.decoder(MessageServerChangePieceType::deserialize)
 		.consumer(MessageServerChangePieceType::handle)
 		.add();
+
+		CHANNEL.messageBuilder(MessageServerChangePieceScale.class, id++)
+		.encoder(MessageServerChangePieceScale::serialize)
+		.decoder(MessageServerChangePieceScale::deserialize)
+		.consumer(MessageServerChangePieceScale::handle)
+		.add();
 	}
 }

@@ -56,6 +56,6 @@ public class ChessBoardPreviousMoveColorButton extends Button
 	 */
 	private static void handleButtonPress()
 	{
-		Minecraft.getInstance().setScreen(new ChessBoardPreviousMoveColorScreen(chessTileEntity));
+		Minecraft.getInstance().setScreen(new ChessBoardPreviousMoveColorScreen(chessTileEntity, false));
 	}
 }

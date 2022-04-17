@@ -98,4 +98,10 @@ public class NetworkUtil
 	{
 		TTCNetwork.CHANNEL.sendToServer(new MessageServerChangePieceType(pos, value));
 	}
+
+	@OnlyIn(Dist.CLIENT)
+	public static void setPieceScale(BlockPos pos, double value)
+	{
+		TTCNetwork.CHANNEL.sendToServer(new MessageServerChangePieceScale(pos, value));
+	}
 }

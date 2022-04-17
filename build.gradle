@@ -66,7 +66,7 @@ minecraft {
 repositories {}
 
 dependencies {
-    minecraft 'net.minecraftforge:forge:1.18.2-40.0.36'
+    minecraft 'net.minecraftforge:forge:1.18.2-40.0.52'
 }
 
 // Example for how to get properties into the manifest for reading at runtime.
@@ -88,18 +88,14 @@ jar {
 
 jar.finalizedBy('reobfJar')
 
-publishing {
-    publications {
-        mavenJava(MavenPublication) {
-            artifact jar
-        }
-    }
-    repositories {
-        maven {
-            url "file://${project.projectDir}/mcmodsrepo"
-        }
-    }
+/* thank you GiantLuigi */
+task deobfJar(type: Jar) {
+    from sourceSets.main.output
+    classifier = 'deobf'
 }
+
+artifacts.archives deobfJar
+/* */
 
 tasks.withType(JavaCompile).configureEach {
     options.encoding = 'UTF-8' // Use the UTF-8 charset for Java compilation

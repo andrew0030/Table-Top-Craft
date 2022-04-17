@@ -5,6 +5,7 @@ import andrews.table_top_craft.game_logic.chess.pieces.BasePiece;
 import andrews.table_top_craft.objects.blocks.ChessPieceFigureBlock;
 import andrews.table_top_craft.tile_entities.ChessPieceFigureBlockEntity;
 import andrews.table_top_craft.tile_entities.model.piece_figure.ChessPieceFigureStandModel;
+import andrews.table_top_craft.util.Color;
 import andrews.table_top_craft.util.NBTColorSaving;
 import andrews.table_top_craft.util.Reference;
 import andrews.table_top_craft.util.TTCRenderTypes;
@@ -36,6 +37,7 @@ public class ChessPieceFigureTileEntityRenderer implements BlockEntityRenderer<C
     // Chess Piece Stand texture and model
     public static final ResourceLocation CHESS_PIECE_FIGURE_TEXTURE = new ResourceLocation(Reference.MODID, "textures/tile/chess_piece_figure/chess_piece_figure.png");
     private static ChessPieceFigureStandModel chessPieceFigureStandModel;
+    private Color color = new Color(0, 0, 0);
 
     static
     {
@@ -53,6 +55,13 @@ public class ChessPieceFigureTileEntityRenderer implements BlockEntityRenderer<C
     @Override
     public void render(ChessPieceFigureBlockEntity blockEntity, float partialTicks, PoseStack poseStack, MultiBufferSource bufferSource, int packedLight, int packedOverlay)
     {
+        if(blockEntity.getPieceName() != null && blockEntity.getPieceName().equals("andrew_"))
+        {
+            int tickCount = Minecraft.getInstance().player.tickCount;
+            int value = (tickCount % 180) * 2;
+            color = color.fromHSV(value, 1.0F, 1.0F);
+            blockEntity.setPieceColor(color.getRed() + "/" + color.getGreen() + "/" + color.getBlue() + "/255");
+        }
         renderChessPieceFigure(blockEntity, poseStack, bufferSource, false, false, partialTicks, packedLight, packedOverlay);
     }
 
@@ -96,6 +105,12 @@ public class ChessPieceFigureTileEntityRenderer implements BlockEntityRenderer<C
             poseStack.mulPose(Vector3f.YN.rotationDegrees(Minecraft.getInstance().player.tickCount + partialTicks));
         // We invert the model because Minecraft renders shit inside out.
         poseStack.scale(3.0F, -3.0F, -3.0F);
+
+        if(blockEntity.hasLevel())
+        {
+            float scale = (float) blockEntity.getPieceScale();
+            poseStack.scale(scale, scale, scale);
+        }
 
         poseStack.pushPose();
         RenderType type = TTCRenderTypes.getChessPieceSolid(resourceLocation);

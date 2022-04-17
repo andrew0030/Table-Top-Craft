@@ -1,6 +1,12 @@
 package andrews.table_top_craft.screens.piece_figure.buttons;
 
-import andrews.table_top_craft.screens.piece_figure.menus.ChessPieceFigureSettingsScreen;
+import andrews.table_top_craft.screens.chess.sliders.ChessBlueColorSlider;
+import andrews.table_top_craft.screens.chess.sliders.ChessGreenColorSlider;
+import andrews.table_top_craft.screens.chess.sliders.ChessRedColorSlider;
+import andrews.table_top_craft.screens.piece_figure.sliders.ChessPieceFigureScaleSlider;
+import andrews.table_top_craft.tile_entities.ChessPieceFigureBlockEntity;
+import andrews.table_top_craft.util.NBTColorSaving;
+import andrews.table_top_craft.util.NetworkUtil;
 import andrews.table_top_craft.util.Reference;
 import com.mojang.blaze3d.systems.RenderSystem;
 import com.mojang.blaze3d.vertex.PoseStack;
@@ -11,22 +17,24 @@ import net.minecraft.network.chat.TextComponent;
 import net.minecraft.network.chat.TranslatableComponent;
 import net.minecraft.resources.ResourceLocation;
 
-public class ChessPieceFigureResetColorButton extends Button
+public class ChessPieceFigureConfirmScaleButton extends Button
 {
     private static final ResourceLocation TEXTURE = new ResourceLocation(Reference.MODID + ":textures/gui/buttons/chess_menu_buttons.png");
-    private final String buttonText = new TranslatableComponent("gui.table_top_craft.chess.color.reset_color").getString();
+    private final String buttonText = new TranslatableComponent("gui.table_top_craft.chess_piece_figure.confirm_scale").getString();
     private final Font fontRenderer;
-    private static final int buttonWidth = 82;
+    private static ChessPieceFigureBlockEntity chessPieceFigureBlockEntity;
+    private static final int buttonWidth = 167;
     private static final int buttonHeight = 13;
     private int u = 0;
-    private int v = 0;
-    private static ChessPieceFigureSettingsScreen screen;
+    private int v = 50;
+    private static ChessPieceFigureScaleSlider scaleSlider;
 
-    public ChessPieceFigureResetColorButton(ChessPieceFigureSettingsScreen chessPieceFigureSettingsScreen, int xPos, int yPos)
+    public ChessPieceFigureConfirmScaleButton(ChessPieceFigureBlockEntity blockEntity, ChessPieceFigureScaleSlider slider, int xPos, int yPos)
     {
         super(xPos, yPos, buttonWidth, buttonHeight, new TextComponent(""), (button) -> { handleButtonPress(); });
         this.fontRenderer = Minecraft.getInstance().font;
-        screen = chessPieceFigureSettingsScreen;
+        chessPieceFigureBlockEntity = blockEntity;
+        scaleSlider = slider;
     }
 
     @Override
@@ -34,9 +42,9 @@ public class ChessPieceFigureResetColorButton extends Button
     {
         this.isHovered = mouseX >= x && mouseX < x + width && mouseY >= y && mouseY < y + height || this.isFocused();
 
-        this.u = 0;
+        this.v = 50;
         if(this.isHovered)
-            this.u = 82;
+            this.v += 13;
 
         // Renders the Button
         RenderSystem.setShaderColor(1.0f, 1.0f, 1.0f, 1.0f);
@@ -54,10 +62,6 @@ public class ChessPieceFigureResetColorButton extends Button
      */
     private static void handleButtonPress()
     {
-        screen.getRedSlider().setValue(210F);
-        screen.getGreenSlider().setValue(188F);
-        screen.getBlueSlider().setValue(161F);
-        if(screen.isColorPickerActive())
-            screen.getColorPicker().updateColorPickerFromSliders();
+        NetworkUtil.setPieceScale(chessPieceFigureBlockEntity.getBlockPos(), scaleSlider.getValue());
     }
 }

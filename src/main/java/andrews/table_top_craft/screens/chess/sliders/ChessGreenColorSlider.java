@@ -1,22 +1,35 @@
 package andrews.table_top_craft.screens.chess.sliders;
 
-import andrews.table_top_craft.screens.util.ForgeSlider;
+import andrews.table_top_craft.screens.piece_figure.menus.ChessPieceFigureSettingsScreen;
+import andrews.table_top_craft.screens.piece_figure.util.IColorPicker;
+import andrews.table_top_craft.screens.piece_figure.util.IColorPickerExtended;
 import com.mojang.blaze3d.systems.RenderSystem;
 import com.mojang.blaze3d.vertex.PoseStack;
 import net.minecraft.client.Minecraft;
+import net.minecraft.client.gui.screens.Screen;
 import net.minecraft.network.chat.Component;
 import net.minecraft.network.chat.TextComponent;
 import net.minecraft.network.chat.TranslatableComponent;
 import net.minecraftforge.client.gui.GuiUtils;
+import net.minecraftforge.client.gui.widget.ForgeSlider;
 
 public class ChessGreenColorSlider extends ForgeSlider
 {
 	private final static TranslatableComponent greenValueText = new TranslatableComponent("gui.table_top_craft.chess.sliders.green");
+    private Screen menuIn;
 
+    //TODO remove deprecation
+    @Deprecated
 	public ChessGreenColorSlider(int xPos, int yPos, int width, int height, int currentValue)
 	{
         super(xPos, yPos, width, height, greenValueText, new TextComponent(""), 0, 255, currentValue, true);
 	}
+
+    public ChessGreenColorSlider(int xPos, int yPos, int width, int height, int currentValue, Screen menuIn)
+    {
+        this(xPos, yPos, width, height, currentValue);
+        this.menuIn = menuIn;
+    }
 
     @Override
     public boolean keyPressed(int keyCode, int scanCode, int modifiers)
@@ -49,5 +62,37 @@ public class ChessGreenColorSlider extends ForgeSlider
         RenderSystem.setShaderColor(1.0F, 1.0F, 1.0F, 1.0F);
         int offset = (this.isHoveredOrFocused() ? 2 : 1) * 20;
         GuiUtils.drawContinuousTexturedBox(poseStack, WIDGETS_LOCATION, this.x + (int)(this.value * (float)(this.width - 8)), this.y, 0, 46 + offset, 8, this.height, 200, 20, 2, 3, 2, 2, this.getBlitOffset());
+    }
+
+    @Override
+    protected void onDrag(double mouseX, double mouseY, double dragX, double dragY)
+    {
+        super.onDrag(mouseX, mouseY, dragX, dragY);
+        if(this.menuIn != null && menuIn instanceof IColorPicker colorPicker && menuIn instanceof IColorPickerExtended colorPickerExtended)
+        {
+            if(colorPicker.isColorPickerActive() || colorPickerExtended.isOptionalColorPickerActive())
+                colorPicker.getColorPicker().updateColorPickerFromSliders();
+        }
+        else if(this.menuIn != null && menuIn instanceof IColorPicker colorPicker)
+        {
+            if(colorPicker.isColorPickerActive())
+                colorPicker.getColorPicker().updateColorPickerFromSliders();
+        }
+    }
+
+    @Override
+    public void onClick(double mouseX, double mouseY)
+    {
+        super.onClick(mouseX, mouseY);
+        if(this.menuIn != null && menuIn instanceof IColorPicker colorPicker && menuIn instanceof IColorPickerExtended colorPickerExtended)
+        {
+            if(colorPicker.isColorPickerActive() || colorPickerExtended.isOptionalColorPickerActive())
+                colorPicker.getColorPicker().updateColorPickerFromSliders();
+        }
+        else if(this.menuIn != null && menuIn instanceof IColorPicker colorPicker)
+        {
+            if(colorPicker.isColorPickerActive())
+                colorPicker.getColorPicker().updateColorPickerFromSliders();
+        }
     }
 }

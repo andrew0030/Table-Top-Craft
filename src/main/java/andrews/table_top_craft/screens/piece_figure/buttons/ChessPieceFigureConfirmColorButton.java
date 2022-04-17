@@ -1,12 +1,9 @@
 package andrews.table_top_craft.screens.piece_figure.buttons;
 
-import andrews.table_top_craft.screens.chess.buttons.colors.ChessConfirmColorButton;
-import andrews.table_top_craft.screens.chess.sliders.ChessAlphaColorSlider;
 import andrews.table_top_craft.screens.chess.sliders.ChessBlueColorSlider;
 import andrews.table_top_craft.screens.chess.sliders.ChessGreenColorSlider;
 import andrews.table_top_craft.screens.chess.sliders.ChessRedColorSlider;
 import andrews.table_top_craft.tile_entities.ChessPieceFigureBlockEntity;
-import andrews.table_top_craft.tile_entities.ChessTileEntity;
 import andrews.table_top_craft.util.NBTColorSaving;
 import andrews.table_top_craft.util.NetworkUtil;
 import andrews.table_top_craft.util.Reference;
@@ -23,7 +20,6 @@ public class ChessPieceFigureConfirmColorButton extends Button
 {
     private static final ResourceLocation TEXTURE = new ResourceLocation(Reference.MODID + ":textures/gui/buttons/chess_menu_buttons.png");
     private final String buttonText = new TranslatableComponent("gui.table_top_craft.chess.confirm_color").getString();
-    private final String buttonText2 = new TranslatableComponent("gui.table_top_craft.chess.confirm_colors").getString();
     private final Font fontRenderer;
     private static ChessPieceFigureBlockEntity chessPieceFigureBlockEntity;
     private static final int buttonWidth = 82;

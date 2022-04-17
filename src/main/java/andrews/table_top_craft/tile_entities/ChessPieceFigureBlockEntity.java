@@ -9,11 +9,9 @@ import net.minecraft.network.Connection;
 import net.minecraft.network.protocol.Packet;
 import net.minecraft.network.protocol.game.ClientGamePacketListener;
 import net.minecraft.network.protocol.game.ClientboundBlockEntityDataPacket;
-import net.minecraft.world.level.block.Block;
 import net.minecraft.world.level.block.entity.BlockEntity;
 import net.minecraft.world.level.block.state.BlockState;
 import net.minecraft.world.phys.AABB;
-import net.minecraft.world.phys.shapes.VoxelShape;
 
 import java.util.Random;
 
@@ -24,6 +22,8 @@ public class ChessPieceFigureBlockEntity extends BlockEntity
     private boolean rotateChessPieceFigure;
     private String pieceColor;
     private int pieceSet;
+    private double pieceScale;
+    private String name;
 
     public ChessPieceFigureBlockEntity(BlockPos pos, BlockState state)
     {
@@ -33,7 +33,9 @@ public class ChessPieceFigureBlockEntity extends BlockEntity
     @Override
     public AABB getRenderBoundingBox()
     {
-        return super.getRenderBoundingBox().expandTowards(0.0D, 0.6D, 0.0D);
+        double scale = this.getPieceScale();
+        double verticalScale = 0.14D * scale;
+        return super.getRenderBoundingBox().expandTowards(-verticalScale, 0.6D * scale, -verticalScale).move(verticalScale / 2, 0, verticalScale / 2);
     }
 
     // Used to synchronize the BlockEntity with the client when the chunk it is in is loaded
@@ -52,7 +54,7 @@ public class ChessPieceFigureBlockEntity extends BlockEntity
         this.loadFromNBT(compound);
     }
 
-    // Used to synchronize the BlockEntity with the client when the chunk it is in is loaded
+    // Used to synchronize the BlockEntity with the client onBlockUpdate
     @Override
     public Packet<ClientGamePacketListener> getUpdatePacket()
     {
@@ -90,6 +92,9 @@ public class ChessPieceFigureBlockEntity extends BlockEntity
         compound.putInt("RotateChessPieceFigure", !this.rotateChessPieceFigure ? 0 : 1);
         compound.putString("PieceColor", getPieceColor());
         compound.putInt("PieceSet", this.getPieceSet());
+        compound.putDouble("PieceScale", this.getPieceScale());
+        if(this.getPieceName() != null)
+            compound.putString("PieceName", this.getPieceName());
     }
 
     /**
@@ -104,6 +109,10 @@ public class ChessPieceFigureBlockEntity extends BlockEntity
             this.pieceColor = compound.getString("PieceColor");
         if(compound.contains("PieceSet", Tag.TAG_INT))
             this.pieceSet = compound.getInt("PieceSet");
+        if(compound.contains("PieceScale", Tag.TAG_DOUBLE))
+            this.pieceScale = compound.getDouble("PieceScale");
+        if(compound.contains("PieceName", Tag.TAG_STRING))
+            this.name = compound.getString("PieceName");
     }
 
     public int getPieceType()
@@ -173,5 +182,25 @@ public class ChessPieceFigureBlockEntity extends BlockEntity
     public String getPieceColor()
     {
         return this.pieceColor == null ? NBTColorSaving.createWhitePiecesColor() : this.pieceColor;
+    }
+
+    public void setPieceScale(double pieceScale)
+    {
+        this.pieceScale = pieceScale;
+    }
+
+    public double getPieceScale()
+    {
+        return this.pieceScale == 0 ? 1 : this.pieceScale;
+    }
+
+    public void setPieceName(String pieceName)
+    {
+        this.name = pieceName;
+    }
+
+    public String getPieceName()
+    {
+        return this.name;
     }
 }

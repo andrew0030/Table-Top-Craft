@@ -3,12 +3,15 @@ package andrews.table_top_craft.screens.chess.buttons.colors;
 import andrews.table_top_craft.screens.chess.sliders.ChessBlueColorSlider;
 import andrews.table_top_craft.screens.chess.sliders.ChessGreenColorSlider;
 import andrews.table_top_craft.screens.chess.sliders.ChessRedColorSlider;
+import andrews.table_top_craft.screens.piece_figure.util.IColorPicker;
+import andrews.table_top_craft.screens.piece_figure.util.IColorPickerExtended;
 import andrews.table_top_craft.util.Reference;
 import com.mojang.blaze3d.systems.RenderSystem;
 import com.mojang.blaze3d.vertex.PoseStack;
 import net.minecraft.client.Minecraft;
 import net.minecraft.client.gui.Font;
 import net.minecraft.client.gui.components.Button;
+import net.minecraft.client.gui.screens.Screen;
 import net.minecraft.network.chat.TextComponent;
 import net.minecraft.network.chat.TranslatableComponent;
 import net.minecraft.resources.ResourceLocation;
@@ -31,7 +34,10 @@ public class ChessRandomColorButton extends Button
 	private static ChessRedColorSlider optionalRedSlider;
 	private static ChessGreenColorSlider optionalGreenSlider;
 	private static ChessBlueColorSlider optionalBlueSlider;
-	
+	private static Screen screen;
+
+	//TODO replace with IColorScreen screen
+	@Deprecated
 	public ChessRandomColorButton(ChessRedColorSlider red, ChessGreenColorSlider green, ChessBlueColorSlider blue, int xPos, int yPos) 
 	{
 		super(xPos, yPos, buttonWidth, buttonHeight, new TextComponent(""), (button) -> { handleButtonPress(); });
@@ -40,13 +46,22 @@ public class ChessRandomColorButton extends Button
 		greenSlider = green;
 		blueSlider = blue;
 	}
-	
+
+	//TODO replace with IColorScreen screen
+	@Deprecated
 	public ChessRandomColorButton(ChessRedColorSlider red, ChessRedColorSlider optionalRed, ChessGreenColorSlider green, ChessGreenColorSlider optionalGreen, ChessBlueColorSlider blue, ChessBlueColorSlider optionalBlue, int xPos, int yPos) 
 	{
 		this(red, green, blue, xPos, yPos);
 		optionalRedSlider = optionalRed;
 		optionalGreenSlider = optionalGreen;
 		optionalBlueSlider = optionalBlue; 
+	}
+
+	public ChessRandomColorButton(Screen screenIn, int xPos, int yPos)
+	{
+		super(xPos, yPos, buttonWidth, buttonHeight, new TextComponent(""), (button) -> { handleButtonPress(); });
+		this.fontRenderer = Minecraft.getInstance().font;
+		screen = screenIn;
 	}
 	
 	@Override
@@ -78,14 +93,26 @@ public class ChessRandomColorButton extends Button
 		Random rand = new Random();
 		try
 		{
-			redSlider.setValue(rand.nextInt(255) + 1);
-			greenSlider.setValue(rand.nextInt(255) + 1);
-			blueSlider.setValue(rand.nextInt(255) + 1);
-			if(optionalRedSlider != null && optionalGreenSlider != null && optionalBlueSlider != null)
+			if (screen instanceof IColorPicker colorPicker && screen instanceof IColorPickerExtended colorPickerExtended)
 			{
-				optionalRedSlider.setValue(rand.nextInt(255) + 1);
-				optionalGreenSlider.setValue(rand.nextInt(255) + 1);
-				optionalBlueSlider.setValue(rand.nextInt(255) + 1);
+				colorPicker.getRedSlider().setValue(rand.nextInt(256));
+				colorPicker.getGreenSlider().setValue(rand.nextInt(256));
+				colorPicker.getBlueSlider().setValue(rand.nextInt(256));
+				colorPickerExtended.getOptionalRedSlider().setValue(rand.nextInt(256));
+				colorPickerExtended.getOptionalGreenSlider().setValue(rand.nextInt(256));
+				colorPickerExtended.getOptionalBlueSlider().setValue(rand.nextInt(256));
+
+				if (colorPicker.isColorPickerActive() || colorPickerExtended.isOptionalColorPickerActive())
+					colorPicker.getColorPicker().updateColorPickerFromSliders();
+			}
+			else if(screen instanceof IColorPicker colorPicker)
+			{
+				colorPicker.getRedSlider().setValue(rand.nextInt(256));
+				colorPicker.getGreenSlider().setValue(rand.nextInt(256));
+				colorPicker.getBlueSlider().setValue(rand.nextInt(256));
+
+				if (colorPicker.isColorPickerActive())
+					colorPicker.getColorPicker().updateColorPickerFromSliders();
 			}
 		}
 		catch(Exception e)

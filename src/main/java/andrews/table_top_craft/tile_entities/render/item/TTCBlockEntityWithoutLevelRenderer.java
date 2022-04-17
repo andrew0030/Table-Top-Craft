@@ -3,6 +3,7 @@ package andrews.table_top_craft.tile_entities.render.item;
 import andrews.table_top_craft.registry.TTCBlocks;
 import andrews.table_top_craft.tile_entities.ChessPieceFigureBlockEntity;
 import andrews.table_top_craft.tile_entities.render.ChessPieceFigureTileEntityRenderer;
+import andrews.table_top_craft.util.Color;
 import andrews.table_top_craft.util.NBTColorSaving;
 import com.mojang.blaze3d.vertex.PoseStack;
 import net.minecraft.client.Minecraft;
@@ -14,6 +15,7 @@ import net.minecraft.client.renderer.blockentity.BlockEntityRenderDispatcher;
 import net.minecraft.core.BlockPos;
 import net.minecraft.nbt.CompoundTag;
 import net.minecraft.nbt.Tag;
+import net.minecraft.network.chat.TextComponent;
 import net.minecraft.world.item.BlockItem;
 import net.minecraft.world.item.ItemStack;
 
@@ -23,6 +25,8 @@ public class TTCBlockEntityWithoutLevelRenderer extends BlockEntityWithoutLevelR
     public static TTCBlockEntityWithoutLevelRenderer INSTANCE = new TTCBlockEntityWithoutLevelRenderer(Minecraft.getInstance().getBlockEntityRenderDispatcher(), Minecraft.getInstance().getEntityModels());
     // Block Entities
     private final ChessPieceFigureBlockEntity chessPieceFigureBlockEntity;
+
+    private Color color = new Color(0, 0, 0);
 
     public TTCBlockEntityWithoutLevelRenderer(BlockEntityRenderDispatcher blockEntityRenderDispatcher, EntityModelSet entityModelSet)
     {
@@ -59,6 +63,14 @@ public class TTCBlockEntityWithoutLevelRenderer extends BlockEntityWithoutLevelR
                     chessPieceFigureBlockEntity.setPieceSet(compoundTag.getInt("PieceSet"));
                 else
                     chessPieceFigureBlockEntity.setPieceSet(1);
+
+                if(itemStack.getHoverName().getString().equals("andrew_"))
+                {
+                    int tickCount = Minecraft.getInstance().player.tickCount;
+                    int value = (tickCount % 180) * 2;
+                    color = color.fromHSV(value, 1.0F, 1.0F);
+                    chessPieceFigureBlockEntity.setPieceColor(color.getRed() + "/" + color.getGreen() + "/" + color.getBlue() + "/255");
+                }
 
                 ChessPieceFigureTileEntityRenderer.renderChessPieceFigure(chessPieceFigureBlockEntity, poseStack, buffer, type.equals(ItemTransforms.TransformType.GUI), isHeldOrHead(type), getPartialTicks(), packedLight, packedOverlay);
             }

@@ -1,4 +1,4 @@
-package andrews.table_top_craft.screens.chess.sliders;
+package andrews.table_top_craft.screens.piece_figure.sliders;
 
 import com.mojang.blaze3d.systems.RenderSystem;
 import com.mojang.blaze3d.vertex.PoseStack;
@@ -9,14 +9,15 @@ import net.minecraft.network.chat.TranslatableComponent;
 import net.minecraftforge.client.gui.GuiUtils;
 import net.minecraftforge.client.gui.widget.ForgeSlider;
 
-public class ChessAlphaColorSlider extends ForgeSlider
+public class ChessPieceFigureScaleSlider extends ForgeSlider
 {
-	private final static TranslatableComponent alphaValueText = new TranslatableComponent("gui.table_top_craft.chess.sliders.alpha");
+    private final static TranslatableComponent scaleValueText = new TranslatableComponent("gui.table_top_craft.chess_piece_figure.sliders.scale");
 
-	public ChessAlphaColorSlider(int xPos, int yPos, int width, int height, int currentValue)
-	{
-        super(xPos, yPos, width, height, alphaValueText, new TextComponent(""), 1, 255, currentValue, true);
-	}
+    public ChessPieceFigureScaleSlider(int xPos, int yPos, int width, int height, double currentValue)
+    {
+//        super(xPos, yPos, width, height, scaleValueText, new TextComponent(""), 0, 255, currentValue, true);
+        super(xPos, yPos, width, height, scaleValueText, new TextComponent(""), 1, 5, currentValue, 0.01D, 0, true);
+    }
 
     @Override
     public boolean keyPressed(int keyCode, int scanCode, int modifiers)

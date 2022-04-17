@@ -1,8 +1,5 @@
-package andrews.table_top_craft.screens.chess.sliders;
+package andrews.table_top_craft.screens.piece_figure.util;
 
-import andrews.table_top_craft.screens.piece_figure.menus.ChessPieceFigureSettingsScreen;
-import andrews.table_top_craft.screens.piece_figure.util.IColorPicker;
-import andrews.table_top_craft.screens.piece_figure.util.IColorPickerExtended;
 import com.mojang.blaze3d.systems.RenderSystem;
 import com.mojang.blaze3d.vertex.PoseStack;
 import net.minecraft.client.Minecraft;
@@ -13,19 +10,17 @@ import net.minecraft.network.chat.TranslatableComponent;
 import net.minecraftforge.client.gui.GuiUtils;
 import net.minecraftforge.client.gui.widget.ForgeSlider;
 
-public class ChessBlueColorSlider extends ForgeSlider
+public class SaturationSlider extends ForgeSlider
 {
-	private final static TranslatableComponent blueValueText = new TranslatableComponent("gui.table_top_craft.chess.sliders.blue");
+    private final static TranslatableComponent saturationValueText = new TranslatableComponent("gui.table_top_craft.sliders.saturation");
     private Screen menuIn;
 
-    //TODO remove deprecation
-    @Deprecated
-	public ChessBlueColorSlider(int xPos, int yPos, int width, int height, int currentValue)
-	{
-        super(xPos, yPos, width, height, blueValueText, new TextComponent(""), 0, 255, currentValue, true);
-	}
+    public SaturationSlider(int xPos, int yPos, int width, int height, int currentValue)
+    {
+        super(xPos, yPos, width, height, saturationValueText, new TextComponent(""), 0, 100, currentValue, true);
+    }
 
-    public ChessBlueColorSlider(int xPos, int yPos, int width, int height, int currentValue, Screen menuIn)
+    public SaturationSlider(int xPos, int yPos, int width, int height, int currentValue, Screen menuIn)
     {
         this(xPos, yPos, width, height, currentValue);
         this.menuIn = menuIn;
@@ -71,12 +66,12 @@ public class ChessBlueColorSlider extends ForgeSlider
         if(this.menuIn != null && menuIn instanceof IColorPicker colorPicker && menuIn instanceof IColorPickerExtended colorPickerExtended)
         {
             if(colorPicker.isColorPickerActive() || colorPickerExtended.isOptionalColorPickerActive())
-                colorPicker.getColorPicker().updateColorPickerFromSliders();
+                colorPicker.getColorPicker().updateRGBHSVSliders();
         }
         else if(this.menuIn != null && menuIn instanceof IColorPicker colorPicker)
         {
             if(colorPicker.isColorPickerActive())
-                colorPicker.getColorPicker().updateColorPickerFromSliders();
+                colorPicker.getColorPicker().updateRGBHSVSliders();
         }
     }
 
@@ -87,12 +82,12 @@ public class ChessBlueColorSlider extends ForgeSlider
         if(this.menuIn != null && menuIn instanceof IColorPicker colorPicker && menuIn instanceof IColorPickerExtended colorPickerExtended)
         {
             if(colorPicker.isColorPickerActive() || colorPickerExtended.isOptionalColorPickerActive())
-                colorPicker.getColorPicker().updateColorPickerFromSliders();
+                colorPicker.getColorPicker().updateRGBHSVSliders();
         }
         else if(this.menuIn != null && menuIn instanceof IColorPicker colorPicker)
         {
             if(colorPicker.isColorPickerActive())
-                colorPicker.getColorPicker().updateColorPickerFromSliders();
+                colorPicker.getColorPicker().updateRGBHSVSliders();
         }
     }
 }

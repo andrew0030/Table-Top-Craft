@@ -9,9 +9,16 @@ import andrews.table_top_craft.screens.chess.sliders.ChessBlueColorSlider;
 import andrews.table_top_craft.screens.chess.sliders.ChessGreenColorSlider;
 import andrews.table_top_craft.screens.chess.sliders.ChessRedColorSlider;
 import andrews.table_top_craft.screens.piece_figure.buttons.ChessPieceFigureConfirmColorButton;
+import andrews.table_top_craft.screens.piece_figure.buttons.ChessPieceFigureConfirmScaleButton;
 import andrews.table_top_craft.screens.piece_figure.buttons.ChessPieceFigureResetColorButton;
 import andrews.table_top_craft.screens.piece_figure.buttons.ChessPieceFigureRotateButton;
+import andrews.table_top_craft.screens.piece_figure.sliders.ChessPieceFigureScaleSlider;
+import andrews.table_top_craft.screens.piece_figure.util.ColorPickerToggleButton;
+import andrews.table_top_craft.screens.piece_figure.util.IColorPicker;
+import andrews.table_top_craft.screens.piece_figure.util.SaturationSlider;
+import andrews.table_top_craft.screens.piece_figure.util.TTCColorPicker;
 import andrews.table_top_craft.tile_entities.ChessPieceFigureBlockEntity;
+import andrews.table_top_craft.util.Color;
 import andrews.table_top_craft.util.NBTColorSaving;
 import andrews.table_top_craft.util.Reference;
 import com.mojang.blaze3d.platform.GlStateManager;
@@ -32,27 +39,36 @@ import net.minecraft.network.chat.TextComponent;
 import net.minecraft.network.chat.TranslatableComponent;
 import net.minecraft.resources.ResourceLocation;
 import net.minecraft.world.item.ItemStack;
+import net.minecraftforge.client.gui.widget.ForgeSlider;
 
-public class ChessPieceFigureSettingsScreen extends Screen
+public class ChessPieceFigureSettingsScreen extends Screen implements IColorPicker
 {
-    private static final ResourceLocation MENU_TEXTURE = new ResourceLocation(Reference.MODID, "textures/gui/menus/medium_chess_menu.png");
+    private static final ResourceLocation MENU_TEXTURE = new ResourceLocation(Reference.MODID, "textures/gui/menus/chess_piece_figure_menu.png");
+    private static final ResourceLocation COLOR_PICKER_FRAME_TEXTURE = new ResourceLocation(Reference.MODID, "textures/gui/color_picker/color_picker_frame.png");
     private final String chessPieceFigureSettingsText = new TranslatableComponent("gui.table_top_craft.piece_figure.piece_settings").getString();
     private final String togglePieceRotationText = new TranslatableComponent("gui.table_top_craft.piece_figure.toggle_rotation").getString();
     private final ChessPieceFigureBlockEntity chessPieceFigureBlockEntity;
     private final int xSize = 177;
-    private final int ySize = 131;
+    private final int ySize = 158;
     // Piece Color
     private ChessRedColorSlider redColorSlider;
     private ChessGreenColorSlider greenColorSlider;
     private ChessBlueColorSlider blueColorSlider;
+    private ChessPieceFigureScaleSlider scaleSlider;
+
+    public TTCColorPicker colorPicker;
+    private SaturationSlider saturationSlider;
 
     private final ChessPieceFigureBlockEntity previewBlockEntity;
     private final ItemStack chessPieceFigureStack;
 
-    public ChessPieceFigureSettingsScreen(ChessPieceFigureBlockEntity chessPieceFigureBlockEntity)
+    public boolean isColorPickerActive;
+
+    public ChessPieceFigureSettingsScreen(ChessPieceFigureBlockEntity chessPieceFigureBlockEntity, boolean isColorPickerActive)
     {
         super(new TextComponent(""));
         this.chessPieceFigureBlockEntity = chessPieceFigureBlockEntity;
+        this.isColorPickerActive = isColorPickerActive;
         previewBlockEntity = new ChessPieceFigureBlockEntity(BlockPos.ZERO, TTCBlocks.CHESS_PIECE_FIGURE.get().defaultBlockState());
         chessPieceFigureStack = new ItemStack(TTCBlocks.CHESS_PIECE_FIGURE.get().asItem());
     }
@@ -68,36 +84,59 @@ public class ChessPieceFigureSettingsScreen extends Screen
     {
         super.init();
         // Values to calculate the relative position
-        int x = (this.width - this.xSize) / 2;
+        int x = (this.width - (this.xSize - (this.isColorPickerActive ? 136 : 0))) / 2;
         int y = (this.height - this.ySize) / 2;
+
+        this.addRenderableWidget(new ChessPieceFigureRotateButton(this.chessPieceFigureBlockEntity, x + 5, y + 60));
+
+        this.addRenderableWidget(new ColorPickerToggleButton(this.chessPieceFigureBlockEntity, this, false, x + 159, y + 60));
+
+        this.addRenderableWidget(this.redColorSlider = new ChessRedColorSlider(x + 5, y + 74, 167, 12, NBTColorSaving.getRed(this.chessPieceFigureBlockEntity.getPieceColor()), this));
+        this.addRenderableWidget(this.greenColorSlider = new ChessGreenColorSlider(x + 5, y + 87, 167, 12, NBTColorSaving.getGreen(this.chessPieceFigureBlockEntity.getPieceColor()), this));
+        this.addRenderableWidget(this.blueColorSlider = new ChessBlueColorSlider(x + 5, y + 100, 167, 12, NBTColorSaving.getBlue(this.chessPieceFigureBlockEntity.getPieceColor()), this));
+
+        this.addRenderableWidget(new ChessPieceFigureResetColorButton(this, x + 5, y + 113));
+        this.addRenderableWidget(new ChessPieceFigureConfirmColorButton(this.chessPieceFigureBlockEntity, this.redColorSlider, this.greenColorSlider, this.blueColorSlider, x + 90, y + 113));
+
+        this.addRenderableWidget(this.scaleSlider = new ChessPieceFigureScaleSlider(x + 5, y + 127, 167, 12, this.chessPieceFigureBlockEntity.getPieceScale()));
+        this.addRenderableWidget(new ChessPieceFigureConfirmScaleButton(this.chessPieceFigureBlockEntity, this.scaleSlider, x + 5, y + 140));
+
+        if(isColorPickerActive)
+        {
+            // The Color Picker
+            Color color = new Color(redColorSlider.getValueInt(), greenColorSlider.getValueInt(), blueColorSlider.getValueInt());
+            this.addRenderableWidget(colorPicker = new TTCColorPicker(x - 131, y + 8, this, color.getHue() / 360F, 1.0F - color.getValue()));
+            // The saturation Slider
+            float saturation = color.getSaturation() * 100;
+            this.addRenderableWidget(saturationSlider = new SaturationSlider(x - 132, y + 138, 130, 12, Math.round(saturation), this));
+        }
+
         // The Buttons in the Gui Menu
         this.addRenderableWidget(new ChessBoardPiecePreviousSetButton(this.chessPieceFigureBlockEntity, x + 5, y + 22));
         this.addRenderableWidget(new ChessBoardPiecePreviousTypeButton(this.chessPieceFigureBlockEntity, x + 5, y + 38));
         this.addRenderableWidget(new ChessBoardPieceNextSetButton(this.chessPieceFigureBlockEntity, x + (xSize - 31), y + 22));
         this.addRenderableWidget(new ChessBoardPieceNextTypeButton(this.chessPieceFigureBlockEntity, x + (xSize - 31), y + 38));
-
-        this.addRenderableWidget(new ChessPieceFigureRotateButton(this.chessPieceFigureBlockEntity, x + 5, y + 60));
-
-        this.addRenderableWidget(this.redColorSlider = new ChessRedColorSlider(x + 5, y + 74, 167, 12, NBTColorSaving.getRed(this.chessPieceFigureBlockEntity.getPieceColor())));
-        this.addRenderableWidget(this.greenColorSlider = new ChessGreenColorSlider(x + 5, y + 87, 167, 12, NBTColorSaving.getGreen(this.chessPieceFigureBlockEntity.getPieceColor())));
-        this.addRenderableWidget(this.blueColorSlider = new ChessBlueColorSlider(x + 5, y + 100, 167, 12, NBTColorSaving.getBlue(this.chessPieceFigureBlockEntity.getPieceColor())));
-
-        this.addRenderableWidget(new ChessPieceFigureResetColorButton(this.redColorSlider, this.greenColorSlider, this.blueColorSlider, x + 5, y + 113));
-        this.addRenderableWidget(new ChessPieceFigureConfirmColorButton(this.chessPieceFigureBlockEntity, this.redColorSlider, this.greenColorSlider, this.blueColorSlider, x + 90, y + 113));
     }
 
     @Override
     public void render(PoseStack poseStack, int mouseX, int mouseY, float partialTicks)
     {
-        int x = (this.width - this.xSize) / 2;
+        int x = (this.width - (this.xSize - (this.isColorPickerActive ? 136 : 0))) / 2;
         int y = (this.height - this.ySize) / 2;
 
         RenderSystem.setShaderColor(1.0f, 1.0f, 1.0f, 1.0f);
         RenderSystem.setShaderTexture(0, MENU_TEXTURE);
         this.blit(poseStack, x, y, 0, 0, this.xSize, this.ySize);
 
+        if(isColorPickerActive)
+        {
+            RenderSystem.setShaderColor(1.0f, 1.0f, 1.0f, 1.0f);
+            RenderSystem.setShaderTexture(0, COLOR_PICKER_FRAME_TEXTURE);
+            this.blit(poseStack, x - 136, y + 3, 0, 0, 136, 151);
+        }
+
         // The screen text
-        this.font.draw(poseStack, this.chessPieceFigureSettingsText, ((this.width / 2) - (this.font.width(this.chessPieceFigureSettingsText) / 2)), y + 6, 4210752);
+        this.font.draw(poseStack, this.chessPieceFigureSettingsText, ((this.width / 2) - (this.font.width(this.chessPieceFigureSettingsText) / 2)) + (this.isColorPickerActive ? 68 : 0), y + 6, 4210752);
         // Toggle piece rotation text
         this.font.draw(poseStack, this.togglePieceRotationText, x + 20, y + 63, 0x000000);
 
@@ -150,6 +189,42 @@ public class ChessPieceFigureSettingsScreen extends Screen
      */
     public static void open(ChessPieceFigureBlockEntity chessPieceFigureBlockEntity)
     {
-        Minecraft.getInstance().setScreen(new ChessPieceFigureSettingsScreen(chessPieceFigureBlockEntity));
+        Minecraft.getInstance().setScreen(new ChessPieceFigureSettingsScreen(chessPieceFigureBlockEntity, false));
+    }
+
+    @Override
+    public TTCColorPicker getColorPicker()
+    {
+        return this.colorPicker;
+    }
+
+    @Override
+    public ForgeSlider getRedSlider()
+    {
+        return this.redColorSlider;
+    }
+
+    @Override
+    public ForgeSlider getGreenSlider()
+    {
+        return this.greenColorSlider;
+    }
+
+    @Override
+    public ForgeSlider getBlueSlider()
+    {
+        return this.blueColorSlider;
+    }
+
+    @Override
+    public ForgeSlider getSaturationSlider()
+    {
+        return this.saturationSlider;
+    }
+
+    @Override
+    public boolean isColorPickerActive()
+    {
+        return this.isColorPickerActive;
     }
 }

@@ -44,8 +44,11 @@ public class ChessBoardPieceModelSelectionButton extends Button
     private final ItemStack chessPieceStack;
     // Piece Set
     private final PieceModelSet pieceModelSet;
+    private final boolean isStandardSetUnlocked;
+    private final boolean isClassicSetUnlocked;
+    private final boolean isPandorasCreaturesSetUnlocked;
 
-    public ChessBoardPieceModelSelectionButton(ChessTileEntity tileEntity, PieceModelSet pieceModelSet, int xPos, int yPos)
+    public ChessBoardPieceModelSelectionButton(ChessTileEntity tileEntity, PieceModelSet pieceModelSet, boolean isStandardSetUnlocked, boolean isClassicSetUnlocked, boolean isPandorasCreaturesSetUnlocked, int xPos, int yPos)
     {
         super(xPos, yPos, buttonWidth, buttonHeight, new TextComponent(""), (button) -> { handleButtonPress(); });
         this.fontRenderer = Minecraft.getInstance().font;
@@ -53,6 +56,10 @@ public class ChessBoardPieceModelSelectionButton extends Button
         chessPieceFigureBlockEntity = new ChessPieceFigureBlockEntity(BlockPos.ZERO, TTCBlocks.CHESS_PIECE_FIGURE.get().defaultBlockState());
         chessPieceStack = new ItemStack(TTCBlocks.CHESS_PIECE_FIGURE.get().asItem());
         this.pieceModelSet = pieceModelSet;
+        /* this should probably be done with an array or smt but I cbb ~ andrew */
+        this.isStandardSetUnlocked = isStandardSetUnlocked;
+        this.isClassicSetUnlocked = isClassicSetUnlocked;
+        this.isPandorasCreaturesSetUnlocked = isPandorasCreaturesSetUnlocked;
     }
 
     @Override
@@ -168,6 +175,18 @@ public class ChessBoardPieceModelSelectionButton extends Button
 
     private boolean shouldButtonBeLocked()
     {
-        return !Minecraft.getInstance().player.isCreative();
+        if(!Minecraft.getInstance().player.isCreative())
+        {
+            // If the player is in survival we lock the Button based on
+            // whether the player has the given Set unlocked
+            return switch (this.pieceModelSet)
+            {
+                case STANDARD -> !this.isStandardSetUnlocked;
+                case CLASSIC -> !this.isClassicSetUnlocked;
+                case PANDORAS_CREATURES -> !this.isPandorasCreaturesSetUnlocked;
+            };
+        }
+        // If the player is in Creative the Buttons should be unlocked
+        return false;
     }
 }

@@ -11,14 +11,12 @@ import net.minecraft.client.Minecraft;
 import net.minecraft.client.gui.components.Button;
 import net.minecraft.client.gui.screens.Screen;
 import net.minecraft.network.chat.TextComponent;
-import net.minecraft.network.chat.TranslatableComponent;
 import net.minecraft.resources.ResourceLocation;
 import net.minecraft.world.level.block.entity.BlockEntity;
 
 public class ColorPickerToggleButton extends Button
 {
     private static final ResourceLocation TEXTURE = new ResourceLocation(Reference.MODID + ":textures/gui/buttons/chess_menu_buttons.png");
-    private final String buttonText = new TranslatableComponent("gui.table_top_craft.chess.color.reset_color").getString();//TODO remove
     private static BlockEntity blockEntity;
     private static final int buttonWidth = 13;
     private static final int buttonHeight = 13;
@@ -73,9 +71,9 @@ public class ColorPickerToggleButton extends Button
     }
 
     @Override
-    public void onClick(double pMouseX, double pMouseY)
+    public void onPress()
     {
-        super.onClick(pMouseX, pMouseY);
+        super.onPress();
         if(Minecraft.getInstance().screen != null)
         {
             if(blockEntity instanceof ChessPieceFigureBlockEntity chessPieceFigureBlockEntity)

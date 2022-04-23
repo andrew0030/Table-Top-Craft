@@ -19,12 +19,6 @@ public class ChessAlphaColorSlider extends ForgeSlider
 	}
 
     @Override
-    public boolean keyPressed(int keyCode, int scanCode, int modifiers)
-    {
-        return false;
-    }
-
-    @Override
     public void renderButton(PoseStack poseStack, int mouseX, int mouseY, float partialTick)
     {
         Minecraft mc = Minecraft.getInstance();

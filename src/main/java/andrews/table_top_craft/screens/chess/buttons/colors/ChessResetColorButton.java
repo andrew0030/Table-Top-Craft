@@ -1,8 +1,5 @@
 package andrews.table_top_craft.screens.chess.buttons.colors;
 
-import andrews.table_top_craft.screens.chess.sliders.ChessBlueColorSlider;
-import andrews.table_top_craft.screens.chess.sliders.ChessGreenColorSlider;
-import andrews.table_top_craft.screens.chess.sliders.ChessRedColorSlider;
 import andrews.table_top_craft.screens.piece_figure.util.IColorPicker;
 import andrews.table_top_craft.screens.piece_figure.util.IColorPickerExtended;
 import andrews.table_top_craft.util.Reference;
@@ -27,35 +24,7 @@ public class ChessResetColorButton extends Button
 	private int u = 0;
 	private int v = 0;
 	private static DefaultColorType colorType;
-	private static ChessRedColorSlider redSlider;
-	private static ChessGreenColorSlider greenSlider;
-	private static ChessBlueColorSlider blueSlider;
-	private static ChessRedColorSlider optionalRedSlider;
-	private static ChessGreenColorSlider optionalGreenSlider;
-	private static ChessBlueColorSlider optionalBlueSlider;
 	private static Screen screen;
-
-	//TODO replace with IColorPicker screen
-	@Deprecated
-	public ChessResetColorButton(DefaultColorType defaultColorType, ChessRedColorSlider red, ChessGreenColorSlider green, ChessBlueColorSlider blue, int xPos, int yPos) 
-	{
-		super(xPos, yPos, buttonWidth, buttonHeight, new TextComponent(""), (button) -> { handleButtonPress(); });
-		this.fontRenderer = Minecraft.getInstance().font;
-		redSlider = red;
-		greenSlider = green;
-		blueSlider = blue;
-		colorType = defaultColorType;
-	}
-
-	//TODO replace with IColorPicker screen
-	@Deprecated
-	public ChessResetColorButton(DefaultColorType defaultColorType, ChessRedColorSlider red, ChessRedColorSlider optionalRed, ChessGreenColorSlider green, ChessGreenColorSlider optionalGreen, ChessBlueColorSlider blue, ChessBlueColorSlider optionalBlue, int xPos, int yPos) 
-	{
-		this(defaultColorType, red, green, blue, xPos, yPos);
-		optionalRedSlider = optionalRed;
-		optionalGreenSlider = optionalGreen;
-		optionalBlueSlider = optionalBlue; 
-	}
 
 	public ChessResetColorButton(DefaultColorType defaultColorType, Screen screenIn, int xPos, int yPos)
 	{
@@ -82,7 +51,7 @@ public class ChessResetColorButton extends Button
 		this.blit(poseStack, x, y, u, v, width, height);
 		RenderSystem.disableBlend();
 		poseStack.popPose();
-		boolean useText2 = (optionalRedSlider != null && optionalGreenSlider != null && optionalBlueSlider != null);
+		boolean useText2 = screen instanceof IColorPickerExtended;
 		this.fontRenderer.draw(poseStack, useText2 ? this.buttonText2 : this.buttonText, x + ((this.width / 2) - (this.fontRenderer.width(useText2 ? this.buttonText2 : this.buttonText) / 2)), y + 3, 0x000000);
 	}
 	

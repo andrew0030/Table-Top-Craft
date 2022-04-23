@@ -1,13 +1,21 @@
 package andrews.table_top_craft.util;
 
 import andrews.table_top_craft.network.TTCNetwork;
+import andrews.table_top_craft.network.client.MessageClientOpenChessPieceSelectionScreen;
 import andrews.table_top_craft.network.server.*;
 import net.minecraft.core.BlockPos;
+import net.minecraft.server.level.ServerPlayer;
 import net.minecraftforge.api.distmarker.Dist;
 import net.minecraftforge.api.distmarker.OnlyIn;
+import net.minecraftforge.network.PacketDistributor;
 
 public class NetworkUtil
 {
+	public static void openChessPieceSelectionFromServer(BlockPos pos, boolean isStandardSetUnlocked, boolean isClassicSetUnlocked, boolean isPandorasCreaturesSetUnlocked, ServerPlayer serverPlayer)
+	{
+		TTCNetwork.CHANNEL.send(PacketDistributor.PLAYER.with(() -> serverPlayer), new MessageClientOpenChessPieceSelectionScreen(pos, isStandardSetUnlocked, isClassicSetUnlocked, isPandorasCreaturesSetUnlocked));
+	}
+
 	@OnlyIn(Dist.CLIENT)
 	public static void newChessGameMessage(BlockPos pos)
 	{
@@ -103,5 +111,11 @@ public class NetworkUtil
 	public static void setPieceScale(BlockPos pos, double value)
 	{
 		TTCNetwork.CHANNEL.sendToServer(new MessageServerChangePieceScale(pos, value));
+	}
+
+	@OnlyIn(Dist.CLIENT)
+	public static void openGuiWithServerPlayer(BlockPos pos)
+	{
+		TTCNetwork.CHANNEL.sendToServer(new MessageServerOpenGUIWithServerPlayer(pos));
 	}
 }

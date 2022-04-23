@@ -57,6 +57,6 @@ public class ChessNewGameButton extends Button
 	private static void handleButtonPress()
 	{
 		NetworkUtil.newChessGameMessage(chessTablePosition);
-		Minecraft.getInstance().player.clientSideCloseContainer();//TODO check if this works
+		Minecraft.getInstance().player.closeContainer();
 	}
 }

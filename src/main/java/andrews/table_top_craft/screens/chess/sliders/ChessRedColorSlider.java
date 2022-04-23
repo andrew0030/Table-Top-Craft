@@ -1,6 +1,5 @@
 package andrews.table_top_craft.screens.chess.sliders;
 
-import andrews.table_top_craft.screens.piece_figure.menus.ChessPieceFigureSettingsScreen;
 import andrews.table_top_craft.screens.piece_figure.util.IColorPicker;
 import andrews.table_top_craft.screens.piece_figure.util.IColorPickerExtended;
 import com.mojang.blaze3d.systems.RenderSystem;
@@ -16,25 +15,12 @@ import net.minecraftforge.client.gui.widget.ForgeSlider;
 public class ChessRedColorSlider extends ForgeSlider
 {
 	private final static TranslatableComponent redValueText = new TranslatableComponent("gui.table_top_craft.chess.sliders.red");
-	private Screen menuIn;
-
-	//TODO remove deprecation
-	@Deprecated
-	public ChessRedColorSlider(int xPos, int yPos, int width, int height, int currentValue)
-	{
-		super(xPos, yPos, width, height, redValueText, new TextComponent(""), 0, 255, currentValue, true);
-	}
+	private final Screen menuIn;
 
 	public ChessRedColorSlider(int xPos, int yPos, int width, int height, int currentValue, Screen menuIn)
 	{
-		this(xPos, yPos, width, height, currentValue);
+		super(xPos, yPos, width, height, redValueText, new TextComponent(""), 0, 255, currentValue, true);
 		this.menuIn = menuIn;
-	}
-
-	@Override
-	public boolean keyPressed(int keyCode, int scanCode, int modifiers)
-	{
-		return false;
 	}
 
 	@Override

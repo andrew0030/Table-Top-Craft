@@ -1,14 +1,12 @@
 package andrews.table_top_craft.objects.blocks;
 
-import andrews.table_top_craft.game_logic.chess.board.moves.BaseMove;
-import andrews.table_top_craft.game_logic.chess.board.moves.MoveFactory;
-import andrews.table_top_craft.game_logic.chess.board.tiles.BaseChessTile;
-import andrews.table_top_craft.game_logic.chess.player.MoveTransition;
+import andrews.table_top_craft.criteria.TTCCriteriaTriggers;
 import andrews.table_top_craft.screens.chess.menus.ChessBoardSettingsScreen;
 import andrews.table_top_craft.tile_entities.ChessTileEntity;
 import andrews.table_top_craft.util.NetworkUtil;
 import net.minecraft.core.BlockPos;
 import net.minecraft.core.Direction;
+import net.minecraft.server.level.ServerPlayer;
 import net.minecraft.util.Mth;
 import net.minecraft.world.InteractionHand;
 import net.minecraft.world.InteractionResult;

@@ -136,7 +136,7 @@ public class ChessBoardInvalidMoveColorScreen extends Screen implements IColorPi
 		super.keyPressed(keyCode, scanCode, modifiers);
 		InputConstants.Key mouseKey = InputConstants.getKey(keyCode, scanCode);
 		if(this.minecraft.options.keyInventory.isActiveAndMatches(mouseKey))
-			this.onClose();//TODO check if works
+			this.onClose();
 		return true;
 	}
 

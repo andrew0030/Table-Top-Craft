@@ -1,12 +1,15 @@
 package andrews.table_top_craft.network.server;
 
+import andrews.table_top_craft.criteria.TTCCriteriaTriggers;
 import andrews.table_top_craft.game_logic.chess.board.moves.BaseMove;
 import andrews.table_top_craft.game_logic.chess.board.moves.MoveFactory;
+import andrews.table_top_craft.game_logic.chess.board.moves.PawnEnPassantAttackMove;
 import andrews.table_top_craft.game_logic.chess.board.tiles.BaseChessTile;
 import andrews.table_top_craft.game_logic.chess.player.MoveTransition;
 import andrews.table_top_craft.tile_entities.ChessTileEntity;
 import net.minecraft.core.BlockPos;
 import net.minecraft.network.FriendlyByteBuf;
+import net.minecraft.server.level.ServerPlayer;
 import net.minecraft.world.entity.player.Player;
 import net.minecraft.world.level.Level;
 import net.minecraft.world.level.block.entity.BlockEntity;
@@ -42,7 +45,7 @@ public class MessageServerDoChessBoardInteraction
     public static void handle(MessageServerDoChessBoardInteraction message, Supplier<NetworkEvent.Context> ctx)
     {
         NetworkEvent.Context context = ctx.get();
-        Player player = context.getSender();
+        ServerPlayer player = context.getSender();
         Level level = player.getLevel();
         BlockPos pos = message.pos;
         byte tileCoordinate = message.tileCoordinate;
@@ -91,6 +94,17 @@ public class MessageServerDoChessBoardInteraction
                                 chessTileEntity.setBoard(transition.getTransitionBoard());
                                 // Adds the move to the MoveLog
                                 chessTileEntity.getMoveLog().addMove(move);
+                                // We call this in here to make sure a move was successfully made, and not just attempted
+                                if(!level.isClientSide)
+                                    TTCCriteriaTriggers.MAKE_CHESS_MOVE.trigger(player);
+                                // If the Move was an EnPassantMove, we trigger the advancement
+                                if(move.isEnPassantMove())
+                                    if(!level.isClientSide)
+                                        TTCCriteriaTriggers.MAKE_EN_PASSANT_MOVE.trigger(player);
+                                // If the Move was a CheckMateMove, we trigger the advancement
+                                if(chessTileEntity.getBoard().getCurrentChessPlayer().isInCheckMate())
+                                    if(!level.isClientSide)
+                                        TTCCriteriaTriggers.MAKE_CHECK_MATE_MOVE.trigger(player);
                             }
                             chessTileEntity.setSourceTile(null);
                             chessTileEntity.setDestinationTile(null);

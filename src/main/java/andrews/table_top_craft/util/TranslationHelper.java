@@ -49,6 +49,23 @@ public class TranslationHelper
         }
     }
 
+    public static void getToolTipWithDoubleFromLang(List<Component> tooltip, String langPath, double value)
+    {
+        String valueString = String.valueOf(value);
+        String rawText = new TranslatableComponent(langPath, new TextComponent(valueString)).getString();
+        rawText = rawText.replace("#c", "§");
+        if(rawText.contains("\n"))
+        {
+            String[] textList = rawText.split("\n");
+            for(String text : textList)
+                tooltip.add(new TextComponent(text));
+        }
+        else
+        {
+            tooltip.add(new TextComponent(rawText));
+        }
+    }
+
     public static void addEnchantmentSeparationLine(List<Component> tooltip, ItemStack stack)
     {
         // Renders another "empty" line if the item is enchanted, so the enchantments are easier to read

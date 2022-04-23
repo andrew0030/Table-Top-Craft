@@ -1,0 +1,32 @@
+{
+    "display": {
+        "title": {
+            "translate": "advancements.table_top_craft.the_hoarding_begins.title"
+        },
+        "description": {
+            "translate": "advancements.table_top_craft.the_hoarding_begins.description"
+        },
+        "icon": {
+            "item": "table_top_craft:chess_piece_figure"
+        },
+        "frame": "task",
+        "show_toast": true,
+        "announce_to_chat": true,
+        "hidden": false
+    },
+    "criteria": {
+        "ChessPieceFigure": {
+            "trigger": "minecraft:inventory_changed",
+            "conditions": {
+                "items": [
+                    {
+                        "items": [
+                            "table_top_craft:chess_piece_figure"
+                        ]
+                    }
+                ]
+            }
+        }
+    },
+    "parent": "table_top_craft:root"
+}

@@ -90,7 +90,7 @@ public class ChessColorSettingsScreen extends Screen
 		super.keyPressed(keyCode, scanCode, modifiers);
 		InputConstants.Key mouseKey = InputConstants.getKey(keyCode, scanCode);
 		if(this.minecraft.options.keyInventory.isActiveAndMatches(mouseKey))
-			this.onClose();//TODO check if it works
+			this.onClose();
 		return true;
 	}
 }

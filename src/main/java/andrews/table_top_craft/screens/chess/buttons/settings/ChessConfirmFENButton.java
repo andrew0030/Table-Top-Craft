@@ -69,7 +69,7 @@ public class ChessConfirmFENButton extends Button
 		if(!fenStringField.getValue().isEmpty())
 		{
 			NetworkUtil.loadFENMessage(chessTileEntity.getBlockPos(), fenStringField.getValue());
-			Minecraft.getInstance().player.closeContainer(); // TODO make sure this is ok
+			Minecraft.getInstance().player.closeContainer();
 		}
 	}
 }

@@ -54,7 +54,7 @@ public abstract class BaseMove
 	}
 	
 	/**
-	 * @return - The current Chess Board
+	 * @return The current Chess Board
 	 */
 	public Board getBoard()
 	{
@@ -62,7 +62,7 @@ public abstract class BaseMove
 	}
 	
 	/**
-	 * @return - The current Coordinate of the moved Piece
+	 * @return The current Coordinate of the moved Piece
 	 */
 	public int getCurrentCoordinate()
 	{
@@ -70,7 +70,7 @@ public abstract class BaseMove
 	}
 	
 	/**
-	 * @return - The Destination Coordinates of this Move
+	 * @return The Destination Coordinates of this Move
 	 */
 	public int getDestinationCoordinate()
 	{
@@ -78,7 +78,7 @@ public abstract class BaseMove
 	}
 	
 	/**
-	 * @return - The Moved Piece
+	 * @return The Moved Piece
 	 */
 	public BasePiece getMovedPiece()
 	{
@@ -86,7 +86,7 @@ public abstract class BaseMove
 	}
 	
 	/**
-	 * @return - Whether or not this Move is an Attack Move
+	 * @return Whether this Move is an Attack Move
 	 */
 	public boolean isAttack()
 	{
@@ -94,15 +94,23 @@ public abstract class BaseMove
 	}
 	
 	/**
-	 * @return - Whether or not this Move is a Castling Move
+	 * @return Whether this Move is a Castling Move
 	 */
 	public boolean isCastlingMove()
 	{
 		return false;
 	}
+
+	/**
+	 * @return Whether this Move is an En Passant Move
+	 */
+	public boolean isEnPassantMove()
+	{
+		return false;
+	}
 	
 	/**
-	 * @return - The Piece that was attacked with this Move
+	 * @return The Piece that was attacked with this Move
 	 */
 	public BasePiece getAttackedPiece()
 	{

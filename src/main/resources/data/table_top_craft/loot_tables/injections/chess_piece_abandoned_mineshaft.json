@@ -1,0 +1,27 @@
+{
+  "pools": [
+    {
+      "rolls": {
+        "min": 1.0,
+        "max": 3.0,
+        "type": "minecraft:uniform"
+      },
+      "entries": [
+        {
+          "type": "minecraft:item",
+          "weight": 5,
+          "name": "table_top_craft:chess_piece_figure",
+          "functions": [
+            {
+              "function": "table_top_craft:gen_piece_nbt"
+            }
+          ]
+        },
+        {
+          "type": "minecraft:empty",
+          "weight": 5
+        }
+      ]
+    }
+  ]
+}

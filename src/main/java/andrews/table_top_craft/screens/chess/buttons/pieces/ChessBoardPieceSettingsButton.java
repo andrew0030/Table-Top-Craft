@@ -3,6 +3,7 @@ package andrews.table_top_craft.screens.chess.buttons.pieces;
 import andrews.table_top_craft.registry.TTCBlocks;
 import andrews.table_top_craft.screens.chess.menus.ChessPieceSelectionScreen;
 import andrews.table_top_craft.tile_entities.ChessTileEntity;
+import andrews.table_top_craft.util.NetworkUtil;
 import andrews.table_top_craft.util.Reference;
 import com.mojang.blaze3d.platform.GlStateManager;
 import com.mojang.blaze3d.platform.Lighting;
@@ -99,6 +100,6 @@ public class ChessBoardPieceSettingsButton extends Button
      */
     private static void handleButtonPress()
     {
-        Minecraft.getInstance().setScreen(new ChessPieceSelectionScreen(chessTileEntity));
+        NetworkUtil.openGuiWithServerPlayer(chessTileEntity.getBlockPos());
     }
 }

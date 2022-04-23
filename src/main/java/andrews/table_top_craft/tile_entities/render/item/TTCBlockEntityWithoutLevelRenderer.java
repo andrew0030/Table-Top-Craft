@@ -15,7 +15,6 @@ import net.minecraft.client.renderer.blockentity.BlockEntityRenderDispatcher;
 import net.minecraft.core.BlockPos;
 import net.minecraft.nbt.CompoundTag;
 import net.minecraft.nbt.Tag;
-import net.minecraft.network.chat.TextComponent;
 import net.minecraft.world.item.BlockItem;
 import net.minecraft.world.item.ItemStack;
 
@@ -71,6 +70,10 @@ public class TTCBlockEntityWithoutLevelRenderer extends BlockEntityWithoutLevelR
                     color = color.fromHSV(value, 1.0F, 1.0F);
                     chessPieceFigureBlockEntity.setPieceColor(color.getRed() + "/" + color.getGreen() + "/" + color.getBlue() + "/255");
                 }
+                if(itemStack.getHoverName().getString().equals("Lyzantra"))
+                    chessPieceFigureBlockEntity.setPieceName("Lyzantra");
+                else
+                    chessPieceFigureBlockEntity.setPieceName(null);
 
                 ChessPieceFigureTileEntityRenderer.renderChessPieceFigure(chessPieceFigureBlockEntity, poseStack, buffer, type.equals(ItemTransforms.TransformType.GUI), isHeldOrHead(type), getPartialTicks(), packedLight, packedOverlay);
             }

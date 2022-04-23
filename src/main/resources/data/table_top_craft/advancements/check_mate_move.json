@@ -1,0 +1,24 @@
+{
+  "display": {
+    "title": {
+      "translate": "advancements.table_top_craft.check_mate_move.title"
+    },
+    "description": {
+      "translate": "advancements.table_top_craft.check_mate_move.description"
+    },
+    "icon": {
+      "item": "table_top_craft:chess_piece_figure",
+      "nbt": "{BlockEntityTag: {PieceSet: 1, PieceType: 5, PieceColor: \"130/30/30/255\"}}"
+    },
+    "frame": "task",
+    "show_toast": true,
+    "announce_to_chat": true,
+    "hidden": false
+  },
+  "criteria": {
+    "make_check_mate_move": {
+      "trigger": "table_top_craft:made_check_mate_move"
+    }
+  },
+  "parent": "table_top_craft:first_chess_move"
+}

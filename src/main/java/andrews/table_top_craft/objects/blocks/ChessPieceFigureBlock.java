@@ -4,6 +4,7 @@ import andrews.table_top_craft.registry.TTCBlocks;
 import andrews.table_top_craft.screens.piece_figure.menus.ChessPieceFigureSettingsScreen;
 import andrews.table_top_craft.tile_entities.ChessPieceFigureBlockEntity;
 import andrews.table_top_craft.util.TranslationHelper;
+import net.minecraft.client.gui.screens.Screen;
 import net.minecraft.core.BlockPos;
 import net.minecraft.nbt.CompoundTag;
 import net.minecraft.nbt.Tag;
@@ -62,7 +63,7 @@ public class ChessPieceFigureBlock extends Block implements EntityBlock
     private static Properties getProperties()
     {
         Properties properties = Block.Properties.of(Material.STONE);
-        properties.strength(1.0F);
+        properties.strength(0.5F);
         properties.sound(SoundType.STONE);
 
         return properties;
@@ -143,48 +144,62 @@ public class ChessPieceFigureBlock extends Block implements EntityBlock
         CompoundTag compoundtag = BlockItem.getBlockEntityData(stack);
         if (compoundtag != null)
         {
-            if (compoundtag.contains("PieceSet", Tag.TAG_INT))
+            if(Screen.hasShiftDown())
             {
-                String pieceSetPath = "tooltip.table_top_craft.chess_piece_figure.piece_set";
-                switch (compoundtag.getInt("PieceSet"))
+                if (compoundtag.contains("PieceSet", Tag.TAG_INT))
                 {
-                    case 1 -> TranslationHelper.getToolTipWithTextFromLang(tooltip, pieceSetPath, "tooltip.table_top_craft.chess_piece_figure.set.standard");
-                    case 2 -> TranslationHelper.getToolTipWithTextFromLang(tooltip, pieceSetPath, "tooltip.table_top_craft.chess_piece_figure.set.classic");
-                    case 3 -> TranslationHelper.getToolTipWithTextFromLang(tooltip, pieceSetPath, "tooltip.table_top_craft.chess_piece_figure.set.pandoras_creatures");
+                    String pieceSetPath = "tooltip.table_top_craft.chess_piece_figure.piece_set";
+                    switch (compoundtag.getInt("PieceSet"))
+                    {
+                        case 1 -> TranslationHelper.getToolTipWithTextFromLang(tooltip, pieceSetPath, "tooltip.table_top_craft.chess_piece_figure.set.standard");
+                        case 2 -> TranslationHelper.getToolTipWithTextFromLang(tooltip, pieceSetPath, "tooltip.table_top_craft.chess_piece_figure.set.classic");
+                        case 3 -> TranslationHelper.getToolTipWithTextFromLang(tooltip, pieceSetPath, "tooltip.table_top_craft.chess_piece_figure.set.pandoras_creatures");
+                    }
                 }
-            }
-            if (compoundtag.contains("PieceType", Tag.TAG_INT))
-            {
-                String pieceTypePath = "tooltip.table_top_craft.chess_piece_figure.piece_type";
-                switch (compoundtag.getInt("PieceType"))
+                if (compoundtag.contains("PieceType", Tag.TAG_INT))
                 {
-                    case 1 -> TranslationHelper.getToolTipWithTextFromLang(tooltip, pieceTypePath, "tooltip.table_top_craft.chess_piece_figure.type.pawn");
-                    case 2 -> TranslationHelper.getToolTipWithTextFromLang(tooltip, pieceTypePath, "tooltip.table_top_craft.chess_piece_figure.type.rook");
-                    case 3 -> TranslationHelper.getToolTipWithTextFromLang(tooltip, pieceTypePath, "tooltip.table_top_craft.chess_piece_figure.type.bishop");
-                    case 4 -> TranslationHelper.getToolTipWithTextFromLang(tooltip, pieceTypePath, "tooltip.table_top_craft.chess_piece_figure.type.knight");
-                    case 5 -> TranslationHelper.getToolTipWithTextFromLang(tooltip, pieceTypePath, "tooltip.table_top_craft.chess_piece_figure.type.king");
-                    case 6 -> TranslationHelper.getToolTipWithTextFromLang(tooltip, pieceTypePath, "tooltip.table_top_craft.chess_piece_figure.type.queen");
+                    String pieceTypePath = "tooltip.table_top_craft.chess_piece_figure.piece_type";
+                    switch (compoundtag.getInt("PieceType"))
+                    {
+                        case 1 -> TranslationHelper.getToolTipWithTextFromLang(tooltip, pieceTypePath, "tooltip.table_top_craft.chess_piece_figure.type.pawn");
+                        case 2 -> TranslationHelper.getToolTipWithTextFromLang(tooltip, pieceTypePath, "tooltip.table_top_craft.chess_piece_figure.type.rook");
+                        case 3 -> TranslationHelper.getToolTipWithTextFromLang(tooltip, pieceTypePath, "tooltip.table_top_craft.chess_piece_figure.type.bishop");
+                        case 4 -> TranslationHelper.getToolTipWithTextFromLang(tooltip, pieceTypePath, "tooltip.table_top_craft.chess_piece_figure.type.knight");
+                        case 5 -> TranslationHelper.getToolTipWithTextFromLang(tooltip, pieceTypePath, "tooltip.table_top_craft.chess_piece_figure.type.king");
+                        case 6 -> TranslationHelper.getToolTipWithTextFromLang(tooltip, pieceTypePath, "tooltip.table_top_craft.chess_piece_figure.type.queen");
+                    }
                 }
-            }
-            if(compoundtag.contains("RotateChessPieceFigure", Tag.TAG_INT))
-            {
-                String shouldRotatePath = "tooltip.table_top_craft.chess_piece_figure.should_rotate";
-                switch (compoundtag.getInt("RotateChessPieceFigure"))
+                if (compoundtag.contains("RotateChessPieceFigure", Tag.TAG_INT))
                 {
-                    case 0 -> TranslationHelper.getToolTipWithTextFromLang(tooltip, shouldRotatePath, "tooltip.table_top_craft.chess_piece_figure.toggle.disabled");
-                    case 1 -> TranslationHelper.getToolTipWithTextFromLang(tooltip, shouldRotatePath, "tooltip.table_top_craft.chess_piece_figure.toggle.enabled");
+                    String shouldRotatePath = "tooltip.table_top_craft.chess_piece_figure.should_rotate";
+                    switch (compoundtag.getInt("RotateChessPieceFigure"))
+                    {
+                        case 0 -> TranslationHelper.getToolTipWithTextFromLang(tooltip, shouldRotatePath, "tooltip.table_top_craft.chess_piece_figure.toggle.disabled");
+                        case 1 -> TranslationHelper.getToolTipWithTextFromLang(tooltip, shouldRotatePath, "tooltip.table_top_craft.chess_piece_figure.toggle.enabled");
+                    }
                 }
-            }
-            if(compoundtag.contains("PieceColor", Tag.TAG_STRING))
-            {
-                String pieceColorText = new TranslatableComponent("tooltip.table_top_craft.chess_piece_figure.piece_color").getString();
-                String colorDescriptionText = compoundtag.getString("PieceColor");
-                pieceColorText = pieceColorText.replaceAll("#c", "§");
-                colorDescriptionText = colorDescriptionText.substring(0, colorDescriptionText.length() - 4);
+                if (compoundtag.contains("PieceColor", Tag.TAG_STRING))
+                {
+                    String pieceColorText = new TranslatableComponent("tooltip.table_top_craft.chess_piece_figure.piece_color").getString();
+                    String colorDescriptionText = compoundtag.getString("PieceColor");
+                    pieceColorText = pieceColorText.replaceAll("#c", "§");
+                    colorDescriptionText = colorDescriptionText.substring(0, colorDescriptionText.length() - 4);
 
-                tooltip.add(new TextComponent(pieceColorText + colorDescriptionText));
+                    tooltip.add(new TextComponent(pieceColorText + colorDescriptionText));
+                }
+                if (compoundtag.contains("PieceScale", Tag.TAG_DOUBLE))
+                {
+                    double chessPieceScale = compoundtag.getDouble("PieceScale");
+                    String pieceScaleText = new TranslatableComponent("tooltip.table_top_craft.chess_piece_figure.scale", new TextComponent(String.valueOf(chessPieceScale))).getString();
+                    TranslationHelper.getTooltipFromLang(tooltip, pieceScaleText);
+                }
+                TranslationHelper.addEnchantmentSeparationLine(tooltip, stack);
             }
-            TranslationHelper.addEnchantmentSeparationLine(tooltip, stack);
+            else
+            {
+                TranslationHelper.getTooltipFromLang(tooltip, "tooltip.table_top_craft.chess_piece_figure.more_info");
+                TranslationHelper.addEnchantmentSeparationLine(tooltip, stack);
+            }
         }
         else
         {

@@ -14,6 +14,10 @@ import net.minecraft.client.gui.screens.Screen;
 import net.minecraft.network.chat.TextComponent;
 import net.minecraft.network.chat.TranslatableComponent;
 import net.minecraft.resources.ResourceLocation;
+import net.minecraft.server.ServerAdvancementManager;
+import net.minecraft.server.level.ServerPlayer;
+import net.minecraft.world.entity.player.Player;
+import net.minecraftforge.event.entity.player.AdvancementEvent;
 
 public class ChessPieceSelectionScreen extends Screen
 {
@@ -23,11 +27,17 @@ public class ChessPieceSelectionScreen extends Screen
     private final ChessTileEntity chessTileEntity;
     private final int xSize = 177;
     private final int ySize = 198;
+    private final boolean isStandardSetUnlocked;
+    private final boolean isClassicSetUnlocked;
+    private final boolean isPandorasCreaturesSetUnlocked;
 
-    public ChessPieceSelectionScreen(ChessTileEntity chessTileEntity)
+    public ChessPieceSelectionScreen(ChessTileEntity chessTileEntity, boolean isStandardSetUnlocked, boolean isClassicSetUnlocked, boolean isPandorasCreaturesSetUnlocked)
     {
         super(new TextComponent(""));
         this.chessTileEntity = chessTileEntity;
+        this.isStandardSetUnlocked = isStandardSetUnlocked;
+        this.isClassicSetUnlocked = isClassicSetUnlocked;
+        this.isPandorasCreaturesSetUnlocked = isPandorasCreaturesSetUnlocked;
     }
 
     @Override
@@ -48,9 +58,9 @@ public class ChessPieceSelectionScreen extends Screen
         this.addRenderableWidget(new ChessBoardColorSettingsButton(this.chessTileEntity, x - 24, y + 42));
         this.addRenderableWidget(new ChessBoardPieceSettingsButton(this.chessTileEntity, x - 24, y + 68));
 
-        this.addRenderableWidget(new ChessBoardPieceModelSelectionButton(this.chessTileEntity, PieceModelSet.STANDARD, x + 5, y + 30));
-        this.addRenderableWidget(new ChessBoardPieceModelSelectionButton(this.chessTileEntity, PieceModelSet.CLASSIC, x + 5, y + 84));
-        this.addRenderableWidget(new ChessBoardPieceModelSelectionButton(this.chessTileEntity, PieceModelSet.PANDORAS_CREATURES, x + 5, y + 138));
+        this.addRenderableWidget(new ChessBoardPieceModelSelectionButton(this.chessTileEntity, PieceModelSet.STANDARD, isStandardSetUnlocked, isClassicSetUnlocked, isPandorasCreaturesSetUnlocked, x + 5, y + 30));
+        this.addRenderableWidget(new ChessBoardPieceModelSelectionButton(this.chessTileEntity, PieceModelSet.CLASSIC, isStandardSetUnlocked, isClassicSetUnlocked, isPandorasCreaturesSetUnlocked, x + 5, y + 84));
+        this.addRenderableWidget(new ChessBoardPieceModelSelectionButton(this.chessTileEntity, PieceModelSet.PANDORAS_CREATURES, isStandardSetUnlocked, isClassicSetUnlocked, isPandorasCreaturesSetUnlocked, x + 5, y + 138));
     }
 
     @Override
@@ -84,7 +94,7 @@ public class ChessPieceSelectionScreen extends Screen
         super.keyPressed(keyCode, scanCode, modifiers);
         InputConstants.Key mouseKey = InputConstants.getKey(keyCode, scanCode);
         if(this.minecraft.options.keyInventory.isActiveAndMatches(mouseKey))
-            this.onClose();//TODO check if it works
+            this.onClose();
         return true;
     }
 }

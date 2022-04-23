@@ -39,7 +39,13 @@ public final class PawnEnPassantAttackMove extends PawnAttackMove
 		builder.setMoveMaker(this.board.getCurrentChessPlayer().getOpponent().getPieceColor());
 		return builder.build();
 	}
-	
+
+	@Override
+	public boolean isEnPassantMove()
+	{
+		return true;
+	}
+
 	@Override
 	public String saveToNBT()
 	{

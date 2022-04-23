@@ -1,0 +1,34 @@
+{
+  "display": {
+    "title": {
+      "translate": "advancements.table_top_craft.upside_down_piece.title"
+    },
+    "description": {
+      "translate": "advancements.table_top_craft.upside_down_piece.description"
+    },
+    "icon": {
+      "item": "table_top_craft:chess_piece_figure",
+      "nbt": "{BlockEntityTag: {PieceSet: 1, PieceType: 6}, display: {Name: '{\"text\":\"Lyzantra\"}'}}"
+    },
+    "frame": "challenge",
+    "show_toast": true,
+    "announce_to_chat": true,
+    "hidden": true
+  },
+  "criteria": {
+    "obtain_rainbow": {
+      "trigger": "minecraft:inventory_changed",
+      "conditions": {
+        "items": [
+          {
+            "items": [
+              "table_top_craft:chess_piece_figure"
+            ],
+            "nbt": "{display: {Name: '{\"text\":\"Lyzantra\"}'}}"
+          }
+        ]
+      }
+    }
+  },
+  "parent": "table_top_craft:the_hoarding_begins"
+}

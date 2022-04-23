@@ -1,0 +1,52 @@
+{
+    "display": {
+        "title": {
+            "translate": "advancements.table_top_craft.root.title"
+        },
+        "description": {
+            "translate": "advancements.table_top_craft.root.description"
+        },
+        "icon": {
+            "item": "table_top_craft:jungle_chess"
+        },
+        "frame": "task",
+        "show_toast": false,
+        "announce_to_chat": false,
+        "hidden": false,
+        "background": "minecraft:textures/block/stripped_oak_log.png"
+    },
+    "criteria": {
+        "get_chess_piece": {
+            "trigger": "minecraft:inventory_changed",
+            "conditions": {
+                "items": [
+                    {
+                        "items": [
+                            "table_top_craft:chess_piece_figure"
+                        ]
+                    }
+                ]
+            }
+        },
+        "get_chess_board": {
+            "trigger": "minecraft:inventory_changed",
+            "conditions": {
+                "items": [
+                    {
+                        "tag": "table_top_craft:chess_boards"
+                    }
+                ]
+            }
+        },
+        "make_chess_move": {
+            "trigger": "table_top_craft:made_chess_move"
+        }
+    },
+    "requirements": [
+        [
+            "get_chess_piece",
+            "get_chess_board",
+            "make_chess_move"
+        ]
+    ]
+}

@@ -450,7 +450,7 @@ public class ChessTileEntity extends BlockEntity
 	public void setBoard(Board board)
 	{
 		this.board = board;
-		setChanged();//TODO markdirty replacement?
+		setChanged();
 	}
 	
 	public Board getBoard()

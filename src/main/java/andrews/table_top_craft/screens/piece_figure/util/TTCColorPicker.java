@@ -11,6 +11,7 @@ import net.minecraft.network.chat.TextComponent;
 import net.minecraft.resources.ResourceLocation;
 import net.minecraft.util.Mth;
 import net.minecraftforge.client.gui.GuiUtils;
+import org.lwjgl.glfw.GLFW;
 
 public class TTCColorPicker extends AbstractSliderButton
 {
@@ -30,6 +31,28 @@ public class TTCColorPicker extends AbstractSliderButton
         this.screen = screen;
         this.valueY = valueY;
         this.color = new Color(0, 0, 0);
+    }
+
+    @Override
+    public boolean keyPressed(int keyCode, int scanCode, int modifiers)
+    {
+        boolean flagX = keyCode == GLFW.GLFW_KEY_LEFT;
+        boolean flagY = keyCode == GLFW.GLFW_KEY_UP;
+        if (flagX || keyCode == GLFW.GLFW_KEY_RIGHT)
+        {
+            float f = flagX ? -1F : 1F;
+            this.value = this.snapToNearest(this.value + f * 0.0027777777777778D);
+            this.updateMessage();
+            this.updateRGBHSVSliders();
+        }
+        if (flagY || keyCode == GLFW.GLFW_KEY_DOWN)
+        {
+            float f = flagY ? -1F : 1F;
+            this.valueY = this.snapToNearest(this.valueY + f * 0.0027777777777778D);
+            this.updateMessage();
+            this.updateRGBHSVSliders();
+        }
+        return false;
     }
 
     @Override

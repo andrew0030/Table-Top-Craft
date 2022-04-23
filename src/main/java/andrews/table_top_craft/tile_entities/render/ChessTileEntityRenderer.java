@@ -321,24 +321,9 @@ public class ChessTileEntityRenderer implements BlockEntityRenderer<ChessTileEnt
 		
 		/* GiantLuigi4: hey just so you know, you probably will want to move this sorting out of render code */
 		// Sorts all White Taken Pieces depending on their Value
-		Collections.sort(whiteTakenPieces, new Comparator<BasePiece>()
-		{//TODO check if replacing the Collections.sort() with List.sort() works the same
-			@Override
-			public int compare(BasePiece piece1, BasePiece piece2)
-			{
-				return Ints.compare(piece2.getPieceValue(), piece1.getPieceValue());
-			}
-		});
-		
+		whiteTakenPieces.sort((piece1, piece2) -> Ints.compare(piece2.getPieceValue(), piece1.getPieceValue()));
 		// Sorts all Black Taken Pieces depending on their Value
-		Collections.sort(blackTakenPieces, new Comparator<BasePiece>()
-		{//TODO check if replacing the Collections.sort() with List.sort() works the same
-			@Override
-			public int compare(BasePiece piece1, BasePiece piece2)
-			{
-				return Ints.compare(piece2.getPieceValue(), piece1.getPieceValue());
-			}
-		});
+		blackTakenPieces.sort((piece1, piece2) -> Ints.compare(piece2.getPieceValue(), piece1.getPieceValue()));
 		
 		renderTakenPiecesFigures(stack, chessTileEntity, whiteTakenPieces, true);
 		renderTakenPiecesFigures(stack, chessTileEntity, blackTakenPieces, false);

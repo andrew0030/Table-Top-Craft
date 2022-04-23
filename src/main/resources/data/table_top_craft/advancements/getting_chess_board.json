@@ -1,0 +1,30 @@
+{
+  "display": {
+    "title": {
+      "translate": "advancements.table_top_craft.getting_chess_board.title"
+    },
+    "description": {
+      "translate": "advancements.table_top_craft.getting_chess_board.description"
+    },
+    "icon": {
+      "item": "table_top_craft:birch_chess"
+    },
+    "frame": "task",
+    "show_toast": true,
+    "announce_to_chat": true,
+    "hidden": false
+  },
+  "criteria": {
+    "getting_chess_board": {
+      "trigger": "minecraft:inventory_changed",
+      "conditions": {
+        "items": [
+          {
+            "tag": "table_top_craft:chess_boards"
+          }
+        ]
+      }
+    }
+  },
+  "parent": "table_top_craft:root"
+}

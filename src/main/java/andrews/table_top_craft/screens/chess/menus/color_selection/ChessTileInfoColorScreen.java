@@ -134,7 +134,7 @@ public class ChessTileInfoColorScreen extends Screen implements IColorPicker
 		super.keyPressed(keyCode, scanCode, modifiers);
 		InputConstants.Key mouseKey = InputConstants.getKey(keyCode, scanCode);
 		if(this.minecraft.options.keyInventory.isActiveAndMatches(mouseKey))
-			this.onClose();//TODO make sure this works
+			this.onClose();
 		return true;
 	}
 

@@ -1,7 +1,6 @@
 package andrews.table_top_craft.util.obj;
 
 import andrews.table_top_craft.util.Reference;
-import com.mojang.blaze3d.vertex.BufferBuilder;
 import com.mojang.blaze3d.vertex.PoseStack;
 import com.mojang.blaze3d.vertex.VertexConsumer;
 import com.mojang.math.Matrix3f;
@@ -9,8 +8,6 @@ import com.mojang.math.Matrix4f;
 import com.mojang.math.Vector3f;
 import net.minecraft.resources.ResourceLocation;
 import net.minecraft.world.phys.Vec2;
-import net.minecraftforge.api.distmarker.Dist;
-import net.minecraftforge.api.distmarker.OnlyIn;
 import org.apache.commons.compress.utils.IOUtils;
 
 import java.io.ByteArrayOutputStream;
@@ -67,7 +64,8 @@ public class ObjModel
     	pos(builder, stack.last().pose(), x, y, z)
     	.color(1F, 1F, 1F, 1F)
     	.uv(u, v)
-    	.uv2(0, 240); // These values are full brightness
+//        .overlayCoords(0, 0) // We use the DefaultVertexFormat.BLOCK so there is no need for an overlay
+    	.uv2(15, 15); // These values are full brightness
     	normal(builder, stack.last().normal(), nx, ny, nz)
     	.endVertex();   
     }
@@ -81,7 +79,7 @@ public class ObjModel
 		float ty = matrix4f.m10 * x + matrix4f.m11 * y + matrix4f.m12 * z + matrix4f.m13 * w;
 		float tz = matrix4f.m20 * x + matrix4f.m21 * y + matrix4f.m22 * z + matrix4f.m23 * w;
 		
-		return (BufferBuilder) bufferBuilder.vertex(tx, ty, tz);//TODO this was pos() make sure it works
+		return bufferBuilder.vertex(tx, ty, tz);
 	}
 	
 	private static VertexConsumer normal(VertexConsumer bufferBuilder, Matrix3f matrix3f, float x, float y, float z)
@@ -92,7 +90,7 @@ public class ObjModel
 	    float ny = matrix3f.m10 * x + matrix3f.m11 * y + matrix3f.m12 * z;
 	    float nz = matrix3f.m20 * x + matrix3f.m21 * y + matrix3f.m22 * z;
 	      
-	    return (BufferBuilder) bufferBuilder.normal(nx, ny, nz);
+	    return bufferBuilder.normal(nx, ny, nz);
 	}
     
     public static ObjModel loadModel(ResourceLocation resourceLocation)

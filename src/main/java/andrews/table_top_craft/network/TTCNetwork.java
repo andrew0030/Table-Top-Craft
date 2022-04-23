@@ -1,5 +1,6 @@
 package andrews.table_top_craft.network;
 
+import andrews.table_top_craft.network.client.*;
 import andrews.table_top_craft.network.server.*;
 import andrews.table_top_craft.util.Reference;
 import net.minecraft.resources.ResourceLocation;
@@ -23,7 +24,12 @@ public static final String NETWORK_PROTOCOL = "1";
 	{
 		int id = -1;
 		// Client Messages
-		
+		CHANNEL.messageBuilder(MessageClientOpenChessPieceSelectionScreen.class, id++)
+		.encoder(MessageClientOpenChessPieceSelectionScreen::serialize)
+		.decoder(MessageClientOpenChessPieceSelectionScreen::deserialize)
+		.consumer(MessageClientOpenChessPieceSelectionScreen::handle)
+		.add();
+
 		// Server Messages
 		CHANNEL.messageBuilder(MessageServerNewChessGame.class, id++)
 		.encoder(MessageServerNewChessGame::serialize)
@@ -107,6 +113,12 @@ public static final String NETWORK_PROTOCOL = "1";
 		.encoder(MessageServerChangePieceScale::serialize)
 		.decoder(MessageServerChangePieceScale::deserialize)
 		.consumer(MessageServerChangePieceScale::handle)
+		.add();
+
+		CHANNEL.messageBuilder(MessageServerOpenGUIWithServerPlayer.class, id++)
+		.encoder(MessageServerOpenGUIWithServerPlayer::serialize)
+		.decoder(MessageServerOpenGUIWithServerPlayer::deserialize)
+		.consumer(MessageServerOpenGUIWithServerPlayer::handle)
 		.add();
 	}
 }

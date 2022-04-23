@@ -1,0 +1,63 @@
+{
+  "display": {
+    "icon": {
+      "item": "table_top_craft:chess_piece_figure",
+      "nbt": "{BlockEntityTag: {PieceSet: 2, PieceType: 4, RotateChessPieceFigure: 1, PieceName: \"andrew_\"}, display: {Name: '{\"text\":\"andrew_\"}'}}"
+    },
+    "title": {
+      "translate": "advancements.table_top_craft.classic_piece_collector.title"
+    },
+    "description": {
+      "translate": "advancements.table_top_craft.classic_piece_collector.description"
+    },
+    "frame": "goal",
+    "show_toast": true,
+    "announce_to_chat": true
+  },
+  "parent": "table_top_craft:the_hoarding_begins",
+  "criteria": {
+    "requirement": {
+      "trigger": "minecraft:inventory_changed",
+      "conditions": {
+        "items": [
+          {
+            "items": [
+              "table_top_craft:chess_piece_figure"
+            ],
+            "nbt": "{BlockEntityTag: {PieceSet: 2, PieceType: 1}}"
+          },
+          {
+            "items": [
+              "table_top_craft:chess_piece_figure"
+            ],
+            "nbt": "{BlockEntityTag: {PieceSet: 2, PieceType: 2}}"
+          },
+          {
+            "items": [
+              "table_top_craft:chess_piece_figure"
+            ],
+            "nbt": "{BlockEntityTag: {PieceSet: 2, PieceType: 3}}"
+          },
+          {
+            "items": [
+              "table_top_craft:chess_piece_figure"
+            ],
+            "nbt": "{BlockEntityTag: {PieceSet: 2, PieceType: 4}}"
+          },
+          {
+            "items": [
+              "table_top_craft:chess_piece_figure"
+            ],
+            "nbt": "{BlockEntityTag: {PieceSet: 2, PieceType: 5}}"
+          },
+          {
+            "items": [
+              "table_top_craft:chess_piece_figure"
+            ],
+            "nbt": "{BlockEntityTag: {PieceSet: 2, PieceType: 6}}"
+          }
+        ]
+      }
+    }
+  }
+}

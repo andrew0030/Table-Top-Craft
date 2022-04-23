@@ -1,0 +1,13 @@
+{
+  "replace": false,
+  "values": [
+    "table_top_craft:acacia_chess",
+    "table_top_craft:birch_chess",
+    "table_top_craft:crimson_chess",
+    "table_top_craft:dark_oak_chess",
+    "table_top_craft:jungle_chess",
+    "table_top_craft:oak_chess",
+    "table_top_craft:spruce_chess",
+    "table_top_craft:warped_chess"
+  ]
+}

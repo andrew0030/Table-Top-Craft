@@ -136,7 +136,7 @@ public class ChessBoardAttackMoveColorScreen extends Screen implements IColorPic
 		super.keyPressed(keyCode, scanCode, modifiers);
 		InputConstants.Key mouseKey = InputConstants.getKey(keyCode, scanCode);
 		if(this.minecraft.options.keyInventory.isActiveAndMatches(mouseKey))
-			this.onClose();//TODO check if it works
+			this.onClose();
 		return true;
 	}
 

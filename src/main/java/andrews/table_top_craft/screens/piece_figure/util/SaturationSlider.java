@@ -29,7 +29,13 @@ public class SaturationSlider extends ForgeSlider
     @Override
     public boolean keyPressed(int keyCode, int scanCode, int modifiers)
     {
-        return false;
+        super.keyPressed(keyCode, scanCode, modifiers);
+        if(this.menuIn != null && menuIn instanceof IColorPicker colorPicker)
+        {
+            if(colorPicker.isColorPickerActive())
+                colorPicker.getColorPicker().updateRGBHSVSliders();
+        }
+        return true;
     }
 
     @Override

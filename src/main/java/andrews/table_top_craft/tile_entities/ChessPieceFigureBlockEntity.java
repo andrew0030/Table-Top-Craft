@@ -122,16 +122,9 @@ public class ChessPieceFigureBlockEntity extends BlockEntity
             // The check bellow makes sure a variant is only set server side, this way the first ticks during rendering (until synchronized)
             // the client variant will be 0 meaning it wont render anything. This is used to prevent visual glitches.
             if(!this.level.isClientSide)
-            {
                 this.setPieceType(rand.nextInt(6) + 1);
-                System.out.println(pieceType); // TODO remove this debug text line
-            }
-            return pieceType;
         }
-        else
-        {
-            return pieceType;
-        }
+        return pieceType;
     }
 
     public void setPieceType(int type)
@@ -145,16 +138,9 @@ public class ChessPieceFigureBlockEntity extends BlockEntity
         if(pieceSet == 0)
         {
             if(!this.level.isClientSide)
-            {
                 this.setPieceSet(rand.nextInt(3) + 1);
-                System.out.println(pieceType); // TODO remove this debug text line
-            }
-            return pieceSet;
         }
-        else
-        {
-            return pieceSet;
-        }
+        return pieceSet;
     }
 
     public void setPieceSet(int pieceSet)

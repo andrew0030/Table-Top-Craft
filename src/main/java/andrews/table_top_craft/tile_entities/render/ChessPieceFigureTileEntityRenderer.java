@@ -1,7 +1,6 @@
 package andrews.table_top_craft.tile_entities.render;
 
 import andrews.table_top_craft.events.DrawScreenEvent;
-import andrews.table_top_craft.game_logic.chess.pieces.BasePiece;
 import andrews.table_top_craft.objects.blocks.ChessPieceFigureBlock;
 import andrews.table_top_craft.tile_entities.ChessPieceFigureBlockEntity;
 import andrews.table_top_craft.tile_entities.model.piece_figure.ChessPieceFigureStandModel;
@@ -15,9 +14,9 @@ import com.mojang.blaze3d.vertex.PoseStack;
 import com.mojang.blaze3d.vertex.VertexBuffer;
 import com.mojang.blaze3d.vertex.VertexConsumer;
 import com.mojang.math.Matrix4f;
-import com.mojang.math.Quaternion;
 import com.mojang.math.Vector3f;
 import net.minecraft.client.Minecraft;
+import net.minecraft.client.gui.screens.advancements.AdvancementsScreen;
 import net.minecraft.client.renderer.LightTexture;
 import net.minecraft.client.renderer.MultiBufferSource;
 import net.minecraft.client.renderer.RenderType;
@@ -25,6 +24,7 @@ import net.minecraft.client.renderer.ShaderInstance;
 import net.minecraft.client.renderer.blockentity.BlockEntityRenderer;
 import net.minecraft.client.renderer.blockentity.BlockEntityRendererProvider;
 import net.minecraft.client.renderer.texture.DynamicTexture;
+import net.minecraft.network.chat.TextComponent;
 import net.minecraft.resources.ResourceLocation;
 import net.minecraft.world.level.block.state.BlockState;
 
@@ -106,6 +106,12 @@ public class ChessPieceFigureTileEntityRenderer implements BlockEntityRenderer<C
         // We invert the model because Minecraft renders shit inside out.
         poseStack.scale(3.0F, -3.0F, -3.0F);
 
+        if(blockEntity.getPieceName() != null && blockEntity.getPieceName().equals("Lyzantra"))
+        {
+            poseStack.translate(0.0D, -0.2D * blockEntity.getPieceScale(), 0.0D);
+            poseStack.mulPose(Vector3f.ZN.rotationDegrees(180));
+        }
+
         if(blockEntity.hasLevel())
         {
             float scale = (float) blockEntity.getPieceScale();
@@ -136,6 +142,11 @@ public class ChessPieceFigureTileEntityRenderer implements BlockEntityRenderer<C
                 stk.translate(8 * 0.0625F, 2 * 0.0625F, 8 * 0.0625F);
                 if (blockEntity.getRotateChessPieceFigure())
                     stk.mulPose(Vector3f.YN.rotationDegrees(Minecraft.getInstance().player.tickCount + partialTicks));
+                if(blockEntity.getPieceName() != null && blockEntity.getPieceName().equals("Lyzantra"))
+                {
+                    stk.translate(0.0D, 0.85D, 0.0D);
+                    stk.mulPose(Vector3f.ZN.rotationDegrees(180));
+                }
                 // The scale of the Pieces, if rendered in on Head, Third Person Left/Right we make them slightly smaller to fit the ones in the Level
                 stk.scale(isHeldOrHead ? 3 : 4, isHeldOrHead ? -3 : -4, isHeldOrHead ? -3 : -4);
                 shaderinstance.MODEL_VIEW_MATRIX.set(stk.last().pose());

@@ -20,7 +20,7 @@ apply plugin: 'net.minecraftforge.gradle'
 apply plugin: 'org.spongepowered.mixin'
 apply plugin: 'org.parchmentmc.librarian.forgegradle'
 
-version = '1.18.2-2.0.0'
+version = '1.18.2-2.1.0'
 group = 'com.andrews.table_top_craft'
 archivesBaseName = 'table_top_craft'
 

@@ -95,23 +95,15 @@ public class ChessBlock extends HorizontalDirectionalBlock implements EntityBloc
 		}
 		else
 		{
-			HitResult raycast = rayTraceFromPlayer(level, player, ClipContext.Fluid.NONE);
-			if(raycast.getType() == HitResult.Type.BLOCK)
+			Direction face = hit.getDirection();
+			if (face.equals(Direction.UP))
 			{
-				if(level.getBlockState(new BlockPos(raycast.getLocation())).getBlock() instanceof ChessBlock)
-				{
-					Direction face = ((BlockHitResult) raycast).getDirection();
-
-					if(face.equals(Direction.UP))
-					{
-						Direction facing = state.getValue(FACING);
-						int chessRank = getChessRank(raycast.getLocation(), facing) + 1;
-						int chessColumn = getChessColumn(raycast.getLocation(), facing);
-						byte tileCoordinate = (byte) Mth.clamp(((8 - chessRank) * 8 + chessColumn), 0, 63);
-						if(level.isClientSide)
-							NetworkUtil.doChessBoardInteraction(pos, tileCoordinate);
-					}
-				}
+				Direction facing = state.getValue(FACING);
+				int chessRank = this.getChessRank(hit.getLocation(), facing) + 1;
+				int chessColumn = this.getChessColumn(hit.getLocation(), facing);
+				byte tileCoordinate = (byte)Mth.clamp((8 - chessRank) * 8 + chessColumn, 0, 63);
+				if (level.isClientSide)
+					NetworkUtil.doChessBoardInteraction(pos, tileCoordinate);
 			}
 		}
 		return InteractionResult.SUCCESS;
@@ -129,30 +121,6 @@ public class ChessBlock extends HorizontalDirectionalBlock implements EntityBloc
 	public RenderShape getRenderShape(BlockState state)
 	{
 		return RenderShape.MODEL;
-	}
-	
-	/**
-	 * Casts a ray from the player towards the Block
-	 * @param level The world the player is in
-	 * @param player The player
-	 * @param fluidMode The FluidMode
-	 * @return A RayTraceResult
-	 */
-	private HitResult rayTraceFromPlayer(Level level, Player player, ClipContext.Fluid fluidMode)
-	{
-		float pitch = player.getXRot();
-		float yaw = player.getYRot();
-		Vec3 startVector = player.getEyePosition(1.0F);
-		float f2 = Mth.cos(-yaw * ((float)Math.PI / 180F) - (float)Math.PI);
-		float f3 = Mth.sin(-yaw * ((float)Math.PI / 180F) - (float)Math.PI);
-		float f4 = -Mth.cos(-pitch * ((float)Math.PI / 180F));
-		float f5 = Mth.sin(-pitch * ((float)Math.PI / 180F));
-		float f6 = f3 * f4;
-		float f7 = f2 * f4;
-		double reach = player.getAttribute(ForgeMod.REACH_DISTANCE.get()).getValue();;
-		reach = (reach * 2);
-		Vec3 targetVector = startVector.add((double)f6 * reach, (double)f5 * reach, (double)f7 * reach);
-		return level.clip(new ClipContext(startVector, targetVector, ClipContext.Block.OUTLINE, fluidMode, player));
 	}
 	
 	/**

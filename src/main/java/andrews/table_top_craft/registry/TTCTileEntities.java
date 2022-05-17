@@ -1,7 +1,9 @@
 package andrews.table_top_craft.registry;
 
 import andrews.table_top_craft.tile_entities.ChessPieceFigureBlockEntity;
+import andrews.table_top_craft.tile_entities.TicTacToeBlockEntity;
 import andrews.table_top_craft.tile_entities.render.ChessPieceFigureTileEntityRenderer;
+import andrews.table_top_craft.tile_entities.render.TicTacToeBlockEntityRenderer;
 import com.google.common.collect.Sets;
 
 import andrews.table_top_craft.tile_entities.ChessTileEntity;
@@ -19,10 +21,12 @@ public class TTCTileEntities
 	
 	public static final RegistryObject<BlockEntityType<ChessTileEntity>> CHESS                              = BLOCK_ENTITY_TYPES.register("chess", () -> new BlockEntityType<>(ChessTileEntity::new, Sets.newHashSet(TTCBlocks.OAK_CHESS.get(), TTCBlocks.SPRUCE_CHESS.get(), TTCBlocks.BIRCH_CHESS.get(), TTCBlocks.JUNGLE_CHESS.get(), TTCBlocks.ACACIA_CHESS.get(), TTCBlocks.DARK_OAK_CHESS.get(), TTCBlocks.CRIMSON_CHESS.get(), TTCBlocks.WARPED_CHESS.get()), null));
     public static final RegistryObject<BlockEntityType<ChessPieceFigureBlockEntity>> CHESS_PIECE_FIGURE     = BLOCK_ENTITY_TYPES.register("chess_piece_figure", () -> new BlockEntityType<>(ChessPieceFigureBlockEntity::new, Sets.newHashSet(TTCBlocks.CHESS_PIECE_FIGURE.get()), null));
+    public static final RegistryObject<BlockEntityType<TicTacToeBlockEntity>> TIC_TAC_TOE                   = BLOCK_ENTITY_TYPES.register("tic_tac_toe", () -> new BlockEntityType<>(TicTacToeBlockEntity::new, Sets.newHashSet(TTCBlocks.TIC_TAC_TOE.get()), null));
 
     public static void registerTileRenders()
     {
         BlockEntityRenderers.register(CHESS.get(), ChessTileEntityRenderer::new);
         BlockEntityRenderers.register(CHESS_PIECE_FIGURE.get(), ChessPieceFigureTileEntityRenderer::new);
+        BlockEntityRenderers.register(TIC_TAC_TOE.get(), TicTacToeBlockEntityRenderer::new);
     }
 }

@@ -1,0 +1,6 @@
+{
+  "parent": "minecraft:item/generated",
+  "textures": {
+    "layer0": "table_top_craft:item/tic_tac_toe"
+  }
+}

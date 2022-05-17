@@ -12,6 +12,7 @@
 	"block.table_top_craft.crimson_chess": "Crimson Chess Board",
 	"block.table_top_craft.warped_chess": "Warped Chess Board",
 	"block.table_top_craft.chess_piece_figure": "Chess Piece Figure",
+	"block.table_top_craft.tic_tac_toe": "Tic Tac Toe",
 	
 "_comment3": "GUI",
 	"gui.table_top_craft.chess.board_settings": "Chess Board Settings",

@@ -1,0 +1,19 @@
+{
+  "type": "minecraft:crafting_shaped",
+  "pattern": [
+    "CPC",
+    "PCP",
+    "CPC"
+  ],
+  "key": {
+    "C": {
+      "item": "minecraft:coal"
+    },
+    "P": {
+      "item": "minecraft:paper"
+    }
+  },
+  "result": {
+    "item": "table_top_craft:tic_tac_toe"
+  }
+}

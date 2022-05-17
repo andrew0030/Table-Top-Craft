@@ -9,6 +9,7 @@ import andrews.table_top_craft.tile_entities.model.chess.ChessBoardPlateModel;
 import andrews.table_top_craft.tile_entities.model.chess.ChessHighlightModel;
 import andrews.table_top_craft.tile_entities.model.chess.ChessTilesInfoModel;
 import andrews.table_top_craft.tile_entities.model.piece_figure.ChessPieceFigureStandModel;
+import andrews.table_top_craft.tile_entities.model.tic_tac_toe.TicTacToeModel;
 import andrews.table_top_craft.util.Reference;
 import com.mojang.blaze3d.vertex.DefaultVertexFormat;
 import net.minecraft.ChatFormatting;
@@ -108,6 +109,7 @@ public class TableTopCraft
 		event.registerLayerDefinition(ChessHighlightModel.CHESS_HIGHLIGHT_LAYER, ChessHighlightModel::createBodyLayer);
 		event.registerLayerDefinition(ChessTilesInfoModel.CHESS_TILES_INFO_LAYER, ChessTilesInfoModel::createBodyLayer);
 		event.registerLayerDefinition(ChessPieceFigureStandModel.CHESS_PIECE_FIGURE_LAYER, ChessPieceFigureStandModel::createBodyLayer);
+		event.registerLayerDefinition(TicTacToeModel.TIC_TAC_TOE_LAYER, TicTacToeModel::createBodyLayer);
 	}
 
 	void registerShaders(final RegisterShadersEvent event)

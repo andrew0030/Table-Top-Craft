@@ -48,7 +48,7 @@ public class TableTopCraft
 		return Objects.requireNonNull(rendertypeSolidBlockEntityShader, "Attempted to call getSolidBlockEntityShader before shaders have finished loading.");
 	}
 
-	public static final CreativeModeTab TABLE_TOP_CRAFT_GROUP = new CreativeModeTab(Reference.MODID)
+	public static final CreativeModeTab TABLE_TOP_CRAFT_GROUP = new CreativeModeTab(Reference.MODID + ".tab")
 	{
 		@Override
 		public ItemStack makeIcon()

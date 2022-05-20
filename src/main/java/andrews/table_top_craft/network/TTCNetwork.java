@@ -5,11 +5,13 @@ import andrews.table_top_craft.network.server.*;
 
 public class TTCNetwork
 {
+	public static void registerClientNetworkMessages()
+	{
+		MessageClientOpenChessPieceSelectionScreen.registerPacket();
+	}
+
 	public static void registerNetworkMessages()
 	{
-		// Client Messages
-		MessageClientOpenChessPieceSelectionScreen.registerPacket();
-		// Server Messages
 		MessageServerNewChessGame.registerPacket();
 		MessageServerShowTileInfo.registerPacket();
 		MessageServerLoadFEN.registerPacket();

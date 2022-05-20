@@ -1,6 +1,6 @@
 package andrews.table_top_craft.network.client;
 
-import andrews.table_top_craft.screens.chess.menus.ChessPieceSelectionScreen;
+import andrews.table_top_craft.network.client.util.ClientPacketHandlerClass;
 import andrews.table_top_craft.tile_entities.ChessTileEntity;
 import andrews.table_top_craft.util.Reference;
 import net.fabricmc.fabric.api.client.networking.v1.ClientPlayNetworking;
@@ -28,7 +28,7 @@ public class MessageClientOpenChessPieceSelectionScreen
                 }
 
                 if(Minecraft.getInstance().player.getLevel().getBlockEntity(pos) != null && Minecraft.getInstance().player.getLevel().getBlockEntity(pos) instanceof ChessTileEntity chessTileEntity)
-                    Minecraft.getInstance().setScreen(new ChessPieceSelectionScreen(chessTileEntity, isStandardSetUnlocked, isClassicSetUnlocked, isPandorasCreaturesSetUnlocked));
+                    ClientPacketHandlerClass.handleOpenChessPieceSelectionPacket(chessTileEntity, isStandardSetUnlocked, isClassicSetUnlocked, isPandorasCreaturesSetUnlocked);
             });
         });
     }

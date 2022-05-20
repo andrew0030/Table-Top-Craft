@@ -1,5 +1,6 @@
 package andrews.table_top_craft.util;
 
+import andrews.table_top_craft.network.TTCNetwork;
 import andrews.table_top_craft.registry.TTCTileEntities;
 import andrews.table_top_craft.tile_entities.model.chess.ChessBoardPlateModel;
 import andrews.table_top_craft.tile_entities.model.chess.ChessHighlightModel;
@@ -40,5 +41,6 @@ public class TTCClientInit implements ClientModInitializer
 		// Block Entity Renderers
         TTCTileEntities.registerBlockEntityRenderers();
 		TTCBlockEntityWithoutLevelRenderer.init();
+		TTCNetwork.registerClientNetworkMessages();
     }
 }

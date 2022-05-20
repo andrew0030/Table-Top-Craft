@@ -1,11 +1,11 @@
 package andrews.table_top_craft.screens.piece_figure.util;
 
-import net.minecraftforge.client.gui.widget.ForgeSlider;
+import andrews.table_top_craft.screens.util.BaseSlider;
 
 public interface IColorPickerExtended
 {
-    ForgeSlider getOptionalRedSlider();
-    ForgeSlider getOptionalGreenSlider();
-    ForgeSlider getOptionalBlueSlider();
+    BaseSlider getOptionalRedSlider();
+    BaseSlider getOptionalGreenSlider();
+    BaseSlider getOptionalBlueSlider();
     boolean isOptionalColorPickerActive();
 }

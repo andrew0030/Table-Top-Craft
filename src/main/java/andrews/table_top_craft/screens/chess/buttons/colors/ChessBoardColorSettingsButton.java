@@ -12,8 +12,6 @@ import net.minecraft.network.chat.TextComponent;
 import net.minecraft.network.chat.TranslatableComponent;
 import net.minecraft.resources.ResourceLocation;
 
-import java.util.Arrays;
-
 public class ChessBoardColorSettingsButton extends Button
 {
 	private static final ResourceLocation TEXTURE = new ResourceLocation(Reference.MODID + ":textures/gui/buttons/chess_menu_buttons.png");
@@ -49,7 +47,7 @@ public class ChessBoardColorSettingsButton extends Button
 		poseStack.popPose();
 		// This is used to render a tooltip
 		if(isHovered)
-			Minecraft.getInstance().screen.renderTooltip(poseStack, Arrays.asList(this.buttonText.getVisualOrderText()), x - (15 + this.fontRenderer.width(this.buttonText.getString())), y + 20, this.fontRenderer);
+			Minecraft.getInstance().screen.renderTooltip(poseStack, this.buttonText, x - (15 + this.fontRenderer.width(this.buttonText.getString())), y + 20);
 	}
 	
 	/**

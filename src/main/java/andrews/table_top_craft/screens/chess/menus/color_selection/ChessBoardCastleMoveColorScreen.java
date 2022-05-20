@@ -16,18 +16,17 @@ import andrews.table_top_craft.screens.piece_figure.util.ColorPickerToggleButton
 import andrews.table_top_craft.screens.piece_figure.util.IColorPicker;
 import andrews.table_top_craft.screens.piece_figure.util.SaturationSlider;
 import andrews.table_top_craft.screens.piece_figure.util.TTCColorPicker;
+import andrews.table_top_craft.screens.util.BaseSlider;
 import andrews.table_top_craft.tile_entities.ChessTileEntity;
 import andrews.table_top_craft.util.Color;
 import andrews.table_top_craft.util.NBTColorSaving;
 import andrews.table_top_craft.util.Reference;
-import com.mojang.blaze3d.platform.InputConstants;
 import com.mojang.blaze3d.systems.RenderSystem;
 import com.mojang.blaze3d.vertex.PoseStack;
 import net.minecraft.client.gui.screens.Screen;
 import net.minecraft.network.chat.TextComponent;
 import net.minecraft.network.chat.TranslatableComponent;
 import net.minecraft.resources.ResourceLocation;
-import net.minecraftforge.client.gui.widget.ForgeSlider;
 
 public class ChessBoardCastleMoveColorScreen extends Screen implements IColorPicker
 {
@@ -134,8 +133,7 @@ public class ChessBoardCastleMoveColorScreen extends Screen implements IColorPic
 	public boolean keyPressed(int keyCode, int scanCode, int modifiers)
 	{
 		super.keyPressed(keyCode, scanCode, modifiers);
-		InputConstants.Key mouseKey = InputConstants.getKey(keyCode, scanCode);
-		if(this.minecraft.options.keyInventory.isActiveAndMatches(mouseKey))
+		if(this.minecraft.options.keyInventory.matches(keyCode, scanCode))
 			this.onClose();
 		return true;
 	}
@@ -147,25 +145,25 @@ public class ChessBoardCastleMoveColorScreen extends Screen implements IColorPic
 	}
 
 	@Override
-	public ForgeSlider getRedSlider()
+	public BaseSlider getRedSlider()
 	{
 		return this.redColorSlider;
 	}
 
 	@Override
-	public ForgeSlider getGreenSlider()
+	public BaseSlider getGreenSlider()
 	{
 		return this.greenColorSlider;
 	}
 
 	@Override
-	public ForgeSlider getBlueSlider()
+	public BaseSlider getBlueSlider()
 	{
 		return this.blueColorSlider;
 	}
 
 	@Override
-	public ForgeSlider getSaturationSlider()
+	public BaseSlider getSaturationSlider()
 	{
 		return this.saturationSlider;
 	}

@@ -1,6 +1,6 @@
 {
 "_comment1": "Item Groups",
-	"itemGroup.table_top_craft": "Настолки",
+	"itemGroup.table_top_craft.tab": "Настолки",
 	
 "_comment2": "Blocks",
 	"block.table_top_craft.oak_chess": "Шахмотный Стол из Дуба",

@@ -7,17 +7,12 @@ import andrews.table_top_craft.screens.chess.buttons.pieces.ChessBoardPieceSetti
 import andrews.table_top_craft.screens.chess.buttons.settings.ChessBoardSettingsButton;
 import andrews.table_top_craft.tile_entities.ChessTileEntity;
 import andrews.table_top_craft.util.Reference;
-import com.mojang.blaze3d.platform.InputConstants;
 import com.mojang.blaze3d.systems.RenderSystem;
 import com.mojang.blaze3d.vertex.PoseStack;
 import net.minecraft.client.gui.screens.Screen;
 import net.minecraft.network.chat.TextComponent;
 import net.minecraft.network.chat.TranslatableComponent;
 import net.minecraft.resources.ResourceLocation;
-import net.minecraft.server.ServerAdvancementManager;
-import net.minecraft.server.level.ServerPlayer;
-import net.minecraft.world.entity.player.Player;
-import net.minecraftforge.event.entity.player.AdvancementEvent;
 
 public class ChessPieceSelectionScreen extends Screen
 {
@@ -92,8 +87,7 @@ public class ChessPieceSelectionScreen extends Screen
     public boolean keyPressed(int keyCode, int scanCode, int modifiers)
     {
         super.keyPressed(keyCode, scanCode, modifiers);
-        InputConstants.Key mouseKey = InputConstants.getKey(keyCode, scanCode);
-        if(this.minecraft.options.keyInventory.isActiveAndMatches(mouseKey))
+        if(this.minecraft.options.keyInventory.matches(keyCode, scanCode))
             this.onClose();
         return true;
     }

@@ -1,12 +1,9 @@
 package andrews.table_top_craft.screens.chess.buttons.settings;
 
-import java.util.Arrays;
-
-import com.mojang.blaze3d.systems.RenderSystem;
-
 import andrews.table_top_craft.screens.chess.menus.ChessBoardSettingsScreen;
 import andrews.table_top_craft.tile_entities.ChessTileEntity;
 import andrews.table_top_craft.util.Reference;
+import com.mojang.blaze3d.systems.RenderSystem;
 import com.mojang.blaze3d.vertex.PoseStack;
 import net.minecraft.client.Minecraft;
 import net.minecraft.client.gui.Font;
@@ -50,7 +47,7 @@ public class ChessBoardSettingsButton extends Button
 		poseStack.popPose();
 		// This is used to render a tooltip
 		if(isHovered)
-			Minecraft.getInstance().screen.renderTooltip(poseStack, Arrays.asList(this.buttonText.getVisualOrderText()), x - (15 + this.fontRenderer.width(this.buttonText.getString())), y + 20, this.fontRenderer);
+			Minecraft.getInstance().screen.renderTooltip(poseStack, this.buttonText, x - (15 + this.fontRenderer.width(this.buttonText.getString())), y + 20);
 	}
 	
 	/**

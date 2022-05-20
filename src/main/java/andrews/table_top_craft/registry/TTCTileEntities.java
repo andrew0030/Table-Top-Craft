@@ -1,32 +1,30 @@
 package andrews.table_top_craft.registry;
 
 import andrews.table_top_craft.tile_entities.ChessPieceFigureBlockEntity;
+import andrews.table_top_craft.tile_entities.ChessTileEntity;
 import andrews.table_top_craft.tile_entities.TicTacToeBlockEntity;
 import andrews.table_top_craft.tile_entities.render.ChessPieceFigureTileEntityRenderer;
-import andrews.table_top_craft.tile_entities.render.TicTacToeBlockEntityRenderer;
-import com.google.common.collect.Sets;
-
-import andrews.table_top_craft.tile_entities.ChessTileEntity;
 import andrews.table_top_craft.tile_entities.render.ChessTileEntityRenderer;
+import andrews.table_top_craft.tile_entities.render.TicTacToeBlockEntityRenderer;
 import andrews.table_top_craft.util.Reference;
-import net.minecraft.client.renderer.blockentity.BlockEntityRenderers;
+import net.fabricmc.fabric.api.client.rendering.v1.BlockEntityRendererRegistry;
+import net.fabricmc.fabric.api.object.builder.v1.block.entity.FabricBlockEntityTypeBuilder;
+import net.minecraft.core.Registry;
+import net.minecraft.resources.ResourceLocation;
 import net.minecraft.world.level.block.entity.BlockEntityType;
-import net.minecraftforge.registries.DeferredRegister;
-import net.minecraftforge.registries.ForgeRegistries;
-import net.minecraftforge.registries.RegistryObject;
 
 public class TTCTileEntities
 {
-	public static final DeferredRegister<BlockEntityType<?>> BLOCK_ENTITY_TYPES = DeferredRegister.create(ForgeRegistries.BLOCK_ENTITIES, Reference.MODID);
-	
-	public static final RegistryObject<BlockEntityType<ChessTileEntity>> CHESS                              = BLOCK_ENTITY_TYPES.register("chess", () -> new BlockEntityType<>(ChessTileEntity::new, Sets.newHashSet(TTCBlocks.OAK_CHESS.get(), TTCBlocks.SPRUCE_CHESS.get(), TTCBlocks.BIRCH_CHESS.get(), TTCBlocks.JUNGLE_CHESS.get(), TTCBlocks.ACACIA_CHESS.get(), TTCBlocks.DARK_OAK_CHESS.get(), TTCBlocks.CRIMSON_CHESS.get(), TTCBlocks.WARPED_CHESS.get()), null));
-    public static final RegistryObject<BlockEntityType<ChessPieceFigureBlockEntity>> CHESS_PIECE_FIGURE     = BLOCK_ENTITY_TYPES.register("chess_piece_figure", () -> new BlockEntityType<>(ChessPieceFigureBlockEntity::new, Sets.newHashSet(TTCBlocks.CHESS_PIECE_FIGURE.get()), null));
-    public static final RegistryObject<BlockEntityType<TicTacToeBlockEntity>> TIC_TAC_TOE                   = BLOCK_ENTITY_TYPES.register("tic_tac_toe", () -> new BlockEntityType<>(TicTacToeBlockEntity::new, Sets.newHashSet(TTCBlocks.TIC_TAC_TOE.get()), null));
+	public static final BlockEntityType<ChessTileEntity> CHESS                              = Registry.register(Registry.BLOCK_ENTITY_TYPE, new ResourceLocation(Reference.MODID, "chess"), FabricBlockEntityTypeBuilder.create(ChessTileEntity::new, TTCBlocks.OAK_CHESS, TTCBlocks.SPRUCE_CHESS, TTCBlocks.BIRCH_CHESS, TTCBlocks.JUNGLE_CHESS, TTCBlocks.ACACIA_CHESS, TTCBlocks.DARK_OAK_CHESS, TTCBlocks.CRIMSON_CHESS, TTCBlocks.WARPED_CHESS).build(null));
+    public static final BlockEntityType<ChessPieceFigureBlockEntity> CHESS_PIECE_FIGURE     = Registry.register(Registry.BLOCK_ENTITY_TYPE, new ResourceLocation(Reference.MODID, "chess_piece_figure"), FabricBlockEntityTypeBuilder.create(ChessPieceFigureBlockEntity::new, TTCBlocks.CHESS_PIECE_FIGURE).build(null));
+    public static final BlockEntityType<TicTacToeBlockEntity> TIC_TAC_TOE                   = Registry.register(Registry.BLOCK_ENTITY_TYPE, new ResourceLocation(Reference.MODID, "tic_tac_toe"), FabricBlockEntityTypeBuilder.create(TicTacToeBlockEntity::new, TTCBlocks.TIC_TAC_TOE).build(null));
 
-    public static void registerTileRenders()
+    public static void init() {}
+
+    public static void registerBlockEntityRenderers()
     {
-        BlockEntityRenderers.register(CHESS.get(), ChessTileEntityRenderer::new);
-        BlockEntityRenderers.register(CHESS_PIECE_FIGURE.get(), ChessPieceFigureTileEntityRenderer::new);
-        BlockEntityRenderers.register(TIC_TAC_TOE.get(), TicTacToeBlockEntityRenderer::new);
+        BlockEntityRendererRegistry.register(CHESS, ChessTileEntityRenderer::new);
+        BlockEntityRendererRegistry.register(CHESS_PIECE_FIGURE, ChessPieceFigureTileEntityRenderer::new);
+        BlockEntityRendererRegistry.register(TIC_TAC_TOE, TicTacToeBlockEntityRenderer::new);
     }
 }

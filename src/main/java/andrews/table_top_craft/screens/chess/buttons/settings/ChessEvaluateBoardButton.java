@@ -1,10 +1,9 @@
 package andrews.table_top_craft.screens.chess.buttons.settings;
 
-import com.mojang.blaze3d.systems.RenderSystem;
-
 import andrews.table_top_craft.screens.chess.menus.ChessBoardEvaluatorScreen;
 import andrews.table_top_craft.tile_entities.ChessTileEntity;
 import andrews.table_top_craft.util.Reference;
+import com.mojang.blaze3d.systems.RenderSystem;
 import com.mojang.blaze3d.vertex.PoseStack;
 import net.minecraft.client.Minecraft;
 import net.minecraft.client.gui.Font;

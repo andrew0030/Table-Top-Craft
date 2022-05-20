@@ -93,8 +93,7 @@ public class ChessBoardEvaluatorScreen extends Screen
 	public boolean keyPressed(int keyCode, int scanCode, int modifiers)
 	{
 		super.keyPressed(keyCode, scanCode, modifiers);
-		InputConstants.Key mouseKey = InputConstants.getKey(keyCode, scanCode);
-		if(this.minecraft.options.keyInventory.isActiveAndMatches(mouseKey))
+		if(this.minecraft.options.keyInventory.matches(keyCode, scanCode))
 			this.onClose();
 		return true;
 	}

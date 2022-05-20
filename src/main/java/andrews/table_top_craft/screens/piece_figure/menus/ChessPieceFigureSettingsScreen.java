@@ -17,6 +17,7 @@ import andrews.table_top_craft.screens.piece_figure.util.ColorPickerToggleButton
 import andrews.table_top_craft.screens.piece_figure.util.IColorPicker;
 import andrews.table_top_craft.screens.piece_figure.util.SaturationSlider;
 import andrews.table_top_craft.screens.piece_figure.util.TTCColorPicker;
+import andrews.table_top_craft.screens.util.BaseSlider;
 import andrews.table_top_craft.tile_entities.ChessPieceFigureBlockEntity;
 import andrews.table_top_craft.util.Color;
 import andrews.table_top_craft.util.NBTColorSaving;
@@ -39,7 +40,6 @@ import net.minecraft.network.chat.TextComponent;
 import net.minecraft.network.chat.TranslatableComponent;
 import net.minecraft.resources.ResourceLocation;
 import net.minecraft.world.item.ItemStack;
-import net.minecraftforge.client.gui.widget.ForgeSlider;
 
 public class ChessPieceFigureSettingsScreen extends Screen implements IColorPicker
 {
@@ -69,8 +69,8 @@ public class ChessPieceFigureSettingsScreen extends Screen implements IColorPick
         super(new TextComponent(""));
         this.chessPieceFigureBlockEntity = chessPieceFigureBlockEntity;
         this.isColorPickerActive = isColorPickerActive;
-        previewBlockEntity = new ChessPieceFigureBlockEntity(BlockPos.ZERO, TTCBlocks.CHESS_PIECE_FIGURE.get().defaultBlockState());
-        chessPieceFigureStack = new ItemStack(TTCBlocks.CHESS_PIECE_FIGURE.get().asItem());
+        previewBlockEntity = new ChessPieceFigureBlockEntity(BlockPos.ZERO, TTCBlocks.CHESS_PIECE_FIGURE.defaultBlockState());
+        chessPieceFigureStack = new ItemStack(TTCBlocks.CHESS_PIECE_FIGURE.asItem());
     }
 
     @Override
@@ -177,8 +177,7 @@ public class ChessPieceFigureSettingsScreen extends Screen implements IColorPick
     public boolean keyPressed(int keyCode, int scanCode, int modifiers)
     {
         super.keyPressed(keyCode, scanCode, modifiers);
-        InputConstants.Key mouseKey = InputConstants.getKey(keyCode, scanCode);
-        if(this.minecraft.options.keyInventory.isActiveAndMatches(mouseKey))
+        if(this.minecraft.options.keyInventory.matches(keyCode, scanCode))
             this.onClose();
         return true;
     }
@@ -199,25 +198,25 @@ public class ChessPieceFigureSettingsScreen extends Screen implements IColorPick
     }
 
     @Override
-    public ForgeSlider getRedSlider()
+    public BaseSlider getRedSlider()
     {
         return this.redColorSlider;
     }
 
     @Override
-    public ForgeSlider getGreenSlider()
+    public BaseSlider getGreenSlider()
     {
         return this.greenColorSlider;
     }
 
     @Override
-    public ForgeSlider getBlueSlider()
+    public BaseSlider getBlueSlider()
     {
         return this.blueColorSlider;
     }
 
     @Override
-    public ForgeSlider getSaturationSlider()
+    public BaseSlider getSaturationSlider()
     {
         return this.saturationSlider;
     }

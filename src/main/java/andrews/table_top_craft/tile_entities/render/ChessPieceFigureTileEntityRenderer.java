@@ -1,13 +1,10 @@
 package andrews.table_top_craft.tile_entities.render;
 
-import andrews.table_top_craft.events.DrawScreenEvent;
 import andrews.table_top_craft.objects.blocks.ChessPieceFigureBlock;
+import andrews.table_top_craft.registry.TTCBlocks;
 import andrews.table_top_craft.tile_entities.ChessPieceFigureBlockEntity;
 import andrews.table_top_craft.tile_entities.model.piece_figure.ChessPieceFigureStandModel;
-import andrews.table_top_craft.util.Color;
-import andrews.table_top_craft.util.NBTColorSaving;
-import andrews.table_top_craft.util.Reference;
-import andrews.table_top_craft.util.TTCRenderTypes;
+import andrews.table_top_craft.util.*;
 import com.mojang.blaze3d.platform.NativeImage;
 import com.mojang.blaze3d.systems.RenderSystem;
 import com.mojang.blaze3d.vertex.PoseStack;
@@ -16,16 +13,16 @@ import com.mojang.blaze3d.vertex.VertexConsumer;
 import com.mojang.math.Matrix4f;
 import com.mojang.math.Vector3f;
 import net.minecraft.client.Minecraft;
-import net.minecraft.client.gui.screens.advancements.AdvancementsScreen;
 import net.minecraft.client.renderer.LightTexture;
 import net.minecraft.client.renderer.MultiBufferSource;
 import net.minecraft.client.renderer.RenderType;
 import net.minecraft.client.renderer.ShaderInstance;
+import net.minecraft.client.renderer.block.model.ItemTransforms;
 import net.minecraft.client.renderer.blockentity.BlockEntityRenderer;
 import net.minecraft.client.renderer.blockentity.BlockEntityRendererProvider;
 import net.minecraft.client.renderer.texture.DynamicTexture;
-import net.minecraft.network.chat.TextComponent;
 import net.minecraft.resources.ResourceLocation;
+import net.minecraft.world.item.ItemStack;
 import net.minecraft.world.level.block.state.BlockState;
 
 public class ChessPieceFigureTileEntityRenderer implements BlockEntityRenderer<ChessPieceFigureBlockEntity>
@@ -164,27 +161,27 @@ public class ChessPieceFigureTileEntityRenderer implements BlockEntityRenderer<C
                 switch (blockEntity.getPieceType())
                 {
                     case 1 -> {
-                        VertexBuffer pawnBuffer = DrawScreenEvent.pawnBuffer;
+                        VertexBuffer pawnBuffer = TTCVBOs.pawnBuffer;
                         BufferHelpers.draw(pawnBuffer, shaderinstance);
                     }
                     case 2 -> {
-                        VertexBuffer rookBuffer = DrawScreenEvent.rookBuffer;
+                        VertexBuffer rookBuffer = TTCVBOs.rookBuffer;
                         BufferHelpers.draw(rookBuffer, shaderinstance);
                     }
                     case 3 -> {
-                        VertexBuffer bishopBuffer = DrawScreenEvent.bishopBuffer;
+                        VertexBuffer bishopBuffer = TTCVBOs.bishopBuffer;
                         BufferHelpers.draw(bishopBuffer, shaderinstance);
                     }
                     case 4 -> {
-                        VertexBuffer knightBuffer = DrawScreenEvent.knightBuffer;
+                        VertexBuffer knightBuffer = TTCVBOs.knightBuffer;
                         BufferHelpers.draw(knightBuffer, shaderinstance);
                     }
                     case 5 -> {
-                        VertexBuffer kingBuffer = DrawScreenEvent.kingBuffer;
+                        VertexBuffer kingBuffer = TTCVBOs.kingBuffer;
                         BufferHelpers.draw(kingBuffer, shaderinstance);
                     }
                     case 6 -> {
-                        VertexBuffer queenBuffer = DrawScreenEvent.queenBuffer;
+                        VertexBuffer queenBuffer = TTCVBOs.queenBuffer;
                         BufferHelpers.draw(queenBuffer, shaderinstance);
                     }
                 }
@@ -193,27 +190,27 @@ public class ChessPieceFigureTileEntityRenderer implements BlockEntityRenderer<C
                 switch (blockEntity.getPieceType())
                 {
                     case 1 -> {
-                        VertexBuffer classicPawnBuffer = DrawScreenEvent.classicPawnBuffer;
+                        VertexBuffer classicPawnBuffer = TTCVBOs.classicPawnBuffer;
                         BufferHelpers.draw(classicPawnBuffer, shaderinstance);
                     }
                     case 2 -> {
-                        VertexBuffer classicRookBuffer = DrawScreenEvent.classicRookBuffer;
+                        VertexBuffer classicRookBuffer = TTCVBOs.classicRookBuffer;
                         BufferHelpers.draw(classicRookBuffer, shaderinstance);
                     }
                     case 3 -> {
-                        VertexBuffer classicBishopBuffer = DrawScreenEvent.classicBishopBuffer;
+                        VertexBuffer classicBishopBuffer = TTCVBOs.classicBishopBuffer;
                         BufferHelpers.draw(classicBishopBuffer, shaderinstance);
                     }
                     case 4 -> {
-                        VertexBuffer classicKnightBuffer = DrawScreenEvent.classicKnightBuffer;
+                        VertexBuffer classicKnightBuffer = TTCVBOs.classicKnightBuffer;
                         BufferHelpers.draw(classicKnightBuffer, shaderinstance);
                     }
                     case 5 -> {
-                        VertexBuffer classicKingBuffer = DrawScreenEvent.classicKingBuffer;
+                        VertexBuffer classicKingBuffer = TTCVBOs.classicKingBuffer;
                         BufferHelpers.draw(classicKingBuffer, shaderinstance);
                     }
                     case 6 -> {
-                        VertexBuffer classicQueenBuffer = DrawScreenEvent.classicQueenBuffer;
+                        VertexBuffer classicQueenBuffer = TTCVBOs.classicQueenBuffer;
                         BufferHelpers.draw(classicQueenBuffer, shaderinstance);
                     }
                 }
@@ -222,27 +219,27 @@ public class ChessPieceFigureTileEntityRenderer implements BlockEntityRenderer<C
                 switch (blockEntity.getPieceType())
                 {
                     case 1 -> {
-                        VertexBuffer pandorasCreaturesPawnBuffer = DrawScreenEvent.pandorasCreaturesPawnBuffer;
+                        VertexBuffer pandorasCreaturesPawnBuffer = TTCVBOs.pandorasCreaturesPawnBuffer;
                         BufferHelpers.draw(pandorasCreaturesPawnBuffer, shaderinstance);
                     }
                     case 2 -> {
-                        VertexBuffer pandorasCreaturesRookBuffer = DrawScreenEvent.pandorasCreaturesRookBuffer;
+                        VertexBuffer pandorasCreaturesRookBuffer = TTCVBOs.pandorasCreaturesRookBuffer;
                         BufferHelpers.draw(pandorasCreaturesRookBuffer, shaderinstance);
                     }
                     case 3 -> {
-                        VertexBuffer pandorasCreaturesBishopBuffer = DrawScreenEvent.pandorasCreaturesBishopBuffer;
+                        VertexBuffer pandorasCreaturesBishopBuffer = TTCVBOs.pandorasCreaturesBishopBuffer;
                         BufferHelpers.draw(pandorasCreaturesBishopBuffer, shaderinstance);
                     }
                     case 4 -> {
-                        VertexBuffer pandorasCreaturesKnightBuffer = DrawScreenEvent.pandorasCreaturesKnightBuffer;
+                        VertexBuffer pandorasCreaturesKnightBuffer = TTCVBOs.pandorasCreaturesKnightBuffer;
                         BufferHelpers.draw(pandorasCreaturesKnightBuffer, shaderinstance);
                     }
                     case 5 -> {
-                        VertexBuffer pandorasCreaturesKingBuffer = DrawScreenEvent.pandorasCreaturesKingBuffer;
+                        VertexBuffer pandorasCreaturesKingBuffer = TTCVBOs.pandorasCreaturesKingBuffer;
                         BufferHelpers.draw(pandorasCreaturesKingBuffer, shaderinstance);
                     }
                     case 6 -> {
-                        VertexBuffer pandorasCreaturesQueenBuffer = DrawScreenEvent.pandorasCreaturesQueenBuffer;
+                        VertexBuffer pandorasCreaturesQueenBuffer = TTCVBOs.pandorasCreaturesQueenBuffer;
                         BufferHelpers.draw(pandorasCreaturesQueenBuffer, shaderinstance);
                     }
                 }

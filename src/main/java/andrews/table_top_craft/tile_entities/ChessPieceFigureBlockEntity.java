@@ -5,13 +5,11 @@ import andrews.table_top_craft.util.NBTColorSaving;
 import net.minecraft.core.BlockPos;
 import net.minecraft.nbt.CompoundTag;
 import net.minecraft.nbt.Tag;
-import net.minecraft.network.Connection;
 import net.minecraft.network.protocol.Packet;
 import net.minecraft.network.protocol.game.ClientGamePacketListener;
 import net.minecraft.network.protocol.game.ClientboundBlockEntityDataPacket;
 import net.minecraft.world.level.block.entity.BlockEntity;
 import net.minecraft.world.level.block.state.BlockState;
-import net.minecraft.world.phys.AABB;
 
 import java.util.Random;
 
@@ -27,15 +25,7 @@ public class ChessPieceFigureBlockEntity extends BlockEntity
 
     public ChessPieceFigureBlockEntity(BlockPos pos, BlockState state)
     {
-        super(TTCTileEntities.CHESS_PIECE_FIGURE.get(), pos, state);
-    }
-
-    @Override
-    public AABB getRenderBoundingBox()
-    {
-        double scale = this.getPieceScale();
-        double verticalScale = 0.14D * scale;
-        return super.getRenderBoundingBox().expandTowards(-verticalScale, 0.6D * scale, -verticalScale).move(verticalScale / 2, 0, verticalScale / 2);
+        super(TTCTileEntities.CHESS_PIECE_FIGURE, pos, state);
     }
 
     // Used to synchronize the BlockEntity with the client when the chunk it is in is loaded
@@ -47,26 +37,12 @@ public class ChessPieceFigureBlockEntity extends BlockEntity
         return compound;
     }
 
-    // Used to synchronize the BlockEntity with the client when the chunk it is in is loaded
-    @Override
-    public void handleUpdateTag(CompoundTag compound)
-    {
-        this.loadFromNBT(compound);
-    }
-
     // Used to synchronize the BlockEntity with the client onBlockUpdate
     @Override
     public Packet<ClientGamePacketListener> getUpdatePacket()
     {
         // Will get tag from #getUpdateTag
         return ClientboundBlockEntityDataPacket.create(this);
-    }
-
-    // Used to synchronize the BlockEntity with the client onBlockUpdate
-    @Override
-    public void onDataPacket(Connection net, ClientboundBlockEntityDataPacket pkt)
-    {
-        this.loadFromNBT(pkt.getTag());
     }
 
     @Override

@@ -1,10 +1,9 @@
 package andrews.table_top_craft.screens.chess.buttons.colors;
 
-import com.mojang.blaze3d.systems.RenderSystem;
-
 import andrews.table_top_craft.screens.chess.menus.color_selection.ChessBoardAttackMoveColorScreen;
 import andrews.table_top_craft.tile_entities.ChessTileEntity;
 import andrews.table_top_craft.util.Reference;
+import com.mojang.blaze3d.systems.RenderSystem;
 import com.mojang.blaze3d.vertex.PoseStack;
 import net.minecraft.client.Minecraft;
 import net.minecraft.client.gui.Font;
@@ -12,7 +11,6 @@ import net.minecraft.client.gui.components.Button;
 import net.minecraft.network.chat.TextComponent;
 import net.minecraft.network.chat.TranslatableComponent;
 import net.minecraft.resources.ResourceLocation;
-import net.minecraftforge.client.gui.GuiUtils;
 
 public class ChessBoardAttackMoveColorButton extends Button
 {

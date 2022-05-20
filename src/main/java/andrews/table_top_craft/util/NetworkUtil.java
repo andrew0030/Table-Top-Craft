@@ -1,121 +1,139 @@
 package andrews.table_top_craft.util;
 
-import andrews.table_top_craft.network.TTCNetwork;
 import andrews.table_top_craft.network.client.MessageClientOpenChessPieceSelectionScreen;
 import andrews.table_top_craft.network.server.*;
+import io.netty.buffer.Unpooled;
+import net.fabricmc.fabric.api.client.networking.v1.ClientPlayNetworking;
+import net.fabricmc.fabric.api.networking.v1.ServerPlayNetworking;
 import net.minecraft.core.BlockPos;
+import net.minecraft.network.FriendlyByteBuf;
 import net.minecraft.server.level.ServerPlayer;
-import net.minecraftforge.api.distmarker.Dist;
-import net.minecraftforge.api.distmarker.OnlyIn;
-import net.minecraftforge.network.PacketDistributor;
 
 public class NetworkUtil
 {
 	public static void openChessPieceSelectionFromServer(BlockPos pos, boolean isStandardSetUnlocked, boolean isClassicSetUnlocked, boolean isPandorasCreaturesSetUnlocked, ServerPlayer serverPlayer)
 	{
-		TTCNetwork.CHANNEL.send(PacketDistributor.PLAYER.with(() -> serverPlayer), new MessageClientOpenChessPieceSelectionScreen(pos, isStandardSetUnlocked, isClassicSetUnlocked, isPandorasCreaturesSetUnlocked));
+		FriendlyByteBuf passedData = new FriendlyByteBuf(Unpooled.buffer());
+		passedData.writeBlockPos(pos);
+		passedData.writeBoolean(isStandardSetUnlocked);
+		passedData.writeBoolean(isClassicSetUnlocked);
+		passedData.writeBoolean(isPandorasCreaturesSetUnlocked);
+		ServerPlayNetworking.send(serverPlayer, MessageClientOpenChessPieceSelectionScreen.PACKET_ID, passedData);
 	}
 
-	@OnlyIn(Dist.CLIENT)
 	public static void newChessGameMessage(BlockPos pos)
 	{
-		TTCNetwork.CHANNEL.sendToServer(new MessageServerNewChessGame(pos));
+		FriendlyByteBuf passedData = new FriendlyByteBuf(Unpooled.buffer());
+		passedData.writeBlockPos(pos);
+		ClientPlayNetworking.send(MessageServerNewChessGame.PACKET_ID, passedData);
 	}
-	
-	@OnlyIn(Dist.CLIENT)
+
 	public static void showTileInfoMessage(BlockPos pos)
 	{
-		TTCNetwork.CHANNEL.sendToServer(new MessageServerShowTileInfo(pos));
+		FriendlyByteBuf passedData = new FriendlyByteBuf(Unpooled.buffer());
+		passedData.writeBlockPos(pos);
+		ClientPlayNetworking.send(MessageServerShowTileInfo.PACKET_ID, passedData);
 	}
-	
-	@OnlyIn(Dist.CLIENT)
+
 	public static void loadFENMessage(BlockPos pos, String FEN)
 	{
-		TTCNetwork.CHANNEL.sendToServer(new MessageServerLoadFEN(pos, FEN));
+		FriendlyByteBuf passedData = new FriendlyByteBuf(Unpooled.buffer());
+		passedData.writeBlockPos(pos);
+		passedData.writeUtf(FEN);
+		ClientPlayNetworking.send(MessageServerLoadFEN.PACKET_ID, passedData);
 	}
-	
-	@OnlyIn(Dist.CLIENT)
+
 	public static void showAvailableMovesMessage(BlockPos pos)
 	{
-		TTCNetwork.CHANNEL.sendToServer(new MessageServerShowAvailableMoves(pos));
+		FriendlyByteBuf passedData = new FriendlyByteBuf(Unpooled.buffer());
+		passedData.writeBlockPos(pos);
+		ClientPlayNetworking.send(MessageServerShowAvailableMoves.PACKET_ID, passedData);
 	}
-	
-	@OnlyIn(Dist.CLIENT)
+
 	public static void showPreviousMoveMessage(BlockPos pos)
 	{
-		TTCNetwork.CHANNEL.sendToServer(new MessageServerShowPreviousMove(pos));
+		FriendlyByteBuf passedData = new FriendlyByteBuf(Unpooled.buffer());
+		passedData.writeBlockPos(pos);
+		ClientPlayNetworking.send(MessageServerShowPreviousMove.PACKET_ID, passedData);
 	}
-	
-	/**
-	 * Sends a message to the server that the player pressed the set color button
-	 * @param colorType The color that will be set, 0 for tile info, 1 for legal move
-	 * @param pos The BlockPos of the ChessTileEntity
-	 * @param color The Color
-	 */
-	@OnlyIn(Dist.CLIENT)
+
 	public static void setColorMessage(int colorType, BlockPos pos, String color)
 	{
-		TTCNetwork.CHANNEL.sendToServer(new MessageServerSetColor(colorType, pos, color));
+		FriendlyByteBuf passedData = new FriendlyByteBuf(Unpooled.buffer());
+		passedData.writeInt(colorType);
+		passedData.writeBlockPos(pos);
+		passedData.writeUtf(color);
+		ClientPlayNetworking.send(MessageServerSetColor.PACKET_ID, passedData);
 	}
-	
-	@OnlyIn(Dist.CLIENT)
+
 	public static void useCustomPlateMessage(BlockPos pos)
 	{
-		TTCNetwork.CHANNEL.sendToServer(new MessageServerUseCustomPlate(pos));
+		FriendlyByteBuf passedData = new FriendlyByteBuf(Unpooled.buffer());
+		passedData.writeBlockPos(pos);
+		ClientPlayNetworking.send(MessageServerUseCustomPlate.PACKET_ID, passedData);
 	}
-	
-	/**
-	 * Sends a message to the server that the player pressed the set colors button
-	 * @param colorType The colors that will be set, 0 for board tiles, 1 for pieces
-	 * @param pos The BlockPos of the ChessTileEntity
-	 * @param color The first Color for the White side
-	 * @param color2 The second Color for the Black side
-	 */
-	@OnlyIn(Dist.CLIENT)
+
 	public static void setColorsMessage(int colorType, BlockPos pos, String color, String color2)
 	{
-		TTCNetwork.CHANNEL.sendToServer(new MessageServerSetColors(colorType, pos, color, color2));
+		FriendlyByteBuf passedData = new FriendlyByteBuf(Unpooled.buffer());
+		passedData.writeInt(colorType);
+		passedData.writeBlockPos(pos);
+		passedData.writeUtf(color);
+		passedData.writeUtf(color2);
+		ClientPlayNetworking.send(MessageServerSetColors.PACKET_ID, passedData);
 	}
 
-	@OnlyIn(Dist.CLIENT)
 	public static void rotateChessPieceFigure(BlockPos pos)
 	{
-		TTCNetwork.CHANNEL.sendToServer(new MessageServerRotateChessPieceFigure(pos));
+		FriendlyByteBuf passedData = new FriendlyByteBuf(Unpooled.buffer());
+		passedData.writeBlockPos(pos);
+		ClientPlayNetworking.send(MessageServerRotateChessPieceFigure.PACKET_ID, passedData);
 	}
 
-	@OnlyIn(Dist.CLIENT)
 	public static void doChessBoardInteraction(BlockPos pos, byte tileCoordinate)
 	{
-		TTCNetwork.CHANNEL.sendToServer(new MessageServerDoChessBoardInteraction(pos, tileCoordinate));
+		FriendlyByteBuf passedData = new FriendlyByteBuf(Unpooled.buffer());
+		passedData.writeBlockPos(pos);
+		passedData.writeByte(tileCoordinate);
+		ClientPlayNetworking.send(MessageServerDoChessBoardInteraction.PACKET_ID, passedData);
 	}
 
-	@OnlyIn(Dist.CLIENT)
 	public static void setChessPieceSet(BlockPos pos, int pieceSet)
 	{
-		TTCNetwork.CHANNEL.sendToServer(new MessageServerSetPieceSet(pos, pieceSet));
+		FriendlyByteBuf passedData = new FriendlyByteBuf(Unpooled.buffer());
+		passedData.writeBlockPos(pos);
+		passedData.writeInt(pieceSet);
+		ClientPlayNetworking.send(MessageServerSetPieceSet.PACKET_ID, passedData);
 	}
 
-	@OnlyIn(Dist.CLIENT)
 	public static void changePieceSet(BlockPos pos, byte value)
 	{
-		TTCNetwork.CHANNEL.sendToServer(new MessageServerChangePieceSet(pos, value));
+		FriendlyByteBuf passedData = new FriendlyByteBuf(Unpooled.buffer());
+		passedData.writeBlockPos(pos);
+		passedData.writeByte(value);
+		ClientPlayNetworking.send(MessageServerChangePieceSet.PACKET_ID, passedData);
 	}
 
-	@OnlyIn(Dist.CLIENT)
 	public static void changePieceType(BlockPos pos, byte value)
 	{
-		TTCNetwork.CHANNEL.sendToServer(new MessageServerChangePieceType(pos, value));
+		FriendlyByteBuf passedData = new FriendlyByteBuf(Unpooled.buffer());
+		passedData.writeBlockPos(pos);
+		passedData.writeByte(value);
+		ClientPlayNetworking.send(MessageServerChangePieceType.PACKET_ID, passedData);
 	}
 
-	@OnlyIn(Dist.CLIENT)
 	public static void setPieceScale(BlockPos pos, double value)
 	{
-		TTCNetwork.CHANNEL.sendToServer(new MessageServerChangePieceScale(pos, value));
+		FriendlyByteBuf passedData = new FriendlyByteBuf(Unpooled.buffer());
+		passedData.writeBlockPos(pos);
+		passedData.writeDouble(value);
+		ClientPlayNetworking.send(MessageServerChangePieceScale.PACKET_ID, passedData);
 	}
 
-	@OnlyIn(Dist.CLIENT)
 	public static void openGuiWithServerPlayer(BlockPos pos)
 	{
-		TTCNetwork.CHANNEL.sendToServer(new MessageServerOpenGUIWithServerPlayer(pos));
+		FriendlyByteBuf passedData = new FriendlyByteBuf(Unpooled.buffer());
+		passedData.writeBlockPos(pos);
+		ClientPlayNetworking.send(MessageServerOpenGUIWithServerPlayer.PACKET_ID, passedData);
 	}
 }

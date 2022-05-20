@@ -1,61 +1,38 @@
 package andrews.table_top_craft.network.server;
 
-import java.util.function.Supplier;
-
-import net.minecraft.ChatFormatting;
-import net.minecraft.core.BlockPos;
-import net.minecraft.network.FriendlyByteBuf;
-import net.minecraft.network.chat.TranslatableComponent;
-import net.minecraft.world.entity.player.Player;
-import net.minecraft.world.level.Level;
-import net.minecraft.world.level.block.entity.BlockEntity;
-import net.minecraftforge.network.NetworkEvent;
-import org.apache.commons.lang3.StringUtils;
-
 import andrews.table_top_craft.game_logic.chess.board.Board;
 import andrews.table_top_craft.game_logic.chess.pgn.FenUtil;
 import andrews.table_top_craft.tile_entities.ChessTileEntity;
-import net.minecraftforge.fml.LogicalSide;
+import andrews.table_top_craft.util.Reference;
+import net.fabricmc.fabric.api.networking.v1.ServerPlayNetworking;
+import net.minecraft.ChatFormatting;
+import net.minecraft.core.BlockPos;
+import net.minecraft.network.chat.TranslatableComponent;
+import net.minecraft.resources.ResourceLocation;
+import net.minecraft.world.level.Level;
+import net.minecraft.world.level.block.entity.BlockEntity;
+import org.apache.commons.lang3.StringUtils;
 
 public class MessageServerLoadFEN
 {
-	private final BlockPos pos;
-	private final String FEN;
-	
-	public MessageServerLoadFEN(BlockPos pos, String FEN)
+	public static ResourceLocation PACKET_ID = new ResourceLocation(Reference.MODID, "load_fen_packet");
+
+	public static void registerPacket()
 	{
-        this.pos = pos;
-        this.FEN = FEN;
-    }
-	
-	public void serialize(FriendlyByteBuf buf)
-	{
-		buf.writeBlockPos(pos);
-		buf.writeUtf(FEN);
-	}
-	
-	public static MessageServerLoadFEN deserialize(FriendlyByteBuf buf)
-	{
-		BlockPos pos = buf.readBlockPos();
-		String FEN = buf.readUtf(32767);
-		return new MessageServerLoadFEN(pos, FEN);
-	}
-	
-	public static void handle(MessageServerLoadFEN message, Supplier<NetworkEvent.Context> ctx)
-	{
-		NetworkEvent.Context context = ctx.get();
-		Player player = context.getSender();
-		Level level = player.getLevel();
-		BlockPos chessPos = message.pos;
-		String FEN = message.FEN;
-		
-		if(context.getDirection().getReceptionSide() == LogicalSide.SERVER)
+		ServerPlayNetworking.registerGlobalReceiver(PACKET_ID, (minecraftServer, serverPlayer, packetListener, buf, packetSender) ->
 		{
-			context.enqueueWork(() ->
+			BlockPos pos = buf.readBlockPos();
+			String FEN = buf.readUtf(Short.MAX_VALUE);
+
+			minecraftServer.execute(() ->
 			{
+				if(serverPlayer == null)
+					return;
+
+				Level level = serverPlayer.getLevel();
 				if(level != null)
 				{
-					BlockEntity blockEntity = level.getBlockEntity(chessPos);
+					BlockEntity blockEntity = level.getBlockEntity(pos);
 					// We make sure the TileEntity is a ChessTileEntity
 					if(blockEntity instanceof ChessTileEntity chessTileEntity)
 			        {
@@ -66,16 +43,15 @@ public class MessageServerLoadFEN
 						}
 						else
 						{
-							player.sendMessage(new TranslatableComponent("message.table_top_craft.chess.invalidFEN").withStyle(ChatFormatting.RED), player.getUUID());
+							serverPlayer.sendMessage(new TranslatableComponent("message.table_top_craft.chess.invalidFEN").withStyle(ChatFormatting.RED), serverPlayer.getUUID());
 						}
 						chessTileEntity.setBoard(board);
 						chessTileEntity.getMoveLog().clear();
-						level.sendBlockUpdated(message.pos, level.getBlockState(chessPos), level.getBlockState(chessPos), 2);
+						level.sendBlockUpdated(pos, level.getBlockState(pos), level.getBlockState(pos), 2);
 			        }
 				}
 			});
-			context.setPacketHandled(true);
-		}
+		});
 	}
 	
 	private static boolean isFENValid(String FEN)

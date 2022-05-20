@@ -1,15 +1,15 @@
 package andrews.table_top_craft.screens.chess.sliders;
 
+import andrews.table_top_craft.screens.util.BaseSlider;
+import andrews.table_top_craft.screens.util.GuiUtils;
 import com.mojang.blaze3d.systems.RenderSystem;
 import com.mojang.blaze3d.vertex.PoseStack;
 import net.minecraft.client.Minecraft;
 import net.minecraft.network.chat.Component;
 import net.minecraft.network.chat.TextComponent;
 import net.minecraft.network.chat.TranslatableComponent;
-import net.minecraftforge.client.gui.GuiUtils;
-import net.minecraftforge.client.gui.widget.ForgeSlider;
 
-public class ChessAlphaColorSlider extends ForgeSlider
+public class ChessAlphaColorSlider extends BaseSlider
 {
 	private final static TranslatableComponent alphaValueText = new TranslatableComponent("gui.table_top_craft.chess.sliders.alpha");
 

@@ -1,6 +1,5 @@
 package andrews.table_top_craft.tile_entities.render;
 
-import andrews.table_top_craft.events.DrawScreenEvent;
 import andrews.table_top_craft.game_logic.chess.PieceColor;
 import andrews.table_top_craft.game_logic.chess.board.Board;
 import andrews.table_top_craft.game_logic.chess.board.BoardUtils;
@@ -19,6 +18,7 @@ import andrews.table_top_craft.tile_entities.model.chess.ChessTilesInfoModel;
 import andrews.table_top_craft.util.NBTColorSaving;
 import andrews.table_top_craft.util.Reference;
 import andrews.table_top_craft.util.TTCRenderTypes;
+import andrews.table_top_craft.util.TTCVBOs;
 import com.google.common.collect.ImmutableList;
 import com.google.common.primitives.Ints;
 import com.mojang.blaze3d.platform.NativeImage;
@@ -41,7 +41,10 @@ import net.minecraft.resources.ResourceLocation;
 import net.minecraft.world.level.block.state.BlockState;
 import org.lwjgl.opengl.GL11;
 
-import java.util.*;
+import java.util.ArrayList;
+import java.util.Collection;
+import java.util.Collections;
+import java.util.List;
 
 public class ChessTileEntityRenderer implements BlockEntityRenderer<ChessTileEntity>
 {
@@ -389,27 +392,27 @@ public class ChessTileEntityRenderer implements BlockEntityRenderer<ChessTileEnt
 				{
 				default:
 				case PAWN:
-					VertexBuffer pawnBuffer = DrawScreenEvent.pawnBuffer;
+					VertexBuffer pawnBuffer = TTCVBOs.pawnBuffer;
 					BufferHelpers.draw(pawnBuffer, shaderinstance);
 					break;
 				case ROOK:
-					VertexBuffer rookBuffer = DrawScreenEvent.rookBuffer;
+					VertexBuffer rookBuffer = TTCVBOs.rookBuffer;
 					BufferHelpers.draw(rookBuffer, shaderinstance);
 					break;
 				case BISHOP:
-					VertexBuffer bishopBuffer = DrawScreenEvent.bishopBuffer;
+					VertexBuffer bishopBuffer = TTCVBOs.bishopBuffer;
 					BufferHelpers.draw(bishopBuffer, shaderinstance);
 					break;
 				case KNIGHT:
-					VertexBuffer knightBuffer = DrawScreenEvent.knightBuffer;
+					VertexBuffer knightBuffer = TTCVBOs.knightBuffer;
 					BufferHelpers.draw(knightBuffer, shaderinstance);
 					break;
 				case KING:
-					VertexBuffer kingBuffer = DrawScreenEvent.kingBuffer;
+					VertexBuffer kingBuffer = TTCVBOs.kingBuffer;
 					BufferHelpers.draw(kingBuffer, shaderinstance);
 					break;
 				case QUEEN:
-					VertexBuffer queenBuffer = DrawScreenEvent.queenBuffer;
+					VertexBuffer queenBuffer = TTCVBOs.queenBuffer;
 					BufferHelpers.draw(queenBuffer, shaderinstance);
 				}
 				break;
@@ -418,27 +421,27 @@ public class ChessTileEntityRenderer implements BlockEntityRenderer<ChessTileEnt
 				{
 					default:
 					case PAWN:
-						VertexBuffer classicPawnBuffer = DrawScreenEvent.classicPawnBuffer;
+						VertexBuffer classicPawnBuffer = TTCVBOs.classicPawnBuffer;
 						BufferHelpers.draw(classicPawnBuffer, shaderinstance);
 						break;
 					case ROOK:
-						VertexBuffer classicRookBuffer = DrawScreenEvent.classicRookBuffer;
+						VertexBuffer classicRookBuffer = TTCVBOs.classicRookBuffer;
 						BufferHelpers.draw(classicRookBuffer, shaderinstance);
 						break;
 					case BISHOP:
-						VertexBuffer classicBishopBuffer = DrawScreenEvent.classicBishopBuffer;
+						VertexBuffer classicBishopBuffer = TTCVBOs.classicBishopBuffer;
 						BufferHelpers.draw(classicBishopBuffer, shaderinstance);
 						break;
 					case KNIGHT:
-						VertexBuffer classicKnightBuffer = DrawScreenEvent.classicKnightBuffer;
+						VertexBuffer classicKnightBuffer = TTCVBOs.classicKnightBuffer;
 						BufferHelpers.draw(classicKnightBuffer, shaderinstance);
 						break;
 					case KING:
-						VertexBuffer classicKingBuffer = DrawScreenEvent.classicKingBuffer;
+						VertexBuffer classicKingBuffer = TTCVBOs.classicKingBuffer;
 						BufferHelpers.draw(classicKingBuffer, shaderinstance);
 						break;
 					case QUEEN:
-						VertexBuffer classicQueenBuffer = DrawScreenEvent.classicQueenBuffer;
+						VertexBuffer classicQueenBuffer = TTCVBOs.classicQueenBuffer;
 						BufferHelpers.draw(classicQueenBuffer, shaderinstance);
 				}
 				break;
@@ -447,27 +450,27 @@ public class ChessTileEntityRenderer implements BlockEntityRenderer<ChessTileEnt
 				{
 					default:
 					case PAWN:
-						VertexBuffer pandorasCreaturesPawnBuffer = DrawScreenEvent.pandorasCreaturesPawnBuffer;
+						VertexBuffer pandorasCreaturesPawnBuffer = TTCVBOs.pandorasCreaturesPawnBuffer;
 						BufferHelpers.draw(pandorasCreaturesPawnBuffer, shaderinstance);
 						break;
 					case ROOK:
-						VertexBuffer pandorasCreaturesRookBuffer = DrawScreenEvent.pandorasCreaturesRookBuffer;
+						VertexBuffer pandorasCreaturesRookBuffer = TTCVBOs.pandorasCreaturesRookBuffer;
 						BufferHelpers.draw(pandorasCreaturesRookBuffer, shaderinstance);
 						break;
 					case BISHOP:
-						VertexBuffer pandorasCreaturesBishopBuffer = DrawScreenEvent.pandorasCreaturesBishopBuffer;
+						VertexBuffer pandorasCreaturesBishopBuffer = TTCVBOs.pandorasCreaturesBishopBuffer;
 						BufferHelpers.draw(pandorasCreaturesBishopBuffer, shaderinstance);
 						break;
 					case KNIGHT:
-						VertexBuffer pandorasCreaturesKnightBuffer = DrawScreenEvent.pandorasCreaturesKnightBuffer;
+						VertexBuffer pandorasCreaturesKnightBuffer = TTCVBOs.pandorasCreaturesKnightBuffer;
 						BufferHelpers.draw(pandorasCreaturesKnightBuffer, shaderinstance);
 						break;
 					case KING:
-						VertexBuffer pandorasCreaturesKingBuffer = DrawScreenEvent.pandorasCreaturesKingBuffer;
+						VertexBuffer pandorasCreaturesKingBuffer = TTCVBOs.pandorasCreaturesKingBuffer;
 						BufferHelpers.draw(pandorasCreaturesKingBuffer, shaderinstance);
 						break;
 					case QUEEN:
-						VertexBuffer pandorasCreaturesQueenBuffer = DrawScreenEvent.pandorasCreaturesQueenBuffer;
+						VertexBuffer pandorasCreaturesQueenBuffer = TTCVBOs.pandorasCreaturesQueenBuffer;
 						BufferHelpers.draw(pandorasCreaturesQueenBuffer, shaderinstance);
 				}
 		}

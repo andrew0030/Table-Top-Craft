@@ -1,55 +1,33 @@
 package andrews.table_top_craft.network.server;
 
 import andrews.table_top_craft.tile_entities.ChessTileEntity;
+import andrews.table_top_craft.util.Reference;
+import net.fabricmc.fabric.api.networking.v1.ServerPlayNetworking;
 import net.minecraft.core.BlockPos;
-import net.minecraft.network.FriendlyByteBuf;
-import net.minecraft.world.entity.player.Player;
+import net.minecraft.resources.ResourceLocation;
 import net.minecraft.world.level.Level;
 import net.minecraft.world.level.block.entity.BlockEntity;
-import net.minecraftforge.fml.LogicalSide;
-import net.minecraftforge.network.NetworkEvent;
-
-import java.util.function.Supplier;
 
 public class MessageServerSetPieceSet
 {
-    private final BlockPos pos;
-    private final int pieceSet;
+    public static ResourceLocation PACKET_ID = new ResourceLocation(Reference.MODID, "set_piece_set_packet");
 
-    public MessageServerSetPieceSet(BlockPos pos, int pieceSet)
+    public static void registerPacket()
     {
-        this.pos = pos;
-        this.pieceSet = pieceSet;
-    }
-
-    public void serialize(FriendlyByteBuf buf)
-    {
-        buf.writeBlockPos(pos);
-        buf.writeInt(pieceSet);
-    }
-
-    public static MessageServerSetPieceSet deserialize(FriendlyByteBuf buf)
-    {
-        BlockPos pos = buf.readBlockPos();
-        int pieceSet = buf.readInt();
-        return new MessageServerSetPieceSet(pos, pieceSet);
-    }
-
-    public static void handle(MessageServerSetPieceSet message, Supplier<NetworkEvent.Context> ctx)
-    {
-        NetworkEvent.Context context = ctx.get();
-        Player player = context.getSender();
-        Level level = player.getLevel();
-        BlockPos chessPos = message.pos;
-        int pieceSet = message.pieceSet;
-
-        if(context.getDirection().getReceptionSide() == LogicalSide.SERVER)
+        ServerPlayNetworking.registerGlobalReceiver(PACKET_ID, (minecraftServer, serverPlayer, packetListener, buf, packetSender) ->
         {
-            context.enqueueWork(() ->
+            BlockPos pos = buf.readBlockPos();
+            int pieceSet = buf.readInt();
+
+            minecraftServer.execute(() ->
             {
+                if(serverPlayer == null)
+                    return;
+
+                Level level = serverPlayer.getLevel();
                 if(level != null)
                 {
-                    BlockEntity blockEntity = level.getBlockEntity(chessPos);
+                    BlockEntity blockEntity = level.getBlockEntity(pos);
                     // We make sure the TileEntity is a ChessTileEntity
                     if(blockEntity instanceof ChessTileEntity chessTileEntity)
                     {
@@ -59,12 +37,11 @@ public class MessageServerSetPieceSet
                             case 1 -> chessTileEntity.setPieceSet(1);
                             case 2 -> chessTileEntity.setPieceSet(2);
                         }
-                        level.sendBlockUpdated(message.pos, level.getBlockState(chessPos), level.getBlockState(chessPos), 2);
+                        level.sendBlockUpdated(pos, level.getBlockState(pos), level.getBlockState(pos), 2);
                         chessTileEntity.setChanged();
                     }
                 }
             });
-            context.setPacketHandled(true);
-        }
+        });
     }
 }

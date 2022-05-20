@@ -1,58 +1,35 @@
 package andrews.table_top_craft.network.client;
 
-import andrews.table_top_craft.network.client.util.ClientPacketHandlerClass;
+import andrews.table_top_craft.screens.chess.menus.ChessPieceSelectionScreen;
+import andrews.table_top_craft.tile_entities.ChessTileEntity;
+import andrews.table_top_craft.util.Reference;
+import net.fabricmc.fabric.api.client.networking.v1.ClientPlayNetworking;
+import net.minecraft.client.Minecraft;
 import net.minecraft.core.BlockPos;
-import net.minecraft.network.FriendlyByteBuf;
-import net.minecraftforge.api.distmarker.Dist;
-import net.minecraftforge.fml.DistExecutor;
-import net.minecraftforge.fml.LogicalSide;
-import net.minecraftforge.network.NetworkEvent;
-
-import java.util.function.Supplier;
+import net.minecraft.resources.ResourceLocation;
 
 public class MessageClientOpenChessPieceSelectionScreen
 {
-    public BlockPos pos;
-    public boolean isStandardSetUnlocked;
-    public boolean isClassicSetUnlocked;
-    public boolean isPandorasCreaturesSetUnlocked;
+    public static ResourceLocation PACKET_ID = new ResourceLocation(Reference.MODID, "open_chess_piece_selection_screen_packet");
 
-    public MessageClientOpenChessPieceSelectionScreen(BlockPos pos, boolean isStandardSetUnlocked, boolean isClassicSetUnlocked, boolean isPandorasCreaturesSetUnlocked)
+    public static void registerPacket()
     {
-        this.pos = pos;
-        this.isStandardSetUnlocked = isStandardSetUnlocked;
-        this.isClassicSetUnlocked = isClassicSetUnlocked;
-        this.isPandorasCreaturesSetUnlocked = isPandorasCreaturesSetUnlocked;
-    }
-
-    public void serialize(FriendlyByteBuf buf)
-    {
-        buf.writeBlockPos(this.pos);
-        buf.writeBoolean(this.isStandardSetUnlocked);
-        buf.writeBoolean(this.isClassicSetUnlocked);
-        buf.writeBoolean(this.isPandorasCreaturesSetUnlocked);
-    }
-
-    public static MessageClientOpenChessPieceSelectionScreen deserialize(FriendlyByteBuf buf)
-    {
-        BlockPos pos = buf.readBlockPos();
-        boolean isStandardSetUnlocked = buf.readBoolean();
-        boolean isClassicSetUnlocked = buf.readBoolean();
-        boolean isPandorasCreaturesSetUnlocked = buf.readBoolean();
-        return new MessageClientOpenChessPieceSelectionScreen(pos, isStandardSetUnlocked, isClassicSetUnlocked, isPandorasCreaturesSetUnlocked);
-    }
-
-    public static void handle(MessageClientOpenChessPieceSelectionScreen message, Supplier<NetworkEvent.Context> ctx)
-    {
-        NetworkEvent.Context context = ctx.get();
-        if(context.getDirection().getReceptionSide() == LogicalSide.CLIENT)
+        ClientPlayNetworking.registerGlobalReceiver(PACKET_ID, (client, handler, buf, responseSender) ->
         {
-            context.enqueueWork(() ->
+            BlockPos pos = buf.readBlockPos();
+            boolean isStandardSetUnlocked = buf.readBoolean();
+            boolean isClassicSetUnlocked = buf.readBoolean();
+            boolean isPandorasCreaturesSetUnlocked = buf.readBoolean();
+
+            client.execute(() ->
             {
-                // We have to use this to avoid calling Screen on the server
-                DistExecutor.unsafeRunWhenOn(Dist.CLIENT, () -> () -> ClientPacketHandlerClass.handleOpenChessPieceSelectionPacket(message, ctx));
+                if(Minecraft.getInstance().level == null) {
+                    return;
+                }
+
+                if(Minecraft.getInstance().player.getLevel().getBlockEntity(pos) != null && Minecraft.getInstance().player.getLevel().getBlockEntity(pos) instanceof ChessTileEntity chessTileEntity)
+                    Minecraft.getInstance().setScreen(new ChessPieceSelectionScreen(chessTileEntity, isStandardSetUnlocked, isClassicSetUnlocked, isPandorasCreaturesSetUnlocked));
             });
-            context.setPacketHandled(true);
-        }
+        });
     }
 }

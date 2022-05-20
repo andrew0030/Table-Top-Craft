@@ -4,7 +4,6 @@ import andrews.table_top_craft.registry.TTCTileEntities;
 import net.minecraft.core.BlockPos;
 import net.minecraft.nbt.CompoundTag;
 import net.minecraft.nbt.Tag;
-import net.minecraft.network.Connection;
 import net.minecraft.network.protocol.Packet;
 import net.minecraft.network.protocol.game.ClientGamePacketListener;
 import net.minecraft.network.protocol.game.ClientboundBlockEntityDataPacket;
@@ -21,7 +20,7 @@ public class TicTacToeBlockEntity extends BlockEntity
 
     public TicTacToeBlockEntity(BlockPos pos, BlockState state)
     {
-        super(TTCTileEntities.TIC_TAC_TOE.get(), pos, state);
+        super(TTCTileEntities.TIC_TAC_TOE, pos, state);
     }
 
     // Used to synchronize the BlockEntity with the client when the chunk it is in is loaded
@@ -35,26 +34,10 @@ public class TicTacToeBlockEntity extends BlockEntity
 
     // Used to synchronize the BlockEntity with the client when the chunk it is in is loaded
     @Override
-    public void handleUpdateTag(CompoundTag compound)
-    {
-//        this.loadFromNBT(compound);
-        this.load(compound);
-    }
-
-    // Used to synchronize the BlockEntity with the client when the chunk it is in is loaded
-    @Override
     public Packet<ClientGamePacketListener> getUpdatePacket()
     {
         // Will get tag from #getUpdateTag
         return ClientboundBlockEntityDataPacket.create(this);
-    }
-
-    // Used to synchronize the BlockEntity with the client onBlockUpdate
-    @Override
-    public void onDataPacket(Connection net, ClientboundBlockEntityDataPacket pkt)
-    {
-//        this.loadFromNBT(pkt.getTag());
-        this.load(pkt.getTag());
     }
 
     @Override

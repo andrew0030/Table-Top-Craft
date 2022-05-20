@@ -25,8 +25,6 @@ import net.minecraft.network.chat.TranslatableComponent;
 import net.minecraft.resources.ResourceLocation;
 import net.minecraft.world.item.ItemStack;
 
-import java.util.Arrays;
-
 public class ChessBoardPieceModelSelectionButton extends Button
 {
     private static final ResourceLocation TEXTURE = new ResourceLocation(Reference.MODID + ":textures/gui/buttons/piece_model_selection_buttons.png");
@@ -53,8 +51,8 @@ public class ChessBoardPieceModelSelectionButton extends Button
         super(xPos, yPos, buttonWidth, buttonHeight, new TextComponent(""), (button) -> { handleButtonPress(); });
         this.fontRenderer = Minecraft.getInstance().font;
         chessTileEntity = tileEntity;
-        chessPieceFigureBlockEntity = new ChessPieceFigureBlockEntity(BlockPos.ZERO, TTCBlocks.CHESS_PIECE_FIGURE.get().defaultBlockState());
-        chessPieceStack = new ItemStack(TTCBlocks.CHESS_PIECE_FIGURE.get().asItem());
+        chessPieceFigureBlockEntity = new ChessPieceFigureBlockEntity(BlockPos.ZERO, TTCBlocks.CHESS_PIECE_FIGURE.defaultBlockState());
+        chessPieceStack = new ItemStack(TTCBlocks.CHESS_PIECE_FIGURE.asItem());
         this.pieceModelSet = pieceModelSet;
         /* this should probably be done with an array or smt but I cbb ~ andrew */
         this.isStandardSetUnlocked = isStandardSetUnlocked;
@@ -113,9 +111,9 @@ public class ChessBoardPieceModelSelectionButton extends Button
 
         switch (pieceModelSet)
         {
-            case STANDARD -> Minecraft.getInstance().screen.renderTooltip(poseStack, Arrays.asList(this.buttonText.getVisualOrderText()), x - 8 + ((this.width / 2) - ((this.fontRenderer.width(this.buttonText) + 8) / 2)), y + 1, this.fontRenderer);
-            case CLASSIC -> Minecraft.getInstance().screen.renderTooltip(poseStack, Arrays.asList(this.buttonTextClassic.getVisualOrderText()), x - 8 + ((this.width / 2) - ((this.fontRenderer.width(this.buttonTextClassic) + 8) / 2)), y + 1, this.fontRenderer);
-            case PANDORAS_CREATURES -> Minecraft.getInstance().screen.renderTooltip(poseStack, Arrays.asList(this.buttonTextPandorasCreatures.getVisualOrderText()), x - 8 + ((this.width / 2) - ((this.fontRenderer.width(this.buttonTextPandorasCreatures) + 8) / 2)), y + 1, this.fontRenderer);
+            case STANDARD -> Minecraft.getInstance().screen.renderTooltip(poseStack, this.buttonText, x - 8 + ((this.width / 2) - ((this.fontRenderer.width(this.buttonText) + 8) / 2)), y + 1);
+            case CLASSIC -> Minecraft.getInstance().screen.renderTooltip(poseStack, this.buttonTextClassic, x - 8 + ((this.width / 2) - ((this.fontRenderer.width(this.buttonTextClassic) + 8) / 2)), y + 1);
+            case PANDORAS_CREATURES -> Minecraft.getInstance().screen.renderTooltip(poseStack, this.buttonTextPandorasCreatures, x - 8 + ((this.width / 2) - ((this.fontRenderer.width(this.buttonTextPandorasCreatures) + 8) / 2)), y + 1);
         }
 
         if (shouldButtonBeLocked())

@@ -2,71 +2,51 @@ package andrews.table_top_craft.network.server;
 
 import andrews.table_top_craft.tile_entities.ChessTileEntity;
 import andrews.table_top_craft.util.NetworkUtil;
+import andrews.table_top_craft.util.Reference;
+import net.fabricmc.fabric.api.networking.v1.ServerPlayNetworking;
 import net.minecraft.advancements.Advancement;
 import net.minecraft.core.BlockPos;
-import net.minecraft.network.FriendlyByteBuf;
 import net.minecraft.resources.ResourceLocation;
 import net.minecraft.server.ServerAdvancementManager;
-import net.minecraft.server.level.ServerPlayer;
 import net.minecraft.world.level.Level;
 import net.minecraft.world.level.block.entity.BlockEntity;
-import net.minecraftforge.fml.LogicalSide;
-import net.minecraftforge.network.NetworkEvent;
-
-import java.util.function.Supplier;
 
 public class MessageServerOpenGUIWithServerPlayer
 {
-    private final BlockPos pos;
+    public static ResourceLocation PACKET_ID = new ResourceLocation(Reference.MODID, "open_gui_with_server_player_packet");
 
-    public MessageServerOpenGUIWithServerPlayer(BlockPos pos)
+    public static void registerPacket()
     {
-        this.pos = pos;
-    }
-
-    public void serialize(FriendlyByteBuf buf)
-    {
-        buf.writeBlockPos(pos);
-    }
-
-    public static MessageServerOpenGUIWithServerPlayer deserialize(FriendlyByteBuf buf)
-    {
-        BlockPos pos = buf.readBlockPos();
-        return new MessageServerOpenGUIWithServerPlayer(pos);
-    }
-
-    public static void handle(MessageServerOpenGUIWithServerPlayer message, Supplier<NetworkEvent.Context> ctx)
-    {
-        NetworkEvent.Context context = ctx.get();
-        ServerPlayer player = context.getSender();
-        Level level = player.getLevel();
-        BlockPos pos = message.pos;
-
-        if(context.getDirection().getReceptionSide() == LogicalSide.SERVER)
+        ServerPlayNetworking.registerGlobalReceiver(PACKET_ID, (minecraftServer, serverPlayer, packetListener, buf, packetSender) ->
         {
-            context.enqueueWork(() ->
+            BlockPos pos = buf.readBlockPos();
+
+            minecraftServer.execute(() ->
             {
+                if(serverPlayer == null)
+                    return;
+
+                Level level = serverPlayer.getLevel();
                 if(level != null)
                 {
                     BlockEntity blockEntity = level.getBlockEntity(pos);
                     // We make sure the TileEntity is a ChessTileEntity
                     if(blockEntity instanceof ChessTileEntity chessTileEntity)
                     {
-                        ServerAdvancementManager serveradvancementmanager = player.getServer().getAdvancements();
+                        ServerAdvancementManager serveradvancementmanager = serverPlayer.getServer().getAdvancements();
                         // We get the piece set advancements
                         Advancement standardAdvancement = serveradvancementmanager.getAdvancement(new ResourceLocation("table_top_craft:standard_piece_collector"));
                         Advancement classicAdvancement = serveradvancementmanager.getAdvancement(new ResourceLocation("table_top_craft:classic_piece_collector"));
                         Advancement pandorasCreaturesAdvancement = serveradvancementmanager.getAdvancement(new ResourceLocation("table_top_craft:pandoras_creatures_piece_collector"));
                         // We check if the player has completed the advancements
-                        boolean isStandardSetUnlocked = standardAdvancement == null || player.getAdvancements().getOrStartProgress(standardAdvancement).isDone();
-                        boolean isClassicSetUnlocked = classicAdvancement == null || player.getAdvancements().getOrStartProgress(classicAdvancement).isDone();
-                        boolean isPandorasCreaturesSetUnlocked = pandorasCreaturesAdvancement == null || player.getAdvancements().getOrStartProgress(pandorasCreaturesAdvancement).isDone();
+                        boolean isStandardSetUnlocked = standardAdvancement == null || serverPlayer.getAdvancements().getOrStartProgress(standardAdvancement).isDone();
+                        boolean isClassicSetUnlocked = classicAdvancement == null || serverPlayer.getAdvancements().getOrStartProgress(classicAdvancement).isDone();
+                        boolean isPandorasCreaturesSetUnlocked = pandorasCreaturesAdvancement == null || serverPlayer.getAdvancements().getOrStartProgress(pandorasCreaturesAdvancement).isDone();
                         // We send a message to the client, to open the menu while taking into consideration which piece sets have been unlocked
-                        NetworkUtil.openChessPieceSelectionFromServer(pos, isStandardSetUnlocked, isClassicSetUnlocked, isPandorasCreaturesSetUnlocked, player);
+                        NetworkUtil.openChessPieceSelectionFromServer(pos, isStandardSetUnlocked, isClassicSetUnlocked, isPandorasCreaturesSetUnlocked, serverPlayer);
                     }
                 }
             });
-            context.setPacketHandled(true);
-        }
+        });
     }
 }

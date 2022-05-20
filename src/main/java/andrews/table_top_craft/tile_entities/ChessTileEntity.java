@@ -4,31 +4,16 @@ import andrews.table_top_craft.game_logic.chess.PieceColor;
 import andrews.table_top_craft.game_logic.chess.board.Board;
 import andrews.table_top_craft.game_logic.chess.board.BoardUtils;
 import andrews.table_top_craft.game_logic.chess.board.ChessMoveLog;
-import andrews.table_top_craft.game_logic.chess.board.moves.KingSideCastleMove;
-import andrews.table_top_craft.game_logic.chess.board.moves.MajorAttackMove;
-import andrews.table_top_craft.game_logic.chess.board.moves.MajorMove;
-import andrews.table_top_craft.game_logic.chess.board.moves.PawnAttackMove;
-import andrews.table_top_craft.game_logic.chess.board.moves.PawnEnPassantAttackMove;
-import andrews.table_top_craft.game_logic.chess.board.moves.PawnJumpMove;
-import andrews.table_top_craft.game_logic.chess.board.moves.PawnMove;
-import andrews.table_top_craft.game_logic.chess.board.moves.PawnPromotion;
-import andrews.table_top_craft.game_logic.chess.board.moves.QueenSideCastleMove;
+import andrews.table_top_craft.game_logic.chess.board.moves.*;
 import andrews.table_top_craft.game_logic.chess.board.tiles.BaseChessTile;
 import andrews.table_top_craft.game_logic.chess.pgn.FenUtil;
-import andrews.table_top_craft.game_logic.chess.pieces.BasePiece;
-import andrews.table_top_craft.game_logic.chess.pieces.BishopPiece;
-import andrews.table_top_craft.game_logic.chess.pieces.KingPiece;
-import andrews.table_top_craft.game_logic.chess.pieces.KnightPiece;
-import andrews.table_top_craft.game_logic.chess.pieces.PawnPiece;
-import andrews.table_top_craft.game_logic.chess.pieces.QueenPiece;
-import andrews.table_top_craft.game_logic.chess.pieces.RookPiece;
+import andrews.table_top_craft.game_logic.chess.pieces.*;
 import andrews.table_top_craft.registry.TTCTileEntities;
 import andrews.table_top_craft.util.NBTColorSaving;
 import net.minecraft.core.BlockPos;
 import net.minecraft.nbt.CompoundTag;
 import net.minecraft.nbt.ListTag;
 import net.minecraft.nbt.Tag;
-import net.minecraft.network.Connection;
 import net.minecraft.network.protocol.Packet;
 import net.minecraft.network.protocol.game.ClientGamePacketListener;
 import net.minecraft.network.protocol.game.ClientboundBlockEntityDataPacket;
@@ -68,14 +53,8 @@ public class ChessTileEntity extends BlockEntity
 
 	public ChessTileEntity(BlockPos pos, BlockState state)
 	{
-		super(TTCTileEntities.CHESS.get(), pos, state);
+		super(TTCTileEntities.CHESS, pos, state);
 		moveLog = new ChessMoveLog();
-	}
-
-	@Override
-	public AABB getRenderBoundingBox()
-	{
-		return super.getRenderBoundingBox().expandTowards(0.0D, 0.4D, 0.0D);
 	}
 
 	// Used to synchronize the BlockEntity with the client when the chunk it is in is loaded
@@ -89,24 +68,10 @@ public class ChessTileEntity extends BlockEntity
 
 	// Used to synchronize the BlockEntity with the client when the chunk it is in is loaded
 	@Override
-	public void handleUpdateTag(CompoundTag compound)
-	{
-		this.loadFromNBT(compound);
-	}
-
-	// Used to synchronize the BlockEntity with the client when the chunk it is in is loaded
-	@Override
 	public Packet<ClientGamePacketListener> getUpdatePacket()
 	{
 		// Will get tag from #getUpdateTag
 		return ClientboundBlockEntityDataPacket.create(this);
-	}
-
-	// Used to synchronize the BlockEntity with the client onBlockUpdate
-	@Override
-	public void onDataPacket(Connection net, ClientboundBlockEntityDataPacket pkt)
-	{
-		this.loadFromNBT(pkt.getTag());
 	}
 	
 	@Override

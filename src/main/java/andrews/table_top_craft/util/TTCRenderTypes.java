@@ -1,18 +1,14 @@
 package andrews.table_top_craft.util;
 
-import andrews.table_top_craft.TableTopCraft;
 import com.mojang.blaze3d.vertex.DefaultVertexFormat;
 import com.mojang.blaze3d.vertex.VertexFormat;
-import net.minecraft.Util;
 import net.minecraft.client.renderer.RenderStateShard;
 import net.minecraft.client.renderer.RenderType;
 import net.minecraft.resources.ResourceLocation;
 
-import java.util.function.Function;
-
 public class TTCRenderTypes extends RenderStateShard
 {
-	private static final RenderStateShard.ShaderStateShard RENDERTYPE_SOLID_BLOCK_ENTITY_SHADER = new RenderStateShard.ShaderStateShard(TableTopCraft::getSolidBlockEntityShader);
+	private static final RenderStateShard.ShaderStateShard RENDERTYPE_SOLID_BLOCK_ENTITY_SHADER = new RenderStateShard.ShaderStateShard(TTCClientInit::getSolidBlockEntityShader);
 
 	public TTCRenderTypes(String nameIn, Runnable setupTaskIn, Runnable clearTaskIn)
 	{

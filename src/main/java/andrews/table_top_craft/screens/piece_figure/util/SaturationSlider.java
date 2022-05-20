@@ -1,5 +1,7 @@
 package andrews.table_top_craft.screens.piece_figure.util;
 
+import andrews.table_top_craft.screens.util.BaseSlider;
+import andrews.table_top_craft.screens.util.GuiUtils;
 import com.mojang.blaze3d.systems.RenderSystem;
 import com.mojang.blaze3d.vertex.PoseStack;
 import net.minecraft.client.Minecraft;
@@ -7,10 +9,9 @@ import net.minecraft.client.gui.screens.Screen;
 import net.minecraft.network.chat.Component;
 import net.minecraft.network.chat.TextComponent;
 import net.minecraft.network.chat.TranslatableComponent;
-import net.minecraftforge.client.gui.GuiUtils;
-import net.minecraftforge.client.gui.widget.ForgeSlider;
+import net.minecraft.util.Mth;
 
-public class SaturationSlider extends ForgeSlider
+public class SaturationSlider extends BaseSlider
 {
     private final static TranslatableComponent saturationValueText = new TranslatableComponent("gui.table_top_craft.sliders.saturation");
     private Screen menuIn;

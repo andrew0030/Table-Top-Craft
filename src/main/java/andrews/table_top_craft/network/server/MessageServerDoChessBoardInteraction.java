@@ -3,57 +3,33 @@ package andrews.table_top_craft.network.server;
 import andrews.table_top_craft.criteria.TTCCriteriaTriggers;
 import andrews.table_top_craft.game_logic.chess.board.moves.BaseMove;
 import andrews.table_top_craft.game_logic.chess.board.moves.MoveFactory;
-import andrews.table_top_craft.game_logic.chess.board.moves.PawnEnPassantAttackMove;
 import andrews.table_top_craft.game_logic.chess.board.tiles.BaseChessTile;
 import andrews.table_top_craft.game_logic.chess.player.MoveTransition;
 import andrews.table_top_craft.tile_entities.ChessTileEntity;
+import andrews.table_top_craft.util.Reference;
+import net.fabricmc.fabric.api.networking.v1.ServerPlayNetworking;
 import net.minecraft.core.BlockPos;
-import net.minecraft.network.FriendlyByteBuf;
-import net.minecraft.server.level.ServerPlayer;
-import net.minecraft.world.entity.player.Player;
+import net.minecraft.resources.ResourceLocation;
 import net.minecraft.world.level.Level;
 import net.minecraft.world.level.block.entity.BlockEntity;
-import net.minecraftforge.fml.LogicalSide;
-import net.minecraftforge.network.NetworkEvent;
-
-import java.util.function.Supplier;
 
 public class MessageServerDoChessBoardInteraction
 {
-    private final BlockPos pos;
-    private final byte tileCoordinate;
+    public static ResourceLocation PACKET_ID = new ResourceLocation(Reference.MODID, "do_chess_board_interaction_packet");
 
-    public MessageServerDoChessBoardInteraction(BlockPos pos, byte tileCoordinate)
+    public static void registerPacket()
     {
-        this.pos = pos;
-        this.tileCoordinate = tileCoordinate;
-    }
-
-    public void serialize(FriendlyByteBuf buf)
-    {
-        buf.writeBlockPos(pos);
-        buf.writeByte(tileCoordinate);
-    }
-
-    public static MessageServerDoChessBoardInteraction deserialize(FriendlyByteBuf buf)
-    {
-        BlockPos pos = buf.readBlockPos();
-        byte tileCoordinate = buf.readByte();
-        return new MessageServerDoChessBoardInteraction(pos, tileCoordinate);
-    }
-
-    public static void handle(MessageServerDoChessBoardInteraction message, Supplier<NetworkEvent.Context> ctx)
-    {
-        NetworkEvent.Context context = ctx.get();
-        ServerPlayer player = context.getSender();
-        Level level = player.getLevel();
-        BlockPos pos = message.pos;
-        byte tileCoordinate = message.tileCoordinate;
-
-        if(context.getDirection().getReceptionSide() == LogicalSide.SERVER)
+        ServerPlayNetworking.registerGlobalReceiver(PACKET_ID, (minecraftServer, serverPlayer, packetListener, buf, packetSender) ->
         {
-            context.enqueueWork(() ->
+            BlockPos pos = buf.readBlockPos();
+            byte tileCoordinate = buf.readByte();
+
+            minecraftServer.execute(() ->
             {
+                if(serverPlayer == null)
+                    return;
+
+                Level level = serverPlayer.getLevel();
                 if(level != null)
                 {
                     BlockEntity blockEntity = level.getBlockEntity(pos);
@@ -96,15 +72,15 @@ public class MessageServerDoChessBoardInteraction
                                 chessTileEntity.getMoveLog().addMove(move);
                                 // We call this in here to make sure a move was successfully made, and not just attempted
                                 if(!level.isClientSide)
-                                    TTCCriteriaTriggers.MAKE_CHESS_MOVE.trigger(player);
+                                    TTCCriteriaTriggers.MAKE_CHESS_MOVE.trigger(serverPlayer);
                                 // If the Move was an EnPassantMove, we trigger the advancement
                                 if(move.isEnPassantMove())
                                     if(!level.isClientSide)
-                                        TTCCriteriaTriggers.MAKE_EN_PASSANT_MOVE.trigger(player);
+                                        TTCCriteriaTriggers.MAKE_EN_PASSANT_MOVE.trigger(serverPlayer);
                                 // If the Move was a CheckMateMove, we trigger the advancement
                                 if(chessTileEntity.getBoard().getCurrentChessPlayer().isInCheckMate())
                                     if(!level.isClientSide)
-                                        TTCCriteriaTriggers.MAKE_CHECK_MATE_MOVE.trigger(player);
+                                        TTCCriteriaTriggers.MAKE_CHECK_MATE_MOVE.trigger(serverPlayer);
                             }
                             chessTileEntity.setSourceTile(null);
                             chessTileEntity.setDestinationTile(null);
@@ -117,7 +93,6 @@ public class MessageServerDoChessBoardInteraction
                     }
                 }
             });
-            context.setPacketHandled(true);
-        }
+        });
     }
 }

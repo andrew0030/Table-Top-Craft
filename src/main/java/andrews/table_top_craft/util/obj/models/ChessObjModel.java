@@ -7,10 +7,7 @@ import andrews.table_top_craft.util.obj.ObjModel;
 import com.mojang.blaze3d.vertex.PoseStack;
 import com.mojang.blaze3d.vertex.VertexConsumer;
 import net.minecraft.resources.ResourceLocation;
-import net.minecraftforge.api.distmarker.Dist;
-import net.minecraftforge.api.distmarker.OnlyIn;
 
-@OnlyIn(Dist.CLIENT)
 public class ChessObjModel
 {
 	private static final String PAWN_MODEL_PATH = "models/pieces/pawn.obj";

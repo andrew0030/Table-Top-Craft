@@ -1,65 +1,42 @@
 package andrews.table_top_craft.network.server;
 
 import andrews.table_top_craft.tile_entities.ChessPieceFigureBlockEntity;
+import andrews.table_top_craft.util.Reference;
+import net.fabricmc.fabric.api.networking.v1.ServerPlayNetworking;
 import net.minecraft.core.BlockPos;
-import net.minecraft.network.FriendlyByteBuf;
-import net.minecraft.world.entity.player.Player;
+import net.minecraft.resources.ResourceLocation;
 import net.minecraft.world.level.Level;
 import net.minecraft.world.level.block.entity.BlockEntity;
-import net.minecraftforge.fml.LogicalSide;
-import net.minecraftforge.network.NetworkEvent;
-
-import java.util.function.Supplier;
 
 public class MessageServerChangePieceScale
 {
-    private final BlockPos pos;
-    private final double value;
+    public static ResourceLocation PACKET_ID = new ResourceLocation(Reference.MODID, "change_piece_scale_packet");
 
-    public MessageServerChangePieceScale(BlockPos pos, double value)
+    public static void registerPacket()
     {
-        this.pos = pos;
-        this.value = value;
-    }
-
-    public void serialize(FriendlyByteBuf buf)
-    {
-        buf.writeBlockPos(pos);
-        buf.writeDouble(value);
-    }
-
-    public static MessageServerChangePieceScale deserialize(FriendlyByteBuf buf)
-    {
-        BlockPos pos = buf.readBlockPos();
-        double value = buf.readDouble();
-        return new MessageServerChangePieceScale(pos, value);
-    }
-
-    public static void handle(MessageServerChangePieceScale message, Supplier<NetworkEvent.Context> ctx)
-    {
-        NetworkEvent.Context context = ctx.get();
-        Player player = context.getSender();
-        Level level = player.getLevel();
-        BlockPos blockPos = message.pos;
-        double value = message.value;
-
-        if(context.getDirection().getReceptionSide() == LogicalSide.SERVER)
+        ServerPlayNetworking.registerGlobalReceiver(PACKET_ID, (minecraftServer, serverPlayer, packetListener, buf, packetSender) ->
         {
-            context.enqueueWork(() ->
+            BlockPos pos = buf.readBlockPos();
+            double value = buf.readDouble();
+
+            minecraftServer.execute(() ->
             {
+                if(serverPlayer == null)
+                    return;
+
+                Level level = serverPlayer.getLevel();
                 if(level != null)
                 {
-                    BlockEntity blockEntity = level.getBlockEntity(blockPos);
-                    // We make sure the TileEntity is a ChessPieceFigureBlockEntity
+                    BlockEntity blockEntity = level.getBlockEntity(pos);
+                    // We make sure the BlockEntity is a ChessPieceFigureBlockEntity
                     if(blockEntity instanceof ChessPieceFigureBlockEntity chessPieceFigureBlockEntity)
                     {
                         chessPieceFigureBlockEntity.setPieceScale(value);
-                        level.sendBlockUpdated(message.pos, level.getBlockState(blockPos), level.getBlockState(blockPos), 2);
+                        level.sendBlockUpdated(pos, level.getBlockState(pos), level.getBlockState(pos), 2);
                         chessPieceFigureBlockEntity.setChanged();
                     }
                 }
             });
-            context.setPacketHandled(true);
-        }
+        });
     }
 }

@@ -1,6 +1,6 @@
 {
 	"_comment1": "Item Groups",
-	"itemGroup.table_top_craft": "Ajedrez Mod",
+	"itemGroup.table_top_craft.tab": "Ajedrez Mod",
 
 	"_comment2": "Blocks",
 	"block.table_top_craft.oak_chess": "Mesa de Ajedrez de roble",

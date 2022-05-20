@@ -1,11 +1,7 @@
 package andrews.table_top_craft.screens.piece_figure.buttons;
 
-import andrews.table_top_craft.screens.chess.sliders.ChessBlueColorSlider;
-import andrews.table_top_craft.screens.chess.sliders.ChessGreenColorSlider;
-import andrews.table_top_craft.screens.chess.sliders.ChessRedColorSlider;
 import andrews.table_top_craft.screens.piece_figure.sliders.ChessPieceFigureScaleSlider;
 import andrews.table_top_craft.tile_entities.ChessPieceFigureBlockEntity;
-import andrews.table_top_craft.util.NBTColorSaving;
 import andrews.table_top_craft.util.NetworkUtil;
 import andrews.table_top_craft.util.Reference;
 import com.mojang.blaze3d.systems.RenderSystem;

@@ -28,7 +28,6 @@ import net.minecraft.world.level.block.EntityBlock;
 import net.minecraft.world.level.block.RenderShape;
 import net.minecraft.world.level.block.SoundType;
 import net.minecraft.world.level.block.entity.BlockEntity;
-import net.minecraft.world.level.block.entity.ShulkerBoxBlockEntity;
 import net.minecraft.world.level.block.state.BlockState;
 import net.minecraft.world.level.block.state.StateDefinition;
 import net.minecraft.world.level.block.state.properties.BlockStateProperties;
@@ -37,7 +36,6 @@ import net.minecraft.world.level.material.Material;
 import net.minecraft.world.level.storage.loot.LootContext;
 import net.minecraft.world.level.storage.loot.parameters.LootContextParams;
 import net.minecraft.world.phys.BlockHitResult;
-import net.minecraft.world.phys.HitResult;
 import net.minecraft.world.phys.shapes.CollisionContext;
 import net.minecraft.world.phys.shapes.VoxelShape;
 
@@ -110,7 +108,7 @@ public class ChessPieceFigureBlock extends Block implements EntityBlock
         {
             if (!level.isClientSide && player.isCreative())// && !chessPieceFigureBlockEntity.isEmpty()
             {
-                ItemStack itemstack = new ItemStack(TTCBlocks.CHESS_PIECE_FIGURE.get().asItem());
+                ItemStack itemstack = new ItemStack(TTCBlocks.CHESS_PIECE_FIGURE.asItem());
                 blockentity.saveToItem(itemstack);
                 if(chessPieceFigureBlockEntity.getPieceName() != null)
                     itemstack.setHoverName(new TextComponent(chessPieceFigureBlockEntity.getPieceName()));
@@ -209,9 +207,9 @@ public class ChessPieceFigureBlock extends Block implements EntityBlock
     }
 
     @Override
-    public ItemStack getCloneItemStack(BlockState state, HitResult target, BlockGetter level, BlockPos pos, Player player)
+    public ItemStack getCloneItemStack(BlockGetter level, BlockPos pos, BlockState state)
     {
-        ItemStack stack = super.getCloneItemStack(state, target, level, pos, player);
+        ItemStack stack = super.getCloneItemStack(level, pos, state);
         if(level.getBlockEntity(pos) != null)
         {
             if(level.getBlockEntity(pos) instanceof ChessPieceFigureBlockEntity chessPieceFigureBlockEntity)

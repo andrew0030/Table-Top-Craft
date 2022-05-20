@@ -1,20 +1,10 @@
 package andrews.table_top_craft.screens.chess.menus;
 
-import andrews.table_top_craft.screens.chess.buttons.colors.ChessBoardAttackMoveColorButton;
-import andrews.table_top_craft.screens.chess.buttons.colors.ChessBoardCastleMoveColorButton;
-import andrews.table_top_craft.screens.chess.buttons.colors.ChessBoardColorSettingsButton;
-import andrews.table_top_craft.screens.chess.buttons.colors.ChessBoardInvalidMoveColorButton;
-import andrews.table_top_craft.screens.chess.buttons.colors.ChessBoardLegalMoveColorButton;
-import andrews.table_top_craft.screens.chess.buttons.colors.ChessBoardPieceColorsButton;
-import andrews.table_top_craft.screens.chess.buttons.colors.ChessBoardPreviousMoveColorButton;
-import andrews.table_top_craft.screens.chess.buttons.colors.ChessBoardTilesColorButton;
-import andrews.table_top_craft.screens.chess.buttons.colors.ChessTileInfoColorsButton;
-import andrews.table_top_craft.screens.chess.buttons.colors.ChessUseCustomPlateButton;
+import andrews.table_top_craft.screens.chess.buttons.colors.*;
 import andrews.table_top_craft.screens.chess.buttons.pieces.ChessBoardPieceSettingsButton;
 import andrews.table_top_craft.screens.chess.buttons.settings.ChessBoardSettingsButton;
 import andrews.table_top_craft.tile_entities.ChessTileEntity;
 import andrews.table_top_craft.util.Reference;
-import com.mojang.blaze3d.platform.InputConstants;
 import com.mojang.blaze3d.systems.RenderSystem;
 import com.mojang.blaze3d.vertex.PoseStack;
 import net.minecraft.client.gui.screens.Screen;
@@ -88,8 +78,7 @@ public class ChessColorSettingsScreen extends Screen
 	public boolean keyPressed(int keyCode, int scanCode, int modifiers)
 	{
 		super.keyPressed(keyCode, scanCode, modifiers);
-		InputConstants.Key mouseKey = InputConstants.getKey(keyCode, scanCode);
-		if(this.minecraft.options.keyInventory.isActiveAndMatches(mouseKey))
+		if(this.minecraft.options.keyInventory.matches(keyCode, scanCode))
 			this.onClose();
 		return true;
 	}

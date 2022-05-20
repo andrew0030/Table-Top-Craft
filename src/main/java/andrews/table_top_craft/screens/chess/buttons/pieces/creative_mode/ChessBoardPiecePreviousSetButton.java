@@ -12,8 +12,6 @@ import net.minecraft.network.chat.TextComponent;
 import net.minecraft.network.chat.TranslatableComponent;
 import net.minecraft.resources.ResourceLocation;
 
-import java.util.Arrays;
-
 public class ChessBoardPiecePreviousSetButton extends Button
 {
     private static final ResourceLocation TEXTURE = new ResourceLocation(Reference.MODID + ":textures/gui/buttons/chess_menu_buttons.png");
@@ -54,7 +52,7 @@ public class ChessBoardPiecePreviousSetButton extends Button
 
         // This is used to render a tooltip
         if(isHovered)
-            Minecraft.getInstance().screen.renderTooltip(poseStack, Arrays.asList(buttonText.getVisualOrderText()), x - 8 - (8 + fontRenderer.width(buttonText)), y + 14, this.fontRenderer);
+            Minecraft.getInstance().screen.renderTooltip(poseStack, buttonText, x - 8 - (8 + fontRenderer.width(buttonText)), y + 14);
     }
 
     /**

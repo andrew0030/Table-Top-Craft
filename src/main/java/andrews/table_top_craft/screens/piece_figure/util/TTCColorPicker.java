@@ -1,5 +1,6 @@
 package andrews.table_top_craft.screens.piece_figure.util;
 
+import andrews.table_top_craft.screens.util.GuiUtils;
 import andrews.table_top_craft.util.Color;
 import andrews.table_top_craft.util.Reference;
 import com.mojang.blaze3d.systems.RenderSystem;
@@ -10,7 +11,6 @@ import net.minecraft.client.gui.screens.Screen;
 import net.minecraft.network.chat.TextComponent;
 import net.minecraft.resources.ResourceLocation;
 import net.minecraft.util.Mth;
-import net.minecraftforge.client.gui.GuiUtils;
 import org.lwjgl.glfw.GLFW;
 
 public class TTCColorPicker extends AbstractSliderButton

@@ -2,6 +2,8 @@ package andrews.table_top_craft.screens.chess.sliders;
 
 import andrews.table_top_craft.screens.piece_figure.util.IColorPicker;
 import andrews.table_top_craft.screens.piece_figure.util.IColorPickerExtended;
+import andrews.table_top_craft.screens.util.BaseSlider;
+import andrews.table_top_craft.screens.util.GuiUtils;
 import com.mojang.blaze3d.systems.RenderSystem;
 import com.mojang.blaze3d.vertex.PoseStack;
 import net.minecraft.client.Minecraft;
@@ -9,10 +11,9 @@ import net.minecraft.client.gui.screens.Screen;
 import net.minecraft.network.chat.Component;
 import net.minecraft.network.chat.TextComponent;
 import net.minecraft.network.chat.TranslatableComponent;
-import net.minecraftforge.client.gui.GuiUtils;
-import net.minecraftforge.client.gui.widget.ForgeSlider;
+import net.minecraft.util.Mth;
 
-public class ChessRedColorSlider extends ForgeSlider
+public class ChessRedColorSlider extends BaseSlider
 {
 	private final static TranslatableComponent redValueText = new TranslatableComponent("gui.table_top_craft.chess.sliders.red");
 	private final Screen menuIn;

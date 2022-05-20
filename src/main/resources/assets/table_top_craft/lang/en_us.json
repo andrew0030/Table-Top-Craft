@@ -1,6 +1,6 @@
 {
 "_comment1": "Item Groups",
-	"itemGroup.table_top_craft": "Table Top Craft",
+	"itemGroup.table_top_craft.tab": "Table Top Craft",
 	
 "_comment2": "Blocks",
 	"block.table_top_craft.oak_chess": "Oak Chess Board",

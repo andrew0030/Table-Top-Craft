@@ -26,9 +26,9 @@ public class GeneratePieceNBTFunction extends LootItemConditionalFunction
     protected ItemStack run(ItemStack stack, LootContext context)
     {
         Random random = context.getRandom();
-        if(stack.is(TTCBlocks.CHESS_PIECE_FIGURE.get().asItem()))
+        if(stack.is(TTCBlocks.CHESS_PIECE_FIGURE.asItem()))
         {
-            ChessPieceFigureBlockEntity blockEntity = new ChessPieceFigureBlockEntity(BlockPos.ZERO, TTCBlocks.CHESS_PIECE_FIGURE.get().defaultBlockState());
+            ChessPieceFigureBlockEntity blockEntity = new ChessPieceFigureBlockEntity(BlockPos.ZERO, TTCBlocks.CHESS_PIECE_FIGURE.defaultBlockState());
             // We randomly generate the values for this chess piece
             blockEntity.setPieceSet(random.nextInt(3) + 1);
             blockEntity.setPieceType(random.nextInt(6) + 1);
@@ -41,7 +41,7 @@ public class GeneratePieceNBTFunction extends LootItemConditionalFunction
     @Override
     public LootItemFunctionType getType()
     {
-        return TTCLootItemFunctions.GEN_PIECE_NBT.get();
+        return TTCLootItemFunctions.GEN_PIECE_NBT;
     }
 
     public static class Serializer extends LootItemConditionalFunction.Serializer<GeneratePieceNBTFunction>

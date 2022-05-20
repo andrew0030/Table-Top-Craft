@@ -2,12 +2,18 @@
   "required": true,
   "minVersion": "0.8",
   "package": "andrews.table_top_craft.mixins",
-  "compatibilityLevel": "JAVA_16",
+  "compatibilityLevel": "JAVA_17",
+  "mixins": [
+    "LootTableMixin",
+    "LootTablesMixin"
+  ],
   "client": [
-    "ScreenMixin"
+    "ScreenMixin",
+    "GameRendererMixin",
+    "ShaderInstanceMixin",
+    "BlockEntityWithoutLevelRendererMixin"
   ],
   "injectors": {
     "defaultRequire": 1
-  },
-  "refmap": "table_top_craft.refmap.json"
+  }
 }

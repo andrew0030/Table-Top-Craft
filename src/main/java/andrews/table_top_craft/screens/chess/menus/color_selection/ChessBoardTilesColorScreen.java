@@ -1,10 +1,5 @@
 package andrews.table_top_craft.screens.chess.menus.color_selection;
 
-import andrews.table_top_craft.screens.piece_figure.util.*;
-import andrews.table_top_craft.util.Color;
-import com.mojang.blaze3d.platform.InputConstants;
-import com.mojang.blaze3d.systems.RenderSystem;
-
 import andrews.table_top_craft.screens.chess.buttons.ChessCancelButton;
 import andrews.table_top_craft.screens.chess.buttons.ChessCancelButton.ChessCancelButtonText;
 import andrews.table_top_craft.screens.chess.buttons.ChessCancelButton.ChessCancelMenuTarget;
@@ -16,15 +11,18 @@ import andrews.table_top_craft.screens.chess.buttons.colors.ChessResetColorButto
 import andrews.table_top_craft.screens.chess.sliders.ChessBlueColorSlider;
 import andrews.table_top_craft.screens.chess.sliders.ChessGreenColorSlider;
 import andrews.table_top_craft.screens.chess.sliders.ChessRedColorSlider;
+import andrews.table_top_craft.screens.piece_figure.util.*;
+import andrews.table_top_craft.screens.util.BaseSlider;
 import andrews.table_top_craft.tile_entities.ChessTileEntity;
+import andrews.table_top_craft.util.Color;
 import andrews.table_top_craft.util.NBTColorSaving;
 import andrews.table_top_craft.util.Reference;
+import com.mojang.blaze3d.systems.RenderSystem;
 import com.mojang.blaze3d.vertex.PoseStack;
 import net.minecraft.client.gui.screens.Screen;
 import net.minecraft.network.chat.TextComponent;
 import net.minecraft.network.chat.TranslatableComponent;
 import net.minecraft.resources.ResourceLocation;
-import net.minecraftforge.client.gui.widget.ForgeSlider;
 
 public class ChessBoardTilesColorScreen extends Screen implements IColorPicker, IColorPickerExtended
 {
@@ -165,8 +163,7 @@ public class ChessBoardTilesColorScreen extends Screen implements IColorPicker, 
 	public boolean keyPressed(int keyCode, int scanCode, int modifiers)
 	{
 		super.keyPressed(keyCode, scanCode, modifiers);
-		InputConstants.Key mouseKey = InputConstants.getKey(keyCode, scanCode);
-		if(this.minecraft.options.keyInventory.isActiveAndMatches(mouseKey))
+		if(this.minecraft.options.keyInventory.matches(keyCode, scanCode))
 			this.onClose();
 		return true;
 	}
@@ -178,25 +175,25 @@ public class ChessBoardTilesColorScreen extends Screen implements IColorPicker, 
 	}
 
 	@Override
-	public ForgeSlider getRedSlider()
+	public BaseSlider getRedSlider()
 	{
 		return this.whiteRedColorSlider;
 	}
 
 	@Override
-	public ForgeSlider getGreenSlider()
+	public BaseSlider getGreenSlider()
 	{
 		return this.whiteGreenColorSlider;
 	}
 
 	@Override
-	public ForgeSlider getBlueSlider()
+	public BaseSlider getBlueSlider()
 	{
 		return this.whiteBlueColorSlider;
 	}
 
 	@Override
-	public ForgeSlider getSaturationSlider()
+	public BaseSlider getSaturationSlider()
 	{
 		return this.saturationSlider;
 	}
@@ -208,19 +205,19 @@ public class ChessBoardTilesColorScreen extends Screen implements IColorPicker, 
 	}
 
 	@Override
-	public ForgeSlider getOptionalRedSlider()
+	public BaseSlider getOptionalRedSlider()
 	{
 		return this.blackRedColorSlider;
 	}
 
 	@Override
-	public ForgeSlider getOptionalGreenSlider()
+	public BaseSlider getOptionalGreenSlider()
 	{
 		return this.blackGreenColorSlider;
 	}
 
 	@Override
-	public ForgeSlider getOptionalBlueSlider()
+	public BaseSlider getOptionalBlueSlider()
 	{
 		return this.blackBlueColorSlider;
 	}

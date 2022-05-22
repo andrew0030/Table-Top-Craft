@@ -32,6 +32,7 @@ dependencies {
 	modImplementation "net.fabricmc.fabric-api:fabric-api:${project.fabric_version}"
 
 	modImplementation "maven.modrinth:modmenu:${project.mod_menu_version}"
+//	modImplementation "maven.modrinth:create-fabric:mc1.18.2_v0.4.1+576"
 }
 
 processResources {

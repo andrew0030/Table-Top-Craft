@@ -22,6 +22,7 @@ import andrews.table_top_craft.game_logic.chess.pieces.KnightPiece;
 import andrews.table_top_craft.game_logic.chess.pieces.PawnPiece;
 import andrews.table_top_craft.game_logic.chess.pieces.QueenPiece;
 import andrews.table_top_craft.game_logic.chess.pieces.RookPiece;
+import andrews.table_top_craft.game_logic.chess.player.MoveTransition;
 import andrews.table_top_craft.registry.TTCTileEntities;
 import andrews.table_top_craft.util.NBTColorSaving;
 import net.minecraft.core.BlockPos;
@@ -36,6 +37,8 @@ import net.minecraft.world.level.block.entity.BlockEntity;
 import net.minecraft.world.level.block.state.BlockState;
 import net.minecraft.world.phys.AABB;
 
+import java.util.ArrayList;
+import java.util.List;
 import java.util.Random;
 
 public class ChessTileEntity extends BlockEntity
@@ -65,6 +68,10 @@ public class ChessTileEntity extends BlockEntity
 	private final Random rand = new Random();
 	// The selected Set of Pieces to render
 	private int pieceSet;
+
+	// Available Moves Highlights Cache
+	private BasePiece cachedPiece;
+	private List<MoveTransition> moveTransitionsCache = new ArrayList<>();
 
 	public ChessTileEntity(BlockPos pos, BlockState state)
 	{
@@ -497,5 +504,30 @@ public class ChessTileEntity extends BlockEntity
 	{
 		pieceSet = set;
 		setChanged();
+	}
+
+	public BasePiece getCachedPiece()
+	{
+		return cachedPiece;
+	}
+
+	public void setCachedPiece(BasePiece cachedPiece)
+	{
+		this.cachedPiece = cachedPiece;
+	}
+
+	public List<MoveTransition> getMoveTransitionsCache()
+	{
+		return moveTransitionsCache;
+	}
+
+	public void clearMoveTransitionsCache()
+	{
+		this.moveTransitionsCache.clear();
+	}
+
+	public void addToMoveTransitionsCache(MoveTransition transition)
+	{
+		this.moveTransitionsCache.add(transition);
 	}
 }

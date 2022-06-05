@@ -270,23 +270,46 @@ public class ChessTileEntityRenderer implements BlockEntityRenderer<ChessTileEnt
 					// Render all the Available Moves Tiles
 					if (tileEntityIn.getShowAvailableMoves())
 					{
-						for (BaseMove move : pieceLegalMoves(tileEntityIn))
+						if(tileEntityIn.getHumanMovedPiece() != null && tileEntityIn.getHumanMovedPiece().getPieceColor() == tileEntityIn.getBoard().getCurrentChessPlayer().getPieceColor())
 						{
-							MoveTransition transition = board.getCurrentChessPlayer().makeMove(move);
-							if (move.getDestinationCoordinate() == currentCoordinate)
+							// If the move transitions havent been cached, we cache them
+							if(tileEntityIn.getCachedPiece() == null || !tileEntityIn.getCachedPiece().equals(tileEntityIn.getHumanMovedPiece()))
 							{
-								// We check if the Move is a Castling Move and if it is we render the Castling Highlight
-								if (move.isCastlingMove())
+								tileEntityIn.clearMoveTransitionsCache();
+								for (BaseMove move : pieceLegalMoves(tileEntityIn))
 								{
-									renderHighlight(poseStack, bufferIn, combinedLightIn, combinedOverlayIn, HighlightType.CASTLE_MOVE, tileEntityIn);
+									MoveTransition transition = board.getCurrentChessPlayer().makeMove(move);
+
+									// We add the move transition to the cache
+									tileEntityIn.addToMoveTransitionsCache(transition);
 								}
-								else
+								// After we are done caching the transitions we update the currently cached piece
+								tileEntityIn.setCachedPiece(tileEntityIn.getHumanMovedPiece());
+							}
+						}
+
+						for (int i = 0; i < pieceLegalMoves(tileEntityIn).size(); i++)
+						{
+							if(!tileEntityIn.getMoveTransitionsCache().isEmpty())
+							{
+								MoveTransition transition = tileEntityIn.getMoveTransitionsCache().get(i);
+								BaseMove move = transition.getMove();
+
+								if (move.getDestinationCoordinate() == currentCoordinate)
 								{
-									// If it wasn't a Castling Move we check the other cases we want to cover
-									switch (transition.getMoveStatus())
+									// We check if the Move is a Castling Move and if it is we render the Castling Highlight
+									if (move.isCastlingMove())
 									{
-										case DONE -> renderHighlight(poseStack, bufferIn, combinedLightIn, combinedOverlayIn, move.isAttack() ? HighlightType.ATTACK_MOVE : HighlightType.LEGAL_MOVE, tileEntityIn);
-										case LEAVES_PLAYER_IN_CHECK -> renderHighlight(poseStack, bufferIn, combinedLightIn, combinedOverlayIn, HighlightType.LEAVES_PLAYER_IN_CHECK, tileEntityIn);
+										renderHighlight(poseStack, bufferIn, combinedLightIn, combinedOverlayIn, HighlightType.CASTLE_MOVE, tileEntityIn);
+									}
+									else
+									{
+										// If it wasn't a Castling Move we check the other cases we want to cover
+										switch (transition.getMoveStatus())
+										{
+											case DONE -> renderHighlight(poseStack, bufferIn, combinedLightIn, combinedOverlayIn, move.isAttack() ? HighlightType.ATTACK_MOVE : HighlightType.LEGAL_MOVE, tileEntityIn);
+											case LEAVES_PLAYER_IN_CHECK -> renderHighlight(poseStack, bufferIn, combinedLightIn, combinedOverlayIn, HighlightType.LEAVES_PLAYER_IN_CHECK, tileEntityIn);
+										}
 									}
 								}
 							}

@@ -33,7 +33,7 @@ accessible field com/mojang/math/Matrix3f m21 F
 accessible field com/mojang/math/Matrix3f m22 F
 
 # vertex buffer, optimization purposes
-accessible method com/mojang/blaze3d/vertex/VertexBuffer bindVertexArray ()V
+# accessible method com/mojang/blaze3d/vertex/VertexBuffer bindVertexArray ()V
 
 # used to turn this mods advancements tab from pauseGame true to false
 accessible field net/minecraft/client/gui/screens/advancements/AdvancementsScreen selectedTab Lnet/minecraft/client/gui/screens/advancements/AdvancementTab;

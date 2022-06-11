@@ -12,14 +12,13 @@ import com.mojang.blaze3d.vertex.PoseStack;
 import net.minecraft.client.Minecraft;
 import net.minecraft.client.gui.Font;
 import net.minecraft.client.gui.components.Button;
-import net.minecraft.network.chat.TextComponent;
-import net.minecraft.network.chat.TranslatableComponent;
+import net.minecraft.network.chat.Component;
 import net.minecraft.resources.ResourceLocation;
 
 public class ChessPieceFigureConfirmColorButton extends Button
 {
     private static final ResourceLocation TEXTURE = new ResourceLocation(Reference.MODID + ":textures/gui/buttons/chess_menu_buttons.png");
-    private final String buttonText = new TranslatableComponent("gui.table_top_craft.chess.confirm_color").getString();
+    private final String buttonText = Component.translatable("gui.table_top_craft.chess.confirm_color").getString();
     private final Font fontRenderer;
     private static ChessPieceFigureBlockEntity chessPieceFigureBlockEntity;
     private static final int buttonWidth = 82;
@@ -32,7 +31,7 @@ public class ChessPieceFigureConfirmColorButton extends Button
 
     public ChessPieceFigureConfirmColorButton(ChessPieceFigureBlockEntity blockEntity, ChessRedColorSlider red, ChessGreenColorSlider green, ChessBlueColorSlider blue, int xPos, int yPos)
     {
-        super(xPos, yPos, buttonWidth, buttonHeight, new TextComponent(""), (button) -> { handleButtonPress(); });
+        super(xPos, yPos, buttonWidth, buttonHeight, Component.literal(""), (button) -> { handleButtonPress(); });
         this.fontRenderer = Minecraft.getInstance().font;
         chessPieceFigureBlockEntity = blockEntity;
         redSlider = red;

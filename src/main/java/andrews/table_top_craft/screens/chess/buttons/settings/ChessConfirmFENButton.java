@@ -9,14 +9,13 @@ import net.minecraft.client.Minecraft;
 import net.minecraft.client.gui.Font;
 import net.minecraft.client.gui.components.Button;
 import net.minecraft.client.gui.components.EditBox;
-import net.minecraft.network.chat.TextComponent;
-import net.minecraft.network.chat.TranslatableComponent;
+import net.minecraft.network.chat.Component;
 import net.minecraft.resources.ResourceLocation;
 
 public class ChessConfirmFENButton extends Button
 {
 	private static final ResourceLocation TEXTURE = new ResourceLocation(Reference.MODID + ":textures/gui/buttons/chess_menu_buttons.png");
-	private final String buttonText = new TranslatableComponent("gui.table_top_craft.chess.confirm_fen").getString();
+	private final String buttonText = Component.translatable("gui.table_top_craft.chess.confirm_fen").getString();
 	private final Font fontRenderer;
 	private static ChessTileEntity chessTileEntity;
 	private static EditBox fenStringField;
@@ -27,7 +26,7 @@ public class ChessConfirmFENButton extends Button
 	
 	public ChessConfirmFENButton(ChessTileEntity tileEntity, EditBox textFieldWidget, int xPos, int yPos)
 	{
-		super(xPos, yPos, buttonWidth, buttonHeight, new TextComponent(""), (button) -> { handleButtonPress(); });
+		super(xPos, yPos, buttonWidth, buttonHeight, Component.literal(""), (button) -> { handleButtonPress(); });
 		this.fontRenderer = Minecraft.getInstance().font;
 		chessTileEntity = tileEntity;
 		fenStringField = textFieldWidget;

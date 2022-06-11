@@ -20,12 +20,10 @@ import andrews.table_top_craft.tile_entities.ChessTileEntity;
 import andrews.table_top_craft.util.Color;
 import andrews.table_top_craft.util.NBTColorSaving;
 import andrews.table_top_craft.util.Reference;
-import com.mojang.blaze3d.platform.InputConstants;
 import com.mojang.blaze3d.systems.RenderSystem;
 import com.mojang.blaze3d.vertex.PoseStack;
 import net.minecraft.client.gui.screens.Screen;
-import net.minecraft.network.chat.TextComponent;
-import net.minecraft.network.chat.TranslatableComponent;
+import net.minecraft.network.chat.Component;
 import net.minecraft.resources.ResourceLocation;
 
 public class ChessTileInfoColorScreen extends Screen implements IColorPicker
@@ -33,8 +31,8 @@ public class ChessTileInfoColorScreen extends Screen implements IColorPicker
 	private static final ResourceLocation MENU_TEXTURE = new ResourceLocation(Reference.MODID, "textures/gui/menus/medium_chess_menu.png");
 	private static final ResourceLocation PREVIEW_TEXTURE = new ResourceLocation(Reference.MODID, "textures/gui/menus/preview_color.png");
 	private static final ResourceLocation COLOR_PICKER_FRAME_TEXTURE = new ResourceLocation(Reference.MODID, "textures/gui/color_picker/color_picker_frame.png");
-	private final String colorSelectionText = new TranslatableComponent("gui.table_top_craft.chess.color.tile_info").getString();
-	private final String previewColorText = new TranslatableComponent("gui.table_top_craft.chess.color.color_preview").getString();
+	private final String colorSelectionText = Component.translatable("gui.table_top_craft.chess.color.tile_info").getString();
+	private final String previewColorText = Component.translatable("gui.table_top_craft.chess.color.color_preview").getString();
 	private final ChessTileEntity chessTileEntity;
 	private final int xSize = 177;
 	private final int ySize = 131;
@@ -47,7 +45,7 @@ public class ChessTileInfoColorScreen extends Screen implements IColorPicker
 	
 	public ChessTileInfoColorScreen(ChessTileEntity chessTileEntity, boolean isColorPickerActive)
 	{
-		super(new TextComponent(""));
+		super(Component.literal(""));
 		this.chessTileEntity = chessTileEntity;
 		this.isColorPickerActive = isColorPickerActive;
 	}

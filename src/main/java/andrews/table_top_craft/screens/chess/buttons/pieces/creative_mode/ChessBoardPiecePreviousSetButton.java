@@ -8,14 +8,13 @@ import com.mojang.blaze3d.vertex.PoseStack;
 import net.minecraft.client.Minecraft;
 import net.minecraft.client.gui.Font;
 import net.minecraft.client.gui.components.Button;
-import net.minecraft.network.chat.TextComponent;
-import net.minecraft.network.chat.TranslatableComponent;
+import net.minecraft.network.chat.Component;
 import net.minecraft.resources.ResourceLocation;
 
 public class ChessBoardPiecePreviousSetButton extends Button
 {
     private static final ResourceLocation TEXTURE = new ResourceLocation(Reference.MODID + ":textures/gui/buttons/chess_menu_buttons.png");
-    private final TranslatableComponent buttonText = new TranslatableComponent("gui.table_top_craft.chess_piece_figure.previous_set");
+    private final Component buttonText = Component.translatable("gui.table_top_craft.chess_piece_figure.previous_set");
     private final Font fontRenderer;
     private static ChessPieceFigureBlockEntity chessPieceFigureBlockEntity;
     private static final int buttonWidth = 26;
@@ -25,7 +24,7 @@ public class ChessBoardPiecePreviousSetButton extends Button
 
     public ChessBoardPiecePreviousSetButton(ChessPieceFigureBlockEntity blockEntity, int xPos, int yPos)
     {
-        super(xPos, yPos, buttonWidth, buttonHeight, new TextComponent(""), (button) -> { handleButtonPress(); });
+        super(xPos, yPos, buttonWidth, buttonHeight, Component.literal(""), (button) -> { handleButtonPress(); });
         this.fontRenderer = Minecraft.getInstance().font;
         chessPieceFigureBlockEntity = blockEntity;
     }

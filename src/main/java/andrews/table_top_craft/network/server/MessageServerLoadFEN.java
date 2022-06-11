@@ -7,7 +7,7 @@ import andrews.table_top_craft.util.Reference;
 import net.fabricmc.fabric.api.networking.v1.ServerPlayNetworking;
 import net.minecraft.ChatFormatting;
 import net.minecraft.core.BlockPos;
-import net.minecraft.network.chat.TranslatableComponent;
+import net.minecraft.network.chat.Component;
 import net.minecraft.resources.ResourceLocation;
 import net.minecraft.world.level.Level;
 import net.minecraft.world.level.block.entity.BlockEntity;
@@ -43,7 +43,7 @@ public class MessageServerLoadFEN
 						}
 						else
 						{
-							serverPlayer.sendMessage(new TranslatableComponent("message.table_top_craft.chess.invalidFEN").withStyle(ChatFormatting.RED), serverPlayer.getUUID());
+							serverPlayer.sendSystemMessage(Component.translatable("message.table_top_craft.chess.invalidFEN").withStyle(ChatFormatting.RED));//TODO make sure this works
 						}
 						chessTileEntity.setBoard(board);
 						chessTileEntity.getMoveLog().clear();

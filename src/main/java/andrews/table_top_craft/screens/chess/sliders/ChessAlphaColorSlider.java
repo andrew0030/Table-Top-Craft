@@ -6,16 +6,14 @@ import com.mojang.blaze3d.systems.RenderSystem;
 import com.mojang.blaze3d.vertex.PoseStack;
 import net.minecraft.client.Minecraft;
 import net.minecraft.network.chat.Component;
-import net.minecraft.network.chat.TextComponent;
-import net.minecraft.network.chat.TranslatableComponent;
 
 public class ChessAlphaColorSlider extends BaseSlider
 {
-	private final static TranslatableComponent alphaValueText = new TranslatableComponent("gui.table_top_craft.chess.sliders.alpha");
+	private final static Component alphaValueText = Component.translatable("gui.table_top_craft.chess.sliders.alpha");
 
 	public ChessAlphaColorSlider(int xPos, int yPos, int width, int height, int currentValue)
 	{
-        super(xPos, yPos, width, height, alphaValueText, new TextComponent(""), 1, 255, currentValue, true);
+        super(xPos, yPos, width, height, alphaValueText, Component.literal(""), 1, 255, currentValue, true);
 	}
 
     @Override
@@ -31,7 +29,7 @@ public class ChessAlphaColorSlider extends BaseSlider
         int ellipsisWidth = mc.font.width("...");
 
         if (strWidth > width - 6 && strWidth > ellipsisWidth)
-            buttonText = new TextComponent(mc.font.substrByWidth(buttonText, width - 6 - ellipsisWidth).getString() + "...");
+            buttonText = Component.literal(mc.font.substrByWidth(buttonText, width - 6 - ellipsisWidth).getString() + "...");
 
         drawCenteredString(poseStack, mc.font, buttonText, this.x + this.width / 2, this.y + (this.height - 8) / 2, getFGColor());
     }

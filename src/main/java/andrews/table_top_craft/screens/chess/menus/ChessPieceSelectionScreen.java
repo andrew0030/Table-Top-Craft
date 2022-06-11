@@ -10,15 +10,14 @@ import andrews.table_top_craft.util.Reference;
 import com.mojang.blaze3d.systems.RenderSystem;
 import com.mojang.blaze3d.vertex.PoseStack;
 import net.minecraft.client.gui.screens.Screen;
-import net.minecraft.network.chat.TextComponent;
-import net.minecraft.network.chat.TranslatableComponent;
+import net.minecraft.network.chat.Component;
 import net.minecraft.resources.ResourceLocation;
 
 public class ChessPieceSelectionScreen extends Screen
 {
     private static final ResourceLocation MENU_TEXTURE = new ResourceLocation(Reference.MODID, "textures/gui/menus/chess_menu.png");
     private static final ResourceLocation BUTTONS_TEXTURE = new ResourceLocation(Reference.MODID + ":textures/gui/buttons/chess_menu_buttons.png");
-    private final String chessBoardColorsText = new TranslatableComponent("gui.table_top_craft.chess.board_pieces").getString();
+    private final String chessBoardColorsText = Component.translatable("gui.table_top_craft.chess.board_pieces").getString();
     private final ChessTileEntity chessTileEntity;
     private final int xSize = 177;
     private final int ySize = 198;
@@ -28,7 +27,7 @@ public class ChessPieceSelectionScreen extends Screen
 
     public ChessPieceSelectionScreen(ChessTileEntity chessTileEntity, boolean isStandardSetUnlocked, boolean isClassicSetUnlocked, boolean isPandorasCreaturesSetUnlocked)
     {
-        super(new TextComponent(""));
+        super(Component.literal(""));
         this.chessTileEntity = chessTileEntity;
         this.isStandardSetUnlocked = isStandardSetUnlocked;
         this.isClassicSetUnlocked = isClassicSetUnlocked;
@@ -77,7 +76,7 @@ public class ChessPieceSelectionScreen extends Screen
         // Menu Text
         this.font.draw(poseStack, this.chessBoardColorsText, ((this.width / 2) - (this.font.width(this.chessBoardColorsText) / 2)), y + 6, 4210752);
         // Page Number Text
-        this.font.draw(poseStack, new TextComponent("1/1"), ((this.width / 2) - (this.font.width("1/1") / 2)), y + (ySize - 16), 4210752);
+        this.font.draw(poseStack, Component.literal("1/1"), ((this.width / 2) - (this.font.width("1/1") / 2)), y + (ySize - 16), 4210752);
 
         // Renders the Buttons we added in init
         super.render(poseStack, mouseX, mouseY, partialTicks);

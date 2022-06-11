@@ -7,14 +7,13 @@ import com.mojang.blaze3d.vertex.PoseStack;
 import net.minecraft.client.Minecraft;
 import net.minecraft.client.gui.Font;
 import net.minecraft.client.gui.components.Button;
-import net.minecraft.network.chat.TextComponent;
-import net.minecraft.network.chat.TranslatableComponent;
+import net.minecraft.network.chat.Component;
 import net.minecraft.resources.ResourceLocation;
 
 public class ChessPieceFigureResetColorButton extends Button
 {
     private static final ResourceLocation TEXTURE = new ResourceLocation(Reference.MODID + ":textures/gui/buttons/chess_menu_buttons.png");
-    private final String buttonText = new TranslatableComponent("gui.table_top_craft.chess.color.reset_color").getString();
+    private final String buttonText = Component.translatable("gui.table_top_craft.chess.color.reset_color").getString();
     private final Font fontRenderer;
     private static final int buttonWidth = 82;
     private static final int buttonHeight = 13;
@@ -24,7 +23,7 @@ public class ChessPieceFigureResetColorButton extends Button
 
     public ChessPieceFigureResetColorButton(ChessPieceFigureSettingsScreen chessPieceFigureSettingsScreen, int xPos, int yPos)
     {
-        super(xPos, yPos, buttonWidth, buttonHeight, new TextComponent(""), (button) -> { handleButtonPress(); });
+        super(xPos, yPos, buttonWidth, buttonHeight, Component.literal(""), (button) -> { handleButtonPress(); });
         this.fontRenderer = Minecraft.getInstance().font;
         screen = chessPieceFigureSettingsScreen;
     }

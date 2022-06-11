@@ -10,21 +10,20 @@ import com.mojang.blaze3d.systems.RenderSystem;
 import com.mojang.blaze3d.vertex.PoseStack;
 import net.minecraft.client.Minecraft;
 import net.minecraft.client.gui.screens.Screen;
-import net.minecraft.network.chat.TextComponent;
-import net.minecraft.network.chat.TranslatableComponent;
+import net.minecraft.network.chat.Component;
 import net.minecraft.resources.ResourceLocation;
 
 public class ChessBoardSettingsScreen extends Screen
 {
 	private static final ResourceLocation MENU_TEXTURE = new ResourceLocation(Reference.MODID, "textures/gui/menus/chess_menu.png");
 	private static final ResourceLocation MOVE_LOG_TEXTURE = new ResourceLocation(Reference.MODID, "textures/gui/menus/move_log.png");
-	private final String chessBoardSettingsText = new TranslatableComponent("gui.table_top_craft.chess.board_settings").getString();
-	private final String moveLogText = new TranslatableComponent("gui.table_top_craft.chess.move_log").getString();
-	private final String moveLogWhiteText = new TranslatableComponent("gui.table_top_craft.chess.move_log.white").getString();
-	private final String moveLogBlackText = new TranslatableComponent("gui.table_top_craft.chess.move_log.black").getString();
-	private final String showTileInfoText = new TranslatableComponent("gui.table_top_craft.chess.show_tile_info").getString();
-	private final String showAvailableMovesText = new TranslatableComponent("gui.table_top_craft.chess.show_available_moves").getString();
-	private final String showPreviousMoveText = new TranslatableComponent("gui.table_top_craft.chess.show_previous_move").getString();
+	private final String chessBoardSettingsText = Component.translatable("gui.table_top_craft.chess.board_settings").getString();
+	private final String moveLogText = Component.translatable("gui.table_top_craft.chess.move_log").getString();
+	private final String moveLogWhiteText = Component.translatable("gui.table_top_craft.chess.move_log.white").getString();
+	private final String moveLogBlackText = Component.translatable("gui.table_top_craft.chess.move_log.black").getString();
+	private final String showTileInfoText = Component.translatable("gui.table_top_craft.chess.show_tile_info").getString();
+	private final String showAvailableMovesText = Component.translatable("gui.table_top_craft.chess.show_available_moves").getString();
+	private final String showPreviousMoveText = Component.translatable("gui.table_top_craft.chess.show_previous_move").getString();
 	private final ChessTileEntity chessTileEntity;
 	private final int xSize = 177;
 	private final int ySize = 198;
@@ -32,7 +31,7 @@ public class ChessBoardSettingsScreen extends Screen
 	
 	public ChessBoardSettingsScreen(ChessTileEntity chessTileEntity)
 	{
-		super(new TextComponent(""));
+		super(Component.literal(""));
 		this.chessTileEntity = chessTileEntity;
 		this.moveLogOffset = 0;
 	}

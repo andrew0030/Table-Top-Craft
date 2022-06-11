@@ -17,12 +17,12 @@ public class BufferHelpers {
 
 //		RenderSystem.setShaderTexture(1, );
 		Minecraft.getInstance().gameRenderer.lightTexture().turnOnLightLayer();
-		
+
 		for (int i = 0; i < 12; ++i) {
 			int j = RenderSystem.getShaderTexture(i);
 			pShaderInstance.setSampler("Sampler" + i, j);
 		}
-		
+
 		if (uniform != null) uniform.set((float) lightU, ilghtV);
 		if (pShaderInstance.INVERSE_VIEW_ROTATION_MATRIX != null) pShaderInstance.INVERSE_VIEW_ROTATION_MATRIX.set(RenderSystem.getInverseViewRotationMatrix());
 		if (pShaderInstance.COLOR_MODULATOR != null) pShaderInstance.COLOR_MODULATOR.set(RenderSystem.getShaderColor());
@@ -58,7 +58,7 @@ public class BufferHelpers {
 	}
 	
 	public static void draw(VertexBuffer buffer, ShaderInstance pShaderInstance) {
-		buffer.bindVertexArray();
+//		buffer.bindVertexArray(); TODO make sure this works
 		buffer.bind();
 		buffer.getFormat().setupBufferState();
 		pShaderInstance.apply();
@@ -71,6 +71,6 @@ public class BufferHelpers {
 	
 	public static void teardownRender() {
 		VertexBuffer.unbind();
-		VertexBuffer.unbindVertexArray();
+//		VertexBuffer.unbindVertexArray(); TODO make sure this works
 	}
 }

@@ -7,6 +7,7 @@ import com.google.gson.JsonDeserializationContext;
 import com.google.gson.JsonObject;
 import com.google.gson.JsonSerializationContext;
 import net.minecraft.core.BlockPos;
+import net.minecraft.util.RandomSource;
 import net.minecraft.world.item.ItemStack;
 import net.minecraft.world.level.storage.loot.LootContext;
 import net.minecraft.world.level.storage.loot.functions.LootItemConditionalFunction;
@@ -25,7 +26,7 @@ public class GeneratePieceNBTFunction extends LootItemConditionalFunction
     @Override
     protected ItemStack run(ItemStack stack, LootContext context)
     {
-        Random random = context.getRandom();
+        RandomSource random = context.getRandom();
         if(stack.is(TTCBlocks.CHESS_PIECE_FIGURE.asItem()))
         {
             ChessPieceFigureBlockEntity blockEntity = new ChessPieceFigureBlockEntity(BlockPos.ZERO, TTCBlocks.CHESS_PIECE_FIGURE.defaultBlockState());

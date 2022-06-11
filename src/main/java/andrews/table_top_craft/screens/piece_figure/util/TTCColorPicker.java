@@ -8,7 +8,7 @@ import com.mojang.blaze3d.vertex.PoseStack;
 import net.minecraft.client.Minecraft;
 import net.minecraft.client.gui.components.AbstractSliderButton;
 import net.minecraft.client.gui.screens.Screen;
-import net.minecraft.network.chat.TextComponent;
+import net.minecraft.network.chat.Component;
 import net.minecraft.resources.ResourceLocation;
 import net.minecraft.util.Mth;
 import org.lwjgl.glfw.GLFW;
@@ -27,7 +27,7 @@ public class TTCColorPicker extends AbstractSliderButton
         // minecraft's texture file. The issue is that a 256x25p Pixel texture is HUGE in any menu, so to fix
         // that we pass a size of 128x128 (half of 256) and simply use the PoseStack inside render() to mul.
         // the size by 0.5, effectively turning a 256x256 texture into a 128x128 one.
-        super(xPos, yPos, 128, 128, TextComponent.EMPTY, valueX);
+        super(xPos, yPos, 128, 128, Component.literal(""), valueX);
         this.screen = screen;
         this.valueY = valueY;
         this.color = new Color(0, 0, 0);
@@ -217,7 +217,7 @@ public class TTCColorPicker extends AbstractSliderButton
     @Override
     protected void updateMessage()
     {
-        this.setMessage(TextComponent.EMPTY);
+        this.setMessage(Component.literal(""));
     }
 
     /**

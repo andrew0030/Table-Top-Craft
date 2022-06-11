@@ -9,14 +9,13 @@ import com.mojang.blaze3d.vertex.PoseStack;
 import net.minecraft.client.Minecraft;
 import net.minecraft.client.gui.Font;
 import net.minecraft.client.gui.components.Button;
-import net.minecraft.network.chat.TextComponent;
-import net.minecraft.network.chat.TranslatableComponent;
+import net.minecraft.network.chat.Component;
 import net.minecraft.resources.ResourceLocation;
 
 public class ChessPieceFigureConfirmScaleButton extends Button
 {
     private static final ResourceLocation TEXTURE = new ResourceLocation(Reference.MODID + ":textures/gui/buttons/chess_menu_buttons.png");
-    private final String buttonText = new TranslatableComponent("gui.table_top_craft.chess_piece_figure.confirm_scale").getString();
+    private final String buttonText = Component.translatable("gui.table_top_craft.chess_piece_figure.confirm_scale").getString();
     private final Font fontRenderer;
     private static ChessPieceFigureBlockEntity chessPieceFigureBlockEntity;
     private static final int buttonWidth = 167;
@@ -27,7 +26,7 @@ public class ChessPieceFigureConfirmScaleButton extends Button
 
     public ChessPieceFigureConfirmScaleButton(ChessPieceFigureBlockEntity blockEntity, ChessPieceFigureScaleSlider slider, int xPos, int yPos)
     {
-        super(xPos, yPos, buttonWidth, buttonHeight, new TextComponent(""), (button) -> { handleButtonPress(); });
+        super(xPos, yPos, buttonWidth, buttonHeight, Component.literal(""), (button) -> { handleButtonPress(); });
         this.fontRenderer = Minecraft.getInstance().font;
         chessPieceFigureBlockEntity = blockEntity;
         scaleSlider = slider;

@@ -20,8 +20,7 @@ import andrews.table_top_craft.util.Reference;
 import com.mojang.blaze3d.systems.RenderSystem;
 import com.mojang.blaze3d.vertex.PoseStack;
 import net.minecraft.client.gui.screens.Screen;
-import net.minecraft.network.chat.TextComponent;
-import net.minecraft.network.chat.TranslatableComponent;
+import net.minecraft.network.chat.Component;
 import net.minecraft.resources.ResourceLocation;
 
 public class ChessBoardPieceColorsScreen extends Screen implements IColorPicker, IColorPickerExtended
@@ -30,10 +29,10 @@ public class ChessBoardPieceColorsScreen extends Screen implements IColorPicker,
 	private static final ResourceLocation PREVIEW_TEXTURE = new ResourceLocation(Reference.MODID, "textures/gui/menus/preview_color.png");
 	private static final ResourceLocation PREVIEW_FRAME_TEXTURE = new ResourceLocation(Reference.MODID, "textures/gui/menus/medium_chess_menu.png");
 	private static final ResourceLocation COLOR_PICKER_FRAME_TEXTURE = new ResourceLocation(Reference.MODID, "textures/gui/color_picker/color_picker_frame.png");
-	private final String colorSelectionText = new TranslatableComponent("gui.table_top_craft.chess.color.piece").getString();
-	private final String previewColorText = new TranslatableComponent("gui.table_top_craft.chess.color.colors_preview").getString();
-	private final String whitePieceSettingsText = new TranslatableComponent("gui.table_top_craft.chess.color.white_piece_settings").getString();
-	private final String blackPieceSettingsText = new TranslatableComponent("gui.table_top_craft.chess.color.black_piece_settings").getString();
+	private final String colorSelectionText = Component.translatable("gui.table_top_craft.chess.color.piece").getString();
+	private final String previewColorText = Component.translatable("gui.table_top_craft.chess.color.colors_preview").getString();
+	private final String whitePieceSettingsText = Component.translatable("gui.table_top_craft.chess.color.white_piece_settings").getString();
+	private final String blackPieceSettingsText = Component.translatable("gui.table_top_craft.chess.color.black_piece_settings").getString();
 	private final ChessTileEntity chessTileEntity;
 	private final int xSize = 177;
 	private final int ySize = 198;
@@ -50,7 +49,7 @@ public class ChessBoardPieceColorsScreen extends Screen implements IColorPicker,
 	
 	public ChessBoardPieceColorsScreen(ChessTileEntity chessTileEntity, boolean isColorPickerActive, boolean isOptionalColorPickerActive)
 	{
-		super(new TextComponent(""));
+		super(Component.literal(""));
 		this.chessTileEntity = chessTileEntity;
 		this.isColorPickerActive = isColorPickerActive;
 		this.isOptionalColorPickerActive = isOptionalColorPickerActive;

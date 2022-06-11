@@ -7,18 +7,15 @@ import com.mojang.blaze3d.vertex.PoseStack;
 import net.minecraft.client.Minecraft;
 import net.minecraft.client.gui.screens.Screen;
 import net.minecraft.network.chat.Component;
-import net.minecraft.network.chat.TextComponent;
-import net.minecraft.network.chat.TranslatableComponent;
-import net.minecraft.util.Mth;
 
 public class SaturationSlider extends BaseSlider
 {
-    private final static TranslatableComponent saturationValueText = new TranslatableComponent("gui.table_top_craft.sliders.saturation");
+    private final static Component saturationValueText = Component.translatable("gui.table_top_craft.sliders.saturation");
     private Screen menuIn;
 
     public SaturationSlider(int xPos, int yPos, int width, int height, int currentValue)
     {
-        super(xPos, yPos, width, height, saturationValueText, new TextComponent(""), 0, 100, currentValue, true);
+        super(xPos, yPos, width, height, saturationValueText, Component.literal(""), 0, 100, currentValue, true);
     }
 
     public SaturationSlider(int xPos, int yPos, int width, int height, int currentValue, Screen menuIn)
@@ -52,7 +49,7 @@ public class SaturationSlider extends BaseSlider
         int ellipsisWidth = mc.font.width("...");
 
         if (strWidth > width - 6 && strWidth > ellipsisWidth)
-            buttonText = new TextComponent(mc.font.substrByWidth(buttonText, width - 6 - ellipsisWidth).getString() + "...");
+            buttonText = Component.literal(mc.font.substrByWidth(buttonText, width - 6 - ellipsisWidth).getString() + "...");
 
         drawCenteredString(poseStack, mc.font, buttonText, this.x + this.width / 2, this.y + (this.height - 8) / 2, getFGColor());
     }

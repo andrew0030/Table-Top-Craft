@@ -7,7 +7,7 @@ import andrews.table_top_craft.util.Reference;
 import com.mojang.blaze3d.systems.RenderSystem;
 import com.mojang.blaze3d.vertex.PoseStack;
 import net.minecraft.client.gui.components.Button;
-import net.minecraft.network.chat.TextComponent;
+import net.minecraft.network.chat.Component;
 import net.minecraft.resources.ResourceLocation;
 
 public class ChessMoveLogUpButton extends Button
@@ -22,7 +22,7 @@ public class ChessMoveLogUpButton extends Button
 	
 	public ChessMoveLogUpButton(int xPos, int yPos, ChessBoardSettingsScreen currentScreen, ChessTileEntity tileEntity) 
 	{
-		super(xPos, yPos, buttonWidth, buttonHeight, new TextComponent(""), (button) -> { handleButtonPress(); });
+		super(xPos, yPos, buttonWidth, buttonHeight, Component.literal(""), (button) -> { handleButtonPress(); });
 		screen = currentScreen;
 		if(tileEntity.getMoveLog() != null)
 			moveLog = tileEntity.getMoveLog();

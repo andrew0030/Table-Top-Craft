@@ -8,22 +8,21 @@ import andrews.table_top_craft.util.Reference;
 import com.mojang.blaze3d.systems.RenderSystem;
 import com.mojang.blaze3d.vertex.PoseStack;
 import net.minecraft.client.gui.screens.Screen;
-import net.minecraft.network.chat.TextComponent;
-import net.minecraft.network.chat.TranslatableComponent;
+import net.minecraft.network.chat.Component;
 import net.minecraft.resources.ResourceLocation;
 
 public class ChessColorSettingsScreen extends Screen
 {
 	private static final ResourceLocation MENU_TEXTURE = new ResourceLocation(Reference.MODID, "textures/gui/menus/chess_menu.png");
-	private final String chessBoardColorsText = new TranslatableComponent("gui.table_top_craft.chess.board_colors").getString();
-	private final String useCustomPlateText = new TranslatableComponent("gui.table_top_craft.chess.use_custom_plate").getString();
+	private final String chessBoardColorsText = Component.translatable("gui.table_top_craft.chess.board_colors").getString();
+	private final String useCustomPlateText = Component.translatable("gui.table_top_craft.chess.use_custom_plate").getString();
 	private final ChessTileEntity chessTileEntity;
 	private final int xSize = 177;
 	private final int ySize = 198;
 	
 	public ChessColorSettingsScreen(ChessTileEntity chessTileEntity)
 	{
-		super(new TextComponent(""));
+		super(Component.literal(""));
 		this.chessTileEntity = chessTileEntity;
 	}
 	

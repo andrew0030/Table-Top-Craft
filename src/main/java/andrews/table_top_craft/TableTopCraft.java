@@ -5,7 +5,6 @@ import andrews.table_top_craft.network.TTCNetwork;
 import andrews.table_top_craft.registry.TTCBlocks;
 import andrews.table_top_craft.registry.TTCLootItemFunctions;
 import andrews.table_top_craft.registry.TTCTileEntities;
-import andrews.table_top_craft.tile_entities.render.item.TTCBlockEntityWithoutLevelRenderer;
 import andrews.table_top_craft.util.Reference;
 import net.fabricmc.api.ModInitializer;
 import net.fabricmc.fabric.api.client.itemgroup.FabricItemGroupBuilder;

@@ -23,7 +23,6 @@ import andrews.table_top_craft.util.Color;
 import andrews.table_top_craft.util.NBTColorSaving;
 import andrews.table_top_craft.util.Reference;
 import com.mojang.blaze3d.platform.GlStateManager;
-import com.mojang.blaze3d.platform.InputConstants;
 import com.mojang.blaze3d.platform.Lighting;
 import com.mojang.blaze3d.systems.RenderSystem;
 import com.mojang.blaze3d.vertex.PoseStack;
@@ -36,8 +35,7 @@ import net.minecraft.client.renderer.texture.OverlayTexture;
 import net.minecraft.client.renderer.texture.TextureAtlas;
 import net.minecraft.client.resources.model.BakedModel;
 import net.minecraft.core.BlockPos;
-import net.minecraft.network.chat.TextComponent;
-import net.minecraft.network.chat.TranslatableComponent;
+import net.minecraft.network.chat.Component;
 import net.minecraft.resources.ResourceLocation;
 import net.minecraft.world.item.ItemStack;
 
@@ -45,8 +43,8 @@ public class ChessPieceFigureSettingsScreen extends Screen implements IColorPick
 {
     private static final ResourceLocation MENU_TEXTURE = new ResourceLocation(Reference.MODID, "textures/gui/menus/chess_piece_figure_menu.png");
     private static final ResourceLocation COLOR_PICKER_FRAME_TEXTURE = new ResourceLocation(Reference.MODID, "textures/gui/color_picker/color_picker_frame.png");
-    private final String chessPieceFigureSettingsText = new TranslatableComponent("gui.table_top_craft.piece_figure.piece_settings").getString();
-    private final String togglePieceRotationText = new TranslatableComponent("gui.table_top_craft.piece_figure.toggle_rotation").getString();
+    private final String chessPieceFigureSettingsText = Component.translatable("gui.table_top_craft.piece_figure.piece_settings").getString();
+    private final String togglePieceRotationText = Component.translatable("gui.table_top_craft.piece_figure.toggle_rotation").getString();
     private final ChessPieceFigureBlockEntity chessPieceFigureBlockEntity;
     private final int xSize = 177;
     private final int ySize = 158;
@@ -66,7 +64,7 @@ public class ChessPieceFigureSettingsScreen extends Screen implements IColorPick
 
     public ChessPieceFigureSettingsScreen(ChessPieceFigureBlockEntity chessPieceFigureBlockEntity, boolean isColorPickerActive)
     {
-        super(new TextComponent(""));
+        super(Component.literal(""));
         this.chessPieceFigureBlockEntity = chessPieceFigureBlockEntity;
         this.isColorPickerActive = isColorPickerActive;
         previewBlockEntity = new ChessPieceFigureBlockEntity(BlockPos.ZERO, TTCBlocks.CHESS_PIECE_FIGURE.defaultBlockState());

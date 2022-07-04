@@ -1,30 +1,28 @@
 package andrews.table_top_craft.screens.chess.menus;
 
-import com.google.common.primitives.Ints;
-
 import andrews.table_top_craft.game_logic.chess.player.ai.StandardBoardEvaluator;
 import andrews.table_top_craft.screens.chess.buttons.ChessCancelButton;
 import andrews.table_top_craft.screens.chess.buttons.ChessCancelButton.ChessCancelButtonText;
 import andrews.table_top_craft.screens.chess.buttons.ChessCancelButton.ChessCancelMenuTarget;
 import andrews.table_top_craft.tile_entities.ChessTileEntity;
 import andrews.table_top_craft.util.Reference;
+import com.google.common.primitives.Ints;
 import com.mojang.blaze3d.platform.InputConstants;
 import com.mojang.blaze3d.systems.RenderSystem;
 import com.mojang.blaze3d.vertex.PoseStack;
 import net.minecraft.client.Minecraft;
 import net.minecraft.client.gui.screens.Screen;
 import net.minecraft.client.player.LocalPlayer;
-import net.minecraft.network.chat.TextComponent;
-import net.minecraft.network.chat.TranslatableComponent;
+import net.minecraft.network.chat.Component;
 import net.minecraft.resources.ResourceLocation;
 
 public class ChessBoardEvaluatorScreen extends Screen
 {
 	private static final ResourceLocation MENU_TEXTURE = new ResourceLocation(Reference.MODID, "textures/gui/menus/chess_menu.png");
-	private final String chessBoardEvaluatorText = new TranslatableComponent("gui.table_top_craft.chess.board_evaluator").getString();
-	private final String whitePlayerText = new TranslatableComponent("gui.table_top_craft.chess.evaluation.white_player").getString();
-	private final String blackPlayerText = new TranslatableComponent("gui.table_top_craft.chess.evaluation.black_player").getString();
-	private final String currentScoreText = new TranslatableComponent("gui.table_top_craft.chess.evaluation.current_score").getString();
+	private final String chessBoardEvaluatorText = Component.translatable("gui.table_top_craft.chess.board_evaluator").getString();
+	private final String whitePlayerText = Component.translatable("gui.table_top_craft.chess.evaluation.white_player").getString();
+	private final String blackPlayerText = Component.translatable("gui.table_top_craft.chess.evaluation.black_player").getString();
+	private final String currentScoreText = Component.translatable("gui.table_top_craft.chess.evaluation.current_score").getString();
 	private final String boardEvaluationText;
 	private final ChessTileEntity chessTileEntity;
 	private final LocalPlayer clientPlayer;
@@ -33,7 +31,7 @@ public class ChessBoardEvaluatorScreen extends Screen
 	
 	public ChessBoardEvaluatorScreen(ChessTileEntity chessTileEntity)
 	{
-		super(new TextComponent(""));
+		super(Component.literal(""));
 		this.chessTileEntity = chessTileEntity;
 		boardEvaluationText = StandardBoardEvaluator.get().evaluationDetails(chessTileEntity.getBoard(), 0);
 		this.clientPlayer = Minecraft.getInstance().player;

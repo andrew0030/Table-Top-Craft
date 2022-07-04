@@ -1,24 +1,22 @@
 package andrews.table_top_craft.screens.chess.buttons;
 
-import com.mojang.blaze3d.systems.RenderSystem;
-
 import andrews.table_top_craft.screens.chess.menus.ChessBoardSettingsScreen;
 import andrews.table_top_craft.screens.chess.menus.ChessColorSettingsScreen;
 import andrews.table_top_craft.tile_entities.ChessTileEntity;
 import andrews.table_top_craft.util.Reference;
+import com.mojang.blaze3d.systems.RenderSystem;
 import com.mojang.blaze3d.vertex.PoseStack;
 import net.minecraft.client.Minecraft;
 import net.minecraft.client.gui.Font;
 import net.minecraft.client.gui.components.Button;
-import net.minecraft.network.chat.TextComponent;
-import net.minecraft.network.chat.TranslatableComponent;
+import net.minecraft.network.chat.Component;
 import net.minecraft.resources.ResourceLocation;
 
 public class ChessCancelButton extends Button
 {
 	private static final ResourceLocation TEXTURE = new ResourceLocation(Reference.MODID + ":textures/gui/buttons/chess_menu_buttons.png");
-	private final String buttonCancelText = new TranslatableComponent("gui.table_top_craft.chess.cancel").getString();
-	private final String buttonBackText = new TranslatableComponent("gui.table_top_craft.chess.back").getString();
+	private final String buttonCancelText = Component.translatable("gui.table_top_craft.chess.cancel").getString();
+	private final String buttonBackText = Component.translatable("gui.table_top_craft.chess.back").getString();
 	private static ChessCancelMenuTarget targetScreen;
 	private final ChessCancelButtonText targetText;
 	private final Font fontRenderer;
@@ -30,7 +28,7 @@ public class ChessCancelButton extends Button
 	
 	public ChessCancelButton(ChessTileEntity tileEntity, ChessCancelMenuTarget target, ChessCancelButtonText targetText, int xPos, int yPos) 
 	{
-		super(xPos, yPos, buttonWidth, buttonHeight, new TextComponent(""), (button) -> { handleButtonPress(); });
+		super(xPos, yPos, buttonWidth, buttonHeight, Component.literal(""), (button) -> { handleButtonPress(); });
 		this.fontRenderer = Minecraft.getInstance().font;
 		chessTileEntity = tileEntity;
 		targetScreen = target;

@@ -1,21 +1,20 @@
 package andrews.table_top_craft.network.server;
 
-import java.util.function.Supplier;
-
-import net.minecraft.ChatFormatting;
-import net.minecraft.core.BlockPos;
-import net.minecraft.network.FriendlyByteBuf;
-import net.minecraft.network.chat.TranslatableComponent;
-import net.minecraft.world.entity.player.Player;
-import net.minecraft.world.level.Level;
-import net.minecraft.world.level.block.entity.BlockEntity;
-import net.minecraftforge.network.NetworkEvent;
-import org.apache.commons.lang3.StringUtils;
-
 import andrews.table_top_craft.game_logic.chess.board.Board;
 import andrews.table_top_craft.game_logic.chess.pgn.FenUtil;
 import andrews.table_top_craft.tile_entities.ChessTileEntity;
+import net.minecraft.ChatFormatting;
+import net.minecraft.core.BlockPos;
+import net.minecraft.network.FriendlyByteBuf;
+import net.minecraft.network.chat.Component;
+import net.minecraft.world.entity.player.Player;
+import net.minecraft.world.level.Level;
+import net.minecraft.world.level.block.entity.BlockEntity;
 import net.minecraftforge.fml.LogicalSide;
+import net.minecraftforge.network.NetworkEvent;
+import org.apache.commons.lang3.StringUtils;
+
+import java.util.function.Supplier;
 
 public class MessageServerLoadFEN
 {
@@ -66,7 +65,7 @@ public class MessageServerLoadFEN
 						}
 						else
 						{
-							player.sendMessage(new TranslatableComponent("message.table_top_craft.chess.invalidFEN").withStyle(ChatFormatting.RED), player.getUUID());
+							player.sendSystemMessage(Component.translatable("message.table_top_craft.chess.invalidFEN").withStyle(ChatFormatting.RED));//TODO make sure this works
 						}
 						chessTileEntity.setBoard(board);
 						chessTileEntity.getMoveLog().clear();

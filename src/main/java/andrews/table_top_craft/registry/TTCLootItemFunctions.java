@@ -4,7 +4,6 @@ import andrews.table_top_craft.util.Reference;
 import andrews.table_top_craft.util.loot_table.GeneratePieceNBTFunction;
 import net.minecraft.core.Registry;
 import net.minecraft.world.level.storage.loot.functions.LootItemFunctionType;
-import net.minecraft.world.level.storage.loot.functions.SetNameFunction;
 import net.minecraftforge.registries.DeferredRegister;
 import net.minecraftforge.registries.RegistryObject;
 

@@ -8,8 +8,7 @@ import com.mojang.blaze3d.vertex.PoseStack;
 import net.minecraft.client.Minecraft;
 import net.minecraft.client.gui.Font;
 import net.minecraft.client.gui.components.Button;
-import net.minecraft.network.chat.TextComponent;
-import net.minecraft.network.chat.TranslatableComponent;
+import net.minecraft.network.chat.Component;
 import net.minecraft.resources.ResourceLocation;
 
 import java.util.Arrays;
@@ -17,7 +16,7 @@ import java.util.Arrays;
 public class ChessBoardColorSettingsButton extends Button
 {
 	private static final ResourceLocation TEXTURE = new ResourceLocation(Reference.MODID + ":textures/gui/buttons/chess_menu_buttons.png");
-	private final TranslatableComponent buttonText = new TranslatableComponent("gui.table_top_craft.chess.button.colors");
+	private final Component buttonText = Component.translatable("gui.table_top_craft.chess.button.colors");
 	private final Font fontRenderer;
 	private static ChessTileEntity chessTileEntity;
 	private static final int buttonWidth = 24;
@@ -27,7 +26,7 @@ public class ChessBoardColorSettingsButton extends Button
 	
 	public ChessBoardColorSettingsButton(ChessTileEntity tileEntity, int xPos, int yPos) 
 	{
-		super(xPos, yPos, buttonWidth, buttonHeight, new TextComponent(""), (button) -> { handleButtonPress(); });
+		super(xPos, yPos, buttonWidth, buttonHeight, Component.literal(""), (button) -> { handleButtonPress(); });
 		this.fontRenderer = Minecraft.getInstance().font;
 		chessTileEntity = tileEntity;
 	}

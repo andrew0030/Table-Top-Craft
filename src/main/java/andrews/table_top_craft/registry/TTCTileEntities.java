@@ -1,14 +1,13 @@
 package andrews.table_top_craft.registry;
 
 import andrews.table_top_craft.tile_entities.ChessPieceFigureBlockEntity;
+import andrews.table_top_craft.tile_entities.ChessTileEntity;
 import andrews.table_top_craft.tile_entities.TicTacToeBlockEntity;
 import andrews.table_top_craft.tile_entities.render.ChessPieceFigureTileEntityRenderer;
-import andrews.table_top_craft.tile_entities.render.TicTacToeBlockEntityRenderer;
-import com.google.common.collect.Sets;
-
-import andrews.table_top_craft.tile_entities.ChessTileEntity;
 import andrews.table_top_craft.tile_entities.render.ChessTileEntityRenderer;
+import andrews.table_top_craft.tile_entities.render.TicTacToeBlockEntityRenderer;
 import andrews.table_top_craft.util.Reference;
+import com.google.common.collect.Sets;
 import net.minecraft.client.renderer.blockentity.BlockEntityRenderers;
 import net.minecraft.world.level.block.entity.BlockEntityType;
 import net.minecraftforge.registries.DeferredRegister;

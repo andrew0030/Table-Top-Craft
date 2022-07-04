@@ -1,40 +1,26 @@
-buildscript {
-    repositories {
-        maven { url = 'https://maven.minecraftforge.net' }
-        maven { url = 'https://repo.spongepowered.org/repository/maven-public/' }
-        maven { url = 'https://maven.parchmentmc.org' }
-        mavenCentral()
-    }
-    dependencies {
-        classpath group: 'net.minecraftforge.gradle', name: 'ForgeGradle', version: '5.1.+', changing: true
-        classpath 'org.spongepowered:mixingradle:0.7.+'
-        classpath 'org.parchmentmc:librarian:1.+'
-    }
-}
-
 plugins {
     id 'eclipse'
     id 'maven-publish'
+    id 'net.minecraftforge.gradle' version '5.+'
+    id 'org.spongepowered.mixin' version '0.7-SNAPSHOT'
+    id 'org.parchmentmc.librarian.forgegradle' version '1.+'
 }
-apply plugin: 'net.minecraftforge.gradle'
-apply plugin: 'org.spongepowered.mixin'
-apply plugin: 'org.parchmentmc.librarian.forgegradle'
 
-version = '1.18.2-2.1.1'
+version = '1.19-3.0.0'
 group = 'com.andrews.table_top_craft'
 archivesBaseName = 'table_top_craft'
 
 java.toolchain.languageVersion = JavaLanguageVersion.of(17)
 
-println "Java: ${System.getProperty 'java.version'}, JVM: ${System.getProperty 'java.vm.version'} (${System.getProperty 'java.vendor'}), Arch: ${System.getProperty 'os.arch'}"
 minecraft {
-    mappings channel: 'parchment', version: '2022.03.13-1.18.2'
+    mappings channel: 'parchment', version: '1.18.2-2022.07.03-1.19'
 
     accessTransformer = file('src/main/resources/META-INF/accesstransformer.cfg')
 
     runs {
         client {
             workingDirectory project.file('run')
+
             property 'forge.logging.markers', 'REGISTRIES'
 
             mods {
@@ -46,6 +32,7 @@ minecraft {
 
         server {
             workingDirectory project.file('run')
+
             property 'forge.logging.markers', 'REGISTRIES'
 
             mods {
@@ -70,13 +57,12 @@ repositories {
 }
 
 dependencies {
-    minecraft 'net.minecraftforge:forge:1.18.2-40.1.0'
-    implementation fg.deobf("curse.maven:spark-361579:3670050")
+    minecraft 'net.minecraftforge:forge:1.19-41.0.63'
+    implementation fg.deobf("curse.maven:spark-361579:3828094")
     annotationProcessor 'org.spongepowered:mixin:0.8.5:processor'
 }
 
 jar {
-    // noinspection GroovyAssignabilityCheck
     manifest {
         attributes([
                 "Specification-Title"     : "table_top_craft",
@@ -91,14 +77,6 @@ jar {
 }
 
 jar.finalizedBy('reobfJar')
-
-/* thank you GiantLuigi */
-task deobfJar(type: Jar) {
-    from sourceSets.main.output
-    classifier = 'deobf'
-}
-artifacts.archives deobfJar
-/* ==================== */
 
 tasks.withType(JavaCompile).configureEach {
     options.encoding = 'UTF-8' // Use the UTF-8 charset for Java compilation

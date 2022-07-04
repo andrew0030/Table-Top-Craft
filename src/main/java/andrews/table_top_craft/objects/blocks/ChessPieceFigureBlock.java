@@ -9,8 +9,6 @@ import net.minecraft.core.BlockPos;
 import net.minecraft.nbt.CompoundTag;
 import net.minecraft.nbt.Tag;
 import net.minecraft.network.chat.Component;
-import net.minecraft.network.chat.TextComponent;
-import net.minecraft.network.chat.TranslatableComponent;
 import net.minecraft.util.Mth;
 import net.minecraft.world.InteractionHand;
 import net.minecraft.world.InteractionResult;
@@ -28,7 +26,6 @@ import net.minecraft.world.level.block.EntityBlock;
 import net.minecraft.world.level.block.RenderShape;
 import net.minecraft.world.level.block.SoundType;
 import net.minecraft.world.level.block.entity.BlockEntity;
-import net.minecraft.world.level.block.entity.ShulkerBoxBlockEntity;
 import net.minecraft.world.level.block.state.BlockState;
 import net.minecraft.world.level.block.state.StateDefinition;
 import net.minecraft.world.level.block.state.properties.BlockStateProperties;
@@ -113,7 +110,7 @@ public class ChessPieceFigureBlock extends Block implements EntityBlock
                 ItemStack itemstack = new ItemStack(TTCBlocks.CHESS_PIECE_FIGURE.get().asItem());
                 blockentity.saveToItem(itemstack);
                 if(chessPieceFigureBlockEntity.getPieceName() != null)
-                    itemstack.setHoverName(new TextComponent(chessPieceFigureBlockEntity.getPieceName()));
+                    itemstack.setHoverName(Component.literal(chessPieceFigureBlockEntity.getPieceName()));
 
                 ItemEntity itementity = new ItemEntity(level, (double)pos.getX() + 0.5D, (double)pos.getY() + 0.5D, (double)pos.getZ() + 0.5D, itemstack);
                 itementity.setDefaultPickUpDelay();
@@ -180,17 +177,17 @@ public class ChessPieceFigureBlock extends Block implements EntityBlock
                 }
                 if (compoundtag.contains("PieceColor", Tag.TAG_STRING))
                 {
-                    String pieceColorText = new TranslatableComponent("tooltip.table_top_craft.chess_piece_figure.piece_color").getString();
+                    String pieceColorText = Component.translatable("tooltip.table_top_craft.chess_piece_figure.piece_color").getString();
                     String colorDescriptionText = compoundtag.getString("PieceColor");
                     pieceColorText = pieceColorText.replaceAll("#c", "§");
                     colorDescriptionText = colorDescriptionText.substring(0, colorDescriptionText.length() - 4);
 
-                    tooltip.add(new TextComponent(pieceColorText + colorDescriptionText));
+                    tooltip.add(Component.literal(pieceColorText + colorDescriptionText));
                 }
                 if (compoundtag.contains("PieceScale", Tag.TAG_DOUBLE))
                 {
                     double chessPieceScale = compoundtag.getDouble("PieceScale");
-                    String pieceScaleText = new TranslatableComponent("tooltip.table_top_craft.chess_piece_figure.scale", new TextComponent(String.valueOf(chessPieceScale))).getString();
+                    String pieceScaleText = Component.translatable("tooltip.table_top_craft.chess_piece_figure.scale", Component.literal(String.valueOf(chessPieceScale))).getString();
                     TranslationHelper.getTooltipFromLang(tooltip, pieceScaleText);
                 }
                 TranslationHelper.addEnchantmentSeparationLine(tooltip, stack);
@@ -218,7 +215,7 @@ public class ChessPieceFigureBlock extends Block implements EntityBlock
             {
                 chessPieceFigureBlockEntity.saveToItem(stack);
                 if(chessPieceFigureBlockEntity.getPieceName() != null)
-                    stack.setHoverName(new TextComponent(chessPieceFigureBlockEntity.getPieceName()));
+                    stack.setHoverName(Component.literal(chessPieceFigureBlockEntity.getPieceName()));
             }
         }
         return stack;

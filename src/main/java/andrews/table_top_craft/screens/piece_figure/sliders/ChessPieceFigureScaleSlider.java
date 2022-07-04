@@ -4,19 +4,17 @@ import com.mojang.blaze3d.systems.RenderSystem;
 import com.mojang.blaze3d.vertex.PoseStack;
 import net.minecraft.client.Minecraft;
 import net.minecraft.network.chat.Component;
-import net.minecraft.network.chat.TextComponent;
-import net.minecraft.network.chat.TranslatableComponent;
 import net.minecraftforge.client.gui.GuiUtils;
 import net.minecraftforge.client.gui.widget.ForgeSlider;
 
 public class ChessPieceFigureScaleSlider extends ForgeSlider
 {
-    private final static TranslatableComponent scaleValueText = new TranslatableComponent("gui.table_top_craft.chess_piece_figure.sliders.scale");
+    private final static Component scaleValueText = Component.translatable("gui.table_top_craft.chess_piece_figure.sliders.scale");
 
     public ChessPieceFigureScaleSlider(int xPos, int yPos, int width, int height, double currentValue)
     {
 //        super(xPos, yPos, width, height, scaleValueText, new TextComponent(""), 0, 255, currentValue, true);
-        super(xPos, yPos, width, height, scaleValueText, new TextComponent(""), 1, 5, currentValue, 0.01D, 0, true);
+        super(xPos, yPos, width, height, scaleValueText, Component.literal(""), 1, 5, currentValue, 0.01D, 0, true);
     }
 
     @Override
@@ -38,7 +36,7 @@ public class ChessPieceFigureScaleSlider extends ForgeSlider
         int ellipsisWidth = mc.font.width("...");
 
         if (strWidth > width - 6 && strWidth > ellipsisWidth)
-            buttonText = new TextComponent(mc.font.substrByWidth(buttonText, width - 6 - ellipsisWidth).getString() + "...");
+            buttonText = Component.literal(mc.font.substrByWidth(buttonText, width - 6 - ellipsisWidth).getString() + "...");
 
         drawCenteredString(poseStack, mc.font, buttonText, this.x + this.width / 2, this.y + (this.height - 8) / 2, getFGColor());
     }

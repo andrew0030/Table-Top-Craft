@@ -56,8 +56,7 @@ public class TableTopCraft
 			return new ItemStack(Item.BY_BLOCK.getOrDefault(TTCBlocks.OAK_CHESS.get(), Items.AIR));
 		}
 	};
-	
-	@SuppressWarnings("deprecation")
+
 	public TableTopCraft()
 	{
 		final IEventBus modEventBus = FMLJavaModLoadingContext.get().getModEventBus();

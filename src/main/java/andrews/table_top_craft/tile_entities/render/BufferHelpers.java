@@ -8,7 +8,6 @@ import com.mojang.blaze3d.vertex.VertexBuffer;
 import com.mojang.math.Matrix4f;
 import net.minecraft.client.Minecraft;
 import net.minecraft.client.renderer.ShaderInstance;
-import net.minecraft.world.phys.Vec3;
 
 public class BufferHelpers {
 	public static void setupRender(ShaderInstance pShaderInstance, int lightU, int ilghtV /* GiantLuigi4 (Jason): no I will not correct this typo */) {
@@ -59,19 +58,19 @@ public class BufferHelpers {
 	}
 	
 	public static void draw(VertexBuffer buffer, ShaderInstance pShaderInstance) {
-		buffer.bindVertexArray();
-		buffer.bind();
-		buffer.getFormat().setupBufferState();
-		pShaderInstance.apply();
+		//buffer.bindVertexArray(); TODO fix this
+//		buffer.bind();
+//		buffer.getFormat().setupBufferState();
+//		pShaderInstance.apply();
 //		RenderSystem.drawElements(buffer.mode.asGLMode, buffer.indexCount, buffer.indexType.asGLType);
-		buffer.draw();
-		pShaderInstance.clear();
-		buffer.getFormat().clearBufferState();
-		teardownRender();
+//		buffer.draw();
+//		pShaderInstance.clear();
+//		buffer.getFormat().clearBufferState();
+//		teardownRender();
 	}
 	
 	public static void teardownRender() {
-		VertexBuffer.unbind();
-		VertexBuffer.unbindVertexArray();
+//		VertexBuffer.unbind();
+		//VertexBuffer.unbindVertexArray(); TODO fix this
 	}
 }

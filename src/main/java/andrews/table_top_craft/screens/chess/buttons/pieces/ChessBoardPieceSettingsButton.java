@@ -18,8 +18,7 @@ import net.minecraft.client.renderer.entity.ItemRenderer;
 import net.minecraft.client.renderer.texture.OverlayTexture;
 import net.minecraft.client.renderer.texture.TextureAtlas;
 import net.minecraft.client.resources.model.BakedModel;
-import net.minecraft.network.chat.TextComponent;
-import net.minecraft.network.chat.TranslatableComponent;
+import net.minecraft.network.chat.Component;
 import net.minecraft.resources.ResourceLocation;
 import net.minecraft.world.item.ItemStack;
 
@@ -28,7 +27,7 @@ import java.util.Arrays;
 public class ChessBoardPieceSettingsButton extends Button
 {
     private static final ResourceLocation TEXTURE = new ResourceLocation(Reference.MODID + ":textures/gui/buttons/chess_menu_buttons.png");
-    private final TranslatableComponent buttonText = new TranslatableComponent("gui.table_top_craft.chess.button.pieces");
+    private final Component buttonText = Component.translatable("gui.table_top_craft.chess.button.pieces");
     private final Font fontRenderer;
     private static ChessTileEntity chessTileEntity;
     private static final int buttonWidth = 24;
@@ -39,7 +38,7 @@ public class ChessBoardPieceSettingsButton extends Button
 
     public ChessBoardPieceSettingsButton(ChessTileEntity tileEntity, int xPos, int yPos)
     {
-        super(xPos, yPos, buttonWidth, buttonHeight, new TextComponent(""), (button) -> { handleButtonPress(); });
+        super(xPos, yPos, buttonWidth, buttonHeight, Component.literal(""), (button) -> { handleButtonPress(); });
         this.fontRenderer = Minecraft.getInstance().font;
         chessTileEntity = tileEntity;
         chessPieceStack = new ItemStack(TTCBlocks.CHESS_PIECE_FIGURE.get().asItem());

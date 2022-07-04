@@ -1,8 +1,6 @@
 package andrews.table_top_craft.util;
 
 import net.minecraft.network.chat.Component;
-import net.minecraft.network.chat.TextComponent;
-import net.minecraft.network.chat.TranslatableComponent;
 import net.minecraft.world.item.ItemStack;
 import net.minecraft.world.item.enchantment.EnchantmentHelper;
 
@@ -17,52 +15,52 @@ public class TranslationHelper
      */
     public static void getTooltipFromLang(List<Component> tooltip, String langPath)
     {
-        String rawText = new TranslatableComponent(langPath).getString();
+        String rawText = Component.translatable(langPath).getString();
         rawText = rawText.replace("#c", "§");
         if(rawText.contains("\n"))
         {
             String[] textList = rawText.split("\n");
             for(String text : textList)
             {
-                tooltip.add(new TextComponent(text));
+                tooltip.add(Component.literal(text));
             }
         }
         else
         {
-            tooltip.add(new TextComponent(rawText));
+            tooltip.add(Component.literal(rawText));
         }
     }
 
     public static void getToolTipWithTextFromLang(List<Component> tooltip, String langPath, String textLangPath)
     {
-        String rawText = new TranslatableComponent(langPath, new TranslatableComponent(textLangPath)).getString();
+        String rawText = Component.translatable(langPath, Component.translatable(textLangPath)).getString();
         rawText = rawText.replace("#c", "§");
         if(rawText.contains("\n"))
         {
             String[] textList = rawText.split("\n");
             for(String text : textList)
-                tooltip.add(new TextComponent(text));
+                tooltip.add(Component.literal(text));
         }
         else
         {
-            tooltip.add(new TextComponent(rawText));
+            tooltip.add(Component.literal(rawText));
         }
     }
 
     public static void getToolTipWithDoubleFromLang(List<Component> tooltip, String langPath, double value)
     {
         String valueString = String.valueOf(value);
-        String rawText = new TranslatableComponent(langPath, new TextComponent(valueString)).getString();
+        String rawText = Component.translatable(langPath, Component.literal(valueString)).getString();
         rawText = rawText.replace("#c", "§");
         if(rawText.contains("\n"))
         {
             String[] textList = rawText.split("\n");
             for(String text : textList)
-                tooltip.add(new TextComponent(text));
+                tooltip.add(Component.literal(text));
         }
         else
         {
-            tooltip.add(new TextComponent(rawText));
+            tooltip.add(Component.literal(rawText));
         }
     }
 
@@ -70,6 +68,6 @@ public class TranslationHelper
     {
         // Renders another "empty" line if the item is enchanted, so the enchantments are easier to read
         if(!EnchantmentHelper.getEnchantments(stack).isEmpty())
-            tooltip.add(new TextComponent(""));
+            tooltip.add(Component.literal(""));
     }
 }

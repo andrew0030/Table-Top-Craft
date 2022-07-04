@@ -10,14 +10,13 @@ import com.mojang.blaze3d.systems.RenderSystem;
 import com.mojang.blaze3d.vertex.PoseStack;
 import net.minecraft.client.gui.components.EditBox;
 import net.minecraft.client.gui.screens.Screen;
-import net.minecraft.network.chat.TextComponent;
-import net.minecraft.network.chat.TranslatableComponent;
+import net.minecraft.network.chat.Component;
 import net.minecraft.resources.ResourceLocation;
 
 public class ChessLoadFENScreen extends Screen
 {
 	private static final ResourceLocation MENU_TEXTURE = new ResourceLocation(Reference.MODID, "textures/gui/menus/small_chess_menu.png");
-	private final String fenLoaderText = new TranslatableComponent("gui.table_top_craft.chess.fen_loader").getString();
+	private final String fenLoaderText = Component.translatable("gui.table_top_craft.chess.fen_loader").getString();
 	private final ChessTileEntity chessTileEntity;
 	private EditBox fenStringField;
 	private final int xSize = 177;
@@ -25,7 +24,7 @@ public class ChessLoadFENScreen extends Screen
 	
 	public ChessLoadFENScreen(ChessTileEntity chessTileEntity)
 	{
-		super(new TextComponent(""));
+		super(Component.literal(""));
 		this.chessTileEntity = chessTileEntity;
 	}
 	
@@ -49,7 +48,7 @@ public class ChessLoadFENScreen extends Screen
 		int x = (this.width - this.xSize) / 2;
 		int y = (this.height - this.ySize) / 2;
 		// The Text Field in which the Player enters the FEN String
-		this.fenStringField = new EditBox(this.font, x + 5, y + 20, 167, 16, new TextComponent("FEN Field"));
+		this.fenStringField = new EditBox(this.font, x + 5, y + 20, 167, 16, Component.literal("FEN Field"));
 		this.fenStringField.setMaxLength(100);
 	    this.fenStringField.setFocus(true);
 		

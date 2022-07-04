@@ -20,8 +20,7 @@ import net.minecraft.client.renderer.texture.OverlayTexture;
 import net.minecraft.client.renderer.texture.TextureAtlas;
 import net.minecraft.client.resources.model.BakedModel;
 import net.minecraft.core.BlockPos;
-import net.minecraft.network.chat.TextComponent;
-import net.minecraft.network.chat.TranslatableComponent;
+import net.minecraft.network.chat.Component;
 import net.minecraft.resources.ResourceLocation;
 import net.minecraft.world.item.ItemStack;
 
@@ -30,9 +29,9 @@ import java.util.Arrays;
 public class ChessBoardPieceModelSelectionButton extends Button
 {
     private static final ResourceLocation TEXTURE = new ResourceLocation(Reference.MODID + ":textures/gui/buttons/piece_model_selection_buttons.png");
-    private final TranslatableComponent buttonText = new TranslatableComponent("tooltip.table_top_craft.chess.piece_type.standard");
-    private final TranslatableComponent buttonTextClassic = new TranslatableComponent("tooltip.table_top_craft.chess.piece_type.classic");
-    private final TranslatableComponent buttonTextPandorasCreatures = new TranslatableComponent("tooltip.table_top_craft.chess.piece_type.pandoras_creatures");
+    private final Component buttonText = Component.translatable("tooltip.table_top_craft.chess.piece_type.standard");
+    private final Component buttonTextClassic = Component.translatable("tooltip.table_top_craft.chess.piece_type.classic");
+    private final Component buttonTextPandorasCreatures = Component.translatable("tooltip.table_top_craft.chess.piece_type.pandoras_creatures");
     private final Font fontRenderer;
     private static ChessTileEntity chessTileEntity;
     private static final int buttonWidth = 167;
@@ -50,7 +49,7 @@ public class ChessBoardPieceModelSelectionButton extends Button
 
     public ChessBoardPieceModelSelectionButton(ChessTileEntity tileEntity, PieceModelSet pieceModelSet, boolean isStandardSetUnlocked, boolean isClassicSetUnlocked, boolean isPandorasCreaturesSetUnlocked, int xPos, int yPos)
     {
-        super(xPos, yPos, buttonWidth, buttonHeight, new TextComponent(""), (button) -> { handleButtonPress(); });
+        super(xPos, yPos, buttonWidth, buttonHeight, Component.literal(""), (button) -> { handleButtonPress(); });
         this.fontRenderer = Minecraft.getInstance().font;
         chessTileEntity = tileEntity;
         chessPieceFigureBlockEntity = new ChessPieceFigureBlockEntity(BlockPos.ZERO, TTCBlocks.CHESS_PIECE_FIGURE.get().defaultBlockState());
@@ -129,8 +128,8 @@ public class ChessBoardPieceModelSelectionButton extends Button
 
             poseStack.pushPose();
             poseStack.translate(0, 0, 200);
-            this.fontRenderer.draw(poseStack, new TextComponent("Locked"), x + (this.width / 4) - (this.fontRenderer.width("Locked") / 2), y + 15, 0xffffff);
-            this.fontRenderer.draw(poseStack, new TextComponent("Locked"), x + ((this.width / 4) * 3) - (this.fontRenderer.width("Locked") / 2), y + 15, 0xffffff);
+            this.fontRenderer.draw(poseStack, Component.literal("Locked"), x + (this.width / 4) - (this.fontRenderer.width("Locked") / 2), y + 15, 0xffffff);
+            this.fontRenderer.draw(poseStack, Component.literal("Locked"), x + ((this.width / 4) * 3) - (this.fontRenderer.width("Locked") / 2), y + 15, 0xffffff);
             poseStack.popPose();
         }
     }

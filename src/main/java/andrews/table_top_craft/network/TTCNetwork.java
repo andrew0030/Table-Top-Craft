@@ -1,6 +1,6 @@
 package andrews.table_top_craft.network;
 
-import andrews.table_top_craft.network.client.*;
+import andrews.table_top_craft.network.client.MessageClientOpenChessPieceSelectionScreen;
 import andrews.table_top_craft.network.server.*;
 import andrews.table_top_craft.util.Reference;
 import net.minecraft.resources.ResourceLocation;

@@ -1,13 +1,12 @@
 package andrews.table_top_craft.screens.chess.buttons.colors;
 
-import com.mojang.blaze3d.systems.RenderSystem;
-
 import andrews.table_top_craft.tile_entities.ChessTileEntity;
 import andrews.table_top_craft.util.NetworkUtil;
 import andrews.table_top_craft.util.Reference;
+import com.mojang.blaze3d.systems.RenderSystem;
 import com.mojang.blaze3d.vertex.PoseStack;
 import net.minecraft.client.gui.components.Button;
-import net.minecraft.network.chat.TextComponent;
+import net.minecraft.network.chat.Component;
 import net.minecraft.resources.ResourceLocation;
 
 public class ChessUseCustomPlateButton extends Button
@@ -21,7 +20,7 @@ public class ChessUseCustomPlateButton extends Button
 	
 	public ChessUseCustomPlateButton(ChessTileEntity tileEntity, int xPos, int yPos) 
 	{
-		super(xPos, yPos, buttonWidth, buttonHeight, new TextComponent(""), (button) -> { handleButtonPress(); });
+		super(xPos, yPos, buttonWidth, buttonHeight, Component.literal(""), (button) -> { handleButtonPress(); });
 		chessTileEntity = tileEntity;
 	}
 	

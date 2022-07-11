@@ -4,7 +4,8 @@
   "package": "andrews.table_top_craft.mixins",
   "compatibilityLevel": "JAVA_16",
   "client": [
-    "ScreenMixin"
+    "ScreenMixin",
+    "GameRendererMixin"
   ],
   "injectors": {
     "defaultRequire": 1

@@ -159,7 +159,7 @@ public class ChessPieceFigureTileEntityRenderer implements BlockEntityRenderer<C
             shaderinstance.PROJECTION_MATRIX.set(RenderSystem.getProjectionMatrix());
         
         BasePiece.PieceModelSet set = BasePiece.PieceModelSet.get(blockEntity.getPieceSet());
-        BasePiece.PieceType piece = BasePiece.PieceType.get(blockEntity.getPieceType() - 1);
+        BasePiece.PieceType piece = BasePiece.PieceType.get(blockEntity.getPieceType());
         VertexBuffer pawnBuffer = DrawScreenEvent.getBuffer(set, piece);
         BufferHelpers.draw(type, pawnBuffer, shaderinstance);
         

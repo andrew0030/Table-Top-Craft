@@ -1,6 +1,7 @@
 package andrews.table_top_craft.game_logic.chess.pieces;
 
 import java.util.Collection;
+import java.util.Locale;
 
 import andrews.table_top_craft.game_logic.chess.PieceColor;
 import andrews.table_top_craft.game_logic.chess.board.Board;
@@ -247,9 +248,19 @@ public abstract class BasePiece
 
 	public enum PieceModelSet
 	{
-		STANDARD,
-		CLASSIC,
-		PANDORAS_CREATURES;
+		STANDARD("models/pieces/%type%.obj"),
+		CLASSIC("models/pieces/classic/classic_%type%.obj"),
+		PANDORAS_CREATURES("models/pieces/pandoras_creatures/pc_%type%.obj");
+		
+		String PIECE_PATH;
+		
+		PieceModelSet(String PIECE_PATH) {
+			this.PIECE_PATH = PIECE_PATH;
+		}
+		
+		public String pathFor(PieceType type) {
+			return PIECE_PATH.replace("%type%", type.name().toLowerCase());
+		}
 		
 		public static PieceModelSet get(int pieceSet) {
 			return switch (pieceSet) {

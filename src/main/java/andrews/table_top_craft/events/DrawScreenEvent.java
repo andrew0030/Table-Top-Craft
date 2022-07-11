@@ -34,9 +34,11 @@ public class DrawScreenEvent
 	{
 		BufferBuilder chessBuilder = new BufferBuilder(RenderType.TRANSIENT_BUFFER_SIZE);
 		
-		for (PieceType type : PieceType.values()) {
-			for (PieceModelSet set : PieceModelSet.values()) {
-				BUFFERS.put(Pair.of(type, set), generate(chessBuilder, chessVertexFormat, type, set));
+		if (BUFFERS.isEmpty()) {
+			for (PieceType type : PieceType.values()) {
+				for (PieceModelSet set : PieceModelSet.values()) {
+					BUFFERS.put(Pair.of(type, set), generate(chessBuilder, chessVertexFormat, type, set));
+				}
 			}
 		}
 	}

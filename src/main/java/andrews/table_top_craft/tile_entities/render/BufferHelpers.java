@@ -5,7 +5,6 @@ import com.mojang.blaze3d.shaders.Uniform;
 import com.mojang.blaze3d.systems.RenderSystem;
 import com.mojang.blaze3d.vertex.BufferUploader;
 import com.mojang.blaze3d.vertex.VertexBuffer;
-import com.mojang.math.Matrix4f;
 import net.minecraft.client.Minecraft;
 import net.minecraft.client.renderer.RenderType;
 import net.minecraft.client.renderer.ShaderInstance;
@@ -47,19 +46,11 @@ public class BufferHelpers {
 			pShaderInstance.LIGHT1_DIRECTION.set(-0.27617238536949695F, 0.9205746178983233F, 0.27617238536949695F);
 	}
 	
-	public static void setMatrix(Matrix4f mat, ShaderInstance pShaderInstance) {
-		if (pShaderInstance.MODEL_VIEW_MATRIX != null) pShaderInstance.MODEL_VIEW_MATRIX.set(mat);
-		mat = mat.copy();
-		mat.invert();
-		if (pShaderInstance.INVERSE_VIEW_ROTATION_MATRIX != null) pShaderInstance.INVERSE_VIEW_ROTATION_MATRIX.set(mat);
-	}
-	
 	public static void updateColor(ShaderInstance pShaderInstance) {
 		if (pShaderInstance.COLOR_MODULATOR != null) pShaderInstance.COLOR_MODULATOR.set(RenderSystem.getShaderColor());
 	}
 	
 	public static void draw(RenderType type, VertexBuffer buffer, ShaderInstance pShaderInstance) {
-		//buffer.bindVertexArray(); TODO fix this
 		if (buffer != null) {
 			type.setupRenderState();
 			pShaderInstance.apply();
@@ -70,10 +61,5 @@ public class BufferHelpers {
 			VertexBuffer.unbind();
 			type.clearRenderState();
 		}
-	}
-	
-	public static void teardownRender() {
-		VertexBuffer.unbind();
-		//VertexBuffer.unbindVertexArray(); TODO fix this
 	}
 }

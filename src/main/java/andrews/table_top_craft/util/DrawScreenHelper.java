@@ -1,9 +1,7 @@
-package andrews.table_top_craft.events;
+package andrews.table_top_craft.util;
 
 import andrews.table_top_craft.game_logic.chess.pieces.BasePiece.PieceModelSet;
 import andrews.table_top_craft.game_logic.chess.pieces.BasePiece.PieceType;
-import andrews.table_top_craft.util.Reference;
-import andrews.table_top_craft.util.TTCRenderTypes;
 import andrews.table_top_craft.util.obj.models.ChessObjModel;
 import com.mojang.blaze3d.vertex.BufferBuilder;
 import com.mojang.blaze3d.vertex.PoseStack;
@@ -12,15 +10,11 @@ import com.mojang.blaze3d.vertex.VertexFormat;
 import com.mojang.datafixers.util.Pair;
 import net.minecraft.client.renderer.RenderType;
 import net.minecraft.resources.ResourceLocation;
-import net.minecraftforge.api.distmarker.Dist;
-import net.minecraftforge.client.event.ScreenEvent;
-import net.minecraftforge.eventbus.api.SubscribeEvent;
-import net.minecraftforge.fml.common.Mod;
 
 import java.util.HashMap;
 
-@Mod.EventBusSubscriber(modid = Reference.MODID, value = Dist.CLIENT)
-public class DrawScreenEvent {
+public class DrawScreenHelper
+{
 	// The texture path is just a dummy texture used as a placeholder
 	public static final VertexFormat chessVertexFormat = TTCRenderTypes.getChessPieceSolid(new ResourceLocation(Reference.MODID, "textures/tile/chess/pieces.png")).format();
 	// Initializes the models

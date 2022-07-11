@@ -1,6 +1,6 @@
 package andrews.table_top_craft.tile_entities.render;
 
-import andrews.table_top_craft.events.DrawScreenEvent;
+import andrews.table_top_craft.util.DrawScreenHelper;
 import andrews.table_top_craft.game_logic.chess.PieceColor;
 import andrews.table_top_craft.game_logic.chess.board.Board;
 import andrews.table_top_craft.game_logic.chess.board.BoardUtils;
@@ -410,7 +410,7 @@ public class ChessTileEntityRenderer implements BlockEntityRenderer<ChessTileEnt
 		if (shaderinstance.PROJECTION_MATRIX != null) shaderinstance.PROJECTION_MATRIX.set(RenderSystem.getProjectionMatrix());
 		
 		BasePiece.PieceModelSet set = BasePiece.PieceModelSet.get(pieceModelSet + 1);
-		VertexBuffer pawnBuffer = DrawScreenEvent.getBuffer(set, pieceType);
+		VertexBuffer pawnBuffer = DrawScreenHelper.getBuffer(set, pieceType);
 		BufferHelpers.draw(TTCRenderTypes.getChessPieceSolid(resourceLocation), pawnBuffer, shaderinstance);
 		
 		poseStack.popPose();

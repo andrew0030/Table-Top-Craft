@@ -6,10 +6,10 @@ import andrews.table_top_craft.util.Reference;
 import andrews.table_top_craft.util.obj.ObjModel;
 import com.mojang.blaze3d.vertex.PoseStack;
 import com.mojang.blaze3d.vertex.VertexConsumer;
+import com.mojang.datafixers.util.Pair;
 import net.minecraft.resources.ResourceLocation;
 import net.minecraftforge.api.distmarker.Dist;
 import net.minecraftforge.api.distmarker.OnlyIn;
-import com.mojang.datafixers.util.Pair;
 
 import java.util.HashMap;
 

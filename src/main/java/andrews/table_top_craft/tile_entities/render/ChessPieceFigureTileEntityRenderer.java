@@ -1,6 +1,6 @@
 package andrews.table_top_craft.tile_entities.render;
 
-import andrews.table_top_craft.events.DrawScreenEvent;
+import andrews.table_top_craft.util.DrawScreenHelper;
 import andrews.table_top_craft.game_logic.chess.pieces.BasePiece;
 import andrews.table_top_craft.objects.blocks.ChessPieceFigureBlock;
 import andrews.table_top_craft.tile_entities.ChessPieceFigureBlockEntity;
@@ -160,7 +160,7 @@ public class ChessPieceFigureTileEntityRenderer implements BlockEntityRenderer<C
         
         BasePiece.PieceModelSet set = BasePiece.PieceModelSet.get(blockEntity.getPieceSet());
         BasePiece.PieceType piece = BasePiece.PieceType.get(blockEntity.getPieceType());
-        VertexBuffer pawnBuffer = DrawScreenEvent.getBuffer(set, piece);
+        VertexBuffer pawnBuffer = DrawScreenHelper.getBuffer(set, piece);
         BufferHelpers.draw(type, pawnBuffer, shaderinstance);
         
         poseStack.popPose();

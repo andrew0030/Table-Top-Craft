@@ -408,95 +408,11 @@ public class ChessTileEntityRenderer implements BlockEntityRenderer<ChessTileEnt
 		poseStack.pushPose();
 		if (shaderinstance.MODEL_VIEW_MATRIX != null) shaderinstance.MODEL_VIEW_MATRIX.set(poseStack.last().pose());
 		if (shaderinstance.PROJECTION_MATRIX != null) shaderinstance.PROJECTION_MATRIX.set(RenderSystem.getProjectionMatrix());
-		switch (pieceModelSet)
-		{
-			case 0:
-				switch(pieceType)
-				{
-				default:
-				case PAWN:
-					VertexBuffer pawnBuffer = DrawScreenEvent.pawnBuffer;
-					BufferHelpers.draw(pawnBuffer, shaderinstance);
-					break;
-				case ROOK:
-					VertexBuffer rookBuffer = DrawScreenEvent.rookBuffer;
-					BufferHelpers.draw(rookBuffer, shaderinstance);
-					break;
-				case BISHOP:
-					VertexBuffer bishopBuffer = DrawScreenEvent.bishopBuffer;
-					BufferHelpers.draw(bishopBuffer, shaderinstance);
-					break;
-				case KNIGHT:
-					VertexBuffer knightBuffer = DrawScreenEvent.knightBuffer;
-					BufferHelpers.draw(knightBuffer, shaderinstance);
-					break;
-				case KING:
-					VertexBuffer kingBuffer = DrawScreenEvent.kingBuffer;
-					BufferHelpers.draw(kingBuffer, shaderinstance);
-					break;
-				case QUEEN:
-					VertexBuffer queenBuffer = DrawScreenEvent.queenBuffer;
-					BufferHelpers.draw(queenBuffer, shaderinstance);
-				}
-				break;
-			case 1:
-				switch(pieceType)
-				{
-					default:
-					case PAWN:
-						VertexBuffer classicPawnBuffer = DrawScreenEvent.classicPawnBuffer;
-						BufferHelpers.draw(classicPawnBuffer, shaderinstance);
-						break;
-					case ROOK:
-						VertexBuffer classicRookBuffer = DrawScreenEvent.classicRookBuffer;
-						BufferHelpers.draw(classicRookBuffer, shaderinstance);
-						break;
-					case BISHOP:
-						VertexBuffer classicBishopBuffer = DrawScreenEvent.classicBishopBuffer;
-						BufferHelpers.draw(classicBishopBuffer, shaderinstance);
-						break;
-					case KNIGHT:
-						VertexBuffer classicKnightBuffer = DrawScreenEvent.classicKnightBuffer;
-						BufferHelpers.draw(classicKnightBuffer, shaderinstance);
-						break;
-					case KING:
-						VertexBuffer classicKingBuffer = DrawScreenEvent.classicKingBuffer;
-						BufferHelpers.draw(classicKingBuffer, shaderinstance);
-						break;
-					case QUEEN:
-						VertexBuffer classicQueenBuffer = DrawScreenEvent.classicQueenBuffer;
-						BufferHelpers.draw(classicQueenBuffer, shaderinstance);
-				}
-				break;
-			case 2:
-				switch(pieceType)
-				{
-					default:
-					case PAWN:
-						VertexBuffer pandorasCreaturesPawnBuffer = DrawScreenEvent.pandorasCreaturesPawnBuffer;
-						BufferHelpers.draw(pandorasCreaturesPawnBuffer, shaderinstance);
-						break;
-					case ROOK:
-						VertexBuffer pandorasCreaturesRookBuffer = DrawScreenEvent.pandorasCreaturesRookBuffer;
-						BufferHelpers.draw(pandorasCreaturesRookBuffer, shaderinstance);
-						break;
-					case BISHOP:
-						VertexBuffer pandorasCreaturesBishopBuffer = DrawScreenEvent.pandorasCreaturesBishopBuffer;
-						BufferHelpers.draw(pandorasCreaturesBishopBuffer, shaderinstance);
-						break;
-					case KNIGHT:
-						VertexBuffer pandorasCreaturesKnightBuffer = DrawScreenEvent.pandorasCreaturesKnightBuffer;
-						BufferHelpers.draw(pandorasCreaturesKnightBuffer, shaderinstance);
-						break;
-					case KING:
-						VertexBuffer pandorasCreaturesKingBuffer = DrawScreenEvent.pandorasCreaturesKingBuffer;
-						BufferHelpers.draw(pandorasCreaturesKingBuffer, shaderinstance);
-						break;
-					case QUEEN:
-						VertexBuffer pandorasCreaturesQueenBuffer = DrawScreenEvent.pandorasCreaturesQueenBuffer;
-						BufferHelpers.draw(pandorasCreaturesQueenBuffer, shaderinstance);
-				}
-		}
+		
+		BasePiece.PieceModelSet set = BasePiece.PieceModelSet.get(pieceModelSet + 1);
+		VertexBuffer pawnBuffer = DrawScreenEvent.getBuffer(set, pieceType);
+		BufferHelpers.draw(TTCRenderTypes.getChessPieceSolid(resourceLocation), pawnBuffer, shaderinstance);
+		
 		poseStack.popPose();
 		// We reset the shader color to avoid funny business during the next render call
 		RenderSystem.setShaderColor(1F, 1F, 1F, 1F);

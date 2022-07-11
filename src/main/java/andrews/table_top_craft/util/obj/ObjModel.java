@@ -67,7 +67,7 @@ public class ObjModel
 //        .overlayCoords(0, 0) // We use the DefaultVertexFormat.BLOCK so there is no need for an overlay
     	.uv2(15, 15); // These values are full brightness
     	normal(builder, stack.last().normal(), nx, ny, nz)
-    	.endVertex();   
+    	.endVertex();
     }
     
 	private static VertexConsumer pos(VertexConsumer bufferBuilder, Matrix4f matrix4f, float x, float y, float z)

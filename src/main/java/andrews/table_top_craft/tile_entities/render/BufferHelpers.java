@@ -61,16 +61,14 @@ public class BufferHelpers {
 	public static void draw(RenderType type, VertexBuffer buffer, ShaderInstance pShaderInstance) {
 		//buffer.bindVertexArray(); TODO fix this
 		if (buffer != null) {
-			buffer.bind();
-			buffer.getFormat().setupBufferState();
-			pShaderInstance.apply();
 			type.setupRenderState();
+			pShaderInstance.apply();
+			buffer.bind();
 //			RenderSystem.drawElements(buffer.mode.asGLMode, buffer.indexCount, buffer.indexType.asGLType);
 			buffer.draw();
-			buffer.getFormat().clearBufferState();
 			pShaderInstance.clear();
+			VertexBuffer.unbind();
 			type.clearRenderState();
-			teardownRender();
 		}
 	}
 	

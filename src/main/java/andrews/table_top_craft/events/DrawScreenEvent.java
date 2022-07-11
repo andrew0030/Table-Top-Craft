@@ -9,12 +9,15 @@ import com.mojang.blaze3d.vertex.BufferBuilder;
 import com.mojang.blaze3d.vertex.PoseStack;
 import com.mojang.blaze3d.vertex.VertexBuffer;
 import com.mojang.blaze3d.vertex.VertexFormat;
+import com.mojang.datafixers.util.Pair;
 import net.minecraft.client.renderer.RenderType;
 import net.minecraft.resources.ResourceLocation;
 import net.minecraftforge.api.distmarker.Dist;
 import net.minecraftforge.client.event.ScreenEvent;
 import net.minecraftforge.eventbus.api.SubscribeEvent;
 import net.minecraftforge.fml.common.Mod;
+
+import java.util.HashMap;
 
 @Mod.EventBusSubscriber(modid = Reference.MODID, value = Dist.CLIENT)
 public class DrawScreenEvent
@@ -24,210 +27,37 @@ public class DrawScreenEvent
 	// Initializes the models
 	public static final ChessObjModel CHESS_PIECE_MODEL = new ChessObjModel();
 	// The model buffers, used to render the VOBs
-	public static VertexBuffer pawnBuffer;
-	public static VertexBuffer rookBuffer;
-	public static VertexBuffer bishopBuffer;
-	public static VertexBuffer knightBuffer;
-	public static VertexBuffer kingBuffer;
-	public static VertexBuffer queenBuffer; //TODO use HashMap for this instead
-
-	public static VertexBuffer classicPawnBuffer;
-	public static VertexBuffer classicRookBuffer;
-	public static VertexBuffer classicBishopBuffer;
-	public static VertexBuffer classicKnightBuffer;
-	public static VertexBuffer classicKingBuffer;
-	public static VertexBuffer classicQueenBuffer;
-
-	public static VertexBuffer pandorasCreaturesPawnBuffer;
-	public static VertexBuffer pandorasCreaturesRookBuffer;
-	public static VertexBuffer pandorasCreaturesBishopBuffer;
-	public static VertexBuffer pandorasCreaturesKnightBuffer;
-	public static VertexBuffer pandorasCreaturesKingBuffer;
-	public static VertexBuffer pandorasCreaturesQueenBuffer;
+	public static final HashMap<Pair<PieceType, PieceModelSet>, VertexBuffer> BUFFERS = new HashMap<>();
 	
 	@SubscribeEvent
 	public static void setup(final ScreenEvent.DrawScreenEvent event)
 	{
 		BufferBuilder chessBuilder = new BufferBuilder(RenderType.TRANSIENT_BUFFER_SIZE);
-
-		if(pawnBuffer == null)
-		{
-			chessBuilder.begin(VertexFormat.Mode.TRIANGLES, chessVertexFormat);
-			CHESS_PIECE_MODEL.render(new PoseStack(), chessBuilder, PieceType.PAWN, PieceModelSet.STANDARD);
-			chessBuilder.end(); // no longer adding new vertexes to the buffer
-			pawnBuffer = new VertexBuffer();
-//			pawnBuffer.upload(chessBuilder); // uploads the model to the GPU
-			chessBuilder.clear(); // frees up unneeded memory
-		}//TODO fix these
 		
-		if(rookBuffer == null)
-		{
-			chessBuilder.begin(VertexFormat.Mode.TRIANGLES, chessVertexFormat);
-			CHESS_PIECE_MODEL.render(new PoseStack(), chessBuilder, PieceType.ROOK, PieceModelSet.STANDARD);
-			chessBuilder.end();
-			rookBuffer = new VertexBuffer();
-//			rookBuffer.upload(chessBuilder);
-			chessBuilder.clear();
+		for (PieceType type : PieceType.values()) {
+			for (PieceModelSet set : PieceModelSet.values()) {
+				BUFFERS.put(Pair.of(type, set), generate(chessBuilder, chessVertexFormat, type, set));
+			}
 		}
-		
-		if(bishopBuffer == null)
-		{
-			chessBuilder.begin(VertexFormat.Mode.TRIANGLES, chessVertexFormat);
-			CHESS_PIECE_MODEL.render(new PoseStack(), chessBuilder, PieceType.BISHOP, PieceModelSet.STANDARD);
-			chessBuilder.end();
-			bishopBuffer = new VertexBuffer();
-//			bishopBuffer.upload(chessBuilder);
-			chessBuilder.clear();
-		}
-		
-		if(knightBuffer == null)
-		{
-			chessBuilder.begin(VertexFormat.Mode.TRIANGLES, chessVertexFormat);
-			CHESS_PIECE_MODEL.render(new PoseStack(), chessBuilder, PieceType.KNIGHT, PieceModelSet.STANDARD);
-			chessBuilder.end();
-			knightBuffer = new VertexBuffer();
-//			knightBuffer.upload(chessBuilder);
-			chessBuilder.clear();
-		}
-		
-		if(kingBuffer == null)
-		{
-			chessBuilder.begin(VertexFormat.Mode.TRIANGLES, chessVertexFormat);
-			CHESS_PIECE_MODEL.render(new PoseStack(), chessBuilder, PieceType.KING, PieceModelSet.STANDARD);
-			chessBuilder.end();
-			kingBuffer = new VertexBuffer();
-//			kingBuffer.upload(chessBuilder);
-			chessBuilder.clear();
-		}
-		
-		if(queenBuffer == null)
-		{
-			chessBuilder.begin(VertexFormat.Mode.TRIANGLES, chessVertexFormat);
-			CHESS_PIECE_MODEL.render(new PoseStack(), chessBuilder, PieceType.QUEEN, PieceModelSet.STANDARD);
-			chessBuilder.end();
-			queenBuffer = new VertexBuffer();
-//			queenBuffer.upload(chessBuilder);
-			chessBuilder.clear();
-		}
-
-		if(classicPawnBuffer == null)
-		{
-			chessBuilder.begin(VertexFormat.Mode.TRIANGLES, chessVertexFormat);
-			CHESS_PIECE_MODEL.render(new PoseStack(), chessBuilder, PieceType.PAWN, PieceModelSet.CLASSIC);
-			chessBuilder.end(); // no longer adding new vertexes to the buffer
-			classicPawnBuffer = new VertexBuffer();
-//			classicPawnBuffer.upload(chessBuilder); // uploads the model to the GPU
-			chessBuilder.clear(); // frees up unneeded memory
-		}
-
-		if(classicRookBuffer == null)
-		{
-			chessBuilder.begin(VertexFormat.Mode.TRIANGLES, chessVertexFormat);
-			CHESS_PIECE_MODEL.render(new PoseStack(), chessBuilder, PieceType.ROOK, PieceModelSet.CLASSIC);
-			chessBuilder.end();
-			classicRookBuffer = new VertexBuffer();
-//			classicRookBuffer.upload(chessBuilder);
-			chessBuilder.clear();
-		}
-
-		if(classicBishopBuffer == null)
-		{
-			chessBuilder.begin(VertexFormat.Mode.TRIANGLES, chessVertexFormat);
-			CHESS_PIECE_MODEL.render(new PoseStack(), chessBuilder, PieceType.BISHOP, PieceModelSet.CLASSIC);
-			chessBuilder.end();
-			classicBishopBuffer = new VertexBuffer();
-//			classicBishopBuffer.upload(chessBuilder);
-			chessBuilder.clear();
-		}
-
-		if(classicKnightBuffer == null)
-		{
-			chessBuilder.begin(VertexFormat.Mode.TRIANGLES, chessVertexFormat);
-			CHESS_PIECE_MODEL.render(new PoseStack(), chessBuilder, PieceType.KNIGHT, PieceModelSet.CLASSIC);
-			chessBuilder.end();
-			classicKnightBuffer = new VertexBuffer();
-//			classicKnightBuffer.upload(chessBuilder);
-			chessBuilder.clear();
-		}
-
-		if(classicKingBuffer == null)
-		{
-			chessBuilder.begin(VertexFormat.Mode.TRIANGLES, chessVertexFormat);
-			CHESS_PIECE_MODEL.render(new PoseStack(), chessBuilder, PieceType.KING, PieceModelSet.CLASSIC);
-			chessBuilder.end();
-			classicKingBuffer = new VertexBuffer();
-//			classicKingBuffer.upload(chessBuilder);
-			chessBuilder.clear();
-		}
-
-		if(classicQueenBuffer == null)
-		{
-			chessBuilder.begin(VertexFormat.Mode.TRIANGLES, chessVertexFormat);
-			CHESS_PIECE_MODEL.render(new PoseStack(), chessBuilder, PieceType.QUEEN, PieceModelSet.CLASSIC);
-			chessBuilder.end();
-			classicQueenBuffer = new VertexBuffer();
-//			classicQueenBuffer.upload(chessBuilder);
-			chessBuilder.clear();
-		}
-
-		if(pandorasCreaturesPawnBuffer == null)
-		{
-			chessBuilder.begin(VertexFormat.Mode.TRIANGLES, chessVertexFormat);
-			CHESS_PIECE_MODEL.render(new PoseStack(), chessBuilder, PieceType.PAWN, PieceModelSet.PANDORAS_CREATURES);
-			chessBuilder.end(); // no longer adding new vertexes to the buffer
-			pandorasCreaturesPawnBuffer = new VertexBuffer();
-//			pandorasCreaturesPawnBuffer.upload(chessBuilder); // uploads the model to the GPU
-			chessBuilder.clear(); // frees up unneeded memory
-		}
-
-		if(pandorasCreaturesRookBuffer == null)
-		{
-			chessBuilder.begin(VertexFormat.Mode.TRIANGLES, chessVertexFormat);
-			CHESS_PIECE_MODEL.render(new PoseStack(), chessBuilder, PieceType.ROOK, PieceModelSet.PANDORAS_CREATURES);
-			chessBuilder.end();
-			pandorasCreaturesRookBuffer = new VertexBuffer();
-//			pandorasCreaturesRookBuffer.upload(chessBuilder);
-			chessBuilder.clear();
-		}
-
-		if(pandorasCreaturesBishopBuffer == null)
-		{
-			chessBuilder.begin(VertexFormat.Mode.TRIANGLES, chessVertexFormat);
-			CHESS_PIECE_MODEL.render(new PoseStack(), chessBuilder, PieceType.BISHOP, PieceModelSet.PANDORAS_CREATURES);
-			chessBuilder.end();
-			pandorasCreaturesBishopBuffer = new VertexBuffer();
-//			pandorasCreaturesBishopBuffer.upload(chessBuilder);
-			chessBuilder.clear();
-		}
-
-		if(pandorasCreaturesKnightBuffer == null)
-		{
-			chessBuilder.begin(VertexFormat.Mode.TRIANGLES, chessVertexFormat);
-			CHESS_PIECE_MODEL.render(new PoseStack(), chessBuilder, PieceType.KNIGHT, PieceModelSet.PANDORAS_CREATURES);
-			chessBuilder.end();
-			pandorasCreaturesKnightBuffer = new VertexBuffer();
-//			pandorasCreaturesKnightBuffer.upload(chessBuilder);
-			chessBuilder.clear();
-		}
-
-		if(pandorasCreaturesKingBuffer == null)
-		{
-			chessBuilder.begin(VertexFormat.Mode.TRIANGLES, chessVertexFormat);
-			CHESS_PIECE_MODEL.render(new PoseStack(), chessBuilder, PieceType.KING, PieceModelSet.PANDORAS_CREATURES);
-			chessBuilder.end();
-			pandorasCreaturesKingBuffer = new VertexBuffer();
-//			pandorasCreaturesKingBuffer.upload(chessBuilder);
-			chessBuilder.clear();
-		}
-
-		if(pandorasCreaturesQueenBuffer == null)
-		{
-			chessBuilder.begin(VertexFormat.Mode.TRIANGLES, chessVertexFormat);
-			CHESS_PIECE_MODEL.render(new PoseStack(), chessBuilder, PieceType.QUEEN, PieceModelSet.PANDORAS_CREATURES);
-			chessBuilder.end();
-			pandorasCreaturesQueenBuffer = new VertexBuffer();
-//			pandorasCreaturesQueenBuffer.upload(chessBuilder);
-			chessBuilder.clear();
-		}
+	}
+	
+	private static VertexBuffer generate(BufferBuilder builder, VertexFormat format, PieceType type, PieceModelSet set) {
+		builder.begin(VertexFormat.Mode.TRIANGLES, format);
+		CHESS_PIECE_MODEL.render(new PoseStack(), builder, type, set);
+		VertexBuffer buffer = BUFFERS.getOrDefault(Pair.of(type, set), null);
+		if (buffer == null) buffer = new VertexBuffer();
+		upload(buffer, builder);
+		return buffer;
+	}
+	
+	private static void upload(VertexBuffer buffer,BufferBuilder builder) {
+		buffer.bind();
+		buffer.upload(builder.end());
+		VertexBuffer.unbind();
+		builder.clear(); // frees up unneeded memory
+	}
+	
+	public static VertexBuffer getBuffer(PieceModelSet set, PieceType piece) {
+		return BUFFERS.get(Pair.of(piece, set));
 	}
 }

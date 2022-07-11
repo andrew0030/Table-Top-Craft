@@ -211,6 +211,18 @@ public abstract class BasePiece
 			this.pieceName = pieceName;
 		}
 		
+		public static PieceType get(int pieceType) {
+			return switch (pieceType) {
+				case 1 -> PAWN;
+				case 2 -> ROOK;
+				case 3 -> BISHOP;
+				case 4 -> KNIGHT;
+				case 5 -> KING;
+				case 6 -> QUEEN;
+				default -> null;
+			};
+		}
+		
 		@Override
 		public String toString()
 		{
@@ -238,5 +250,14 @@ public abstract class BasePiece
 		STANDARD,
 		CLASSIC,
 		PANDORAS_CREATURES;
+		
+		public static PieceModelSet get(int pieceSet) {
+			return switch (pieceSet) {
+				case 1 -> STANDARD;
+				case 2 -> CLASSIC;
+				case 3 -> PANDORAS_CREATURES;
+				default -> null;
+			};
+		}
 	}
 }

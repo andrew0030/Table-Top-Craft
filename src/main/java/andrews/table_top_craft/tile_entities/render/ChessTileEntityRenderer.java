@@ -159,9 +159,6 @@ public class ChessTileEntityRenderer implements BlockEntityRenderer<ChessTileEnt
 			// This loop renders all the Chess Pieces on the Chess board
 			/* setup render state */
 			poseStack.pushPose(); // General Chess Piece Positioning
-			RenderType type = TTCRenderTypes.getChessPieceSolid(resourceLocation);
-			type.setupRenderState();
-			BufferHelpers.setupRender(RenderSystem.getShader(), lightU, lightV);
 			
 			/* get board colors */
 			float wR = NBTColorSaving.getRed(tileEntityIn.getWhitePiecesColor()) / 255F;
@@ -170,6 +167,13 @@ public class ChessTileEntityRenderer implements BlockEntityRenderer<ChessTileEnt
 			float bR = NBTColorSaving.getRed(tileEntityIn.getBlackPiecesColor()) / 255F;
 			float bG = NBTColorSaving.getGreen(tileEntityIn.getBlackPiecesColor()) / 255F;
 			float bB = NBTColorSaving.getBlue(tileEntityIn.getBlackPiecesColor()) / 255F;
+			
+			/* setup render state */
+			RenderType type = TTCRenderTypes.getChessPieceSolid(resourceLocation);
+			type.setupRenderState();
+			BufferHelpers.setupRender(RenderSystem.getShader(), lightU, lightV);
+			ShaderInstance shaderinstance = RenderSystem.getShader();
+//			shaderinstance.apply();
 			/* loop */
 			for (int rank = 0; rank < BoardUtils.NUM_TILES_PER_ROW; rank++)
 			{
@@ -234,6 +238,8 @@ public class ChessTileEntityRenderer implements BlockEntityRenderer<ChessTileEnt
 			poseStack.translate(CHESS_SCALE * -6.5D, 0.556D, CHESS_SCALE * 0.3D);
 			renderTakenPieces(poseStack, tileEntityIn.getMoveLog(), tileEntityIn);
 			/* clear render state */
+			VertexBuffer.unbind();
+			shaderinstance.clear();
 			type.clearRenderState();
 			poseStack.popPose(); // # General Chess Piece Positioning #
 
@@ -351,6 +357,7 @@ public class ChessTileEntityRenderer implements BlockEntityRenderer<ChessTileEnt
 		// Sorts all Black Taken Pieces depending on their Value
 		blackTakenPieces.sort((piece1, piece2) -> Ints.compare(piece2.getPieceValue(), piece1.getPieceValue()));
 		
+		// draw
 		renderTakenPiecesFigures(stack, chessTileEntity, whiteTakenPieces, true);
 		renderTakenPiecesFigures(stack, chessTileEntity, blackTakenPieces, false);
 		
@@ -403,15 +410,14 @@ public class ChessTileEntityRenderer implements BlockEntityRenderer<ChessTileEnt
 	{
 		// The RenderType for the chess pieces (the texture is just a dummy texture)
 		ShaderInstance shaderinstance = RenderSystem.getShader();
-		RenderSystem.setShaderColor(pieceColor.isWhite() ? wR : bR, pieceColor.isWhite() ? wG : bG, pieceColor.isWhite() ? wB : bB, 1f);
-		BufferHelpers.updateColor(shaderinstance);
+		BufferHelpers.updateColor(shaderinstance, new float[]{pieceColor.isWhite() ? wR : bR, pieceColor.isWhite() ? wG : bG, pieceColor.isWhite() ? wB : bB, 1f});
 		poseStack.pushPose();
 		if (shaderinstance.MODEL_VIEW_MATRIX != null) shaderinstance.MODEL_VIEW_MATRIX.set(poseStack.last().pose());
 		if (shaderinstance.PROJECTION_MATRIX != null) shaderinstance.PROJECTION_MATRIX.set(RenderSystem.getProjectionMatrix());
 		
 		BasePiece.PieceModelSet set = BasePiece.PieceModelSet.get(pieceModelSet + 1);
 		VertexBuffer pawnBuffer = DrawScreenHelper.getBuffer(set, pieceType);
-		BufferHelpers.draw(TTCRenderTypes.getChessPieceSolid(resourceLocation), pawnBuffer, shaderinstance);
+		BufferHelpers.draw(pawnBuffer, shaderinstance);
 		
 		poseStack.popPose();
 		// We reset the shader color to avoid funny business during the next render call

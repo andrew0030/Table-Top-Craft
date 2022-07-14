@@ -171,8 +171,9 @@ public class ChessTileEntityRenderer implements BlockEntityRenderer<ChessTileEnt
 			/* setup render state */
 			RenderType type = TTCRenderTypes.getChessPieceSolid(resourceLocation);
 			type.setupRenderState();
-			BufferHelpers.setupRender(RenderSystem.getShader(), lightU, lightV);
 			ShaderInstance shaderinstance = RenderSystem.getShader();
+			if (shaderinstance.PROJECTION_MATRIX != null) shaderinstance.PROJECTION_MATRIX.set(RenderSystem.getProjectionMatrix());
+			BufferHelpers.setupRender(RenderSystem.getShader(), lightU, lightV);
 //			shaderinstance.apply();
 			/* loop */
 			for (int rank = 0; rank < BoardUtils.NUM_TILES_PER_ROW; rank++)
@@ -413,7 +414,6 @@ public class ChessTileEntityRenderer implements BlockEntityRenderer<ChessTileEnt
 		BufferHelpers.updateColor(shaderinstance, new float[]{pieceColor.isWhite() ? wR : bR, pieceColor.isWhite() ? wG : bG, pieceColor.isWhite() ? wB : bB, 1f});
 		poseStack.pushPose();
 		if (shaderinstance.MODEL_VIEW_MATRIX != null) shaderinstance.MODEL_VIEW_MATRIX.set(poseStack.last().pose());
-		if (shaderinstance.PROJECTION_MATRIX != null) shaderinstance.PROJECTION_MATRIX.set(RenderSystem.getProjectionMatrix());
 		
 		BasePiece.PieceModelSet set = BasePiece.PieceModelSet.get(pieceModelSet + 1);
 		VertexBuffer pawnBuffer = DrawScreenHelper.getBuffer(set, pieceType);
@@ -521,6 +521,7 @@ public class ChessTileEntityRenderer implements BlockEntityRenderer<ChessTileEnt
 		poseStack.pushPose();
 		poseStack.mulPose(new Quaternion(180, 270, 0, true));
 		poseStack.translate(0.0F, -1.65D, 0.0F);
+		// TODO: for some reason, this does not change colors?
 		chessBoardPlateModel.renderToBuffer(poseStack, builderBoardPlateWhiteTiles, combinedLightIn, combinedOverlayIn, whiteR, whiteG, whiteB, 1.0F);
 		poseStack.popPose();
 		VertexConsumer builderBoardPlateBlackTiles = bufferIn.getBuffer(RenderType.entityCutout(PLATE_BLACK_TILES_TEXTURE));

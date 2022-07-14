@@ -7,15 +7,14 @@ import com.mojang.blaze3d.vertex.BufferUploader;
 import com.mojang.blaze3d.vertex.VertexBuffer;
 import com.mojang.math.Matrix4f;
 import net.minecraft.client.Minecraft;
-import net.minecraft.client.renderer.RenderType;
 import net.minecraft.client.renderer.ShaderInstance;
 
 public class BufferHelpers {
 	public static boolean shouldRefresh = true;
 	
 	public static void setupRender(ShaderInstance pShaderInstance, int lightU, int ilghtV /* GiantLuigi4 (Jason): no I will not correct this typo */) {
+		pShaderInstance.apply();
 		if (shouldRefresh) {
-			Uniform uniform = pShaderInstance.getUniform("LightUV");
 			RenderSystem.assertOnRenderThread();
 			BufferUploader.reset();
 
@@ -27,15 +26,10 @@ public class BufferHelpers {
 				pShaderInstance.setSampler("Sampler" + i, j);
 			}
 			
-			if (uniform != null) uniform.set((float) lightU, ilghtV);
-			if (pShaderInstance.INVERSE_VIEW_ROTATION_MATRIX != null) pShaderInstance.INVERSE_VIEW_ROTATION_MATRIX.set(RenderSystem.getInverseViewRotationMatrix());
-			if (pShaderInstance.COLOR_MODULATOR != null) pShaderInstance.COLOR_MODULATOR.set(RenderSystem.getShaderColor());
-			if (pShaderInstance.FOG_START != null) pShaderInstance.FOG_START.set(RenderSystem.getShaderFogStart());
-			if (pShaderInstance.FOG_END != null) pShaderInstance.FOG_END.set(RenderSystem.getShaderFogEnd());
-			if (pShaderInstance.FOG_COLOR != null) pShaderInstance.FOG_COLOR.set(RenderSystem.getShaderFogColor());
-			if (pShaderInstance.FOG_SHAPE != null)
-				pShaderInstance.FOG_SHAPE.set(RenderSystem.getShaderFogShape().getIndex());
-			if (pShaderInstance.TEXTURE_MATRIX != null) pShaderInstance.TEXTURE_MATRIX.set(RenderSystem.getTextureMatrix());
+			if (pShaderInstance.COLOR_MODULATOR != null)
+				pShaderInstance.COLOR_MODULATOR.set(RenderSystem.getShaderColor());
+			if (pShaderInstance.TEXTURE_MATRIX != null)
+				pShaderInstance.TEXTURE_MATRIX.set(RenderSystem.getTextureMatrix());
 			if (pShaderInstance.GAME_TIME != null) pShaderInstance.GAME_TIME.set(RenderSystem.getShaderGameTime());
 //			if (pShaderInstance.LINE_WIDTH != null && (this.modae == VertexFormat.Mode.LINES || this.mode == VertexFormat.Mode.LINE_STRIP))
 //				pShaderInstance.LINE_WIDTH.set(RenderSystem.getShaderLineWidth());
@@ -49,8 +43,34 @@ public class BufferHelpers {
 			if (pShaderInstance.LIGHT1_DIRECTION != null)
 				pShaderInstance.LIGHT1_DIRECTION.set(-0.27617238536949695F, 0.9205746178983233F, 0.27617238536949695F);
 		}
-		pShaderInstance.apply();
-		if (pShaderInstance.PROJECTION_MATRIX != null) pShaderInstance.PROJECTION_MATRIX.upload();
+		if (pShaderInstance.FOG_START != null) {
+			pShaderInstance.FOG_START.set(RenderSystem.getShaderFogStart());
+			pShaderInstance.FOG_START.upload();
+		}
+		if (pShaderInstance.FOG_END != null) {
+			pShaderInstance.FOG_END.set(RenderSystem.getShaderFogEnd());
+			pShaderInstance.FOG_END.upload();
+		}
+		if (pShaderInstance.FOG_COLOR != null) {
+			pShaderInstance.FOG_COLOR.set(RenderSystem.getShaderFogColor());
+			pShaderInstance.FOG_COLOR.upload();
+		}
+		if (pShaderInstance.FOG_SHAPE != null) {
+			pShaderInstance.FOG_SHAPE.set(RenderSystem.getShaderFogShape().getIndex());
+			pShaderInstance.FOG_SHAPE.upload();
+		}
+		
+		Uniform uniform = pShaderInstance.getUniform("LightUV");
+		if (uniform != null) {
+			uniform.set((float) lightU, ilghtV);
+			uniform.upload();
+		}
+		if (pShaderInstance.INVERSE_VIEW_ROTATION_MATRIX != null) {
+			pShaderInstance.INVERSE_VIEW_ROTATION_MATRIX.set(RenderSystem.getInverseViewRotationMatrix());
+			pShaderInstance.INVERSE_VIEW_ROTATION_MATRIX.upload();
+		}
+		if (pShaderInstance.PROJECTION_MATRIX != null)
+			pShaderInstance.PROJECTION_MATRIX.upload();
 	}
 	
 	public static void setMatrix(Matrix4f mat, ShaderInstance pShaderInstance) {
@@ -69,7 +89,6 @@ public class BufferHelpers {
 		ShaderInstance instance = RenderSystem.getShader();
 		if (buffer != null) {
 			if (instance.MODEL_VIEW_MATRIX != null) instance.MODEL_VIEW_MATRIX.upload();
-			if (instance.INVERSE_VIEW_ROTATION_MATRIX != null) instance.INVERSE_VIEW_ROTATION_MATRIX.upload();
 			if (instance.COLOR_MODULATOR != null) instance.COLOR_MODULATOR.upload();
 			buffer.bind();
 //			RenderSystem.drawElements(buffer.mode.asGLMode, buffer.indexCount, buffer.indexType.asGLType);

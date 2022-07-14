@@ -116,8 +116,10 @@ public class ChessPieceFigureTileEntityRenderer implements BlockEntityRenderer<C
         poseStack.pushPose();
         RenderType type = TTCRenderTypes.getChessPieceSolid(resourceLocation);
         type.setupRenderState();
-        BufferHelpers.setupRender(RenderSystem.getShader(), lightU, lightV);
         ShaderInstance shaderinstance = RenderSystem.getShader();
+        if (shaderinstance.PROJECTION_MATRIX != null)
+            shaderinstance.PROJECTION_MATRIX.set(RenderSystem.getProjectionMatrix());
+        BufferHelpers.setupRender(RenderSystem.getShader(), lightU, lightV);
         // We get the colors the Piece should have
         float red = NBTColorSaving.getRed(blockEntity.getPieceColor()) / 255F;
         float green = NBTColorSaving.getGreen(blockEntity.getPieceColor()) / 255F;
@@ -150,8 +152,6 @@ public class ChessPieceFigureTileEntityRenderer implements BlockEntityRenderer<C
                 shaderinstance.MODEL_VIEW_MATRIX.set(poseStack.last().pose());
             }
         }
-        if (shaderinstance.PROJECTION_MATRIX != null)
-            shaderinstance.PROJECTION_MATRIX.set(RenderSystem.getProjectionMatrix());
         
         BasePiece.PieceModelSet set = BasePiece.PieceModelSet.get(blockEntity.getPieceSet());
         BasePiece.PieceType piece = BasePiece.PieceType.get(blockEntity.getPieceType());

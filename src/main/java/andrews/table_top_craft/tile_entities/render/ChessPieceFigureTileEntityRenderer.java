@@ -1,14 +1,10 @@
 package andrews.table_top_craft.tile_entities.render;
 
-import andrews.table_top_craft.util.DrawScreenHelper;
 import andrews.table_top_craft.game_logic.chess.pieces.BasePiece;
 import andrews.table_top_craft.objects.blocks.ChessPieceFigureBlock;
 import andrews.table_top_craft.tile_entities.ChessPieceFigureBlockEntity;
 import andrews.table_top_craft.tile_entities.model.piece_figure.ChessPieceFigureStandModel;
-import andrews.table_top_craft.util.Color;
-import andrews.table_top_craft.util.NBTColorSaving;
-import andrews.table_top_craft.util.Reference;
-import andrews.table_top_craft.util.TTCRenderTypes;
+import andrews.table_top_craft.util.*;
 import com.mojang.blaze3d.platform.NativeImage;
 import com.mojang.blaze3d.systems.RenderSystem;
 import com.mojang.blaze3d.vertex.PoseStack;
@@ -120,15 +116,16 @@ public class ChessPieceFigureTileEntityRenderer implements BlockEntityRenderer<C
         poseStack.pushPose();
         RenderType type = TTCRenderTypes.getChessPieceSolid(resourceLocation);
         type.setupRenderState();
-        BufferHelpers.setupRender(RenderSystem.getShader(), lightU, lightV);
         ShaderInstance shaderinstance = RenderSystem.getShader();
+        if (shaderinstance.PROJECTION_MATRIX != null)
+            shaderinstance.PROJECTION_MATRIX.set(RenderSystem.getProjectionMatrix());
+        BufferHelpers.setupRender(RenderSystem.getShader(), lightU, lightV);
         // We get the colors the Piece should have
         float red = NBTColorSaving.getRed(blockEntity.getPieceColor()) / 255F;
         float green = NBTColorSaving.getGreen(blockEntity.getPieceColor()) / 255F;
         float blue = NBTColorSaving.getBlue(blockEntity.getPieceColor()) / 255F;
         // We set the colors
-        RenderSystem.setShaderColor(red, green, blue, 1.0F);
-        BufferHelpers.updateColor(shaderinstance);
+        BufferHelpers.updateColor(shaderinstance, new float[]{red, green, blue, 1.0F});
         poseStack.pushPose();
         if (shaderinstance.MODEL_VIEW_MATRIX != null)
         {
@@ -155,17 +152,22 @@ public class ChessPieceFigureTileEntityRenderer implements BlockEntityRenderer<C
                 shaderinstance.MODEL_VIEW_MATRIX.set(poseStack.last().pose());
             }
         }
-        if (shaderinstance.PROJECTION_MATRIX != null)
-            shaderinstance.PROJECTION_MATRIX.set(RenderSystem.getProjectionMatrix());
         
         BasePiece.PieceModelSet set = BasePiece.PieceModelSet.get(blockEntity.getPieceSet());
         BasePiece.PieceType piece = BasePiece.PieceType.get(blockEntity.getPieceType());
         VertexBuffer pawnBuffer = DrawScreenHelper.getBuffer(set, piece);
-        BufferHelpers.draw(type, pawnBuffer, shaderinstance);
+        
+        /* setup render state */
+        TTCRenderTypes.getChessPieceSolid(resourceLocation).setupRenderState();
+//        shaderinstance.apply();
+        BufferHelpers.draw(pawnBuffer, shaderinstance);
+        /* clear render state */
+        VertexBuffer.unbind();
+        shaderinstance.clear();
+        type.clearRenderState();
         
         poseStack.popPose();
         poseStack.popPose();
-        type.clearRenderState();
         poseStack.popPose();
     }
 }

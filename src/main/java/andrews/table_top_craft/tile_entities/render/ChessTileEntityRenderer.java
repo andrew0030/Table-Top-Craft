@@ -417,7 +417,7 @@ public class ChessTileEntityRenderer implements BlockEntityRenderer<ChessTileEnt
 		
 		BasePiece.PieceModelSet set = BasePiece.PieceModelSet.get(pieceModelSet + 1);
 		VertexBuffer pawnBuffer = DrawScreenHelper.getBuffer(set, pieceType);
-		BufferHelpers.draw(pawnBuffer, shaderinstance);
+		BufferHelpers.draw(pawnBuffer);
 		
 		poseStack.popPose();
 		// We reset the shader color to avoid funny business during the next render call

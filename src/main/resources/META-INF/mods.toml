@@ -15,7 +15,7 @@ license="GNU Lesser General Public License v3.0"
 [[dependencies.table_top_craft]]
     modId="forge"
     mandatory=true
-    versionRange="[41,)"
+    versionRange="[41.0.99,)"
     ordering="NONE"
     side="BOTH"
 

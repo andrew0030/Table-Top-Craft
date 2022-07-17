@@ -22,16 +22,16 @@ public class TTCBlocks
 	public static final DeferredRegister<Block> BLOCKS = DeferredRegister.create(ForgeRegistries.BLOCKS, Reference.MODID);
 
 	// Chess
-	public static final RegistryObject<Block> OAK_CHESS				= createBlock("oak_chess", () -> new ChessBlock(), TableTopCraft.TABLE_TOP_CRAFT_GROUP);
-	public static final RegistryObject<Block> SPRUCE_CHESS			= createBlock("spruce_chess", () -> new ChessBlock(), TableTopCraft.TABLE_TOP_CRAFT_GROUP);
-	public static final RegistryObject<Block> BIRCH_CHESS			= createBlock("birch_chess", () -> new ChessBlock(), TableTopCraft.TABLE_TOP_CRAFT_GROUP);
-	public static final RegistryObject<Block> JUNGLE_CHESS			= createBlock("jungle_chess", () -> new ChessBlock(), TableTopCraft.TABLE_TOP_CRAFT_GROUP);
-	public static final RegistryObject<Block> ACACIA_CHESS			= createBlock("acacia_chess", () -> new ChessBlock(), TableTopCraft.TABLE_TOP_CRAFT_GROUP);
-	public static final RegistryObject<Block> DARK_OAK_CHESS		= createBlock("dark_oak_chess", () -> new ChessBlock(), TableTopCraft.TABLE_TOP_CRAFT_GROUP);
-	public static final RegistryObject<Block> CRIMSON_CHESS			= createBlock("crimson_chess", () -> new ChessBlock(), TableTopCraft.TABLE_TOP_CRAFT_GROUP);
-	public static final RegistryObject<Block> WARPED_CHESS			= createBlock("warped_chess", () -> new ChessBlock(), TableTopCraft.TABLE_TOP_CRAFT_GROUP);
+	public static final RegistryObject<Block> OAK_CHESS				= createBlock("oak_chess", ChessBlock::new, TableTopCraft.TABLE_TOP_CRAFT_GROUP);
+	public static final RegistryObject<Block> SPRUCE_CHESS			= createBlock("spruce_chess", ChessBlock::new, TableTopCraft.TABLE_TOP_CRAFT_GROUP);
+	public static final RegistryObject<Block> BIRCH_CHESS			= createBlock("birch_chess", ChessBlock::new, TableTopCraft.TABLE_TOP_CRAFT_GROUP);
+	public static final RegistryObject<Block> JUNGLE_CHESS			= createBlock("jungle_chess", ChessBlock::new, TableTopCraft.TABLE_TOP_CRAFT_GROUP);
+	public static final RegistryObject<Block> ACACIA_CHESS			= createBlock("acacia_chess", ChessBlock::new, TableTopCraft.TABLE_TOP_CRAFT_GROUP);
+	public static final RegistryObject<Block> DARK_OAK_CHESS		= createBlock("dark_oak_chess", ChessBlock::new, TableTopCraft.TABLE_TOP_CRAFT_GROUP);
+	public static final RegistryObject<Block> CRIMSON_CHESS			= createBlock("crimson_chess", ChessBlock::new, TableTopCraft.TABLE_TOP_CRAFT_GROUP);
+	public static final RegistryObject<Block> WARPED_CHESS			= createBlock("warped_chess", ChessBlock::new, TableTopCraft.TABLE_TOP_CRAFT_GROUP);
 	// Chess Piece Figure
-	public static final RegistryObject<Block> CHESS_PIECE_FIGURE	= createISBERBlock("chess_piece_figure", () -> new ChessPieceFigureBlock(), false, TableTopCraft.TABLE_TOP_CRAFT_GROUP);
+	public static final RegistryObject<Block> CHESS_PIECE_FIGURE	= createISBERBlock("chess_piece_figure", ChessPieceFigureBlock::new, false, TableTopCraft.TABLE_TOP_CRAFT_GROUP);
 	//Tic Tac Toe
 	public static final RegistryObject<Block> TIC_TAC_TOE			= createBlock("tic_tac_toe", TicTacToeBlock::new, TableTopCraft.TABLE_TOP_CRAFT_GROUP);
 	

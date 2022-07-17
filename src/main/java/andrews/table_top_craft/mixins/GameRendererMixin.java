@@ -22,5 +22,6 @@ public class GameRendererMixin
 	public void preRender(float pPartialTicks, long pNanoTime, boolean pRenderLevel, CallbackInfo ci)
 	{
 		BufferHelpers.shouldRefresh = true;
+		BufferHelpers.useFallbackSystem = false;
 	}
 }

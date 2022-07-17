@@ -87,19 +87,13 @@ public class TableTopCraft
 	}
 	
 	void setupCommon(final FMLCommonSetupEvent event)
-	{	
-		event.enqueueWork(() -> {});
-		//Thread Safe Stuff
+	{
 		TTCNetwork.setupMessages();
 	}
 
 	void setupClient(final FMLClientSetupEvent event)
 	{
-		event.enqueueWork(() -> 
-		{
-			TTCTileEntities.registerTileRenders();
-		});
-		//Thread Safe Stuff
+		event.enqueueWork(TTCTileEntities::registerTileRenders);
 	}
 
 	void setupLayers(final EntityRenderersEvent.RegisterLayerDefinitions event)

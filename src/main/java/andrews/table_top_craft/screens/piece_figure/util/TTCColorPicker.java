@@ -10,7 +10,7 @@ import net.minecraft.client.gui.screens.Screen;
 import net.minecraft.network.chat.Component;
 import net.minecraft.resources.ResourceLocation;
 import net.minecraft.util.Mth;
-import net.minecraftforge.client.gui.GuiUtils;
+import net.minecraftforge.client.gui.ScreenUtils;
 import org.lwjgl.glfw.GLFW;
 
 public class TTCColorPicker extends AbstractSliderButton
@@ -104,7 +104,7 @@ public class TTCColorPicker extends AbstractSliderButton
 
         int size = 4;
 
-        GuiUtils.drawContinuousTexturedBox(poseStack, WIDGETS_LOCATION, xPosition, yPosition, 0, 46 + offset, size, size, 200, 20, 1, 1, 1, 1, this.getBlitOffset());
+        ScreenUtils.blitWithBorder(poseStack, WIDGETS_LOCATION, xPosition, yPosition, 0, 46 + offset, size, size, 200, 20, 1, 1, 1, 1, this.getBlitOffset());
     }
 
     @Override

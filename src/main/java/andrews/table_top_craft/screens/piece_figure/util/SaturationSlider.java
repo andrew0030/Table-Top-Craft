@@ -5,7 +5,7 @@ import com.mojang.blaze3d.vertex.PoseStack;
 import net.minecraft.client.Minecraft;
 import net.minecraft.client.gui.screens.Screen;
 import net.minecraft.network.chat.Component;
-import net.minecraftforge.client.gui.GuiUtils;
+import net.minecraftforge.client.gui.ScreenUtils;
 import net.minecraftforge.client.gui.widget.ForgeSlider;
 
 public class SaturationSlider extends ForgeSlider
@@ -41,7 +41,7 @@ public class SaturationSlider extends ForgeSlider
     {
         Minecraft mc = Minecraft.getInstance();
         int k = this.getYImage(this.isHovered);
-        GuiUtils.drawContinuousTexturedBox(poseStack, WIDGETS_LOCATION, this.x, this.y, 0, 46 + k * 20, this.width, this.height, 200, 20, 2, 3, 2, 2, this.getBlitOffset());
+        ScreenUtils.blitWithBorder(poseStack, WIDGETS_LOCATION, this.x, this.y, 0, 46 + k * 20, this.width, this.height, 200, 20, 2, 3, 2, 2, this.getBlitOffset());
         this.renderBg(poseStack, mc, mouseX, mouseY);
 
         Component buttonText = this.getMessage();
@@ -60,7 +60,7 @@ public class SaturationSlider extends ForgeSlider
         RenderSystem.setShaderTexture(0, WIDGETS_LOCATION);
         RenderSystem.setShaderColor(1.0F, 1.0F, 1.0F, 1.0F);
         int offset = (this.isHoveredOrFocused() ? 2 : 1) * 20;
-        GuiUtils.drawContinuousTexturedBox(poseStack, WIDGETS_LOCATION, this.x + (int)(this.value * (float)(this.width - 8)), this.y, 0, 46 + offset, 8, this.height, 200, 20, 2, 3, 2, 2, this.getBlitOffset());
+        ScreenUtils.blitWithBorder(poseStack, WIDGETS_LOCATION, this.x + (int)(this.value * (float)(this.width - 8)), this.y, 0, 46 + offset, 8, this.height, 200, 20, 2, 3, 2, 2, this.getBlitOffset());
     }
 
     @Override

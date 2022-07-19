@@ -1,7 +1,7 @@
 package andrews.table_top_craft.tile_entities.render;
 
+import andrews.table_top_craft.game_logic.chess.pieces.BasePiece;
 import andrews.table_top_craft.objects.blocks.ChessPieceFigureBlock;
-import andrews.table_top_craft.registry.TTCBlocks;
 import andrews.table_top_craft.tile_entities.ChessPieceFigureBlockEntity;
 import andrews.table_top_craft.tile_entities.model.piece_figure.ChessPieceFigureStandModel;
 import andrews.table_top_craft.util.*;
@@ -17,12 +17,10 @@ import net.minecraft.client.renderer.LightTexture;
 import net.minecraft.client.renderer.MultiBufferSource;
 import net.minecraft.client.renderer.RenderType;
 import net.minecraft.client.renderer.ShaderInstance;
-import net.minecraft.client.renderer.block.model.ItemTransforms;
 import net.minecraft.client.renderer.blockentity.BlockEntityRenderer;
 import net.minecraft.client.renderer.blockentity.BlockEntityRendererProvider;
 import net.minecraft.client.renderer.texture.DynamicTexture;
 import net.minecraft.resources.ResourceLocation;
-import net.minecraft.world.item.ItemStack;
 import net.minecraft.world.level.block.state.BlockState;
 
 public class ChessPieceFigureTileEntityRenderer implements BlockEntityRenderer<ChessPieceFigureBlockEntity>
@@ -118,15 +116,16 @@ public class ChessPieceFigureTileEntityRenderer implements BlockEntityRenderer<C
         poseStack.pushPose();
         RenderType type = TTCRenderTypes.getChessPieceSolid(resourceLocation);
         type.setupRenderState();
-        BufferHelpers.setupRender(RenderSystem.getShader(), lightU, lightV);
         ShaderInstance shaderinstance = RenderSystem.getShader();
+        if (shaderinstance.PROJECTION_MATRIX != null)
+            shaderinstance.PROJECTION_MATRIX.set(RenderSystem.getProjectionMatrix());
+        BufferHelpers.setupRender(RenderSystem.getShader(), lightU, lightV);
         // We get the colors the Piece should have
         float red = NBTColorSaving.getRed(blockEntity.getPieceColor()) / 255F;
         float green = NBTColorSaving.getGreen(blockEntity.getPieceColor()) / 255F;
         float blue = NBTColorSaving.getBlue(blockEntity.getPieceColor()) / 255F;
         // We set the colors
-        RenderSystem.setShaderColor(red, green, blue, 1.0F);
-        BufferHelpers.updateColor(shaderinstance);
+        BufferHelpers.updateColor(shaderinstance, new float[]{red, green, blue, 1.0F});
         poseStack.pushPose();
         if (shaderinstance.MODEL_VIEW_MATRIX != null)
         {
@@ -153,100 +152,22 @@ public class ChessPieceFigureTileEntityRenderer implements BlockEntityRenderer<C
                 shaderinstance.MODEL_VIEW_MATRIX.set(poseStack.last().pose());
             }
         }
-        if (shaderinstance.PROJECTION_MATRIX != null)
-            shaderinstance.PROJECTION_MATRIX.set(RenderSystem.getProjectionMatrix());
-        switch (blockEntity.getPieceSet())
-        {
-            case 1:
-                switch (blockEntity.getPieceType())
-                {
-                    case 1 -> {
-                        VertexBuffer pawnBuffer = TTCVBOs.pawnBuffer;
-                        BufferHelpers.draw(pawnBuffer, shaderinstance);
-                    }
-                    case 2 -> {
-                        VertexBuffer rookBuffer = TTCVBOs.rookBuffer;
-                        BufferHelpers.draw(rookBuffer, shaderinstance);
-                    }
-                    case 3 -> {
-                        VertexBuffer bishopBuffer = TTCVBOs.bishopBuffer;
-                        BufferHelpers.draw(bishopBuffer, shaderinstance);
-                    }
-                    case 4 -> {
-                        VertexBuffer knightBuffer = TTCVBOs.knightBuffer;
-                        BufferHelpers.draw(knightBuffer, shaderinstance);
-                    }
-                    case 5 -> {
-                        VertexBuffer kingBuffer = TTCVBOs.kingBuffer;
-                        BufferHelpers.draw(kingBuffer, shaderinstance);
-                    }
-                    case 6 -> {
-                        VertexBuffer queenBuffer = TTCVBOs.queenBuffer;
-                        BufferHelpers.draw(queenBuffer, shaderinstance);
-                    }
-                }
-                break;
-            case 2:
-                switch (blockEntity.getPieceType())
-                {
-                    case 1 -> {
-                        VertexBuffer classicPawnBuffer = TTCVBOs.classicPawnBuffer;
-                        BufferHelpers.draw(classicPawnBuffer, shaderinstance);
-                    }
-                    case 2 -> {
-                        VertexBuffer classicRookBuffer = TTCVBOs.classicRookBuffer;
-                        BufferHelpers.draw(classicRookBuffer, shaderinstance);
-                    }
-                    case 3 -> {
-                        VertexBuffer classicBishopBuffer = TTCVBOs.classicBishopBuffer;
-                        BufferHelpers.draw(classicBishopBuffer, shaderinstance);
-                    }
-                    case 4 -> {
-                        VertexBuffer classicKnightBuffer = TTCVBOs.classicKnightBuffer;
-                        BufferHelpers.draw(classicKnightBuffer, shaderinstance);
-                    }
-                    case 5 -> {
-                        VertexBuffer classicKingBuffer = TTCVBOs.classicKingBuffer;
-                        BufferHelpers.draw(classicKingBuffer, shaderinstance);
-                    }
-                    case 6 -> {
-                        VertexBuffer classicQueenBuffer = TTCVBOs.classicQueenBuffer;
-                        BufferHelpers.draw(classicQueenBuffer, shaderinstance);
-                    }
-                }
-                break;
-            case 3:
-                switch (blockEntity.getPieceType())
-                {
-                    case 1 -> {
-                        VertexBuffer pandorasCreaturesPawnBuffer = TTCVBOs.pandorasCreaturesPawnBuffer;
-                        BufferHelpers.draw(pandorasCreaturesPawnBuffer, shaderinstance);
-                    }
-                    case 2 -> {
-                        VertexBuffer pandorasCreaturesRookBuffer = TTCVBOs.pandorasCreaturesRookBuffer;
-                        BufferHelpers.draw(pandorasCreaturesRookBuffer, shaderinstance);
-                    }
-                    case 3 -> {
-                        VertexBuffer pandorasCreaturesBishopBuffer = TTCVBOs.pandorasCreaturesBishopBuffer;
-                        BufferHelpers.draw(pandorasCreaturesBishopBuffer, shaderinstance);
-                    }
-                    case 4 -> {
-                        VertexBuffer pandorasCreaturesKnightBuffer = TTCVBOs.pandorasCreaturesKnightBuffer;
-                        BufferHelpers.draw(pandorasCreaturesKnightBuffer, shaderinstance);
-                    }
-                    case 5 -> {
-                        VertexBuffer pandorasCreaturesKingBuffer = TTCVBOs.pandorasCreaturesKingBuffer;
-                        BufferHelpers.draw(pandorasCreaturesKingBuffer, shaderinstance);
-                    }
-                    case 6 -> {
-                        VertexBuffer pandorasCreaturesQueenBuffer = TTCVBOs.pandorasCreaturesQueenBuffer;
-                        BufferHelpers.draw(pandorasCreaturesQueenBuffer, shaderinstance);
-                    }
-                }
-        }
-        poseStack.popPose();
-        poseStack.popPose();
+
+        BasePiece.PieceModelSet set = BasePiece.PieceModelSet.get(blockEntity.getPieceSet());
+        BasePiece.PieceType piece = BasePiece.PieceType.get(blockEntity.getPieceType());
+        VertexBuffer pawnBuffer = DrawScreenHelper.getBuffer(set, piece);
+
+        /* setup render state */
+        TTCRenderTypes.getChessPieceSolid(resourceLocation).setupRenderState();
+//        shaderinstance.apply();
+        BufferHelpers.draw(pawnBuffer);
+        /* clear render state */
+        VertexBuffer.unbind();
+        shaderinstance.clear();
         type.clearRenderState();
+
+        poseStack.popPose();
+        poseStack.popPose();
         poseStack.popPose();
     }
 }

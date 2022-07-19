@@ -6,74 +6,24 @@ import andrews.table_top_craft.util.Reference;
 import andrews.table_top_craft.util.obj.ObjModel;
 import com.mojang.blaze3d.vertex.PoseStack;
 import com.mojang.blaze3d.vertex.VertexConsumer;
+import com.mojang.datafixers.util.Pair;
 import net.minecraft.resources.ResourceLocation;
+
+import java.util.HashMap;
 
 public class ChessObjModel
 {
-	private static final String PAWN_MODEL_PATH = "models/pieces/pawn.obj";
-	private static final String ROOK_MODEL_PATH = "models/pieces/rook.obj";
-	private static final String BISHOP_MODEL_PATH = "models/pieces/bishop.obj";
-	private static final String KNIGHT_MODEL_PATH = "models/pieces/knight.obj";
-	private static final String KING_MODEL_PATH = "models/pieces/king.obj";
-	private static final String QUEEN_MODEL_PATH = "models/pieces/queen.obj";
-
-	private static final String CLASSIC_PAWN_MODEL_PATH = "models/pieces/classic/classic_pawn.obj";
-	private static final String CLASSIC_ROOK_MODEL_PATH = "models/pieces/classic/classic_rook.obj";
-	private static final String CLASSIC_BISHOP_MODEL_PATH = "models/pieces/classic/classic_bishop.obj";
-	private static final String CLASSIC_KNIGHT_MODEL_PATH = "models/pieces/classic/classic_knight.obj";
-	private static final String CLASSIC_KING_MODEL_PATH = "models/pieces/classic/classic_king.obj";
-	private static final String CLASSIC_QUEEN_MODEL_PATH = "models/pieces/classic/classic_queen.obj";
-
-	private static final String PC_PAWN_MODEL_PATH = "models/pieces/pandoras_creatures/pc_pawn.obj";
-	private static final String PC_ROOK_MODEL_PATH = "models/pieces/pandoras_creatures/pc_rook.obj";
-	private static final String PC_BISHOP_MODEL_PATH = "models/pieces/pandoras_creatures/pc_bishop.obj";
-	private static final String PC_KNIGHT_MODEL_PATH = "models/pieces/pandoras_creatures/pc_knight.obj";
-	private static final String PC_KING_MODEL_PATH = "models/pieces/pandoras_creatures/pc_king.obj";
-	private static final String PC_QUEEN_MODEL_PATH = "models/pieces/pandoras_creatures/pc_queen.obj";
-	
-	private final ObjModel PAWN_MODEL;
-	private final ObjModel ROOK_MODEL;
-	private final ObjModel BISHOP_MODEL;
-	private final ObjModel KNIGHT_MODEL;
-	private final ObjModel KING_MODEL;
-	private final ObjModel QUEEN_MODEL;
-
-	private final ObjModel CLASSIC_PAWN_MODEL;
-	private final ObjModel CLASSIC_ROOK_MODEL;
-	private final ObjModel CLASSIC_BISHOP_MODEL;
-	private final ObjModel CLASSIC_KNIGHT_MODEL;
-	private final ObjModel CLASSIC_KING_MODEL;
-	private final ObjModel CLASSIC_QUEEN_MODEL;
-
-	private final ObjModel PC_PAWN_MODEL;
-	private final ObjModel PC_ROOK_MODEL;
-	private final ObjModel PC_BISHOP_MODEL;
-	private final ObjModel PC_KNIGHT_MODEL;
-	private final ObjModel PC_KING_MODEL;
-	private final ObjModel PC_QUEEN_MODEL;
+	private final HashMap<Pair<PieceModelSet, PieceType>, ObjModel> MODELS = new HashMap<>();
 	
 	public ChessObjModel()
 	{
-		PAWN_MODEL = ObjModel.loadModel(new ResourceLocation(Reference.MODID, PAWN_MODEL_PATH));
-		ROOK_MODEL = ObjModel.loadModel(new ResourceLocation(Reference.MODID, ROOK_MODEL_PATH));
-		BISHOP_MODEL = ObjModel.loadModel(new ResourceLocation(Reference.MODID, BISHOP_MODEL_PATH));
-		KNIGHT_MODEL = ObjModel.loadModel(new ResourceLocation(Reference.MODID, KNIGHT_MODEL_PATH));
-		KING_MODEL = ObjModel.loadModel(new ResourceLocation(Reference.MODID, KING_MODEL_PATH));
-		QUEEN_MODEL = ObjModel.loadModel(new ResourceLocation(Reference.MODID, QUEEN_MODEL_PATH));
-
-		CLASSIC_PAWN_MODEL = ObjModel.loadModel(new ResourceLocation(Reference.MODID, CLASSIC_PAWN_MODEL_PATH));
-		CLASSIC_ROOK_MODEL = ObjModel.loadModel(new ResourceLocation(Reference.MODID, CLASSIC_ROOK_MODEL_PATH));
-		CLASSIC_BISHOP_MODEL = ObjModel.loadModel(new ResourceLocation(Reference.MODID, CLASSIC_BISHOP_MODEL_PATH));
-		CLASSIC_KNIGHT_MODEL = ObjModel.loadModel(new ResourceLocation(Reference.MODID, CLASSIC_KNIGHT_MODEL_PATH));
-		CLASSIC_KING_MODEL = ObjModel.loadModel(new ResourceLocation(Reference.MODID, CLASSIC_KING_MODEL_PATH));
-		CLASSIC_QUEEN_MODEL = ObjModel.loadModel(new ResourceLocation(Reference.MODID, CLASSIC_QUEEN_MODEL_PATH));
-
-		PC_PAWN_MODEL = ObjModel.loadModel(new ResourceLocation(Reference.MODID, PC_PAWN_MODEL_PATH));
-		PC_ROOK_MODEL = ObjModel.loadModel(new ResourceLocation(Reference.MODID, PC_ROOK_MODEL_PATH));
-		PC_BISHOP_MODEL = ObjModel.loadModel(new ResourceLocation(Reference.MODID, PC_BISHOP_MODEL_PATH));
-		PC_KNIGHT_MODEL = ObjModel.loadModel(new ResourceLocation(Reference.MODID, PC_KNIGHT_MODEL_PATH));
-		PC_KING_MODEL = ObjModel.loadModel(new ResourceLocation(Reference.MODID, PC_KING_MODEL_PATH));
-		PC_QUEEN_MODEL = ObjModel.loadModel(new ResourceLocation(Reference.MODID, PC_QUEEN_MODEL_PATH));
+		for (PieceModelSet value : PieceModelSet.values())
+		{
+			for (PieceType pieceType : PieceType.values())
+			{
+				MODELS.put(Pair.of(value, pieceType), ObjModel.loadModel(new ResourceLocation(Reference.MODID, value.pathFor(pieceType))));
+			}
+		}
 	}
 	
 	/**
@@ -88,42 +38,7 @@ public class ChessObjModel
 		// We scale the Piece and invert the rendering
 		stack.scale(1F, -1F, -1F);
 		stack.scale(0.1F, 0.1F, 0.1F);
-
-		switch (pieceModelSet)
-		{
-			case STANDARD:
-				switch (pieceType)
-				{
-					case PAWN -> PAWN_MODEL.render(stack, buffer);
-					case ROOK -> ROOK_MODEL.render(stack, buffer);
-					case BISHOP -> BISHOP_MODEL.render(stack, buffer);
-					case KNIGHT -> KNIGHT_MODEL.render(stack, buffer);
-					case KING -> KING_MODEL.render(stack, buffer);
-					case QUEEN -> QUEEN_MODEL.render(stack, buffer);
-				}
-				break;
-			case CLASSIC:
-				switch (pieceType)
-				{
-					case PAWN -> CLASSIC_PAWN_MODEL.render(stack, buffer);
-					case ROOK -> CLASSIC_ROOK_MODEL.render(stack, buffer);
-					case BISHOP -> CLASSIC_BISHOP_MODEL.render(stack, buffer);
-					case KNIGHT -> CLASSIC_KNIGHT_MODEL.render(stack, buffer);
-					case KING -> CLASSIC_KING_MODEL.render(stack, buffer);
-					case QUEEN -> CLASSIC_QUEEN_MODEL.render(stack, buffer);
-				}
-				break;
-			case PANDORAS_CREATURES:
-				switch (pieceType)
-				{
-					case PAWN -> PC_PAWN_MODEL.render(stack, buffer);
-					case ROOK -> PC_ROOK_MODEL.render(stack, buffer);
-					case BISHOP -> PC_BISHOP_MODEL.render(stack, buffer);
-					case KNIGHT -> PC_KNIGHT_MODEL.render(stack, buffer);
-					case KING -> PC_KING_MODEL.render(stack, buffer);
-					case QUEEN -> PC_QUEEN_MODEL.render(stack, buffer);
-				}
-		}
+		MODELS.get(Pair.of(pieceModelSet, pieceType)).render(stack, buffer);
 		stack.popPose();
 	}
 }

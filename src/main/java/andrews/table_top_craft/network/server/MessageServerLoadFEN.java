@@ -65,7 +65,7 @@ public class MessageServerLoadFEN
 						}
 						else
 						{
-							player.sendSystemMessage(Component.translatable("message.table_top_craft.chess.invalidFEN").withStyle(ChatFormatting.RED));//TODO make sure this works
+							player.sendSystemMessage(Component.translatable("message.table_top_craft.chess.invalidFEN").withStyle(ChatFormatting.RED));
 						}
 						chessTileEntity.setBoard(board);
 						chessTileEntity.getMoveLog().clear();

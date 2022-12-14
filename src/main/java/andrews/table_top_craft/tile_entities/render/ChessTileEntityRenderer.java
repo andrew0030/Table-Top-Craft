@@ -519,7 +519,6 @@ public class ChessTileEntityRenderer implements BlockEntityRenderer<ChessTileEnt
 		// this is gonna need a custom render type, most likely
 		VertexConsumer builderBoardPlateWhiteTiles = bufferIn.getBuffer(RenderType.entityCutout(PLATE_WHITE_TILES_TEXTURE));
 		poseStack.pushPose();
-//		poseStack.mulPose(new Quaternion(180, 270, 0, true)); TODO find the replacement for this
 		poseStack.mulPose(Axis.XN.rotationDegrees(180));
 		poseStack.mulPose(Axis.YN.rotationDegrees(270));
 		poseStack.translate(0.0F, -1.65D, 0.0F);
@@ -528,7 +527,6 @@ public class ChessTileEntityRenderer implements BlockEntityRenderer<ChessTileEnt
 		poseStack.popPose();
 		VertexConsumer builderBoardPlateBlackTiles = bufferIn.getBuffer(RenderType.entityCutout(PLATE_BLACK_TILES_TEXTURE));
 		poseStack.pushPose();
-//		poseStack.mulPose(new Quaternionf(180, 270, 0, true));
 		poseStack.mulPose(Axis.XN.rotationDegrees(180));
 		poseStack.mulPose(Axis.YN.rotationDegrees(270));
 		poseStack.translate(0.0F, -1.65D, 0.0F);

@@ -49,7 +49,7 @@ public class ChessBoardPieceModelSelectionButton extends Button
 
     public ChessBoardPieceModelSelectionButton(ChessTileEntity tileEntity, PieceModelSet pieceModelSet, boolean isStandardSetUnlocked, boolean isClassicSetUnlocked, boolean isPandorasCreaturesSetUnlocked, int xPos, int yPos)
     {
-        super(xPos, yPos, buttonWidth, buttonHeight, Component.literal(""), (button) -> { handleButtonPress(); });
+        super(xPos, yPos, buttonWidth, buttonHeight, Component.literal(""), (button) -> { handleButtonPress(); }, DEFAULT_NARRATION);
         this.fontRenderer = Minecraft.getInstance().font;
         chessTileEntity = tileEntity;
         chessPieceFigureBlockEntity = new ChessPieceFigureBlockEntity(BlockPos.ZERO, TTCBlocks.CHESS_PIECE_FIGURE.get().defaultBlockState());

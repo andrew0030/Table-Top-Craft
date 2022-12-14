@@ -26,7 +26,7 @@ public class ChessBoardPiecePreviousSetButton extends Button
 
     public ChessBoardPiecePreviousSetButton(ChessPieceFigureBlockEntity blockEntity, int xPos, int yPos)
     {
-        super(xPos, yPos, buttonWidth, buttonHeight, Component.literal(""), (button) -> { handleButtonPress(); });
+        super(xPos, yPos, buttonWidth, buttonHeight, Component.literal(""), (button) -> { handleButtonPress(); }, DEFAULT_NARRATION);
         this.fontRenderer = Minecraft.getInstance().font;
         chessPieceFigureBlockEntity = blockEntity;
     }

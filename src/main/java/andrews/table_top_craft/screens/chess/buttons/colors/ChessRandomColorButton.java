@@ -28,7 +28,7 @@ public class ChessRandomColorButton extends Button
 
 	public ChessRandomColorButton(Screen screenIn, int xPos, int yPos)
 	{
-		super(xPos, yPos, buttonWidth, buttonHeight, Component.literal(""), (button) -> { handleButtonPress(); });
+		super(xPos, yPos, buttonWidth, buttonHeight, Component.literal(""), (button) -> { handleButtonPress(); }, DEFAULT_NARRATION);
 		this.fontRenderer = Minecraft.getInstance().font;
 		screen = screenIn;
 	}

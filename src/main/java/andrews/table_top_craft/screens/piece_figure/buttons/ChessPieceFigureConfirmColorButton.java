@@ -31,7 +31,7 @@ public class ChessPieceFigureConfirmColorButton extends Button
 
     public ChessPieceFigureConfirmColorButton(ChessPieceFigureBlockEntity blockEntity, ChessRedColorSlider red, ChessGreenColorSlider green, ChessBlueColorSlider blue, int xPos, int yPos)
     {
-        super(xPos, yPos, buttonWidth, buttonHeight, Component.literal(""), (button) -> { handleButtonPress(); });
+        super(xPos, yPos, buttonWidth, buttonHeight, Component.literal(""), (button) -> { handleButtonPress(); }, DEFAULT_NARRATION);
         this.fontRenderer = Minecraft.getInstance().font;
         chessPieceFigureBlockEntity = blockEntity;
         redSlider = red;

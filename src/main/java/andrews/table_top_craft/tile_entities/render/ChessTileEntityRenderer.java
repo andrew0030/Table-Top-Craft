@@ -1,6 +1,5 @@
 package andrews.table_top_craft.tile_entities.render;
 
-import andrews.table_top_craft.util.DrawScreenHelper;
 import andrews.table_top_craft.game_logic.chess.PieceColor;
 import andrews.table_top_craft.game_logic.chess.board.Board;
 import andrews.table_top_craft.game_logic.chess.board.BoardUtils;
@@ -16,6 +15,7 @@ import andrews.table_top_craft.tile_entities.ChessTileEntity;
 import andrews.table_top_craft.tile_entities.model.chess.ChessBoardPlateModel;
 import andrews.table_top_craft.tile_entities.model.chess.ChessHighlightModel;
 import andrews.table_top_craft.tile_entities.model.chess.ChessTilesInfoModel;
+import andrews.table_top_craft.util.DrawScreenHelper;
 import andrews.table_top_craft.util.NBTColorSaving;
 import andrews.table_top_craft.util.Reference;
 import andrews.table_top_craft.util.TTCRenderTypes;
@@ -26,8 +26,7 @@ import com.mojang.blaze3d.systems.RenderSystem;
 import com.mojang.blaze3d.vertex.PoseStack;
 import com.mojang.blaze3d.vertex.VertexBuffer;
 import com.mojang.blaze3d.vertex.VertexConsumer;
-import com.mojang.math.Quaternion;
-import com.mojang.math.Vector3f;
+import com.mojang.math.Axis;
 import net.minecraft.client.Minecraft;
 import net.minecraft.client.renderer.LightTexture;
 import net.minecraft.client.renderer.MultiBufferSource;
@@ -39,6 +38,7 @@ import net.minecraft.client.renderer.texture.DynamicTexture;
 import net.minecraft.core.Direction;
 import net.minecraft.resources.ResourceLocation;
 import net.minecraft.world.level.block.state.BlockState;
+import org.joml.Quaternionf;
 import org.lwjgl.opengl.GL11;
 
 import java.util.ArrayList;
@@ -105,15 +105,15 @@ public class ChessTileEntityRenderer implements BlockEntityRenderer<ChessTileEnt
 		{
 			default:
 			case NORTH:
-				poseStack.mulPose(Vector3f.YN.rotationDegrees(180.0F));
+				poseStack.mulPose(Axis.YN.rotationDegrees(180.0F));
 				break;
 			case SOUTH:
 				break;
 			case WEST:
-				poseStack.mulPose(Vector3f.YN.rotationDegrees(270.0F));
+				poseStack.mulPose(Axis.YN.rotationDegrees(270.0F));
 				break;
 			case EAST:
-				poseStack.mulPose(Vector3f.YN.rotationDegrees(90.0F));
+				poseStack.mulPose(Axis.YN.rotationDegrees(90.0F));
 		}
 		
 		// Renders the Custom Plate if needed
@@ -139,15 +139,15 @@ public class ChessTileEntityRenderer implements BlockEntityRenderer<ChessTileEnt
 			{
 				default:
 				case NORTH:
-					poseStack.mulPose(Vector3f.YN.rotationDegrees(180.0F));
+					poseStack.mulPose(Axis.YN.rotationDegrees(180.0F));
 					break;
 				case SOUTH:
 					break;
 				case WEST:
-					poseStack.mulPose(Vector3f.YN.rotationDegrees(270.0F));
+					poseStack.mulPose(Axis.YN.rotationDegrees(270.0F));
 					break;
 				case EAST:
-					poseStack.mulPose(Vector3f.YN.rotationDegrees(90.0F));
+					poseStack.mulPose(Axis.YN.rotationDegrees(90.0F));
 			}
 			
 			// Moves the Piece away from the center of the Board, onto the center of a tile
@@ -207,18 +207,18 @@ public class ChessTileEntityRenderer implements BlockEntityRenderer<ChessTileEnt
 						
 						// We rotate the Piece 180 Degrees if its White and supposed to face the other way
 						if(pieceColor.isWhite())
-							poseStack.mulPose(Vector3f.YN.rotationDegrees(180F));
+							poseStack.mulPose(Axis.YN.rotationDegrees(180F));
 						
 						// The dance the Pieces do when you check mate the enemy
 						if(isWhiteInCheckmate && pieceColor.isBlack())
 						{
 							poseStack.translate(0.0F, (float) Math.abs(Math.sin((Minecraft.getInstance().player.tickCount + partialTicks) / 2.5)) * -0.05F, 0F);
-							poseStack.mulPose(Vector3f.ZN.rotationDegrees((float) Math.cos((Minecraft.getInstance().player.tickCount + partialTicks) / 2.5) * 10));
+							poseStack.mulPose(Axis.ZN.rotationDegrees((float) Math.cos((Minecraft.getInstance().player.tickCount + partialTicks) / 2.5) * 10));
 						}
 						if(isBlackInCheckmate && pieceColor.isWhite())
 						{
 							poseStack.translate(0.0F, (float) Math.abs(Math.sin((Minecraft.getInstance().player.tickCount + partialTicks) / 2.5)) * -0.05F, 0F);
-							poseStack.mulPose(Vector3f.ZN.rotationDegrees((float) Math.cos((Minecraft.getInstance().player.tickCount + partialTicks) / 2.5) * 10));
+							poseStack.mulPose(Axis.ZN.rotationDegrees((float) Math.cos((Minecraft.getInstance().player.tickCount + partialTicks) / 2.5) * 10));
 						}
 						
 						// Renders The Chess Piece
@@ -395,7 +395,7 @@ public class ChessTileEntityRenderer implements BlockEntityRenderer<ChessTileEnt
 			stack.pushPose();
 			// Rotates the Pieces if they are white so they face the player
 			if(isWhite)
-				stack.mulPose(Vector3f.YN.rotationDegrees(180F));
+				stack.mulPose(Axis.YN.rotationDegrees(180F));
 			
 			if(!isWhite)
 				stack.translate((CHESS_SCALE * 0.855D) * 7D, 0.0D, 0.8D);
@@ -501,7 +501,7 @@ public class ChessTileEntityRenderer implements BlockEntityRenderer<ChessTileEnt
 		float blue = NBTColorSaving.getBlue(chessTileEntity.getTileInfoColor()) / 255F;
 		
 		poseStack.pushPose();
-		poseStack.mulPose(Vector3f.YN.rotationDegrees(180.0F));
+		poseStack.mulPose(Axis.YN.rotationDegrees(180.0F));
 		poseStack.translate(0.0F, -1.32F, 0.0F);
 		tilesInfoModel.renderToBuffer(poseStack, builderTilesInfo, combinedLightIn, combinedOverlayIn, red, green, blue, 1.0F);
 		poseStack.popPose();
@@ -519,14 +519,18 @@ public class ChessTileEntityRenderer implements BlockEntityRenderer<ChessTileEnt
 		// this is gonna need a custom render type, most likely
 		VertexConsumer builderBoardPlateWhiteTiles = bufferIn.getBuffer(RenderType.entityCutout(PLATE_WHITE_TILES_TEXTURE));
 		poseStack.pushPose();
-		poseStack.mulPose(new Quaternion(180, 270, 0, true));
+//		poseStack.mulPose(new Quaternion(180, 270, 0, true)); TODO find the replacement for this
+		poseStack.mulPose(Axis.XN.rotationDegrees(180));
+		poseStack.mulPose(Axis.YN.rotationDegrees(270));
 		poseStack.translate(0.0F, -1.65D, 0.0F);
 		// TODO: for some reason, this does not change colors?
 		chessBoardPlateModel.renderToBuffer(poseStack, builderBoardPlateWhiteTiles, combinedLightIn, combinedOverlayIn, whiteR, whiteG, whiteB, 1.0F);
 		poseStack.popPose();
 		VertexConsumer builderBoardPlateBlackTiles = bufferIn.getBuffer(RenderType.entityCutout(PLATE_BLACK_TILES_TEXTURE));
 		poseStack.pushPose();
-		poseStack.mulPose(new Quaternion(180, 270, 0, true));
+//		poseStack.mulPose(new Quaternionf(180, 270, 0, true));
+		poseStack.mulPose(Axis.XN.rotationDegrees(180));
+		poseStack.mulPose(Axis.YN.rotationDegrees(270));
 		poseStack.translate(0.0F, -1.65D, 0.0F);
 		chessBoardPlateModel.renderToBuffer(poseStack, builderBoardPlateBlackTiles, combinedLightIn, combinedOverlayIn, blackR, blackG, blackB, 1.0F);
 		poseStack.popPose();

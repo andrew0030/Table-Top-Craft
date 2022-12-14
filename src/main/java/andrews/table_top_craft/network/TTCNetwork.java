@@ -27,98 +27,98 @@ public static final String NETWORK_PROTOCOL = "1";
 		CHANNEL.messageBuilder(MessageClientOpenChessPieceSelectionScreen.class, id++)
 		.encoder(MessageClientOpenChessPieceSelectionScreen::serialize)
 		.decoder(MessageClientOpenChessPieceSelectionScreen::deserialize)
-		.consumer(MessageClientOpenChessPieceSelectionScreen::handle)
+		.consumerMainThread(MessageClientOpenChessPieceSelectionScreen::handle)
 		.add();
 
 		// Server Messages
 		CHANNEL.messageBuilder(MessageServerNewChessGame.class, id++)
 		.encoder(MessageServerNewChessGame::serialize)
 		.decoder(MessageServerNewChessGame::deserialize)
-		.consumer(MessageServerNewChessGame::handle)
+		.consumerMainThread(MessageServerNewChessGame::handle)
 		.add();
 		
 		CHANNEL.messageBuilder(MessageServerShowTileInfo.class, id++)
 		.encoder(MessageServerShowTileInfo::serialize)
 		.decoder(MessageServerShowTileInfo::deserialize)
-		.consumer(MessageServerShowTileInfo::handle)
+		.consumerMainThread(MessageServerShowTileInfo::handle)
 		.add();
 		
 		CHANNEL.messageBuilder(MessageServerLoadFEN.class, id++)
 		.encoder(MessageServerLoadFEN::serialize)
 		.decoder(MessageServerLoadFEN::deserialize)
-		.consumer(MessageServerLoadFEN::handle)
+		.consumerMainThread(MessageServerLoadFEN::handle)
 		.add();
 		
 		CHANNEL.messageBuilder(MessageServerShowAvailableMoves.class, id++)
 		.encoder(MessageServerShowAvailableMoves::serialize)
 		.decoder(MessageServerShowAvailableMoves::deserialize)
-		.consumer(MessageServerShowAvailableMoves::handle)
+		.consumerMainThread(MessageServerShowAvailableMoves::handle)
 		.add();
 		
 		CHANNEL.messageBuilder(MessageServerShowPreviousMove.class, id++)
 		.encoder(MessageServerShowPreviousMove::serialize)
 		.decoder(MessageServerShowPreviousMove::deserialize)
-		.consumer(MessageServerShowPreviousMove::handle)
+		.consumerMainThread(MessageServerShowPreviousMove::handle)
 		.add();
 		
 		CHANNEL.messageBuilder(MessageServerSetColor.class, id++)
 		.encoder(MessageServerSetColor::serialize)
 		.decoder(MessageServerSetColor::deserialize)
-		.consumer(MessageServerSetColor::handle)
+		.consumerMainThread(MessageServerSetColor::handle)
 		.add();
 		
 		CHANNEL.messageBuilder(MessageServerUseCustomPlate.class, id++)
 		.encoder(MessageServerUseCustomPlate::serialize)
 		.decoder(MessageServerUseCustomPlate::deserialize)
-		.consumer(MessageServerUseCustomPlate::handle)
+		.consumerMainThread(MessageServerUseCustomPlate::handle)
 		.add();
 		
 		CHANNEL.messageBuilder(MessageServerSetColors.class, id++)
 		.encoder(MessageServerSetColors::serialize)
 		.decoder(MessageServerSetColors::deserialize)
-		.consumer(MessageServerSetColors::handle)
+		.consumerMainThread(MessageServerSetColors::handle)
 		.add();
 
 		CHANNEL.messageBuilder(MessageServerRotateChessPieceFigure.class, id++)
 		.encoder(MessageServerRotateChessPieceFigure::serialize)
 		.decoder(MessageServerRotateChessPieceFigure::deserialize)
-		.consumer(MessageServerRotateChessPieceFigure::handle)
+		.consumerMainThread(MessageServerRotateChessPieceFigure::handle)
 		.add();
 
 		CHANNEL.messageBuilder(MessageServerDoChessBoardInteraction.class, id++)
 		.encoder(MessageServerDoChessBoardInteraction::serialize)
 		.decoder(MessageServerDoChessBoardInteraction::deserialize)
-		.consumer(MessageServerDoChessBoardInteraction::handle)
+		.consumerMainThread(MessageServerDoChessBoardInteraction::handle)
 		.add();
 
 		CHANNEL.messageBuilder(MessageServerSetPieceSet.class, id++)
 		.encoder(MessageServerSetPieceSet::serialize)
 		.decoder(MessageServerSetPieceSet::deserialize)
-		.consumer(MessageServerSetPieceSet::handle)
+		.consumerMainThread(MessageServerSetPieceSet::handle)
 		.add();
 
 		CHANNEL.messageBuilder(MessageServerChangePieceSet.class, id++)
 		.encoder(MessageServerChangePieceSet::serialize)
 		.decoder(MessageServerChangePieceSet::deserialize)
-		.consumer(MessageServerChangePieceSet::handle)
+		.consumerMainThread(MessageServerChangePieceSet::handle)
 		.add();
 
 		CHANNEL.messageBuilder(MessageServerChangePieceType.class, id++)
 		.encoder(MessageServerChangePieceType::serialize)
 		.decoder(MessageServerChangePieceType::deserialize)
-		.consumer(MessageServerChangePieceType::handle)
+		.consumerMainThread(MessageServerChangePieceType::handle)
 		.add();
 
 		CHANNEL.messageBuilder(MessageServerChangePieceScale.class, id++)
 		.encoder(MessageServerChangePieceScale::serialize)
 		.decoder(MessageServerChangePieceScale::deserialize)
-		.consumer(MessageServerChangePieceScale::handle)
+		.consumerMainThread(MessageServerChangePieceScale::handle)
 		.add();
 
 		CHANNEL.messageBuilder(MessageServerOpenGUIWithServerPlayer.class, id++)
 		.encoder(MessageServerOpenGUIWithServerPlayer::serialize)
 		.decoder(MessageServerOpenGUIWithServerPlayer::deserialize)
-		.consumer(MessageServerOpenGUIWithServerPlayer::handle)
+		.consumerMainThread(MessageServerOpenGUIWithServerPlayer::handle)
 		.add();
 	}
 }

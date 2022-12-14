@@ -38,7 +38,7 @@ public class ChessConfirmColorButton extends Button
 	
 	public ChessConfirmColorButton(ColorMenuType colorMenu, ChessTileEntity tileEntity, ChessRedColorSlider red, ChessGreenColorSlider green, ChessBlueColorSlider blue, int xPos, int yPos) 
 	{
-		super(xPos, yPos, buttonWidth, buttonHeight, Component.literal(""), (button) -> { handleButtonPress(); });
+		super(xPos, yPos, buttonWidth, buttonHeight, Component.literal(""), (button) -> { handleButtonPress(); }, DEFAULT_NARRATION);
 		this.fontRenderer = Minecraft.getInstance().font;
 		colorMenuType = colorMenu;
 		chessTileEntity = tileEntity;

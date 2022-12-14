@@ -4,6 +4,7 @@ import andrews.table_top_craft.tile_entities.render.BufferHelpers;
 import andrews.table_top_craft.util.DrawScreenHelper;
 import net.minecraft.client.renderer.GameRenderer;
 import net.minecraft.server.packs.resources.ResourceManager;
+import net.minecraft.server.packs.resources.ResourceProvider;
 import org.spongepowered.asm.mixin.Mixin;
 import org.spongepowered.asm.mixin.injection.At;
 import org.spongepowered.asm.mixin.injection.Inject;
@@ -12,8 +13,14 @@ import org.spongepowered.asm.mixin.injection.callback.CallbackInfo;
 @Mixin(GameRenderer.class)
 public class GameRendererMixin
 {
-	@Inject(at = @At("TAIL"), method = "onResourceManagerReload")
-	public void postLoadShaders(ResourceManager pResourceManager, CallbackInfo ci)
+//	@Inject(at = @At("TAIL"), method = "onResourceManagerReload")
+//	public void postLoadShaders(ResourceManager pResourceManager, CallbackInfo ci)
+//	{
+//		DrawScreenHelper.setup();
+//	}
+	//TODO tried using reloadShaders which kinda works???
+	@Inject(at = @At("TAIL"), method = "reloadShaders")
+	public void postLoadShaders(ResourceProvider provider, CallbackInfo ci)
 	{
 		DrawScreenHelper.setup();
 	}

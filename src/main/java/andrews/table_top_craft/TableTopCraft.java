@@ -15,10 +15,6 @@ import com.mojang.blaze3d.vertex.DefaultVertexFormat;
 import net.minecraft.ChatFormatting;
 import net.minecraft.client.renderer.ShaderInstance;
 import net.minecraft.resources.ResourceLocation;
-import net.minecraft.world.item.CreativeModeTab;
-import net.minecraft.world.item.Item;
-import net.minecraft.world.item.ItemStack;
-import net.minecraft.world.item.Items;
 import net.minecraftforge.api.distmarker.Dist;
 import net.minecraftforge.client.event.EntityRenderersEvent;
 import net.minecraftforge.client.event.RegisterShadersEvent;
@@ -47,15 +43,6 @@ public class TableTopCraft
 	{
 		return Objects.requireNonNull(rendertypeSolidBlockEntityShader, "Attempted to call getSolidBlockEntityShader before shaders have finished loading.");
 	}
-
-	public static final CreativeModeTab TABLE_TOP_CRAFT_GROUP = new CreativeModeTab(Reference.MODID + ".tab")
-	{
-		@Override
-		public ItemStack makeIcon()
-		{
-			return new ItemStack(Item.BY_BLOCK.getOrDefault(TTCBlocks.OAK_CHESS.get(), Items.AIR));
-		}
-	};
 
 	public TableTopCraft()
 	{
@@ -109,7 +96,7 @@ public class TableTopCraft
 	{
 		try
 		{
-			event.registerShader(new ShaderInstance(event.getResourceManager(), new ResourceLocation(Reference.MODID,"rendertype_solid"), DefaultVertexFormat.BLOCK), (shader) -> {
+			event.registerShader(new ShaderInstance(event.getResourceProvider(), new ResourceLocation(Reference.MODID,"rendertype_solid"), DefaultVertexFormat.BLOCK), (shader) -> {
 				rendertypeSolidBlockEntityShader = shader;
 			});
 		}

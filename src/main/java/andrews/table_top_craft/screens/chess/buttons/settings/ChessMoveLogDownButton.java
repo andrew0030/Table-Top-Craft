@@ -19,7 +19,7 @@ public class ChessMoveLogDownButton extends Button
 	
 	public ChessMoveLogDownButton(int xPos, int yPos, ChessBoardSettingsScreen currentScreen) 
 	{
-		super(xPos, yPos, buttonWidth, buttonHeight, Component.literal(""), (button) -> { handleButtonPress(); });
+		super(xPos, yPos, buttonWidth, buttonHeight, Component.literal(""), (button) -> { handleButtonPress(); }, DEFAULT_NARRATION);
 		screen = currentScreen;
 	}
 	

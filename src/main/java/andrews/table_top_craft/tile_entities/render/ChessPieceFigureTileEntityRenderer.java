@@ -10,8 +10,7 @@ import com.mojang.blaze3d.systems.RenderSystem;
 import com.mojang.blaze3d.vertex.PoseStack;
 import com.mojang.blaze3d.vertex.VertexBuffer;
 import com.mojang.blaze3d.vertex.VertexConsumer;
-import com.mojang.math.Matrix4f;
-import com.mojang.math.Vector3f;
+import com.mojang.math.Axis;
 import net.minecraft.client.Minecraft;
 import net.minecraft.client.renderer.LightTexture;
 import net.minecraft.client.renderer.MultiBufferSource;
@@ -22,6 +21,7 @@ import net.minecraft.client.renderer.blockentity.BlockEntityRendererProvider;
 import net.minecraft.client.renderer.texture.DynamicTexture;
 import net.minecraft.resources.ResourceLocation;
 import net.minecraft.world.level.block.state.BlockState;
+import org.joml.Matrix4f;
 
 public class ChessPieceFigureTileEntityRenderer implements BlockEntityRenderer<ChessPieceFigureBlockEntity>
 {
@@ -70,7 +70,7 @@ public class ChessPieceFigureTileEntityRenderer implements BlockEntityRenderer<C
             poseStack.translate(0.5D, 1.5D, 0.5D);
             poseStack.scale(1.0F, -1.0F, -1.0F);
             if (blockEntity.getRotateChessPieceFigure() && isInGui)
-                poseStack.mulPose(Vector3f.YP.rotationDegrees(Minecraft.getInstance().player.tickCount + partialTicks));
+                poseStack.mulPose(Axis.YP.rotationDegrees(Minecraft.getInstance().player.tickCount + partialTicks));
             VertexConsumer vertexconsumer = bufferSource.getBuffer(RenderType.entitySolid(CHESS_PIECE_FIGURE_TEXTURE));
             chessPieceFigureStandModel.renderToBuffer(poseStack, vertexconsumer, packedLight, packedOverlay, 1.0F, 1.0F, 1.0F, 1.0F);
             poseStack.popPose();
@@ -94,17 +94,17 @@ public class ChessPieceFigureTileEntityRenderer implements BlockEntityRenderer<C
         // Moves the piece to the center and onto the Base Plate
         poseStack.translate(8 * 0.0625F, 2 * 0.0625F, 8 * 0.0625F);
         // Rotates the piece based on the rotation
-        poseStack.mulPose(Vector3f.YN.rotationDegrees(rotation * 22.5F));
+        poseStack.mulPose(Axis.YN.rotationDegrees(rotation * 22.5F));
         // Continuously rotates the piece if it was enabled
         if (blockEntity.getRotateChessPieceFigure())
-            poseStack.mulPose(Vector3f.YN.rotationDegrees(Minecraft.getInstance().player.tickCount + partialTicks));
+            poseStack.mulPose(Axis.YN.rotationDegrees(Minecraft.getInstance().player.tickCount + partialTicks));
         // We invert the model because Minecraft renders shit inside out.
         poseStack.scale(3.0F, -3.0F, -3.0F);
 
         if(blockEntity.getPieceName() != null && blockEntity.getPieceName().equals("Lyzantra"))
         {
             poseStack.translate(0.0D, -0.2D * blockEntity.getPieceScale(), 0.0D);
-            poseStack.mulPose(Vector3f.ZN.rotationDegrees(180));
+            poseStack.mulPose(Axis.ZN.rotationDegrees(180));
         }
 
         if(blockEntity.hasLevel())
@@ -131,17 +131,17 @@ public class ChessPieceFigureTileEntityRenderer implements BlockEntityRenderer<C
         {
             if (isInGui || isHeldOrHead)
             {
-                Matrix4f mat4f = RenderSystem.getModelViewMatrix().copy();
+                Matrix4f mat4f = new Matrix4f(RenderSystem.getModelViewMatrix());
                 PoseStack stk = new PoseStack();
-                stk.last().pose().multiply(mat4f);
-                stk.last().pose().multiply(initialMatrix);
+                stk.last().pose().mul(mat4f);
+                stk.last().pose().mul(initialMatrix);
                 stk.translate(8 * 0.0625F, 2 * 0.0625F, 8 * 0.0625F);
                 if (blockEntity.getRotateChessPieceFigure())
-                    stk.mulPose(Vector3f.YN.rotationDegrees(Minecraft.getInstance().player.tickCount + partialTicks));
+                    stk.mulPose(Axis.YN.rotationDegrees(Minecraft.getInstance().player.tickCount + partialTicks));
                 if(blockEntity.getPieceName() != null && blockEntity.getPieceName().equals("Lyzantra"))
                 {
                     stk.translate(0.0D, 0.85D, 0.0D);
-                    stk.mulPose(Vector3f.ZN.rotationDegrees(180));
+                    stk.mulPose(Axis.ZN.rotationDegrees(180));
                 }
                 // The scale of the Pieces, if rendered in on Head, Third Person Left/Right we make them slightly smaller to fit the ones in the Level
                 stk.scale(isHeldOrHead ? 3 : 4, isHeldOrHead ? -3 : -4, isHeldOrHead ? -3 : -4);

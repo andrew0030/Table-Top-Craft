@@ -3,12 +3,10 @@ package andrews.table_top_craft.util.obj;
 import andrews.table_top_craft.util.Reference;
 import com.mojang.blaze3d.vertex.PoseStack;
 import com.mojang.blaze3d.vertex.VertexConsumer;
-import com.mojang.math.Matrix3f;
-import com.mojang.math.Matrix4f;
-import com.mojang.math.Vector3f;
 import net.minecraft.resources.ResourceLocation;
 import net.minecraft.world.phys.Vec2;
 import org.apache.commons.compress.utils.IOUtils;
+import org.joml.Vector3f;
 
 import java.io.ByteArrayOutputStream;
 import java.io.IOException;
@@ -61,37 +59,41 @@ public class ObjModel
     
     private void addVertex(PoseStack stack, VertexConsumer builder, float x, float y, float z, float u, float v, float nx, float ny, float nz)
     {
-    	pos(builder, stack.last().pose(), x, y, z)
+        builder.vertex(x, y, z)
+    	//pos(builder, stack.last().pose(), x, y, z) TODO probably remove
     	.color(1F, 1F, 1F, 1F)
     	.uv(u, v)
 //        .overlayCoords(0, 0) // We use the DefaultVertexFormat.BLOCK so there is no need for an overlay
-    	.uv2(15, 15); // These values are full brightness
-    	normal(builder, stack.last().normal(), nx, ny, nz)
+    	.uv2(15, 15) // These values are full brightness
+        .normal(nx, ny, nz)
+    	//normal(builder, stack.last().normal(), nx, ny, nz) TODO probably remove
     	.endVertex();
     }
-    
-	private static VertexConsumer pos(VertexConsumer bufferBuilder, Matrix4f matrix4f, float x, float y, float z)
-	{
-		// Calling 'bufferBuilder.pos(matrix4f, x, y, z)' allocates a Vector4f
-		// To avoid allocating so many short-lived vectors we do the transform ourselves instead
-		float w = 1.0F;
-		float tx = matrix4f.m00 * x + matrix4f.m01 * y + matrix4f.m02 * z + matrix4f.m03 * w;
-		float ty = matrix4f.m10 * x + matrix4f.m11 * y + matrix4f.m12 * z + matrix4f.m13 * w;
-		float tz = matrix4f.m20 * x + matrix4f.m21 * y + matrix4f.m22 * z + matrix4f.m23 * w;
-		
-		return bufferBuilder.vertex(tx, ty, tz);
-	}
+
+    //TODO probably remove the code bellow because JOML doesnt need it
+
+//	private static VertexConsumer pos(VertexConsumer bufferBuilder, Matrix4f matrix4f, float x, float y, float z)
+//	{
+//		// Calling 'bufferBuilder.pos(matrix4f, x, y, z)' allocates a Vector4f
+//		// To avoid allocating so many short-lived vectors we do the transform ourselves instead
+//		float w = 1.0F;
+//		float tx = matrix4f.m00 * x + matrix4f.m01 * y + matrix4f.m02 * z + matrix4f.m03 * w;
+//		float ty = matrix4f.m10 * x + matrix4f.m11 * y + matrix4f.m12 * z + matrix4f.m13 * w;
+//		float tz = matrix4f.m20 * x + matrix4f.m21 * y + matrix4f.m22 * z + matrix4f.m23 * w;
+//
+//		return bufferBuilder.vertex(tx, ty, tz);
+//	}
 	
-	private static VertexConsumer normal(VertexConsumer bufferBuilder, Matrix3f matrix3f, float x, float y, float z)
-	{
-		// Calling 'bufferBuilder.normal(matrix3f, x, y, z)' allocates a Vector3f
-		// To avoid allocating so many short-lived vectors we do the transform ourselves instead
-	    float nx = matrix3f.m00 * x + matrix3f.m01 * y + matrix3f.m02 * z;
-	    float ny = matrix3f.m10 * x + matrix3f.m11 * y + matrix3f.m12 * z;
-	    float nz = matrix3f.m20 * x + matrix3f.m21 * y + matrix3f.m22 * z;
-	      
-	    return bufferBuilder.normal(nx, ny, nz);
-	}
+//	private static VertexConsumer normal(VertexConsumer bufferBuilder, Matrix3f matrix3f, float x, float y, float z)
+//	{
+//		// Calling 'bufferBuilder.normal(matrix3f, x, y, z)' allocates a Vector3f
+//		// To avoid allocating so many short-lived vectors we do the transform ourselves instead
+//	    float nx = matrix3f.m00 * x + matrix3f.m01 * y + matrix3f.m02 * z;
+//	    float ny = matrix3f.m10 * x + matrix3f.m11 * y + matrix3f.m12 * z;
+//	    float nz = matrix3f.m20 * x + matrix3f.m21 * y + matrix3f.m22 * z;
+//
+//	    return bufferBuilder.normal(nx, ny, nz);
+//	}
     
     public static ObjModel loadModel(ResourceLocation resourceLocation)
     {

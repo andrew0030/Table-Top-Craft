@@ -20,7 +20,7 @@ public class ChessShowTileInfoButton extends Button
 	
 	public ChessShowTileInfoButton(ChessTileEntity tileEntity, int xPos, int yPos) 
 	{
-		super(xPos, yPos, buttonWidth, buttonHeight, Component.literal(""), (button) -> { handleButtonPress(); });
+		super(xPos, yPos, buttonWidth, buttonHeight, Component.literal(""), (button) -> { handleButtonPress(); }, DEFAULT_NARRATION);
 		chessTileEntity = tileEntity;
 	}
 	

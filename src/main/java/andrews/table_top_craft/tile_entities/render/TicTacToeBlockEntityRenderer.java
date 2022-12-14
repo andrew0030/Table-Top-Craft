@@ -6,7 +6,7 @@ import andrews.table_top_craft.util.Reference;
 import com.mojang.blaze3d.systems.RenderSystem;
 import com.mojang.blaze3d.vertex.PoseStack;
 import com.mojang.blaze3d.vertex.VertexConsumer;
-import com.mojang.math.Vector3f;
+import com.mojang.math.Axis;
 import net.minecraft.client.renderer.MultiBufferSource;
 import net.minecraft.client.renderer.RenderType;
 import net.minecraft.client.renderer.blockentity.BlockEntityRenderer;
@@ -68,32 +68,32 @@ public class TicTacToeBlockEntityRenderer implements BlockEntityRenderer<TicTacT
             else if ((rows[0].charAt(0) == 'X' && rows[1].charAt(0) == 'X' && rows[2].charAt(0) == 'X') ||
                      (rows[0].charAt(0) == 'O' && rows[1].charAt(0) == 'O' && rows[2].charAt(0) == 'O')) {
                 poseStack.translate(0, 0, 0.6);
-                poseStack.mulPose(Vector3f.YN.rotationDegrees(90F));
+                poseStack.mulPose(Axis.YN.rotationDegrees(90F));
                 poseStack.scale(1, 1, 3.8F);
                 ticTacToeModel.renderToBuffer(poseStack, vertexconsumer, packedLight, packedOverlay, 0F, 0F, 0F, 1.0F);
             }
             else if ((rows[0].charAt(1) == 'X' && rows[1].charAt(1) == 'X' && rows[2].charAt(1) == 'X') ||
                     (rows[0].charAt(1) == 'O' && rows[1].charAt(1) == 'O' && rows[2].charAt(1) == 'O')) {
-                poseStack.mulPose(Vector3f.YN.rotationDegrees(90F));
+                poseStack.mulPose(Axis.YN.rotationDegrees(90F));
                 poseStack.scale(1, 1, 3.8F);
                 ticTacToeModel.renderToBuffer(poseStack, vertexconsumer, packedLight, packedOverlay, 0F, 0F, 0F, 1.0F);
             }
             else if ((rows[0].charAt(2) == 'X' && rows[1].charAt(2) == 'X' && rows[2].charAt(2) == 'X') ||
                     (rows[0].charAt(2) == 'O' && rows[1].charAt(2) == 'O' && rows[2].charAt(2) == 'O')) {
                 poseStack.translate(0, 0, -0.6);
-                poseStack.mulPose(Vector3f.YN.rotationDegrees(90F));
+                poseStack.mulPose(Axis.YN.rotationDegrees(90F));
                 poseStack.scale(1, 1, 3.8F);
                 ticTacToeModel.renderToBuffer(poseStack, vertexconsumer, packedLight, packedOverlay, 0F, 0F, 0F, 1.0F);
             }
             else if ((rows[0].charAt(0) == 'X' && rows[1].charAt(1) == 'X' && rows[2].charAt(2) == 'X') ||
                     (rows[0].charAt(0) == 'O' && rows[1].charAt(1) == 'O' && rows[2].charAt(2) == 'O')) {
-                poseStack.mulPose(Vector3f.YP.rotationDegrees(45F));
+                poseStack.mulPose(Axis.YP.rotationDegrees(45F));
                 poseStack.scale(1, 1, 5.2F);
                 ticTacToeModel.renderToBuffer(poseStack, vertexconsumer, packedLight, packedOverlay, 0F, 0F, 0F, 1.0F);
             }
             else if ((rows[0].charAt(2) == 'X' && rows[1].charAt(1) == 'X' && rows[2].charAt(0) == 'X') ||
                      (rows[0].charAt(2) == 'O' && rows[1].charAt(1) == 'O' && rows[2].charAt(0) == 'O')) {
-                poseStack.mulPose(Vector3f.YN.rotationDegrees(45F));
+                poseStack.mulPose(Axis.YN.rotationDegrees(45F));
                 poseStack.scale(1, 1, 5.2F);
                 ticTacToeModel.renderToBuffer(poseStack, vertexconsumer, packedLight, packedOverlay, 0F, 0F, 0F, 1.0F);
             }
@@ -144,7 +144,7 @@ public class TicTacToeBlockEntityRenderer implements BlockEntityRenderer<TicTacT
                     poseStack.pushPose();
                     poseStack.translate(0.6F * -(x - 1), 0, 0);
                     poseStack.translate(0, 0, 0.6F * -(y - 1));
-                    poseStack.mulPose(Vector3f.YN.rotationDegrees(45F));
+                    poseStack.mulPose(Axis.YN.rotationDegrees(45F));
                     if((blockEntity.getTicTacToeFrame(y + 3 * x) != -1) && (blockEntity.getTicTacToeFrame(y + 3 * x) <= 13))
                     {
                         VertexConsumer vertexconsumer = bufferSource.getBuffer(RenderType.entityCutout(CROSS_TEXTURES.get(blockEntity.getTicTacToeFrame(y + 3 * x))));

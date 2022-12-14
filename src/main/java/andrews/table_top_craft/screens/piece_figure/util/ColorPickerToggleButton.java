@@ -27,7 +27,7 @@ public class ColorPickerToggleButton extends Button
 
     public ColorPickerToggleButton(BlockEntity blockEntityIn, Screen screen, boolean isOptional, int xPos, int yPos)
     {
-        super(xPos, yPos, buttonWidth, buttonHeight, Component.literal(""), (button) -> {});
+        super(xPos, yPos, buttonWidth, buttonHeight, Component.literal(""), (button) -> {}, DEFAULT_NARRATION);
         this.screen = screen;
         blockEntity = blockEntityIn;
         this.isOptional = isOptional;

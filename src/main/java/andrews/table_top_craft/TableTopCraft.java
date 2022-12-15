@@ -1,21 +1,15 @@
 package andrews.table_top_craft;
 
 import andrews.table_top_craft.criteria.TTCCriteriaTriggers;
+import andrews.table_top_craft.events.CreativeTabEvents;
 import andrews.table_top_craft.network.TTCNetwork;
 import andrews.table_top_craft.registry.TTCBlocks;
 import andrews.table_top_craft.registry.TTCLootItemFunctions;
 import andrews.table_top_craft.registry.TTCTileEntities;
-import andrews.table_top_craft.util.Reference;
 import net.fabricmc.api.ModInitializer;
-import net.fabricmc.fabric.api.client.itemgroup.FabricItemGroupBuilder;
-import net.minecraft.resources.ResourceLocation;
-import net.minecraft.world.item.CreativeModeTab;
-import net.minecraft.world.item.ItemStack;
 
 public class TableTopCraft implements ModInitializer
 {
-    public static final CreativeModeTab TABLE_TOP_CRAFT_GROUP = FabricItemGroupBuilder.build(new ResourceLocation(Reference.MODID, "tab"), () -> new ItemStack(TTCBlocks.OAK_CHESS));
-
     @Override
     public void onInitialize()
     {
@@ -25,6 +19,8 @@ public class TableTopCraft implements ModInitializer
         TTCLootItemFunctions.init();
 
         TTCNetwork.registerNetworkMessages();
+
+        CreativeTabEvents.init();
     }
 //     A little something to let people know the Mod won't fully work with Shaders installed.
 //		try {

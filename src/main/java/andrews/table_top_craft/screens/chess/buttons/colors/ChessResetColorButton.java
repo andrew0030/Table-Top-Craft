@@ -27,7 +27,7 @@ public class ChessResetColorButton extends Button
 
 	public ChessResetColorButton(DefaultColorType defaultColorType, Screen screenIn, int xPos, int yPos)
 	{
-		super(xPos, yPos, buttonWidth, buttonHeight, Component.literal(""), (button) -> { handleButtonPress(); });
+		super(xPos, yPos, buttonWidth, buttonHeight, Component.literal(""), (button) -> { handleButtonPress(); }, DEFAULT_NARRATION);
 		this.fontRenderer = Minecraft.getInstance().font;
 		colorType = defaultColorType;
 		screen = screenIn;

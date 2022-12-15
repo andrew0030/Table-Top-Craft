@@ -24,7 +24,7 @@ public class ChessBoardAttackMoveColorButton extends Button
 	
 	public ChessBoardAttackMoveColorButton(ChessTileEntity tileEntity, int xPos, int yPos) 
 	{
-		super(xPos, yPos, buttonWidth, buttonHeight, Component.literal(""), (button) -> { handleButtonPress(); });
+		super(xPos, yPos, buttonWidth, buttonHeight, Component.literal(""), (button) -> { handleButtonPress(); }, DEFAULT_NARRATION);
 		this.fontRenderer = Minecraft.getInstance().font;
 		chessTileEntity = tileEntity;
 	}

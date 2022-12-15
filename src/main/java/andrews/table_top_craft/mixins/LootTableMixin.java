@@ -3,6 +3,7 @@ package andrews.table_top_craft.mixins;
 import andrews.table_top_craft.util.loot_table.ITTCLootPool;
 import net.minecraft.world.level.storage.loot.LootPool;
 import net.minecraft.world.level.storage.loot.LootTable;
+import org.spongepowered.asm.mixin.Final;
 import org.spongepowered.asm.mixin.Mixin;
 import org.spongepowered.asm.mixin.Mutable;
 import org.spongepowered.asm.mixin.Shadow;
@@ -12,8 +13,10 @@ import java.util.Arrays;
 @Mixin(LootTable.class)
 public class LootTableMixin implements ITTCLootPool
 {
+    @Final
     @Shadow
     @Mutable
+    public
     LootPool[] pools;
 
     @Override

@@ -4,14 +4,15 @@
   "package": "andrews.table_top_craft.mixins",
   "compatibilityLevel": "JAVA_17",
   "mixins": [
+    "GameRendererMixin$HackToGetReloadManager",
     "LootTableMixin",
     "LootTablesMixin"
   ],
   "client": [
-    "ScreenMixin",
+    "BlockEntityWithoutLevelRendererMixin",
     "GameRendererMixin",
-    "ShaderInstanceMixin",
-    "BlockEntityWithoutLevelRendererMixin"
+    "ScreenMixin",
+    "ShaderInstanceMixin"
   ],
   "injectors": {
     "defaultRequire": 1

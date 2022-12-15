@@ -20,7 +20,7 @@ public class ChessShowAvailableMovesButton extends Button
 	
 	public ChessShowAvailableMovesButton(ChessTileEntity tileEntity, int xPos, int yPos) 
 	{
-		super(xPos, yPos, buttonWidth, buttonHeight, Component.literal(""), (button) -> { handleButtonPress(); });
+		super(xPos, yPos, buttonWidth, buttonHeight, Component.literal(""), (button) -> { handleButtonPress(); }, DEFAULT_NARRATION);
 		chessTileEntity = tileEntity;
 	}
 	

@@ -13,6 +13,7 @@
   },
   "refmap": "table_top_craft.refmap.json",
   "mixins": [
+    "LootTableMixin",
     "LootTablesMixin"
   ]
 }

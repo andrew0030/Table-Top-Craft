@@ -4,24 +4,10 @@ import andrews.table_top_craft.game_logic.chess.PieceColor;
 import andrews.table_top_craft.game_logic.chess.board.Board;
 import andrews.table_top_craft.game_logic.chess.board.BoardUtils;
 import andrews.table_top_craft.game_logic.chess.board.ChessMoveLog;
-import andrews.table_top_craft.game_logic.chess.board.moves.KingSideCastleMove;
-import andrews.table_top_craft.game_logic.chess.board.moves.MajorAttackMove;
-import andrews.table_top_craft.game_logic.chess.board.moves.MajorMove;
-import andrews.table_top_craft.game_logic.chess.board.moves.PawnAttackMove;
-import andrews.table_top_craft.game_logic.chess.board.moves.PawnEnPassantAttackMove;
-import andrews.table_top_craft.game_logic.chess.board.moves.PawnJumpMove;
-import andrews.table_top_craft.game_logic.chess.board.moves.PawnMove;
-import andrews.table_top_craft.game_logic.chess.board.moves.PawnPromotion;
-import andrews.table_top_craft.game_logic.chess.board.moves.QueenSideCastleMove;
+import andrews.table_top_craft.game_logic.chess.board.moves.*;
 import andrews.table_top_craft.game_logic.chess.board.tiles.BaseChessTile;
 import andrews.table_top_craft.game_logic.chess.pgn.FenUtil;
-import andrews.table_top_craft.game_logic.chess.pieces.BasePiece;
-import andrews.table_top_craft.game_logic.chess.pieces.BishopPiece;
-import andrews.table_top_craft.game_logic.chess.pieces.KingPiece;
-import andrews.table_top_craft.game_logic.chess.pieces.KnightPiece;
-import andrews.table_top_craft.game_logic.chess.pieces.PawnPiece;
-import andrews.table_top_craft.game_logic.chess.pieces.QueenPiece;
-import andrews.table_top_craft.game_logic.chess.pieces.RookPiece;
+import andrews.table_top_craft.game_logic.chess.pieces.*;
 import andrews.table_top_craft.game_logic.chess.player.MoveTransition;
 import andrews.table_top_craft.registry.TTCTileEntities;
 import andrews.table_top_craft.util.NBTColorSaving;
@@ -205,7 +191,11 @@ public class ChessTileEntity extends BlockEntity
 		{
 			boolean isWhiteCastled = chessNBT.getBoolean("IsWhiteCastled");
 			boolean isBlackCastled = chessNBT.getBoolean("IsBlackCastled");
-			this.board = FenUtil.createGameFromFEN(chessNBT.getString("BoardFEN"), chessNBT.getString("FirstMoves"), isWhiteCastled, isBlackCastled);
+			if(FenUtil.isFENValid(chessNBT.getString("BoardFEN"))) {
+				this.board = FenUtil.createGameFromFEN(chessNBT.getString("BoardFEN"), chessNBT.getString("FirstMoves"), isWhiteCastled, isBlackCastled);
+			} else {
+				this.board = Board.createStandardBoard();
+			}
 		}
 
 		if(chessNBT.contains("MoveLog"))

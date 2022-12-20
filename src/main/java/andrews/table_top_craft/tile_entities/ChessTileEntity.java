@@ -191,7 +191,11 @@ public class ChessTileEntity extends BlockEntity
 		{
 			boolean isWhiteCastled = chessNBT.getBoolean("IsWhiteCastled");
 			boolean isBlackCastled = chessNBT.getBoolean("IsBlackCastled");
-			this.board = FenUtil.createGameFromFEN(chessNBT.getString("BoardFEN"), chessNBT.getString("FirstMoves"), isWhiteCastled, isBlackCastled);
+			if(FenUtil.isFENValid(chessNBT.getString("BoardFEN"))) {
+				this.board = FenUtil.createGameFromFEN(chessNBT.getString("BoardFEN"), chessNBT.getString("FirstMoves"), isWhiteCastled, isBlackCastled);
+			} else {
+				this.board = Board.createStandardBoard();
+			}
 		}
 
 		if(chessNBT.contains("MoveLog"))

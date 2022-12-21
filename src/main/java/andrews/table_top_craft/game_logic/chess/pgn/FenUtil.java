@@ -1,17 +1,13 @@
 package andrews.table_top_craft.game_logic.chess.pgn;
 
-import java.util.Arrays;
-
 import andrews.table_top_craft.game_logic.chess.PieceColor;
 import andrews.table_top_craft.game_logic.chess.board.Board;
 import andrews.table_top_craft.game_logic.chess.board.Board.Builder;
 import andrews.table_top_craft.game_logic.chess.board.BoardUtils;
-import andrews.table_top_craft.game_logic.chess.pieces.BishopPiece;
-import andrews.table_top_craft.game_logic.chess.pieces.KingPiece;
-import andrews.table_top_craft.game_logic.chess.pieces.KnightPiece;
-import andrews.table_top_craft.game_logic.chess.pieces.PawnPiece;
-import andrews.table_top_craft.game_logic.chess.pieces.QueenPiece;
-import andrews.table_top_craft.game_logic.chess.pieces.RookPiece;
+import andrews.table_top_craft.game_logic.chess.pieces.*;
+import org.apache.commons.lang3.StringUtils;
+
+import java.util.Arrays;
 
 public class FenUtil
 {
@@ -174,7 +170,7 @@ public class FenUtil
         if(Arrays.stream(BoardUtils.ALGEBRAIC_NOTATION).anyMatch(fenPartitions[3]::equals))
         	enPassantCoordinate = BoardUtils.getCoordinateAtPosition(fenPartitions[3]);
         while(i < boardTiles.length)
-        {	
+        {
         	// Black End Passant Pawn
         	if(enPassantCoordinate != -1 && enPassantCoordinate == (i - 8) && BoardUtils.SIXTH_RANK[enPassantCoordinate])
         	{
@@ -193,7 +189,7 @@ public class FenUtil
         		i++;
         		continue;
         	}
-        	
+
             switch(boardTiles[i])
             {
                 case 'r':
@@ -376,4 +372,73 @@ public class FenUtil
         return board.getCurrentChessPlayer().toString().substring(0, 1).toLowerCase();
     }
 
+    public static boolean isFENValid(String FEN)
+    {
+        String[] FENInfo = FEN.split(" ");
+        String[] boardTileInfo = FENInfo[0].split("/");
+        int splitCounter = StringUtils.countMatches(FENInfo[0], "/");
+        int whiteKingCounter = StringUtils.countMatches(FENInfo[0], "K");
+        int blackKingCounter = StringUtils.countMatches(FENInfo[0], "k");
+
+        // If the FEN has more/less than 6 elements its invalid
+        if(FENInfo.length != 6)
+            return false;
+        // We have 8 tile rows, so we need exactly 7 splits
+        if(splitCounter != 7)
+            return false;
+
+        for(int i = 0; i < 8; i++)
+        {
+            String rowInfo = boardTileInfo[i];
+            int valueCounter = 0;
+
+            for(int j = 0; j < rowInfo.length(); j++)
+            {
+                if(rowInfo.charAt(j) == '1')
+                    valueCounter += 1;
+                else if(rowInfo.charAt(j) == '2')
+                    valueCounter += 2;
+                else if(rowInfo.charAt(j) == '3')
+                    valueCounter += 3;
+                else if(rowInfo.charAt(j) == '4')
+                    valueCounter += 4;
+                else if(rowInfo.charAt(j) == '5')
+                    valueCounter += 5;
+                else if(rowInfo.charAt(j) == '6')
+                    valueCounter += 6;
+                else if(rowInfo.charAt(j) == '7')
+                    valueCounter += 7;
+                else if(rowInfo.charAt(j) == '8')
+                    valueCounter += 8;
+                else
+                    valueCounter += 1;
+            }
+            // If the contents of a row don't add up to a value of 8 its invalid
+            if(valueCounter != 8)
+                return false;
+        }
+        // We need exactly 1 white king
+        if(whiteKingCounter != 1)
+            return false;
+        // We need exactly 1 black king
+        if(blackKingCounter != 1)
+            return false;
+        // We ensure the next move player is a valid input
+        if(!(FENInfo[1].equals("w") || FENInfo[1].equals("b")))
+            return false;
+        // If we made it this far it's time for the REALLY mighty checks...
+        // Basically at this point we know the FEN is good enough to create a Board,
+        // but it can still crash the game in some edge cases, so we create a temporary
+        // Board to perform some more checks.
+        Board board = FenUtil.createGameFromFEN(FEN);
+        // If both players are in check the board is invalid
+        if(board.getBlackChessPlayer().isInCheck() && board.getWhiteChessPlayer().isInCheck())
+            return false;
+        // If the non-active player is in check the board is invalid
+        if(FENInfo[1].equals("w") && board.getBlackChessPlayer().isInCheck())
+            return false;
+        if(FENInfo[1].equals("b") && board.getWhiteChessPlayer().isInCheck())
+            return false;
+        return true;
+    }
 }

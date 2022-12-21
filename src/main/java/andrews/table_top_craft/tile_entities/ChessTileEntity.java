@@ -20,7 +20,6 @@ import net.minecraft.network.protocol.game.ClientGamePacketListener;
 import net.minecraft.network.protocol.game.ClientboundBlockEntityDataPacket;
 import net.minecraft.world.level.block.entity.BlockEntity;
 import net.minecraft.world.level.block.state.BlockState;
-import net.minecraft.world.phys.AABB;
 
 import java.util.ArrayList;
 import java.util.List;
@@ -170,7 +169,11 @@ public class ChessTileEntity extends BlockEntity
 		{
 			boolean isWhiteCastled = chessNBT.getBoolean("IsWhiteCastled");
 			boolean isBlackCastled = chessNBT.getBoolean("IsBlackCastled");
-			this.board = FenUtil.createGameFromFEN(chessNBT.getString("BoardFEN"), chessNBT.getString("FirstMoves"), isWhiteCastled, isBlackCastled);
+			if(FenUtil.isFENValid(chessNBT.getString("BoardFEN"))) {
+				this.board = FenUtil.createGameFromFEN(chessNBT.getString("BoardFEN"), chessNBT.getString("FirstMoves"), isWhiteCastled, isBlackCastled);
+			} else {
+				this.board = Board.createStandardBoard();
+			}
 		}
 
 		if(chessNBT.contains("MoveLog"))

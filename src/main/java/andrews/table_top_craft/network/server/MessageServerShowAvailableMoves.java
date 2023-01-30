@@ -1,7 +1,5 @@
 package andrews.table_top_craft.network.server;
 
-import java.util.function.Supplier;
-
 import andrews.table_top_craft.tile_entities.ChessTileEntity;
 import net.minecraft.core.BlockPos;
 import net.minecraft.network.FriendlyByteBuf;
@@ -10,6 +8,8 @@ import net.minecraft.world.level.Level;
 import net.minecraft.world.level.block.entity.BlockEntity;
 import net.minecraftforge.fml.LogicalSide;
 import net.minecraftforge.network.NetworkEvent;
+
+import java.util.function.Supplier;
 
 public class MessageServerShowAvailableMoves
 {

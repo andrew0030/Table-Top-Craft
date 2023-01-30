@@ -1,5 +1,8 @@
 package andrews.table_top_craft.objects.blocks;
 
+import andrews.table_top_craft.animation.system.base.AnimatedBlockEntity;
+import andrews.table_top_craft.animation.system.core.AdvancedAnimationState;
+import andrews.table_top_craft.animation.system.core.types.EasingTypes;
 import andrews.table_top_craft.screens.chess.menus.ChessBoardSettingsScreen;
 import andrews.table_top_craft.tile_entities.ChessTileEntity;
 import andrews.table_top_craft.util.NetworkUtil;
@@ -14,6 +17,8 @@ import net.minecraft.world.level.BlockGetter;
 import net.minecraft.world.level.Level;
 import net.minecraft.world.level.block.*;
 import net.minecraft.world.level.block.entity.BlockEntity;
+import net.minecraft.world.level.block.entity.BlockEntityTicker;
+import net.minecraft.world.level.block.entity.BlockEntityType;
 import net.minecraft.world.level.block.state.BlockState;
 import net.minecraft.world.level.block.state.StateDefinition;
 import net.minecraft.world.level.block.state.properties.BooleanProperty;
@@ -80,6 +85,20 @@ public class ChessBlock extends HorizontalDirectionalBlock implements EntityBloc
 	@Override
 	public InteractionResult use(BlockState state, Level level, BlockPos pos, Player player, InteractionHand hand, BlockHitResult hit)
 	{
+		if(level.getBlockEntity(pos) instanceof ChessTileEntity chessTileEntity)
+		{
+			if (chessTileEntity.placedState.isStarted())
+			{
+				chessTileEntity.placedState.interpolateAndStop(0.0F, EasingTypes.EASE_IN_OUT_QUAD, false);
+				chessTileEntity.lingeringStates.add(new AdvancedAnimationState(chessTileEntity.placedState));
+				chessTileEntity.placedState.stop();
+			}
+			else
+			{
+				chessTileEntity.placedState.interpolateAndStart(0.0F, EasingTypes.EASE_IN_OUT_QUAD, false, chessTileEntity.getTicksExisted());
+			}
+		}
+
 		if(player.isShiftKeyDown())
 		{
 			if(level.getBlockEntity(pos) instanceof ChessTileEntity chessTileEntity)
@@ -116,6 +135,12 @@ public class ChessBlock extends HorizontalDirectionalBlock implements EntityBloc
 	public RenderShape getRenderShape(BlockState state)
 	{
 		return RenderShape.MODEL;
+	}
+
+	@Override
+	public <T extends BlockEntity> BlockEntityTicker<T> getTicker(Level level, BlockState state, BlockEntityType<T> blockEntityType)
+	{
+		return (level1, pos, state1, blockEntity) -> ChessTileEntity.tick(level1, pos, state1, (AnimatedBlockEntity) blockEntity);
 	}
 	
 	/**

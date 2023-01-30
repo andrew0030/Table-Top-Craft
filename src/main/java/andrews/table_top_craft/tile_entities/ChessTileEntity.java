@@ -1,5 +1,7 @@
 package andrews.table_top_craft.tile_entities;
 
+import andrews.table_top_craft.animation.system.base.AnimatedBlockEntity;
+import andrews.table_top_craft.animation.system.core.AdvancedAnimationState;
 import andrews.table_top_craft.game_logic.chess.PieceColor;
 import andrews.table_top_craft.game_logic.chess.board.Board;
 import andrews.table_top_craft.game_logic.chess.board.BoardUtils;
@@ -10,6 +12,7 @@ import andrews.table_top_craft.game_logic.chess.pgn.FenUtil;
 import andrews.table_top_craft.game_logic.chess.pieces.*;
 import andrews.table_top_craft.game_logic.chess.player.MoveTransition;
 import andrews.table_top_craft.registry.TTCTileEntities;
+import andrews.table_top_craft.tile_entities.animations.ChessAnimations;
 import andrews.table_top_craft.util.NBTColorSaving;
 import net.minecraft.core.BlockPos;
 import net.minecraft.nbt.CompoundTag;
@@ -19,7 +22,7 @@ import net.minecraft.network.Connection;
 import net.minecraft.network.protocol.Packet;
 import net.minecraft.network.protocol.game.ClientGamePacketListener;
 import net.minecraft.network.protocol.game.ClientboundBlockEntityDataPacket;
-import net.minecraft.world.level.block.entity.BlockEntity;
+import net.minecraft.world.level.Level;
 import net.minecraft.world.level.block.state.BlockState;
 import net.minecraft.world.phys.AABB;
 
@@ -27,8 +30,12 @@ import java.util.ArrayList;
 import java.util.List;
 import java.util.Random;
 
-public class ChessTileEntity extends BlockEntity
+public class ChessTileEntity extends AnimatedBlockEntity
 {
+	public final List<AdvancedAnimationState> lingeringStates = new ArrayList<>();
+	public final AdvancedAnimationState selectedPieceState = new AdvancedAnimationState(ChessAnimations.SELECTED_PIECE);
+	public final AdvancedAnimationState placedState = new AdvancedAnimationState(ChessAnimations.PLACED);
+
 	private Board board;
 	private BaseChessTile sourceTile;
 	private BaseChessTile destinationTile;
@@ -114,6 +121,11 @@ public class ChessTileEntity extends BlockEntity
 	{
 		super.load(compound);
 		this.loadFromNBT(compound);
+	}
+
+	public static void tick(Level level, BlockPos pos, BlockState state, AnimatedBlockEntity blockEntity)
+	{
+		blockEntity.incTicksExisted();
 	}
 	
 	/**

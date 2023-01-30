@@ -4,16 +4,17 @@ plugins {
     id 'net.minecraftforge.gradle' version '5.+'
     id 'org.spongepowered.mixin' version '0.7-SNAPSHOT'
     id 'org.parchmentmc.librarian.forgegradle' version '1.+'
+    id 'com.github.johnrengelman.shadow' version '7.1.2'
 }
 
-version = '1.19.3-4.0.1'
+version = '1.19.3-4.1.0'
 group = 'com.andrews.table_top_craft'
 archivesBaseName = 'table_top_craft'
 
 java.toolchain.languageVersion = JavaLanguageVersion.of(17)
 
 minecraft {
-    mappings channel: 'parchment', version: '1.19.2-2022.11.27-1.19.3'
+    mappings channel: 'parchment', version: '2022.12.18-1.19.3'
   
     accessTransformer = file('src/main/resources/META-INF/accesstransformer.cfg')
 
@@ -53,12 +54,19 @@ mixin {
 //sourceSets.main.resources { srcDir 'src/generated/resources' }
 
 repositories {
+    mavenCentral()
+}
 
+configurations {
+    shade
+    implementation.extendsFrom shade
 }
 
 dependencies {
-    minecraft 'net.minecraftforge:forge:1.19.3-44.0.37'
+    minecraft 'net.minecraftforge:forge:1.19.3-44.1.8'
     annotationProcessor 'org.spongepowered:mixin:0.8.5:processor'
+    minecraftLibrary 'net.objecthunter:exp4j:0.4.8'
+    shade 'net.objecthunter:exp4j:0.4.8'
 }
 
 jar {
@@ -75,6 +83,17 @@ jar {
     }
 }
 
+shadowJar {
+    archiveClassifier = ''
+    configurations = [project.configurations.shade]
+    relocate 'net.objecthunter', "andrews.shadowed.objecthunter"
+    finalizedBy 'reobfShadowJar'
+}
+
+assemble.dependsOn shadowJar
+reobf {
+    shadowJar {}
+}
 jar.finalizedBy('reobfJar')
 
 tasks.withType(JavaCompile).configureEach {

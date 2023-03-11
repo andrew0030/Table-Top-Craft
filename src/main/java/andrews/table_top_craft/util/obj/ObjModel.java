@@ -3,6 +3,7 @@ package andrews.table_top_craft.util.obj;
 import andrews.table_top_craft.util.Reference;
 import com.mojang.blaze3d.vertex.PoseStack;
 import com.mojang.blaze3d.vertex.VertexConsumer;
+import net.minecraft.client.renderer.texture.OverlayTexture;
 import net.minecraft.resources.ResourceLocation;
 import net.minecraft.world.phys.Vec2;
 import org.apache.commons.compress.utils.IOUtils;
@@ -29,9 +30,9 @@ public class ObjModel
         this.vn = vn;
         this.faces = faces;
     }
-    
+
     public void render(PoseStack stack, VertexConsumer buffer)
-    {    	
+    {
         try
         {
             for(Face face : faces)
@@ -51,6 +52,36 @@ public class ObjModel
                 addVertex(stack, buffer, v1.x(), v1.y(), v1.z(), vt1.x, -vt1.y, vn1.x(), vn1.y(), vn1.z());
                 addVertex(stack, buffer, v2.x(), v2.y(), v2.z(), vt2.x, -vt2.y, vn2.x(), vn2.y(), vn2.z());
                 addVertex(stack, buffer, v3.x(), v3.y(), v3.z(), vt3.x, -vt3.y, vn3.x(), vn3.y(), vn3.z());
+            }
+        }
+        catch(Exception e)
+        {
+            e.printStackTrace();
+        }
+    }
+
+    public void render(PoseStack stack, VertexConsumer buffer, float red, float green, float blue, int packedLight)
+    {    	
+        try
+        {
+            for(Face face : faces)
+            {
+                Vector3f v1 = v[face.v1 - 1];
+                Vector3f v2 = v[face.v2 - 1];
+                Vector3f v3 = v[face.v3 - 1];
+
+                Vec2 vt1 = vt[face.vt1 - 1];
+                Vec2 vt2 = vt[face.vt2 - 1];
+                Vec2 vt3 = vt[face.vt3 - 1];
+
+                Vector3f vn1 = vn[face.vn1 - 1];
+                Vector3f vn2 = vn[face.vn2 - 1];
+                Vector3f vn3 = vn[face.vn3 - 1];
+
+                buffer.vertex(stack.last().pose(), v1.x(), v1.y(), v1.z()).color(red, green, blue, 1F).uv(vt1.x, -vt1.y).overlayCoords(OverlayTexture.NO_OVERLAY).uv2(packedLight).normal(stack.last().normal(), vn1.x(), vn1.y(), vn1.z()).endVertex();
+                buffer.vertex(stack.last().pose(), v2.x(), v2.y(), v2.z()).color(red, green, blue, 1F).uv(vt2.x, -vt2.y).overlayCoords(OverlayTexture.NO_OVERLAY).uv2(packedLight).normal(stack.last().normal(), vn2.x(), vn2.y(), vn2.z()).endVertex();
+                buffer.vertex(stack.last().pose(), v3.x(), v3.y(), v3.z()).color(red, green, blue, 1F).uv(vt3.x, -vt3.y).overlayCoords(OverlayTexture.NO_OVERLAY).uv2(packedLight).normal(stack.last().normal(), vn3.x(), vn3.y(), vn3.z()).endVertex();
+                buffer.vertex(stack.last().pose(), v3.x(), v3.y(), v3.z()).color(red, green, blue, 1F).uv(vt3.x, -vt3.y).overlayCoords(OverlayTexture.NO_OVERLAY).uv2(packedLight).normal(stack.last().normal(), vn3.x(), vn3.y(), vn3.z()).endVertex();
             }
         }
         catch(Exception e)

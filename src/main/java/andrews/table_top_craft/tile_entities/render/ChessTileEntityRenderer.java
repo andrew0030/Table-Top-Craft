@@ -1,5 +1,9 @@
 package andrews.table_top_craft.tile_entities.render;
 
+import andrews.table_top_craft.TableTopCraft;
+import andrews.table_top_craft.animation.system.core.AdvancedAnimationState;
+import andrews.table_top_craft.animation.system.core.Animation;
+import andrews.table_top_craft.animation.system.core.AnimationHandler;
 import andrews.table_top_craft.game_logic.chess.PieceColor;
 import andrews.table_top_craft.game_logic.chess.board.Board;
 import andrews.table_top_craft.game_logic.chess.board.BoardUtils;
@@ -10,6 +14,7 @@ import andrews.table_top_craft.game_logic.chess.pieces.BasePiece.PieceType;
 import andrews.table_top_craft.game_logic.chess.player.BlackChessPlayer;
 import andrews.table_top_craft.game_logic.chess.player.MoveTransition;
 import andrews.table_top_craft.game_logic.chess.player.WhiteChessPlayer;
+import andrews.table_top_craft.network.client.util.ClientPacketHandlerClass;
 import andrews.table_top_craft.objects.blocks.ChessBlock;
 import andrews.table_top_craft.tile_entities.ChessTileEntity;
 import andrews.table_top_craft.tile_entities.model.chess.ChessBoardPlateModel;
@@ -25,20 +30,14 @@ import com.mojang.blaze3d.vertex.PoseStack;
 import com.mojang.blaze3d.vertex.VertexBuffer;
 import com.mojang.blaze3d.vertex.VertexConsumer;
 import com.mojang.math.Axis;
-import com.sun.jna.platform.win32.HighLevelMonitorConfigurationAPI;
 import net.minecraft.client.Minecraft;
-import net.minecraft.client.renderer.LightTexture;
-import net.minecraft.client.renderer.MultiBufferSource;
-import net.minecraft.client.renderer.RenderType;
-import net.minecraft.client.renderer.ShaderInstance;
+import net.minecraft.client.renderer.*;
 import net.minecraft.client.renderer.blockentity.BlockEntityRenderer;
 import net.minecraft.client.renderer.blockentity.BlockEntityRendererProvider;
 import net.minecraft.client.renderer.texture.DynamicTexture;
 import net.minecraft.core.Direction;
 import net.minecraft.resources.ResourceLocation;
-import net.minecraft.util.Mth;
 import net.minecraft.world.level.block.state.BlockState;
-import net.minecraftforge.client.event.ScreenEvent;
 import org.joml.Quaternionf;
 import org.lwjgl.opengl.GL11;
 
@@ -60,7 +59,10 @@ public class ChessTileEntityRenderer implements BlockEntityRenderer<ChessTileEnt
 	private static final NativeImage image = new NativeImage(NativeImage.Format.RGBA, 1, 1, true);
 	private static final DynamicTexture texture = new DynamicTexture(image);
 	private static ResourceLocation resourceLocation = null;
-	
+
+	// Shader Compat texture
+	public static final ResourceLocation SHADER_COMPAT_WHITE = new ResourceLocation(Reference.MODID, "textures/tile/compat/full_white.png");
+
 	// Chess Models
 	private final ChessHighlightModel highlightModel;
 	private final ChessTilesInfoModel tilesInfoModel;
@@ -135,11 +137,11 @@ public class ChessTileEntityRenderer implements BlockEntityRenderer<ChessTileEnt
 			BlackChessPlayer blackChessPlayer = (BlackChessPlayer) board.getBlackChessPlayer();
 			boolean isWhiteInCheckmate = whiteChessPlayer.isInCheckMate();
 			boolean isBlackInCheckmate = blackChessPlayer.isInCheckMate();
-			
+
 			poseStack.pushPose(); // Master Rotation and Position
 			poseStack.translate(0.5D, 0.9D, 0.5D);
 			poseStack.scale(1.0F, -1.0F, -1.0F);
-			switch(facing)
+			switch (facing)
 			{
 				default:
 				case NORTH:
@@ -153,7 +155,7 @@ public class ChessTileEntityRenderer implements BlockEntityRenderer<ChessTileEnt
 				case EAST:
 					poseStack.mulPose(Axis.YN.rotationDegrees(90.0F));
 			}
-			
+
 			// Moves the Piece away from the center of the Board, onto the center of a tile
 			poseStack.translate(CHESS_SCALE / 2D, 0.0D, CHESS_SCALE / 2D);
 			// Moves the Piece to the first Tile on the Board
@@ -163,7 +165,7 @@ public class ChessTileEntityRenderer implements BlockEntityRenderer<ChessTileEnt
 			// This loop renders all the Chess Pieces on the Chess board
 			/* setup render state */
 			poseStack.pushPose(); // General Chess Piece Positioning
-			
+
 			/* get board colors */
 			float wR = NBTColorSaving.getRed(tileEntityIn.getWhitePiecesColor()) / 255F;
 			float wG = NBTColorSaving.getGreen(tileEntityIn.getWhitePiecesColor()) / 255F;
@@ -171,105 +173,180 @@ public class ChessTileEntityRenderer implements BlockEntityRenderer<ChessTileEnt
 			float bR = NBTColorSaving.getRed(tileEntityIn.getBlackPiecesColor()) / 255F;
 			float bG = NBTColorSaving.getGreen(tileEntityIn.getBlackPiecesColor()) / 255F;
 			float bB = NBTColorSaving.getBlue(tileEntityIn.getBlackPiecesColor()) / 255F;
-			
+
+			VertexConsumer consumer = bufferIn.getBuffer(RenderType.entitySolid(SHADER_COMPAT_WHITE));
+			BasePiece.PieceModelSet set = BasePiece.PieceModelSet.get(tileEntityIn.getPieceSet() + 1);
+
 			/* setup render state */
 			RenderType type = TTCRenderTypes.getChessPieceSolid(resourceLocation);
 			type.setupRenderState();
 			ShaderInstance shaderinstance = RenderSystem.getShader();
-			if (shaderinstance.PROJECTION_MATRIX != null) shaderinstance.PROJECTION_MATRIX.set(RenderSystem.getProjectionMatrix());
-			BufferHelpers.setupRender(RenderSystem.getShader(), lightU, lightV);
-//			shaderinstance.apply();
+			if (!TableTopCraft.shaderCompatMode.get()) {
+				if (shaderinstance.PROJECTION_MATRIX != null)
+					shaderinstance.PROJECTION_MATRIX.set(RenderSystem.getProjectionMatrix());
+				BufferHelpers.setupRender(RenderSystem.getShader(), lightU, lightV);
+				shaderinstance.apply();
+			}
+
 			/* loop */
 			for (int rank = 0; rank < BoardUtils.NUM_TILES_PER_ROW; rank++)
 			{
 				for (int column = 0; column < BoardUtils.NUM_TILES_PER_ROW; column++)
 				{
 					currentCoordinate++;
-					
+
 					// Sets the piece to selected if it is indeed selected
 					boolean isSelectedPiece = board.getTile(currentCoordinate) == tileEntityIn.getSourceTile() && tileEntityIn.getHumanMovedPiece() != null;
-					
+
 					// Render all the Pieces
 					if (board.getTile(currentCoordinate).isTileOccupied())
 					{
 						PieceColor pieceColor = board.getTile(currentCoordinate).getPiece().getPieceColor();
 						PieceType pieceType = board.getTile(currentCoordinate).getPiece().getPieceType();
-						
+
 						poseStack.pushPose(); // X and Z Position on Chess Board
 						// Offsets the Piece that is about to be rendered to the current Tile
 						poseStack.translate(CHESS_SCALE * -column, 0.0D, CHESS_SCALE * rank);
-						
+
 						poseStack.pushPose(); // Move Piece to Board surface and victory dance
 						// Move the Pieces down to the board surface
 						poseStack.translate(0D, (1 / 16D) * 2.4D, 0D);
-						
+
 						// We rotate the Piece 180 Degrees if its White and supposed to face the other way
-						if(pieceColor.isWhite())
+						if (pieceColor.isWhite())
 							poseStack.mulPose(Axis.YN.rotationDegrees(180F));
-						
+
 						// The dance the Pieces do when you check mate the enemy
-						if(isWhiteInCheckmate && pieceColor.isBlack())
+						if (isWhiteInCheckmate && pieceColor.isBlack())
 						{
 							poseStack.translate(0.0F, (float) Math.abs(Math.sin((Minecraft.getInstance().player.tickCount + partialTicks) / 2.5)) * -0.05F, 0F);
 							poseStack.mulPose(Axis.ZN.rotationDegrees((float) Math.cos((Minecraft.getInstance().player.tickCount + partialTicks) / 2.5) * 10));
 						}
-						if(isBlackInCheckmate && pieceColor.isWhite())
+						if (isBlackInCheckmate && pieceColor.isWhite())
 						{
 							poseStack.translate(0.0F, (float) Math.abs(Math.sin((Minecraft.getInstance().player.tickCount + partialTicks) / 2.5)) * -0.05F, 0F);
 							poseStack.mulPose(Axis.ZN.rotationDegrees((float) Math.cos((Minecraft.getInstance().player.tickCount + partialTicks) / 2.5) * 10));
 						}
 
 						poseStack.translate(CHESS_SCALE * ghostModel.root.x * 0.5F, CHESS_SCALE * ghostModel.root.y * 0.5F, CHESS_SCALE * ghostModel.root.z * 0.5F);
-						poseStack.mulPose((new Quaternionf()).rotationZYX(ghostModel.root.zRot, ghostModel.root.yRot, ghostModel.root.xRot));
+						if (AnimationHandler.getElapsedSeconds(tileEntityIn.placedState) > tileEntityIn.placedState.getInTime())
+							poseStack.mulPose((new Quaternionf()).rotationZYX(ghostModel.root.zRot, ghostModel.root.yRot, ghostModel.root.xRot));
 						poseStack.scale(ghostModel.root.xScale, ghostModel.root.yScale, ghostModel.root.zScale);
 
-						// Renders The Chess Piece
-						if(isSelectedPiece)
+						if (currentCoordinate == tileEntityIn.selectedPiecePos)
 						{
-//							poseStack.translate(CHESS_SCALE * ghostModel.root.x * 0.5F, CHESS_SCALE * ghostModel.root.y * 0.5F, CHESS_SCALE * ghostModel.root.z * 0.5F);
-//							poseStack.mulPose((new Quaternionf()).rotationZYX(ghostModel.root.zRot, ghostModel.root.yRot, ghostModel.root.xRot));
+							poseStack.translate(CHESS_SCALE * ghostModel.selected.x * 0.5F, CHESS_SCALE * ghostModel.selected.y * 0.5F, CHESS_SCALE * ghostModel.selected.z * 0.5F);
+							poseStack.mulPose((new Quaternionf()).rotationZYX(ghostModel.selected.zRot, ghostModel.selected.yRot, ghostModel.selected.xRot));
+						}
 
-							float modifier = -ghostModel.root.y / 0.4F;
+						if (tileEntityIn.moveState != null)
+						{
+							// Moved chess piece
+							if (tileEntityIn.currentCord == currentCoordinate)
+							{
+								poseStack.translate(CHESS_SCALE * ghostModel.moved.x * 0.5F, CHESS_SCALE * ghostModel.moved.y * 0.5F, CHESS_SCALE * ghostModel.moved.z * 0.5F);
+								poseStack.mulPose((new Quaternionf()).rotationZYX(ghostModel.moved.zRot, ghostModel.moved.yRot, ghostModel.moved.xRot));
+							}
+							// Affected chess piece
+							if (tileEntityIn.destCord == currentCoordinate)
+							{
+								poseStack.translate(CHESS_SCALE * ghostModel.affected.x * 0.5F, CHESS_SCALE * ghostModel.affected.y * 0.5F, CHESS_SCALE * ghostModel.affected.z * 0.5F);
+								poseStack.mulPose((new Quaternionf()).rotationZYX(ghostModel.affected.zRot, ghostModel.affected.yRot, ghostModel.affected.xRot));
+								poseStack.scale(ghostModel.affected.xScale, ghostModel.affected.yScale, ghostModel.affected.zScale);
+							}
+							// White Castle Moves
+							if (tileEntityIn.currentCord == 60)
+								if (board.getTile(60).getPiece().getPieceType().isKing())
+									if ((tileEntityIn.destCord == 62 && currentCoordinate == 63) || (tileEntityIn.destCord == 58 && currentCoordinate == 56))
+									{
+										poseStack.translate(CHESS_SCALE * ghostModel.affected.x * 0.5F, CHESS_SCALE * ghostModel.affected.y * 0.5F, CHESS_SCALE * ghostModel.affected.z * 0.5F);
+										poseStack.mulPose((new Quaternionf()).rotationZYX(ghostModel.affected.zRot, ghostModel.affected.yRot, ghostModel.affected.xRot));
+									}
+							// Black Castle Moves
+							if (tileEntityIn.currentCord == 4)
+								if (board.getTile(4).getPiece().getPieceType().isKing())
+									if ((tileEntityIn.destCord == 6 && currentCoordinate == 7) || (tileEntityIn.destCord == 2 && currentCoordinate == 0))
+									{
+										poseStack.translate(CHESS_SCALE * ghostModel.affected.x * 0.5F, CHESS_SCALE * ghostModel.affected.y * 0.5F, CHESS_SCALE * ghostModel.affected.z * 0.5F);
+										poseStack.mulPose((new Quaternionf()).rotationZYX(ghostModel.affected.zRot, ghostModel.affected.yRot, ghostModel.affected.xRot));
+									}
 
+							// White En Passant Move
+							if (board.getTile(tileEntityIn.currentCord).getPiece().getPieceColor().isWhite() && tileEntityIn.currentCord / 8 == 3)
+								if ((tileEntityIn.currentCord % 8) - (tileEntityIn.destCord % 8) == -1 || (tileEntityIn.currentCord % 8) - (tileEntityIn.destCord % 8) == 1)
+									if (board.getTile(tileEntityIn.destCord).getPiece() == null)
+										if (currentCoordinate == tileEntityIn.destCord + 8)
+										{
+											poseStack.translate(CHESS_SCALE * ghostModel.affected.x * 0.5F, CHESS_SCALE * ghostModel.affected.y * 0.5F, CHESS_SCALE * ghostModel.affected.z * 0.5F);
+											poseStack.mulPose((new Quaternionf()).rotationZYX(ghostModel.affected.zRot, ghostModel.affected.yRot, ghostModel.affected.xRot));
+											poseStack.scale(ghostModel.affected.xScale, ghostModel.affected.yScale, ghostModel.affected.zScale);
+										}
+							// Black En Passant Move
+							if (board.getTile(tileEntityIn.currentCord).getPiece().getPieceColor().isBlack() && tileEntityIn.currentCord / 8 == 4)
+								if ((tileEntityIn.currentCord % 8) - (tileEntityIn.destCord % 8) == -1 || (tileEntityIn.currentCord % 8) - (tileEntityIn.destCord % 8) == 1)
+									if (board.getTile(tileEntityIn.destCord).getPiece() == null)
+										if (currentCoordinate == tileEntityIn.destCord - 8)
+										{
+											poseStack.translate(CHESS_SCALE * ghostModel.affected.x * 0.5F, CHESS_SCALE * ghostModel.affected.y * 0.5F, CHESS_SCALE * ghostModel.affected.z * 0.5F);
+											poseStack.mulPose((new Quaternionf()).rotationZYX(ghostModel.affected.zRot, ghostModel.affected.yRot, ghostModel.affected.xRot));
+											poseStack.scale(ghostModel.affected.xScale, ghostModel.affected.yScale, ghostModel.affected.zScale);
+										}
+						}
+
+						// Renders The Chess Piece
+						if (isSelectedPiece)
+						{
 							Color colorW = new Color(Math.round(255 * wR), Math.round(255 * wG), Math.round(255 * wB));
 							float brightnessW = (0.2126F * colorW.getRed()) + (0.7152F * colorW.getGreen()) + (0.0722F * colorW.getBlue());
 							Color colorB = new Color(Math.round(255 * bR), Math.round(255 * bG), Math.round(255 * bB));
 							float brightnessB = (0.2126F * colorB.getRed()) + (0.7152F * colorB.getGreen()) + (0.0722F * colorB.getBlue());
 
-							poseStack.pushPose();
-							poseStack.scale(1.001F, 1.001F, 1.001F);
-							RenderSystem.polygonMode(GL11.GL_FRONT_AND_BACK, GL11.GL_LINE);
-							float whiteLines = brightnessW * 0.5F / 255F;
-							float blackLines = brightnessB * 0.5F / 255F;
-							renderPiece(poseStack, tileEntityIn.getPieceSet(), pieceType, pieceColor, whiteLines, whiteLines, whiteLines, blackLines, blackLines, blackLines);
-							RenderSystem.polygonMode(GL11.GL_FRONT_AND_BACK, GL11.GL_FILL);
-							poseStack.popPose();
+							if (!TableTopCraft.shaderCompatMode.get()) {
+								poseStack.pushPose();
+								poseStack.scale(1.001F, 1.001F, 1.001F);
+								RenderSystem.polygonMode(GL11.GL_FRONT_AND_BACK, GL11.GL_LINE);
+								float whiteLines = brightnessW * 0.5F / 255F;
+								float blackLines = brightnessB * 0.5F / 255F;
+								renderPiece(poseStack, tileEntityIn.getPieceSet(), pieceType, pieceColor, whiteLines, whiteLines, whiteLines, blackLines, blackLines, blackLines);
+								RenderSystem.polygonMode(GL11.GL_FRONT_AND_BACK, GL11.GL_FILL);
+								poseStack.popPose();
+							}
+
 							colorW = brightnessW > 128 ? colorW.darker(0.8F, 0.0F) : colorW.brighter(0.8F, 0.0F);
 							colorB = brightnessB > 128 ? colorB.darker(0.8F, 0.0F) : colorB.brighter(0.8F, 0.0F);
-							renderPiece(poseStack, tileEntityIn.getPieceSet(), pieceType, pieceColor, colorW.getRed() / 255F, colorW.getGreen() / 255F, colorW.getBlue() / 255F, colorB.getRed() / 255F, colorB.getGreen() / 255F, colorB.getBlue() / 255F);
-						} else {
-							renderPiece(poseStack, tileEntityIn.getPieceSet(), pieceType, pieceColor, wR, wG, wB, bR, bG, bB);
+							// Depending on the render mode we call the corresponding renderer
+							if (TableTopCraft.shaderCompatMode.get()) {
+								DrawScreenHelper.CHESS_PIECE_MODEL.render(poseStack, consumer, pieceType, set, pieceColor.isWhite() ? colorW.getRed() / 255F : colorB.getRed() / 255F, pieceColor.isWhite() ? colorW.getGreen() / 255F : colorB.getGreen() / 255F, pieceColor.isWhite() ? colorW.getBlue() / 255F : colorB.getBlue() / 255F, combinedLightIn);
+							} else {
+								renderPiece(poseStack, tileEntityIn.getPieceSet(), pieceType, pieceColor, colorW.getRed() / 255F, colorW.getGreen() / 255F, colorW.getBlue() / 255F, colorB.getRed() / 255F, colorB.getGreen() / 255F, colorB.getBlue() / 255F);
+							}
+						}
+						else
+						{
+							// Depending on the render mode we call the corresponding renderer
+							if (TableTopCraft.shaderCompatMode.get()) {
+								DrawScreenHelper.CHESS_PIECE_MODEL.render(poseStack, consumer, pieceType, set, pieceColor.isWhite() ? wR : bR, pieceColor.isWhite() ? wG : bG, pieceColor.isWhite() ? wB : bB, combinedLightIn);
+							} else {
+								renderPiece(poseStack, tileEntityIn.getPieceSet(), pieceType, pieceColor, wR, wG, wB, bR, bG, bB);
+							}
 						}
 
 						poseStack.popPose(); // # Move Piece to Board surface and victory dance #
 						poseStack.popPose(); // # X and Z Position on Chess Board #
 					}
-
-					// We reset the Polygon Mode after we are done rendering the piece
-					// Note, this only happens if the Piece was the selected Piece
-					if(isSelectedPiece)
-						RenderSystem.polygonMode(GL11.GL_FRONT_AND_BACK, GL11.GL_FILL);
 				}
 			}
 
 			// Renders the taken pieces in the piece storage bellow the chess plate
 			// Moves the pieces down into the taken Pieces area
 			poseStack.translate(CHESS_SCALE * -6.5D, 0.556D, CHESS_SCALE * 0.3D);
-			renderTakenPieces(poseStack, tileEntityIn.getMoveLog(), tileEntityIn);
-			/* clear render state */
-			VertexBuffer.unbind();
-			shaderinstance.clear();
-			type.clearRenderState();
+			renderTakenPieces(poseStack, bufferIn, tileEntityIn, combinedLightIn);
+			// clear render state
+			if (!TableTopCraft.shaderCompatMode.get()) {
+				VertexBuffer.unbind();
+				shaderinstance.clear();
+				type.clearRenderState();
+			}
 			poseStack.popPose(); // # General Chess Piece Positioning #
 
 			// We set the currentCoordinate back to -1 in order to reuse it instead of making a new variable
@@ -355,8 +432,10 @@ public class ChessTileEntityRenderer implements BlockEntityRenderer<ChessTileEnt
 		}
 	}
 	
-	private void renderTakenPieces(PoseStack stack, ChessMoveLog moveLog, ChessTileEntity chessTileEntity)
+	private void renderTakenPieces(PoseStack stack, MultiBufferSource buffer, ChessTileEntity chessTileEntity, int packedLight)
 	{
+		ChessMoveLog moveLog = chessTileEntity.getMoveLog();
+
 		for(final BaseMove move : moveLog.getMoves())
 		{
 			if(move.isAttack())
@@ -385,8 +464,8 @@ public class ChessTileEntityRenderer implements BlockEntityRenderer<ChessTileEnt
 		blackTakenPieces.sort((piece1, piece2) -> Ints.compare(piece2.getPieceValue(), piece1.getPieceValue()));
 		
 		// draw
-		renderTakenPiecesFigures(stack, chessTileEntity, whiteTakenPieces, true);
-		renderTakenPiecesFigures(stack, chessTileEntity, blackTakenPieces, false);
+		renderTakenPiecesFigures(stack, buffer, chessTileEntity, whiteTakenPieces, true, packedLight);
+		renderTakenPiecesFigures(stack, buffer, chessTileEntity, blackTakenPieces, false, packedLight);
 		
 		// We have to clear the lists, otherwise we end up with the endless army of endlessness
 		/* GiantLuigi4: lol */
@@ -394,7 +473,7 @@ public class ChessTileEntityRenderer implements BlockEntityRenderer<ChessTileEnt
 		blackTakenPieces.clear();
 	}
 	
-	private void renderTakenPiecesFigures(PoseStack stack, ChessTileEntity chessTileEntity, final List<BasePiece> pieceList, final boolean isWhite)
+	private void renderTakenPiecesFigures(PoseStack stack, MultiBufferSource buffer, ChessTileEntity chessTileEntity, final List<BasePiece> pieceList, final boolean isWhite, int packedLight)
 	{
 		int currentCoordinate = -1;
 		int currentRank = 0;
@@ -406,6 +485,10 @@ public class ChessTileEntityRenderer implements BlockEntityRenderer<ChessTileEnt
 		float bR = NBTColorSaving.getRed(chessTileEntity.getBlackPiecesColor()) / 255F;
 		float bG = NBTColorSaving.getGreen(chessTileEntity.getBlackPiecesColor()) / 255F;
 		float bB = NBTColorSaving.getBlue(chessTileEntity.getBlackPiecesColor()) / 255F;
+
+		VertexConsumer consumer = buffer.getBuffer(RenderType.entitySolid(SHADER_COMPAT_WHITE));
+		BasePiece.PieceModelSet set = BasePiece.PieceModelSet.get(chessTileEntity.getPieceSet() + 1);
+
 		for(final BasePiece piece : pieceList)
 		{
 			if(currentCoordinate < 7)
@@ -426,9 +509,12 @@ public class ChessTileEntityRenderer implements BlockEntityRenderer<ChessTileEnt
 			if(!isWhite)
 				stack.translate((CHESS_SCALE * 0.855D) * 7D, 0.0D, 0.8D);
 			stack.translate((CHESS_SCALE * 0.855D) * -currentCoordinate, 0.0D, CHESS_SCALE * -currentRank);
-			
-			renderPiece(stack, chessTileEntity.getPieceSet(), piece.getPieceType(), piece.getPieceColor(), wR, wG, wB, bR, bG, bB);
-			
+			// Depending on the render mode we call the corresponding renderer
+			if (TableTopCraft.shaderCompatMode.get()) {
+				DrawScreenHelper.CHESS_PIECE_MODEL.render(stack, consumer, piece.getPieceType(), set, isWhite ? wR : bR, isWhite ? wG : bG, isWhite ? wB : bB, packedLight);
+			} else {
+				renderPiece(stack, chessTileEntity.getPieceSet(), piece.getPieceType(), piece.getPieceColor(), wR, wG, wB, bR, bG, bB);
+			}
 			stack.popPose();
 		}
 	}
@@ -440,11 +526,11 @@ public class ChessTileEntityRenderer implements BlockEntityRenderer<ChessTileEnt
 		BufferHelpers.updateColor(shaderinstance, new float[]{pieceColor.isWhite() ? wR : bR, pieceColor.isWhite() ? wG : bG, pieceColor.isWhite() ? wB : bB, 1f});
 		poseStack.pushPose();
 		if (shaderinstance.MODEL_VIEW_MATRIX != null) shaderinstance.MODEL_VIEW_MATRIX.set(poseStack.last().pose());
-		
+
 		BasePiece.PieceModelSet set = BasePiece.PieceModelSet.get(pieceModelSet + 1);
 		VertexBuffer pawnBuffer = DrawScreenHelper.getBuffer(set, pieceType);
 		BufferHelpers.draw(pawnBuffer);
-		
+
 		poseStack.popPose();
 		// We reset the shader color to avoid funny business during the next render call
 		RenderSystem.setShaderColor(1F, 1F, 1F, 1F);

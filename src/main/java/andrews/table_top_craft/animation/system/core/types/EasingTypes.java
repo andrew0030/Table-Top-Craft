@@ -53,7 +53,7 @@ public class EasingTypes
         {
             case LINEAR -> { cachedLastVec.lerp(current, keyframeDelta, animationVecCache); }
             case CATMULLROM -> {
-                Vector3f old = keyframes[Math.max(0, currentKeyframeIdx - 2)].target(0.0F);//TODO deal with this
+                Vector3f old = keyframes[Math.max(0, currentKeyframeIdx - 2)].target(0.0F);
                 Vector3f future = keyframes[Math.min(keyframes.length - 1, currentKeyframeIdx + 1)].target(0.0F);
                 animationVecCache.set(
                         Mth.catmullrom(keyframeDelta, old.x(), cachedLastVec.x(), current.x(), future.x()),

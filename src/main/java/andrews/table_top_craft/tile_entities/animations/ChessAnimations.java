@@ -15,8 +15,8 @@ public class ChessAnimations
 {
     public static final Animation PLACED = AnimationBuilder.withLength(1.48F)
             .addAnimation("root", new KeyframeGroup(TransformTypes.POSITION,
-                    new BasicKeyframe(0.04F, KeyframeAnimations.posVec(0F, 3F, 0F), EasingTypes.LINEAR),
-                    new BasicKeyframe(0.8F, KeyframeAnimations.posVec(0F, 3F, 0F), EasingTypes.LINEAR),
+                    new BasicKeyframe(0.04F, KeyframeAnimations.posVec(0F, 2F, 0F), EasingTypes.LINEAR),
+                    new BasicKeyframe(0.8F, KeyframeAnimations.posVec(0F, 2F, 0F), EasingTypes.LINEAR),
                     new BasicKeyframe(1.48F, KeyframeAnimations.posVec(0F, 0F, 0F), EasingBuilder.type(EasingType.EASE_IN_BOUNCE).argument(0.24F).build())))
             .addAnimation("root", new KeyframeGroup(TransformTypes.ROTATION,
                     new BasicKeyframe(0.04F, KeyframeAnimations.degreeVec(-40F, -360F, 0F), EasingTypes.LINEAR),
@@ -26,8 +26,8 @@ public class ChessAnimations
                     new BasicKeyframe(0.8F, KeyframeAnimations.scaleVec(1F, 1F, 1F), EasingTypes.EASE_OUT_CUBIC))).build();
 
     public static final Animation SELECTED_PIECE = AnimationBuilder.withLength(0F)
-            .addAnimation("root", new KeyframeGroup(TransformTypes.POSITION,
-                    new MolangKeyframe(0F, 'p', "dsin(anim_time * 100) * 0.1", "0.4", "dcos(anim_time * 100) * 0.1", EasingTypes.LINEAR)))
-            .addAnimation("root", new KeyframeGroup(TransformTypes.ROTATION,
+            .addAnimation("selected", new KeyframeGroup(TransformTypes.POSITION,
+                    new MolangKeyframe(0F, 'p', "dsin(anim_time * 100) * 0.1", "0.5", "dcos(anim_time * 100) * 0.1", EasingTypes.LINEAR)))
+            .addAnimation("selected", new KeyframeGroup(TransformTypes.ROTATION,
                     new MolangKeyframe(0F, 'r', "dcos(anim_time * 100) * 3", "0", "-dsin(anim_time * 100) * 3", EasingTypes.LINEAR))).build();
 }

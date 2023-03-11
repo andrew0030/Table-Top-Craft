@@ -26,16 +26,20 @@ import net.minecraftforge.fml.common.Mod;
 import net.minecraftforge.fml.event.lifecycle.FMLClientSetupEvent;
 import net.minecraftforge.fml.event.lifecycle.FMLCommonSetupEvent;
 import net.minecraftforge.fml.javafmlmod.FMLJavaModLoadingContext;
+import org.checkerframework.checker.units.qual.A;
 
 import javax.annotation.Nullable;
 import java.io.IOException;
 import java.util.Objects;
+import java.util.concurrent.atomic.AtomicBoolean;
 
 @Mod(value = Reference.MODID)
 public class TableTopCraft
 {
 	@Nullable
 	public static ShaderInstance rendertypeSolidBlockEntityShader;
+	// Shader Compatibility Mode
+	public static AtomicBoolean shaderCompatMode = new AtomicBoolean(false);
 
 	/**
 	 * @return The Table Top Craft chess piece Shader.
@@ -62,14 +66,11 @@ public class TableTopCraft
 		});
 		modEventBus.addListener(EventPriority.LOWEST, this::setupCommon);
 
-		// A little something to let people know the Mod won't fully work with Shaders installed.
 		try {
 			Class<?> clazz = Class.forName("net.optifine.Config");
 			if (clazz != null)
 			{
-				ModLoader.get().addWarning(new ModLoadingWarning(ModLoadingContext.get().getActiveContainer().getModInfo(), ModLoadingStage.CONSTRUCT,
-						ChatFormatting.YELLOW + "Table Top Craft" + ChatFormatting.RESET + "\nOptifine Shaders and Table Top Craft are" + ChatFormatting.RED + ChatFormatting.BOLD + " incompatible " + ChatFormatting.RESET + "with each other."
-				));
+				TableTopCraft.shaderCompatMode.set(true);
 			}
 		} catch (Throwable ignored) {}
 	}

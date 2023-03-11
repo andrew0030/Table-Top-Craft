@@ -21,11 +21,17 @@ public class GhostModel extends AnimatedBlockEntityModel
 {
     public static final ModelLayerLocation LAYER = new ModelLayerLocation(new ResourceLocation(Reference.MODID, "ghost_model"), "main");
     public final AdvancedModelPart root;
+    public final AdvancedModelPart selected;
+    public final AdvancedModelPart moved;
+    public final AdvancedModelPart affected;
 
     public GhostModel(ModelPart root)
     {
         super(RenderType::entityCutoutNoCull);
         this.root = (AdvancedModelPart) root.getChild("root");
+        this.selected = this.root.getChild("selected");
+        this.moved = this.root.getChild("moved");
+        this.affected = this.root.getChild("affected");
     }
 
     public static LayerDefinition createBodyLayer()
@@ -33,6 +39,9 @@ public class GhostModel extends AnimatedBlockEntityModel
         AdvancedMeshDefinition meshDefinition = new AdvancedMeshDefinition();
         AdvancedPartDefinition partDefinition = meshDefinition.getAdvancedRoot();
         AdvancedPartDefinition root = partDefinition.addOrReplaceChild("root", CubeListBuilder.create(), PartPose.offset(0.0F, 0.0F, 0.0F));
+        AdvancedPartDefinition selected = root.addOrReplaceChild("selected", CubeListBuilder.create(), PartPose.offset(0.0F, 0.0F, 0.0F));
+        AdvancedPartDefinition moved = root.addOrReplaceChild("moved", CubeListBuilder.create(), PartPose.offset(0.0F, 0.0F, 0.0F));
+        AdvancedPartDefinition affected = root.addOrReplaceChild("affected", CubeListBuilder.create(), PartPose.offset(0.0F, 0.0F, 0.0F));
         return LayerDefinition.create(meshDefinition.overwriteRootChildren(partDefinition), 0, 0);
     }
 
@@ -46,6 +55,8 @@ public class GhostModel extends AnimatedBlockEntityModel
             animated.lingeringStates.forEach(state -> this.animate(state, animated.getTicksExisted() + partialTick, 1.0F));
             this.animate(animated.selectedPieceState, animated.getTicksExisted() + partialTick, 1.0F);
             this.animate(animated.placedState, animated.getTicksExisted() + partialTick, 1.0F);
+            if(animated.moveState != null)
+                this.animate(animated.moveState, animated.getTicksExisted() + partialTick, 1.0F);
         }
     }
 

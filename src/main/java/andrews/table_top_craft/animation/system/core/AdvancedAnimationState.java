@@ -5,11 +5,12 @@ import com.google.common.collect.Maps;
 import net.minecraft.world.entity.AnimationState;
 
 import java.util.Map;
+import java.util.concurrent.atomic.AtomicReference;
 
 public class AdvancedAnimationState extends AnimationState
 {
     public Map<KeyframeGroup, Integer> cachedIndex = Maps.newHashMap();
-    private final Animation animation;
+    private final AtomicReference<Animation> animation;
     // Interpolation
     private float easeInTime = 0;
     private float easeOutTime = 0;
@@ -20,7 +21,7 @@ public class AdvancedAnimationState extends AnimationState
     private boolean forceInLinear = false;
     private boolean forceOutLinear = false;
 
-    public AdvancedAnimationState(Animation animation)
+    public AdvancedAnimationState(AtomicReference<Animation> animation)
     {
         this.animation = animation;
     }
@@ -30,7 +31,7 @@ public class AdvancedAnimationState extends AnimationState
         this.lastTime = state.lastTime;
         this.accumulatedTime = state.accumulatedTime;
         this.cachedIndex.putAll(state.cachedIndex);
-        this.animation = state.getAnimation();
+        this.animation = new AtomicReference<>(state.getAnimation());
         this.easeInTime = state.getInTime();
         this.easeOutTime = state.getOutTime();
         this.prevElapsedTime = state.getPrevElapsedTime();
@@ -41,12 +42,14 @@ public class AdvancedAnimationState extends AnimationState
         this.forceOutLinear = state.forceOutLinear();
     }
 
-    /**
-     * @return The AnimationDefinition connected to this AnimationState
-     */
     public Animation getAnimation()
     {
-        return this.animation;
+        return this.animation.get();
+    }
+
+    public void setAnimation(Animation animation)
+    {
+        this.animation.set(animation);
     }
 
     @Override
@@ -116,7 +119,7 @@ public class AdvancedAnimationState extends AnimationState
 
     public void interpolateAndStop(float easeOutTime, EasingTypes easeOutType, boolean forceOutLinear)
     {
-        if(this.isStarted())
+        if(this.getAnimation() != null && this.isStarted())
         {
             this.easeOutType = easeOutType;
             this.forceOutLinear = forceOutLinear;
@@ -133,5 +136,14 @@ public class AdvancedAnimationState extends AnimationState
     public float getPrevElapsedTime()
     {
         return this.prevElapsedTime;
+    }
+
+    public boolean isFinished()
+    {
+        if(this.getAnimation() == null) // We need to make sure the Animation exists
+            return false;
+        if(this.getAnimation().isLooping() || this.getAnimation().getLengthInSeconds() == 0)
+            return false;
+        return AnimationHandler.getElapsedSeconds(this) > this.getAnimation().getLengthInSeconds() + this.easeInTime + this.easeOutTime;
     }
 }

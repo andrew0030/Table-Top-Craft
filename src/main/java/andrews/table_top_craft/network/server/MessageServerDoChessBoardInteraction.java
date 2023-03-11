@@ -1,12 +1,16 @@
 package andrews.table_top_craft.network.server;
 
+import andrews.table_top_craft.animation.system.core.AdvancedAnimationState;
 import andrews.table_top_craft.criteria.TTCCriteriaTriggers;
 import andrews.table_top_craft.game_logic.chess.board.moves.BaseMove;
 import andrews.table_top_craft.game_logic.chess.board.moves.MoveFactory;
 import andrews.table_top_craft.game_logic.chess.board.moves.PawnEnPassantAttackMove;
 import andrews.table_top_craft.game_logic.chess.board.tiles.BaseChessTile;
+import andrews.table_top_craft.game_logic.chess.pieces.BasePiece;
 import andrews.table_top_craft.game_logic.chess.player.MoveTransition;
+import andrews.table_top_craft.network.client.util.ClientPacketHandlerClass;
 import andrews.table_top_craft.tile_entities.ChessTileEntity;
+import andrews.table_top_craft.util.NetworkUtil;
 import net.minecraft.core.BlockPos;
 import net.minecraft.network.FriendlyByteBuf;
 import net.minecraft.server.level.ServerPlayer;
@@ -64,8 +68,19 @@ public class MessageServerDoChessBoardInteraction
                         // We do not continue the game logic if there is no Chess
                         if(chessTileEntity.getBoard() == null)
                             return;
-                        BaseChessTile chessTile = chessTileEntity.getBoard().getTile(tileCoordinate);
+                        // If an interaction is still happening we skip it
+                        if(chessTileEntity.doingAnimationTimer > 0 && chessTileEntity.move != null && chessTileEntity.transition != null)
+                        {
+                            chessTileEntity.setBoard(chessTileEntity.transition.getTransitionBoard());
+                            chessTileEntity.getMoveLog().addMove(chessTileEntity.move);
+                            chessTileEntity.doingAnimationTimer = 0;
+                            chessTileEntity.move = null;
+                            chessTileEntity.transition = null;
+                            level.sendBlockUpdated(pos, level.getBlockState(pos), level.getBlockState(pos), 2);
+                            chessTileEntity.setChanged();
+                        }
 
+                        BaseChessTile chessTile = chessTileEntity.getBoard().getTile(tileCoordinate);
                         // Checks if a Tile has already been selected
                         if(chessTileEntity.getSourceTile() == null)
                         {
@@ -89,11 +104,12 @@ public class MessageServerDoChessBoardInteraction
                             chessTileEntity.setDestinationTile(chessTile);
                             final BaseMove move = MoveFactory.createMove(chessTileEntity.getBoard(), chessTileEntity.getSourceTile().getTileCoordinate(), chessTileEntity.getDestinationTile().getTileCoordinate());
                             final MoveTransition transition = chessTileEntity.getBoard().getCurrentChessPlayer().makeMove(move);
+
                             if(transition.getMoveStatus().isDone())
                             {
-                                chessTileEntity.setBoard(transition.getTransitionBoard());
-                                // Adds the move to the MoveLog
-                                chessTileEntity.getMoveLog().addMove(move);
+//                                chessTileEntity.setBoard(transition.getTransitionBoard());
+//                                // Adds the move to the MoveLog
+//                                chessTileEntity.getMoveLog().addMove(move);
                                 // We call this in here to make sure a move was successfully made, and not just attempted
                                 if(!level.isClientSide)
                                     TTCCriteriaTriggers.MAKE_CHESS_MOVE.trigger(player);
@@ -105,6 +121,40 @@ public class MessageServerDoChessBoardInteraction
                                 if(chessTileEntity.getBoard().getCurrentChessPlayer().isInCheckMate())
                                     if(!level.isClientSide)
                                         TTCCriteriaTriggers.MAKE_CHECK_MATE_MOVE.trigger(player);
+
+                                chessTileEntity.move = move;
+                                chessTileEntity.transition = transition;
+                                int animTime = 1000;
+                                if(move.getMovedPiece().getPieceType().isKing() && !move.isCastlingMove())
+                                    animTime = 750;
+                                if(move.getMovedPiece().getPieceType().equals(BasePiece.PieceType.PAWN) && Math.abs(move.getDestinationCoordinate() - move.getCurrentCoordinate()) <= 9)
+                                    animTime = 750;
+                                if(move.isEnPassantMove())
+                                    animTime = 1000;
+                                if(move.getMovedPiece().getPieceType().equals(BasePiece.PieceType.ROOK)) {
+                                    if(Math.abs((move.getCurrentCoordinate() % 8) - (move.getDestinationCoordinate() % 8)) == 1 || Math.abs((move.getCurrentCoordinate() / 8) - (move.getDestinationCoordinate() / 8)) == 1) {
+                                        animTime = 750;
+                                    } else if (Math.abs((move.getCurrentCoordinate() % 8) - (move.getDestinationCoordinate() % 8)) > 3 || Math.abs((move.getCurrentCoordinate() / 8) - (move.getDestinationCoordinate() / 8)) > 3) {
+                                        animTime = 1250;
+                                    }
+                                }
+                                if(move.getMovedPiece().getPieceType().equals(BasePiece.PieceType.BISHOP)) {
+                                    if(Math.abs((move.getCurrentCoordinate() % 8) - (move.getDestinationCoordinate() % 8)) == 1) {
+                                        animTime = 750;
+                                    } else if (Math.abs((move.getCurrentCoordinate() % 8) - (move.getDestinationCoordinate() % 8)) > 3) {
+                                        animTime = 1250;
+                                    }
+                                }
+                                if(move.getMovedPiece().getPieceType().equals(BasePiece.PieceType.QUEEN)) {
+                                    if(Math.abs((move.getCurrentCoordinate() % 8) - (move.getDestinationCoordinate() % 8)) == 1 || Math.abs((move.getCurrentCoordinate() / 8) - (move.getDestinationCoordinate() / 8)) == 1) {
+                                        animTime = 750;
+                                    } else if (Math.abs((move.getCurrentCoordinate() % 8) - (move.getDestinationCoordinate() % 8)) > 3 || Math.abs((move.getCurrentCoordinate() / 8) - (move.getDestinationCoordinate() / 8)) > 3) {
+                                        animTime = 1250;
+                                    }
+                                }
+                                chessTileEntity.doingAnimationTimer = System.currentTimeMillis() + animTime;//1000 ms are 1 second
+
+                                NetworkUtil.setChessAnimationForAllTracking(level, pos, (byte) 2, (byte) move.getCurrentCoordinate(), (byte) move.getDestinationCoordinate());
                             }
                             chessTileEntity.setSourceTile(null);
                             chessTileEntity.setDestinationTile(null);

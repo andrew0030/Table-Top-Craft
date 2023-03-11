@@ -1,10 +1,12 @@
 package andrews.table_top_craft.util;
 
 import andrews.table_top_craft.network.TTCNetwork;
+import andrews.table_top_craft.network.client.MessageClientChessAnimationState;
 import andrews.table_top_craft.network.client.MessageClientOpenChessPieceSelectionScreen;
 import andrews.table_top_craft.network.server.*;
 import net.minecraft.core.BlockPos;
 import net.minecraft.server.level.ServerPlayer;
+import net.minecraft.world.level.Level;
 import net.minecraftforge.api.distmarker.Dist;
 import net.minecraftforge.api.distmarker.OnlyIn;
 import net.minecraftforge.network.PacketDistributor;
@@ -14,6 +16,16 @@ public class NetworkUtil
 	public static void openChessPieceSelectionFromServer(BlockPos pos, boolean isStandardSetUnlocked, boolean isClassicSetUnlocked, boolean isPandorasCreaturesSetUnlocked, ServerPlayer serverPlayer)
 	{
 		TTCNetwork.CHANNEL.send(PacketDistributor.PLAYER.with(() -> serverPlayer), new MessageClientOpenChessPieceSelectionScreen(pos, isStandardSetUnlocked, isClassicSetUnlocked, isPandorasCreaturesSetUnlocked));
+	}
+
+	public static void setChessAnimationForAllTracking(Level level, BlockPos pos, byte actionType, byte currentCord, byte destCord)
+	{
+		TTCNetwork.CHANNEL.send(PacketDistributor.TRACKING_CHUNK.with(() -> level.getChunkAt(pos)), new MessageClientChessAnimationState(pos, actionType, currentCord, destCord));
+	}
+
+	public static void setChessAnimationForAllTracking(Level level, BlockPos pos, byte actionType)
+	{
+		NetworkUtil.setChessAnimationForAllTracking(level, pos, actionType, (byte) 0, (byte) 0);
 	}
 
 	@OnlyIn(Dist.CLIENT)

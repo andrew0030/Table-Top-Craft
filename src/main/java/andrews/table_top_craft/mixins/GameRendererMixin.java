@@ -4,7 +4,6 @@ import andrews.table_top_craft.tile_entities.render.BufferHelpers;
 import andrews.table_top_craft.util.DrawScreenHelper;
 import net.minecraft.client.renderer.GameRenderer;
 import net.minecraft.server.packs.resources.ResourceManager;
-import net.minecraft.server.packs.resources.ResourceProvider;
 import net.minecraft.util.profiling.ProfilerFiller;
 import org.spongepowered.asm.mixin.Mixin;
 import org.spongepowered.asm.mixin.injection.At;

@@ -3,6 +3,7 @@ package andrews.table_top_craft.network.server;
 import andrews.table_top_craft.game_logic.chess.board.Board;
 import andrews.table_top_craft.game_logic.chess.pgn.FenUtil;
 import andrews.table_top_craft.tile_entities.ChessTileEntity;
+import andrews.table_top_craft.util.NetworkUtil;
 import net.minecraft.ChatFormatting;
 import net.minecraft.core.BlockPos;
 import net.minecraft.network.FriendlyByteBuf;
@@ -68,7 +69,14 @@ public class MessageServerLoadFEN
 						}
 						chessTileEntity.setBoard(board);
 						chessTileEntity.getMoveLog().clear();
+						chessTileEntity.setHumanMovedPiece(null);
+						chessTileEntity.setSourceTile(null);
+						chessTileEntity.doingAnimationTimer = 0;
+						chessTileEntity.move = null;
+						chessTileEntity.transition = null;
 						level.sendBlockUpdated(message.pos, level.getBlockState(chessPos), level.getBlockState(chessPos), 2);
+						// We start the placed Animation on server and client
+						NetworkUtil.setChessAnimationForAllTracking(level, chessPos, (byte) 0);
 			        }
 				}
 			});

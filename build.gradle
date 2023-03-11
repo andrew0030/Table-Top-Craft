@@ -86,7 +86,7 @@ jar {
 shadowJar {
     archiveClassifier = ''
     configurations = [project.configurations.shade]
-    relocate 'net.objecthunter', "andrews.shadowed.objecthunter"
+    relocate 'net.objecthunter', "andrews.table_top_craft.shadowed.objecthunter"
     finalizedBy 'reobfShadowJar'
 }
 

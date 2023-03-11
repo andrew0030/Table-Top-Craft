@@ -1,5 +1,6 @@
 package andrews.table_top_craft.network;
 
+import andrews.table_top_craft.network.client.MessageClientChessAnimationState;
 import andrews.table_top_craft.network.client.MessageClientOpenChessPieceSelectionScreen;
 import andrews.table_top_craft.network.server.*;
 import andrews.table_top_craft.util.Reference;
@@ -28,6 +29,12 @@ public static final String NETWORK_PROTOCOL = "1";
 		.encoder(MessageClientOpenChessPieceSelectionScreen::serialize)
 		.decoder(MessageClientOpenChessPieceSelectionScreen::deserialize)
 		.consumerMainThread(MessageClientOpenChessPieceSelectionScreen::handle)
+		.add();
+
+		CHANNEL.messageBuilder(MessageClientChessAnimationState.class, id++)
+		.encoder(MessageClientChessAnimationState::serialize)
+		.decoder(MessageClientChessAnimationState::deserialize)
+		.consumerMainThread(MessageClientChessAnimationState::handle)
 		.add();
 
 		// Server Messages

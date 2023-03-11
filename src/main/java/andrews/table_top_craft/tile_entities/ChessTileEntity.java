@@ -2,6 +2,7 @@ package andrews.table_top_craft.tile_entities;
 
 import andrews.table_top_craft.animation.system.base.AnimatedBlockEntity;
 import andrews.table_top_craft.animation.system.core.AdvancedAnimationState;
+import andrews.table_top_craft.animation.system.core.types.EasingTypes;
 import andrews.table_top_craft.game_logic.chess.PieceColor;
 import andrews.table_top_craft.game_logic.chess.board.Board;
 import andrews.table_top_craft.game_logic.chess.board.BoardUtils;
@@ -18,23 +19,32 @@ import net.minecraft.core.BlockPos;
 import net.minecraft.nbt.CompoundTag;
 import net.minecraft.nbt.ListTag;
 import net.minecraft.nbt.Tag;
-import net.minecraft.network.Connection;
 import net.minecraft.network.protocol.Packet;
 import net.minecraft.network.protocol.game.ClientGamePacketListener;
 import net.minecraft.network.protocol.game.ClientboundBlockEntityDataPacket;
 import net.minecraft.world.level.Level;
 import net.minecraft.world.level.block.state.BlockState;
 import net.minecraft.world.phys.AABB;
+import net.minecraftforge.api.distmarker.Dist;
+import net.minecraftforge.fml.DistExecutor;
 
 import java.util.ArrayList;
 import java.util.List;
 import java.util.Random;
+import java.util.concurrent.atomic.AtomicReference;
 
 public class ChessTileEntity extends AnimatedBlockEntity
 {
 	public final List<AdvancedAnimationState> lingeringStates = new ArrayList<>();
-	public final AdvancedAnimationState selectedPieceState = new AdvancedAnimationState(ChessAnimations.SELECTED_PIECE);
-	public final AdvancedAnimationState placedState = new AdvancedAnimationState(ChessAnimations.PLACED);
+	public final AdvancedAnimationState selectedPieceState = new AdvancedAnimationState(new AtomicReference<>());
+	public AdvancedAnimationState moveState;
+	public int selectedPiecePos;
+	public final AdvancedAnimationState placedState = new AdvancedAnimationState(new AtomicReference<>());
+	public long doingAnimationTimer;
+	public BaseMove move;
+	public MoveTransition transition;
+	public byte currentCord;
+	public byte destCord;
 
 	private Board board;
 	private BaseChessTile sourceTile;
@@ -69,44 +79,36 @@ public class ChessTileEntity extends AnimatedBlockEntity
 	public ChessTileEntity(BlockPos pos, BlockState state)
 	{
 		super(TTCTileEntities.CHESS.get(), pos, state);
+		DistExecutor.unsafeRunWhenOn(Dist.CLIENT, () -> () -> {
+			selectedPieceState.setAnimation(ChessAnimations.SELECTED_PIECE);
+			placedState.setAnimation(ChessAnimations.PLACED);
+		});
 		moveLog = new ChessMoveLog();
 	}
 
 	@Override
 	public AABB getRenderBoundingBox()
 	{
-		return super.getRenderBoundingBox().expandTowards(0.0D, 0.4D, 0.0D);
+		AABB aabb = super.getRenderBoundingBox();
+		return aabb.expandTowards(1D / 8D, 0.4D, 1D / 8D).expandTowards(-1D / 8D, 0D, -1D / 8D).setMinY(aabb.getCenter().y - (1F / 16F));
 	}
 
-	// Used to synchronize the BlockEntity with the client when the chunk it is in is loaded
+	// Used to synchronize the BlockEntity
 	@Override
 	public CompoundTag getUpdateTag()
 	{
 		CompoundTag compound = new CompoundTag();
+		// Could also use saveAdditional if I needed the super stuff
 		this.saveToNBT(compound);
 		return compound;
 	}
 
-	// Used to synchronize the BlockEntity with the client when the chunk it is in is loaded
-	@Override
-	public void handleUpdateTag(CompoundTag compound)
-	{
-		this.loadFromNBT(compound);
-	}
-
-	// Used to synchronize the BlockEntity with the client when the chunk it is in is loaded
+	// Used to synchronize the BlockEntity
 	@Override
 	public Packet<ClientGamePacketListener> getUpdatePacket()
 	{
 		// Will get tag from #getUpdateTag
 		return ClientboundBlockEntityDataPacket.create(this);
-	}
-
-	// Used to synchronize the BlockEntity with the client onBlockUpdate
-	@Override
-	public void onDataPacket(Connection net, ClientboundBlockEntityDataPacket pkt)
-	{
-		this.loadFromNBT(pkt.getTag());
 	}
 	
 	@Override
@@ -123,9 +125,46 @@ public class ChessTileEntity extends AnimatedBlockEntity
 		this.loadFromNBT(compound);
 	}
 
-	public static void tick(Level level, BlockPos pos, BlockState state, AnimatedBlockEntity blockEntity)
+	public static void tick(Level level, BlockPos pos, BlockState state, ChessTileEntity blockEntity)
 	{
 		blockEntity.incTicksExisted();
+
+		if(blockEntity.placedState.isStarted())
+			if(blockEntity.placedState.isFinished())
+				blockEntity.placedState.stop();
+
+		if(blockEntity.doingAnimationTimer != 0)
+		{
+			if(blockEntity.doingAnimationTimer < System.currentTimeMillis() && blockEntity.move != null && blockEntity.transition != null)
+			{
+				blockEntity.setBoard(blockEntity.transition.getTransitionBoard());
+				blockEntity.getMoveLog().addMove(blockEntity.move);
+				blockEntity.doingAnimationTimer = 0;
+				blockEntity.move = null;
+				blockEntity.transition = null;
+				level.sendBlockUpdated(pos, level.getBlockState(pos), level.getBlockState(pos), 2);
+				blockEntity.setChanged();
+			}
+		}
+
+		if(blockEntity.getHumanMovedPiece() != null)
+		{
+			if (!blockEntity.selectedPieceState.isStarted())
+			{
+				blockEntity.selectedPiecePos = blockEntity.getHumanMovedPiece().getPiecePosition();
+				blockEntity.lingeringStates.clear();
+				blockEntity.selectedPieceState.interpolateAndStart(0.15F, EasingTypes.LINEAR, false, blockEntity.getTicksExisted());
+			}
+		}
+		else
+		{
+			if (blockEntity.selectedPieceState.isStarted())
+			{
+				blockEntity.selectedPieceState.interpolateAndStop(0.15F, EasingTypes.LINEAR, false);
+				blockEntity.lingeringStates.add(new AdvancedAnimationState(blockEntity.selectedPieceState));
+				blockEntity.selectedPieceState.stop();
+			}
+		}
 	}
 	
 	/**
@@ -185,10 +224,8 @@ public class ChessTileEntity extends AnimatedBlockEntity
 		chessNBT.putString("AttackMoveColor", getAttackMoveColor());
 		chessNBT.putString("PreviousMoveColor", getPreviousMoveColor());
 		chessNBT.putString("CastleMoveColor", getCastleMoveColor());
-		if(this.sourceTile != null)
-			chessNBT.putInt("SourceTile", this.getSourceTile().getTileCoordinate());
-		if(this.humanMovedPiece != null)
-			chessNBT.putInt("HumanMovedPiece", this.getHumanMovedPiece().getPiecePosition());
+		chessNBT.putInt("SourceTile", this.sourceTile == null ? -1 : this.sourceTile.getTileCoordinate());
+		chessNBT.putInt("HumanMovedPiece", this.humanMovedPiece == null ? -1 : this.humanMovedPiece.getPiecePosition());
 		chessNBT.putInt("PieceSet", this.getPieceSet());
 		compound.put("ChessValues", chessNBT);
 	}
@@ -203,7 +240,12 @@ public class ChessTileEntity extends AnimatedBlockEntity
 		{
 			boolean isWhiteCastled = chessNBT.getBoolean("IsWhiteCastled");
 			boolean isBlackCastled = chessNBT.getBoolean("IsBlackCastled");
+
 			if(FenUtil.isFENValid(chessNBT.getString("BoardFEN"))) {
+				// We do this here to prevent a flicker from resetting it to early
+				if(level != null && level.isClientSide())
+					if(moveState != null && !FenUtil.createFENFromGame(this.board).equals(chessNBT.getString("BoardFEN")))
+						moveState = null;
 				this.board = FenUtil.createGameFromFEN(chessNBT.getString("BoardFEN"), chessNBT.getString("FirstMoves"), isWhiteCastled, isBlackCastled);
 			} else {
 				this.board = Board.createStandardBoard();
@@ -285,9 +327,9 @@ public class ChessTileEntity extends AnimatedBlockEntity
 		if(chessNBT.contains("CastleMoveColor", Tag.TAG_STRING))
 			this.castleMoveColor = chessNBT.getString("CastleMoveColor");
 		if(chessNBT.contains("SourceTile", Tag.TAG_INT))
-			this.sourceTile = getBoard().getTile(chessNBT.getInt("SourceTile"));
+			this.sourceTile = chessNBT.getInt("SourceTile") == -1 ? null : getBoard().getTile(chessNBT.getInt("SourceTile"));
 		if(chessNBT.contains("HumanMovedPiece", Tag.TAG_INT))
-			this.humanMovedPiece = getBoard().getTile(chessNBT.getInt("HumanMovedPiece")).getPiece();
+			this.humanMovedPiece = chessNBT.getInt("HumanMovedPiece") == -1 ? null : getBoard().getTile(chessNBT.getInt("HumanMovedPiece")).getPiece();
 		if(chessNBT.contains("PieceSet", Tag.TAG_INT))
 			this.pieceSet = chessNBT.getInt("PieceSet");
 	}

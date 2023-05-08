@@ -10,12 +10,22 @@ public class PawnPromotion extends BaseMove
 {
 	final BaseMove decoratedMove;
 	final PawnPiece promotedPawn;
+	final String promotionChar;
 
 	public PawnPromotion(final BaseMove decoratedMove)
 	{
 		super(decoratedMove.getBoard(), decoratedMove.getMovedPiece(), decoratedMove.getDestinationCoordinate());
 		this.decoratedMove = decoratedMove;
 		this.promotedPawn = (PawnPiece) decoratedMove.getMovedPiece();
+		this.promotionChar = "?";
+	}
+
+	public PawnPromotion(final BaseMove decoratedMove, String promotionChar)
+	{
+		super(decoratedMove.getBoard(), decoratedMove.getMovedPiece(), decoratedMove.getDestinationCoordinate());
+		this.decoratedMove = decoratedMove;
+		this.promotedPawn = (PawnPiece) decoratedMove.getMovedPiece();
+		this.promotionChar = promotionChar;
 	}
 	
 	@Override
@@ -57,7 +67,13 @@ public class PawnPromotion extends BaseMove
 	{
 		return this.decoratedMove.isAttack();
 	}
-	
+
+	@Override
+	public boolean isPawnPromotion()
+	{
+		return true;
+	}
+
 	@Override
 	public BasePiece getAttackedPiece()
 	{
@@ -67,12 +83,14 @@ public class PawnPromotion extends BaseMove
 	@Override
 	public String toString()
 	{
-		return BoardUtils.getPositionAtCoordinate(this.destinationCoordinate) + "=Q";
+		return this.decoratedMove.toString() + "=" + this.promotionChar;
 	}
 	
 	@Override
 	public String saveToNBT()
 	{
-		return "pawn_promotion/" + getColorForPiece(this.promotedPawn) + "/" + this.promotedPawn.getPiecePosition() + "/" + this.decoratedMove.getDestinationCoordinate();
+		if(this.decoratedMove.isAttack())
+			return "pawn_attack_promotion/" + getColorForPiece(this.promotedPawn) + "/" + this.promotedPawn.getPiecePosition() + "/" + this.decoratedMove.getDestinationCoordinate() + "/" + this.decoratedMove.getAttackedPiece().getPiecePosition() + "/" + this.decoratedMove.getAttackedPiece().getPieceType().toString() + "/" + this.promotionChar;
+		return "pawn_promotion/" + getColorForPiece(this.promotedPawn) + "/" + this.promotedPawn.getPiecePosition() + "/" + this.decoratedMove.getDestinationCoordinate() + "/" + this.promotionChar;
 	}
 }

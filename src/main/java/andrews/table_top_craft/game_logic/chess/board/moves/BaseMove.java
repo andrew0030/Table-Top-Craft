@@ -108,6 +108,14 @@ public abstract class BaseMove
 	{
 		return false;
 	}
+
+	/**
+	 * @return Whether this Move is a Pawn Promotion Move
+	 */
+	public boolean isPawnPromotion()
+	{
+		return false;
+	}
 	
 	/**
 	 * @return The Piece that was attacked with this Move

@@ -2,6 +2,7 @@ package andrews.table_top_craft.registry;
 
 import andrews.table_top_craft.objects.blocks.ChessBlock;
 import andrews.table_top_craft.objects.blocks.ChessPieceFigureBlock;
+import andrews.table_top_craft.objects.blocks.ChessTimerBlock;
 import andrews.table_top_craft.objects.blocks.TicTacToeBlock;
 import andrews.table_top_craft.registry.util.BEWLRBlockItem;
 import andrews.table_top_craft.util.Reference;
@@ -9,6 +10,8 @@ import com.google.common.base.Supplier;
 import net.minecraft.world.item.BlockItem;
 import net.minecraft.world.item.Item;
 import net.minecraft.world.level.block.Block;
+import net.minecraft.world.level.block.Blocks;
+import net.minecraft.world.level.block.state.BlockBehaviour;
 import net.minecraftforge.registries.DeferredRegister;
 import net.minecraftforge.registries.ForgeRegistries;
 import net.minecraftforge.registries.RegistryObject;
@@ -26,15 +29,23 @@ public class TTCBlocks
 	public static final RegistryObject<Block> DARK_OAK_CHESS		= createBlock("dark_oak_chess", ChessBlock::new);
 	public static final RegistryObject<Block> CRIMSON_CHESS			= createBlock("crimson_chess", ChessBlock::new);
 	public static final RegistryObject<Block> WARPED_CHESS			= createBlock("warped_chess", ChessBlock::new);
+	public static final RegistryObject<Block> MANGROVE_CHESS		= createBlock("mangrove_chess", ChessBlock::new);
 	// Chess Piece Figure
 	public static final RegistryObject<Block> CHESS_PIECE_FIGURE	= createISBERBlock("chess_piece_figure", ChessPieceFigureBlock::new, false);
-	//Tic Tac Toe
+	// Tic Tac Toe
 	public static final RegistryObject<Block> TIC_TAC_TOE			= createBlock("tic_tac_toe", TicTacToeBlock::new);
-	
+	// Chess Timers
+	public static final RegistryObject<Block> WHITE_CHESS_TIMER		= createBlock("white_chess_timer", ChessTimerBlock::new);
+
 	public static <B extends Block> RegistryObject<B> createBlock(String name, Supplier<? extends B> supplier)
 	{
+		return createBlock(name, supplier, 64);
+	}
+
+	public static <B extends Block> RegistryObject<B> createBlock(String name, Supplier<? extends B> supplier, int maxStackSize)
+	{
 		RegistryObject<B> block = TTCBlocks.BLOCKS.register(name, supplier);
-		TTCItems.ITEMS.register(name, () -> new BlockItem(block.get(), new Item.Properties().stacksTo(1)));
+		TTCItems.ITEMS.register(name, () -> new BlockItem(block.get(), new Item.Properties().stacksTo(maxStackSize)));
 		return block;
 	}
 

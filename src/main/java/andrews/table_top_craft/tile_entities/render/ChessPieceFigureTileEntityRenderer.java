@@ -1,13 +1,11 @@
 package andrews.table_top_craft.tile_entities.render;
 
-import andrews.table_top_craft.TableTopCraft;
 import andrews.table_top_craft.game_logic.chess.pieces.BasePiece;
 import andrews.table_top_craft.objects.blocks.ChessPieceFigureBlock;
 import andrews.table_top_craft.tile_entities.ChessPieceFigureBlockEntity;
 import andrews.table_top_craft.tile_entities.model.piece_figure.ChessPieceFigureStandModel;
 import andrews.table_top_craft.util.*;
-import andrews.table_top_craft.util.obj.ObjModel;
-import com.mojang.blaze3d.platform.Lighting;
+import andrews.table_top_craft.util.shader_compat.ShaderCompatHandler;
 import com.mojang.blaze3d.platform.NativeImage;
 import com.mojang.blaze3d.systems.RenderSystem;
 import com.mojang.blaze3d.vertex.PoseStack;
@@ -22,14 +20,9 @@ import net.minecraft.client.renderer.ShaderInstance;
 import net.minecraft.client.renderer.blockentity.BlockEntityRenderer;
 import net.minecraft.client.renderer.blockentity.BlockEntityRendererProvider;
 import net.minecraft.client.renderer.texture.DynamicTexture;
-import net.minecraft.client.renderer.texture.OverlayTexture;
 import net.minecraft.resources.ResourceLocation;
 import net.minecraft.world.level.block.state.BlockState;
-import net.minecraftforge.client.event.ScreenEvent;
-import org.apache.logging.log4j.core.net.Rfc1349TrafficClass;
-import org.checkerframework.checker.units.qual.C;
 import org.joml.Matrix4f;
-import org.joml.Vector3f;
 
 public class ChessPieceFigureTileEntityRenderer implements BlockEntityRenderer<ChessPieceFigureBlockEntity>
 {
@@ -131,7 +124,7 @@ public class ChessPieceFigureTileEntityRenderer implements BlockEntityRenderer<C
         BasePiece.PieceModelSet set = BasePiece.PieceModelSet.get(blockEntity.getPieceSet());
         BasePiece.PieceType piece = BasePiece.PieceType.get(blockEntity.getPieceType());
 
-        if (TableTopCraft.shaderCompatMode.get()) // Shader Compat Mode
+        if (ShaderCompatHandler.isShaderActive()) // Shader Compat Mode
         {
             poseStack.pushPose();
             VertexConsumer consumer = bufferSource.getBuffer(RenderType.entitySolid(SHADER_COMPAT_WHITE));

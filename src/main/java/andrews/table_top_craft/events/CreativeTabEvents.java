@@ -25,10 +25,14 @@ public class CreativeTabEvents
                             populator.accept(TTCBlocks.JUNGLE_CHESS.get());
                             populator.accept(TTCBlocks.ACACIA_CHESS.get());
                             populator.accept(TTCBlocks.DARK_OAK_CHESS.get());
+                            populator.accept(TTCBlocks.MANGROVE_CHESS.get());
                             populator.accept(TTCBlocks.CRIMSON_CHESS.get());
                             populator.accept(TTCBlocks.WARPED_CHESS.get());
-                            populator.accept(TTCBlocks.TIC_TAC_TOE.get());
                             populator.accept(TTCBlocks.CHESS_PIECE_FIGURE.get());
+
+                            populator.accept(TTCBlocks.WHITE_CHESS_TIMER.get());
+
+                            populator.accept(TTCBlocks.TIC_TAC_TOE.get());
                         })
         );
     }

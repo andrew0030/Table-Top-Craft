@@ -1,8 +1,7 @@
 package andrews.table_top_craft.util;
 
 import andrews.table_top_craft.network.TTCNetwork;
-import andrews.table_top_craft.network.client.MessageClientChessAnimationState;
-import andrews.table_top_craft.network.client.MessageClientOpenChessPieceSelectionScreen;
+import andrews.table_top_craft.network.client.*;
 import andrews.table_top_craft.network.server.*;
 import net.minecraft.core.BlockPos;
 import net.minecraft.server.level.ServerPlayer;
@@ -26,6 +25,21 @@ public class NetworkUtil
 	public static void setChessAnimationForAllTracking(Level level, BlockPos pos, byte actionType)
 	{
 		NetworkUtil.setChessAnimationForAllTracking(level, pos, actionType, (byte) 0, (byte) 0);
+	}
+
+	public static void openChessPromotionFromServer(BlockPos pos, boolean isWhite, ServerPlayer serverPlayer)
+	{
+		TTCNetwork.CHANNEL.send(PacketDistributor.PLAYER.with(() -> serverPlayer), new MessageClientOpenChessPromotionScreen(pos, isWhite));
+	}
+
+	public static void playChesTimerSoundFromServer(Level level, BlockPos pos, byte id)
+	{
+		TTCNetwork.CHANNEL.send(PacketDistributor.TRACKING_CHUNK.with(() -> level.getChunkAt(pos)), new MessageClientPlayChessTimerSound(pos, id));
+	}
+
+	public static void playChesParticlesFromServer(Level level, BlockPos pos, byte destCord, boolean isWhite, float xSpeed, float ySpeed, float zSpeed)
+	{
+		TTCNetwork.CHANNEL.send(PacketDistributor.TRACKING_CHUNK.with(() -> level.getChunkAt(pos)), new MessageClientChessParticles(pos, destCord, isWhite, xSpeed, ySpeed, zSpeed));
 	}
 
 	@OnlyIn(Dist.CLIENT)
@@ -129,5 +143,40 @@ public class NetworkUtil
 	public static void openGuiWithServerPlayer(BlockPos pos)
 	{
 		TTCNetwork.CHANNEL.sendToServer(new MessageServerOpenGUIWithServerPlayer(pos));
+	}
+
+	@OnlyIn(Dist.CLIENT)
+	public static void adjustChessTimerTime(BlockPos pos, byte type, byte category)
+	{
+		TTCNetwork.CHANNEL.sendToServer(new MessageServerAdjustChessTimerTime(pos, type, category));
+	}
+
+	/**
+	 * Used to toggle the Piece Animations and Particle options for Chess tables
+	 * @param pos Chess BlockPos
+	 * @param type Which one to switch. 0 = Animations and 1 = Particles
+	 */
+	@OnlyIn(Dist.CLIENT)
+	public static void toggleChessVisuals(BlockPos pos, byte type)
+	{
+		TTCNetwork.CHANNEL.sendToServer(new MessageServerChessVisuals(pos, type));
+	}
+
+	@OnlyIn(Dist.CLIENT)
+	public static void doPawnPromotion(BlockPos pos, byte type)
+	{
+		TTCNetwork.CHANNEL.sendToServer(new MessageServerDoPawnPromotion(pos, type));
+	}
+
+	@OnlyIn(Dist.CLIENT)
+	public static void resetChessTimerTime(BlockPos pos)
+	{
+		TTCNetwork.CHANNEL.sendToServer(new MessageServerResetChessTimer(pos));
+	}
+
+	@OnlyIn(Dist.CLIENT)
+	public static void pauseChessTimerTime(BlockPos pos)
+	{
+		TTCNetwork.CHANNEL.sendToServer(new MessageServerPauseChessTimer(pos));
 	}
 }

@@ -12,16 +12,21 @@ import andrews.table_top_craft.game_logic.chess.board.tiles.BaseChessTile;
 import andrews.table_top_craft.game_logic.chess.pgn.FenUtil;
 import andrews.table_top_craft.game_logic.chess.pieces.*;
 import andrews.table_top_craft.game_logic.chess.player.MoveTransition;
+import andrews.table_top_craft.objects.blocks.ChessBlock;
 import andrews.table_top_craft.registry.TTCTileEntities;
 import andrews.table_top_craft.tile_entities.animations.ChessAnimations;
 import andrews.table_top_craft.util.NBTColorSaving;
+import andrews.table_top_craft.util.NetworkUtil;
 import net.minecraft.core.BlockPos;
+import net.minecraft.core.Direction;
 import net.minecraft.nbt.CompoundTag;
 import net.minecraft.nbt.ListTag;
 import net.minecraft.nbt.Tag;
 import net.minecraft.network.protocol.Packet;
 import net.minecraft.network.protocol.game.ClientGamePacketListener;
 import net.minecraft.network.protocol.game.ClientboundBlockEntityDataPacket;
+import net.minecraft.server.level.ServerLevel;
+import net.minecraft.server.level.ServerPlayer;
 import net.minecraft.world.level.Level;
 import net.minecraft.world.level.block.state.BlockState;
 import net.minecraft.world.phys.AABB;
@@ -31,6 +36,7 @@ import net.minecraftforge.fml.DistExecutor;
 import java.util.ArrayList;
 import java.util.List;
 import java.util.Random;
+import java.util.UUID;
 import java.util.concurrent.atomic.AtomicReference;
 
 public class ChessTileEntity extends AnimatedBlockEntity
@@ -45,6 +51,7 @@ public class ChessTileEntity extends AnimatedBlockEntity
 	public MoveTransition transition;
 	public byte currentCord;
 	public byte destCord;
+	public boolean playedParticles;
 
 	private Board board;
 	private BaseChessTile sourceTile;
@@ -56,6 +63,11 @@ public class ChessTileEntity extends AnimatedBlockEntity
 	private boolean showAvailableMoves;
 	private boolean showPreviousMove;
 	private boolean useCustomPlate;
+	private boolean playPieceAnimations = true;
+	private boolean displayParticles = true;
+	private boolean waitingForPromotion;
+	private byte promotionCoordinate = -1;
+	private UUID promotionPlayerUUID;
 	
 	private String tileInfoColor;
 	private String whiteTilesColor;
@@ -135,13 +147,81 @@ public class ChessTileEntity extends AnimatedBlockEntity
 
 		if(blockEntity.doingAnimationTimer != 0)
 		{
+			// Visual Effects
+			if(blockEntity.doingAnimationTimer >= System.currentTimeMillis() && blockEntity.move != null && blockEntity.transition != null)
+			{
+				if(blockEntity.move.isAttack() && !blockEntity.playedParticles)
+				{
+					int timeMod = 250;
+					boolean isBlack = blockEntity.move.getMovedPiece().getPieceColor().isBlack();
+					byte destCoordinate = (byte) blockEntity.move.getDestinationCoordinate();
+					float xSpeed = 0;
+					float ySpeed = 0;
+					float zSpeed = 0;
+
+					if(blockEntity.move.isEnPassantMove()) {
+						destCoordinate += isBlack ? -8 : 8;
+						timeMod = 400;
+						if(blockEntity.getBlockState().hasProperty(ChessBlock.FACING))
+							switch (blockEntity.getBlockState().getValue(ChessBlock.FACING)) {
+								case NORTH -> zSpeed = isBlack ? -0.4F : 0.4F;
+								case SOUTH -> zSpeed = isBlack ? 0.4F : -0.4F;
+								case EAST -> xSpeed = isBlack ? 0.4F : -0.4F;
+								case WEST -> xSpeed = isBlack ? -0.4F : 0.4F;
+							}
+					}
+					else if (blockEntity.move.isAttack())
+					{
+						BasePiece.PieceType type = blockEntity.move.getMovedPiece().getPieceType();
+						int startX = blockEntity.move.getCurrentCoordinate() % 8;
+						int startY = blockEntity.move.getCurrentCoordinate() / 8;
+						int destX = blockEntity.move.getDestinationCoordinate() % 8;
+						int destY =  blockEntity.move.getDestinationCoordinate() / 8;
+						int deltaY = startY - destY;
+						deltaY = !isBlack ? deltaY : -deltaY;
+						int deltaX = startX - destX;
+						deltaX = !isBlack ? -deltaX : deltaX;
+
+						// Helper method to calculate speed and timeMod
+						float[] result = ChessTileEntity.calculateSpeedAndTimeMod(type, isBlack, blockEntity.getBlockState().getValue(ChessBlock.FACING), deltaY, deltaX);
+
+						zSpeed = result[0];
+						xSpeed = result[1];
+						timeMod = (int) result[2];
+					}
+
+					if(blockEntity.doingAnimationTimer - timeMod < System.currentTimeMillis())
+					{
+						if(blockEntity.getDisplayParticles() && !level.isClientSide())
+							NetworkUtil.playChesParticlesFromServer(level, pos, destCoordinate, isBlack, xSpeed, ySpeed, zSpeed);
+						blockEntity.playedParticles = true;
+					}
+				}
+			}
+			// Board Transition
 			if(blockEntity.doingAnimationTimer < System.currentTimeMillis() && blockEntity.move != null && blockEntity.transition != null)
 			{
 				blockEntity.setBoard(blockEntity.transition.getTransitionBoard());
 				blockEntity.getMoveLog().addMove(blockEntity.move);
+				// If the Move was a Pawn Promotion, we make the Board wait for the Promotion choice to be made
+				if(blockEntity.move.isPawnPromotion())
+				{
+					blockEntity.setWaitingForPromotion(true);
+					blockEntity.setPromotionCoordinate((byte) blockEntity.move.getDestinationCoordinate());
+					if(level instanceof ServerLevel serverLevel)
+					{
+						List<ServerPlayer> players = serverLevel.players();
+						for(ServerPlayer serverPlayer : players) {
+							if (serverPlayer.getUUID().equals(blockEntity.getPromotionPlayerUUID()))
+								NetworkUtil.openChessPromotionFromServer(blockEntity.getBlockPos(), blockEntity.move.getMovedPiece().getPieceColor().isWhite(), serverPlayer);
+						}
+					}
+					blockEntity.setPromotionPlayerUUID(null);
+				}
 				blockEntity.doingAnimationTimer = 0;
 				blockEntity.move = null;
 				blockEntity.transition = null;
+				blockEntity.playedParticles = false;
 				level.sendBlockUpdated(pos, level.getBlockState(pos), level.getBlockState(pos), 2);
 				blockEntity.setChanged();
 			}
@@ -149,17 +229,26 @@ public class ChessTileEntity extends AnimatedBlockEntity
 
 		if(blockEntity.getHumanMovedPiece() != null)
 		{
-			if (!blockEntity.selectedPieceState.isStarted())
+			if (blockEntity.getPlayPieceAnimations() && !blockEntity.selectedPieceState.isStarted())
 			{
+				// If Animations should play and a Piece is selected we started the selection Animation if stopped
 				blockEntity.selectedPiecePos = blockEntity.getHumanMovedPiece().getPiecePosition();
 				blockEntity.lingeringStates.clear();
 				blockEntity.selectedPieceState.interpolateAndStart(0.15F, EasingTypes.LINEAR, false, blockEntity.getTicksExisted());
+			}
+			else if (!blockEntity.getPlayPieceAnimations() && blockEntity.selectedPieceState.isStarted())
+			{
+				// If Animations shouldn't play and a Piece is selected we stop the Animation if started
+				blockEntity.selectedPieceState.interpolateAndStop(0.15F, EasingTypes.LINEAR, false);
+				blockEntity.lingeringStates.add(new AdvancedAnimationState(blockEntity.selectedPieceState));
+				blockEntity.selectedPieceState.stop();
 			}
 		}
 		else
 		{
 			if (blockEntity.selectedPieceState.isStarted())
 			{
+				// If no piece is selected we stop the selection Animation
 				blockEntity.selectedPieceState.interpolateAndStop(0.15F, EasingTypes.LINEAR, false);
 				blockEntity.lingeringStates.add(new AdvancedAnimationState(blockEntity.selectedPieceState));
 				blockEntity.selectedPieceState.stop();
@@ -214,6 +303,10 @@ public class ChessTileEntity extends AnimatedBlockEntity
 		chessNBT.putInt("ShowAvailableMoves", !this.showAvailableMoves ? 0 : 1);
 		chessNBT.putInt("ShowPreviousMove", !this.showPreviousMove ? 0 : 1);
 		chessNBT.putInt("UseCustomPlate", !this.useCustomPlate ? 0 : 1);
+		chessNBT.putInt("PlayPieceAnimations", !this.playPieceAnimations ? 0 : 1);
+		chessNBT.putInt("DisplayParticles", !this.displayParticles ? 0 : 1);
+		chessNBT.putInt("WaitingForPromotion", !this.waitingForPromotion ? 0 : 1);
+		chessNBT.putByte("PromotionCoordinate", getPromotionCoordinate());
 		chessNBT.putString("TileInfoColor", getTileInfoColor());
 		chessNBT.putString("WhiteTilesColor", getWhiteTilesColor());
 		chessNBT.putString("BlackTilesColor", getBlackTilesColor());
@@ -264,37 +357,20 @@ public class ChessTileEntity extends AnimatedBlockEntity
 				PieceColor pieceColor = PieceColor.WHITE;
 				if(moveInfo[1].equals("B"))
 					pieceColor = PieceColor.BLACK;
-				
-				switch(moveInfo[0])
+
+				switch (moveInfo[0])
 				{
-				default:
-					break;
-				case "pawn_jump":
-					this.moveLog.addMove(new PawnJumpMove(this.getBoard(), new PawnPiece(pieceColor, Integer.parseInt(moveInfo[2])), Integer.parseInt(moveInfo[3])));
-					break;
-				case "pawn_move":
-					this.moveLog.addMove(new PawnMove(this.getBoard(), new PawnPiece(pieceColor, Integer.parseInt(moveInfo[2])), Integer.parseInt(moveInfo[3])));
-					break;
-				case "pawn_attack":
-					this.moveLog.addMove(new PawnAttackMove(this.getBoard(), new PawnPiece(pieceColor, Integer.parseInt(moveInfo[2])), Integer.parseInt(moveInfo[3]), getPieceFromType(moveInfo[5], pieceColor, Integer.parseInt(moveInfo[4]))));
-					break;
-				case "pawn_enpassant":
-					this.moveLog.addMove(new PawnEnPassantAttackMove(this.getBoard(), new PawnPiece(pieceColor, Integer.parseInt(moveInfo[2])), Integer.parseInt(moveInfo[3]), new PawnPiece(getOppositeColor(pieceColor), Integer.parseInt(moveInfo[4]))));
-					break;
-				case "pawn_promotion":
-					this.moveLog.addMove(new PawnPromotion(new PawnMove(this.getBoard(), new PawnPiece(pieceColor, Integer.parseInt(moveInfo[2])), Integer.parseInt(moveInfo[3]))));
-					break;
-				case "major_move":
-					this.moveLog.addMove(new MajorMove(this.getBoard(), getPieceFromType(moveInfo[4], getOppositeColor(pieceColor), Integer.parseInt(moveInfo[2])), Integer.parseInt(moveInfo[3])));
-					break;
-				case "major_attack":
-					this.moveLog.addMove(new MajorAttackMove(this.getBoard(), getPieceFromType(moveInfo[3], getOppositeColor(pieceColor), Integer.parseInt(moveInfo[2])), Integer.parseInt(moveInfo[4]), getPieceFromType(moveInfo[6], pieceColor, Integer.parseInt(moveInfo[5]))));
-					break;
-				case "king_side_castle":
-					this.moveLog.addMove(new KingSideCastleMove(this.getBoard(), new KingPiece(pieceColor, Integer.parseInt(moveInfo[2]), false, false), Integer.parseInt(moveInfo[3]), new RookPiece(pieceColor, Integer.parseInt(moveInfo[4])), Integer.parseInt(moveInfo[5]), Integer.parseInt(moveInfo[6])));
-					break;
-				case "queen_side_castle":
-					this.moveLog.addMove(new QueenSideCastleMove(this.getBoard(), new KingPiece(pieceColor, Integer.parseInt(moveInfo[2]), false, false), Integer.parseInt(moveInfo[3]), new RookPiece(pieceColor, Integer.parseInt(moveInfo[4])), Integer.parseInt(moveInfo[5]), Integer.parseInt(moveInfo[6])));
+					default -> {}
+					case "pawn_jump" -> this.moveLog.addMove(new PawnJumpMove(this.getBoard(), new PawnPiece(pieceColor, Integer.parseInt(moveInfo[2])), Integer.parseInt(moveInfo[3])));
+					case "pawn_move" -> this.moveLog.addMove(new PawnMove(this.getBoard(), new PawnPiece(pieceColor, Integer.parseInt(moveInfo[2])), Integer.parseInt(moveInfo[3])));
+					case "pawn_attack" -> this.moveLog.addMove(new PawnAttackMove(this.getBoard(), new PawnPiece(pieceColor, Integer.parseInt(moveInfo[2])), Integer.parseInt(moveInfo[3]), getPieceFromType(moveInfo[5], pieceColor, Integer.parseInt(moveInfo[4]))));
+					case "pawn_enpassant" -> this.moveLog.addMove(new PawnEnPassantAttackMove(this.getBoard(), new PawnPiece(pieceColor, Integer.parseInt(moveInfo[2])), Integer.parseInt(moveInfo[3]), new PawnPiece(getOppositeColor(pieceColor), Integer.parseInt(moveInfo[4]))));
+					case "pawn_attack_promotion" -> this.moveLog.addMove(new PawnPromotion(new PawnAttackMove(this.getBoard(), new PawnPiece(pieceColor, Integer.parseInt(moveInfo[2])), Integer.parseInt(moveInfo[3]), getPieceFromType(moveInfo[5], pieceColor, Integer.parseInt(moveInfo[4]))), moveInfo[6]));
+					case "pawn_promotion" -> this.moveLog.addMove(new PawnPromotion(new PawnMove(this.getBoard(), new PawnPiece(pieceColor, Integer.parseInt(moveInfo[2])), Integer.parseInt(moveInfo[3])), moveInfo[4]));
+					case "major_move" -> this.moveLog.addMove(new MajorMove(this.getBoard(), getPieceFromType(moveInfo[4], getOppositeColor(pieceColor), Integer.parseInt(moveInfo[2])), Integer.parseInt(moveInfo[3])));
+					case "major_attack" -> this.moveLog.addMove(new MajorAttackMove(this.getBoard(), getPieceFromType(moveInfo[3], getOppositeColor(pieceColor), Integer.parseInt(moveInfo[2])), Integer.parseInt(moveInfo[4]), getPieceFromType(moveInfo[6], pieceColor, Integer.parseInt(moveInfo[5]))));
+					case "king_side_castle" -> this.moveLog.addMove(new KingSideCastleMove(this.getBoard(), new KingPiece(pieceColor, Integer.parseInt(moveInfo[2]), false, false), Integer.parseInt(moveInfo[3]), new RookPiece(pieceColor, Integer.parseInt(moveInfo[4])), Integer.parseInt(moveInfo[5]), Integer.parseInt(moveInfo[6])));
+					case "queen_side_castle" -> this.moveLog.addMove(new QueenSideCastleMove(this.getBoard(), new KingPiece(pieceColor, Integer.parseInt(moveInfo[2]), false, false), Integer.parseInt(moveInfo[3]), new RookPiece(pieceColor, Integer.parseInt(moveInfo[4])), Integer.parseInt(moveInfo[5]), Integer.parseInt(moveInfo[6])));
 				}
 			}
 		}
@@ -308,6 +384,14 @@ public class ChessTileEntity extends AnimatedBlockEntity
 			this.tileInfoColor = chessNBT.getString("TileInfoColor");
 		if(chessNBT.contains("UseCustomPlate", Tag.TAG_INT))
 			this.useCustomPlate = chessNBT.getInt("UseCustomPlate") != 0;
+		if(chessNBT.contains("PlayPieceAnimations", Tag.TAG_INT))
+			this.playPieceAnimations = chessNBT.getInt("PlayPieceAnimations") != 0;
+		if(chessNBT.contains("DisplayParticles", Tag.TAG_INT))
+			this.displayParticles = chessNBT.getInt("DisplayParticles") != 0;
+		if(chessNBT.contains("WaitingForPromotion", Tag.TAG_INT))
+			this.waitingForPromotion = chessNBT.getInt("WaitingForPromotion") != 0;
+		if(chessNBT.contains("PromotionCoordinate", Tag.TAG_BYTE))
+			this.promotionCoordinate = chessNBT.getByte("PromotionCoordinate");
 		if(chessNBT.contains("WhiteTilesColor", Tag.TAG_STRING))
 			this.whiteTilesColor = chessNBT.getString("WhiteTilesColor");
 		if(chessNBT.contains("BlackTilesColor", Tag.TAG_STRING))
@@ -333,7 +417,110 @@ public class ChessTileEntity extends AnimatedBlockEntity
 		if(chessNBT.contains("PieceSet", Tag.TAG_INT))
 			this.pieceSet = chessNBT.getInt("PieceSet");
 	}
-	
+
+	private static float[] calculateSpeedAndTimeMod(BasePiece.PieceType type, boolean isBlack, Direction facing, int deltaY, int deltaX)
+	{
+		float[] result = new float[3];
+		float zSpeed = 0;
+		float xSpeed = 0;
+		int timeMod = 250;
+
+		if (type.equals(BasePiece.PieceType.ROOK)) {
+			if (Math.abs(deltaY) > 4) {
+				switch (facing) {
+					case NORTH -> zSpeed = (isBlack ? 0.4F : -0.4F) * (deltaY < 0 ? -1 : 1);
+					case SOUTH -> zSpeed = (isBlack ? -0.4F : 0.4F) * (deltaY < 0 ? -1 : 1);
+					case EAST -> xSpeed = (isBlack ? -0.4F : 0.4F) * (deltaY < 0 ? -1 : 1);
+					case WEST -> xSpeed = (isBlack ? 0.4F : -0.4F) * (deltaY < 0 ? -1 : 1);
+				}
+				timeMod = 550;
+			}
+			if (Math.abs(deltaX) > 4) {
+				switch (facing) {
+					case NORTH -> xSpeed = (isBlack ? -0.4F : 0.4F) * (deltaX < 0 ? -1 : 1);
+					case SOUTH -> xSpeed = (isBlack ? 0.4F : -0.4F) * (deltaX < 0 ? -1 : 1);
+					case EAST -> zSpeed = (isBlack ? -0.4F : 0.4F) * (deltaX < 0 ? -1 : 1);
+					case WEST -> zSpeed = (isBlack ? 0.4F : -0.4F) * (deltaX < 0 ? -1 : 1);
+				}
+				timeMod = 550;
+			}
+		}
+		else if (type.equals(BasePiece.PieceType.BISHOP)) {
+			if (Math.abs(deltaY) > 3) {
+				switch (facing) {
+					case NORTH -> {
+						zSpeed = (isBlack ? 0.4F : -0.4F) * (deltaY < 0 ? -1 : 1);
+						xSpeed = (isBlack ? -0.4F : 0.4F) * (deltaX < 0 ? -1 : 1);
+					}
+					case SOUTH -> {
+						zSpeed = (isBlack ? -0.4F : 0.4F) * (deltaY < 0 ? -1 : 1);
+						xSpeed = (isBlack ? 0.4F : -0.4F) * (deltaX < 0 ? -1 : 1);
+					}
+					case EAST -> {
+						zSpeed = (isBlack ? -0.4F : 0.4F) * (deltaX < 0 ? -1 : 1);
+						xSpeed = (isBlack ? -0.4F : 0.4F) * (deltaY < 0 ? -1 : 1);
+					}
+					case WEST -> {
+						zSpeed = (isBlack ? 0.4F : -0.4F) * (deltaX < 0 ? -1 : 1);
+						xSpeed = (isBlack ? 0.4F : -0.4F) * (deltaY < 0 ? -1 : 1);
+					}
+				}
+				timeMod = 550;
+			}
+		}
+		else if (type.equals(BasePiece.PieceType.QUEEN)) {
+			if(Math.abs(deltaX) != Math.abs(deltaY))
+			{
+				if (Math.abs(deltaY) > 3) {
+					switch (facing) {
+						case NORTH -> zSpeed = (isBlack ? 0.4F : -0.4F) * (deltaY < 0 ? -1 : 1);
+						case SOUTH -> zSpeed = (isBlack ? -0.4F : 0.4F) * (deltaY < 0 ? -1 : 1);
+						case EAST -> xSpeed = (isBlack ? -0.4F : 0.4F) * (deltaY < 0 ? -1 : 1);
+						case WEST -> xSpeed = (isBlack ? 0.4F : -0.4F) * (deltaY < 0 ? -1 : 1);
+					}
+					timeMod = 550;
+				}
+				if (Math.abs(deltaX) > 3) {
+					switch (facing) {
+						case NORTH -> xSpeed = (isBlack ? -0.4F : 0.4F) * (deltaX < 0 ? -1 : 1);
+						case SOUTH -> xSpeed = (isBlack ? 0.4F : -0.4F) * (deltaX < 0 ? -1 : 1);
+						case EAST -> zSpeed = (isBlack ? -0.4F : 0.4F) * (deltaX < 0 ? -1 : 1);
+						case WEST -> zSpeed = (isBlack ? 0.4F : -0.4F) * (deltaX < 0 ? -1 : 1);
+					}
+					timeMod = 550;
+				}
+			}
+			else
+			{
+				if (Math.abs(deltaY) > 3) {
+					switch (facing) {
+						case NORTH -> {
+							zSpeed = (isBlack ? 0.4F : -0.4F) * (deltaY < 0 ? -1 : 1);
+							xSpeed = (isBlack ? -0.4F : 0.4F) * (deltaX < 0 ? -1 : 1);
+						}
+						case SOUTH -> {
+							zSpeed = (isBlack ? -0.4F : 0.4F) * (deltaY < 0 ? -1 : 1);
+							xSpeed = (isBlack ? 0.4F : -0.4F) * (deltaX < 0 ? -1 : 1);
+						}
+						case EAST -> {
+							zSpeed = (isBlack ? -0.4F : 0.4F) * (deltaX < 0 ? -1 : 1);
+							xSpeed = (isBlack ? -0.4F : 0.4F) * (deltaY < 0 ? -1 : 1);
+						}
+						case WEST -> {
+							zSpeed = (isBlack ? 0.4F : -0.4F) * (deltaX < 0 ? -1 : 1);
+							xSpeed = (isBlack ? 0.4F : -0.4F) * (deltaY < 0 ? -1 : 1);
+						}
+					}
+					timeMod = 550;
+				}
+			}
+		}
+		result[0] = zSpeed;
+		result[1] = xSpeed;
+		result[2] = timeMod;
+		return result;
+	}
+
 	private BasePiece getPieceFromType(String pieceType, PieceColor pieceColor, int piecePosition)
 	{
 		return switch (pieceType)
@@ -487,6 +674,26 @@ public class ChessTileEntity extends AnimatedBlockEntity
 	{
 		return this.useCustomPlate;
 	}
+
+	public void setPlayPieceAnimations(boolean shouldPlayPieceAnimations)
+	{
+		this.playPieceAnimations = shouldPlayPieceAnimations;
+	}
+
+	public boolean getPlayPieceAnimations()
+	{
+		return this.playPieceAnimations;
+	}
+
+	public void setDisplayParticles(boolean shouldDisplayParticles)
+	{
+		this.displayParticles = shouldDisplayParticles;
+	}
+
+	public boolean getDisplayParticles()
+	{
+		return this.displayParticles;
+	}
 	
 	public void setShowTileInfo(boolean shouldShowTileInfo)
 	{
@@ -496,6 +703,26 @@ public class ChessTileEntity extends AnimatedBlockEntity
 	public boolean getShouldShowTileInfo()
 	{
 		return this.showTileInfo;
+	}
+
+	public void setWaitingForPromotion(boolean waitingForPromotion)
+	{
+		this.waitingForPromotion = waitingForPromotion;
+	}
+
+	public boolean getWaitingForPromotion()
+	{
+		return this.waitingForPromotion;
+	}
+
+	public void setPromotionCoordinate(byte promotionCoordinate)
+	{
+		this.promotionCoordinate = promotionCoordinate;
+	}
+
+	public byte getPromotionCoordinate()
+	{
+		return this.promotionCoordinate;
 	}
 	
 	public void setBoard(Board board)
@@ -573,5 +800,15 @@ public class ChessTileEntity extends AnimatedBlockEntity
 	public void addToMoveTransitionsCache(MoveTransition transition)
 	{
 		this.moveTransitionsCache.add(transition);
+	}
+
+	public void setPromotionPlayerUUID(UUID uuid)
+	{
+		this.promotionPlayerUUID = uuid;
+	}
+
+	public UUID getPromotionPlayerUUID()
+	{
+		return this.promotionPlayerUUID;
 	}
 }

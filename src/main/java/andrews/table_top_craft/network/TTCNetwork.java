@@ -1,7 +1,6 @@
 package andrews.table_top_craft.network;
 
-import andrews.table_top_craft.network.client.MessageClientChessAnimationState;
-import andrews.table_top_craft.network.client.MessageClientOpenChessPieceSelectionScreen;
+import andrews.table_top_craft.network.client.*;
 import andrews.table_top_craft.network.server.*;
 import andrews.table_top_craft.util.Reference;
 import net.minecraft.resources.ResourceLocation;
@@ -10,14 +9,12 @@ import net.minecraftforge.network.simple.SimpleChannel;
 
 public class TTCNetwork
 {
-public static final String NETWORK_PROTOCOL = "1";
-	
+	public static final String NETWORK_PROTOCOL = "1";
 	public static final SimpleChannel CHANNEL = NetworkRegistry.ChannelBuilder.named(new ResourceLocation(Reference.MODID, "net"))
 		.networkProtocolVersion(() -> NETWORK_PROTOCOL)
 		.clientAcceptedVersions(NETWORK_PROTOCOL::equals)
 		.serverAcceptedVersions(NETWORK_PROTOCOL::equals)
 		.simpleChannel();
-	
 	/**
 	 * Used to set up all the Messages
 	 */
@@ -35,6 +32,24 @@ public static final String NETWORK_PROTOCOL = "1";
 		.encoder(MessageClientChessAnimationState::serialize)
 		.decoder(MessageClientChessAnimationState::deserialize)
 		.consumerMainThread(MessageClientChessAnimationState::handle)
+		.add();
+
+		CHANNEL.messageBuilder(MessageClientOpenChessPromotionScreen.class, id++)
+		.encoder(MessageClientOpenChessPromotionScreen::serialize)
+		.decoder(MessageClientOpenChessPromotionScreen::deserialize)
+		.consumerMainThread(MessageClientOpenChessPromotionScreen::handle)
+		.add();
+
+		CHANNEL.messageBuilder(MessageClientPlayChessTimerSound.class, id++)
+		.encoder(MessageClientPlayChessTimerSound::serialize)
+		.decoder(MessageClientPlayChessTimerSound::deserialize)
+		.consumerMainThread(MessageClientPlayChessTimerSound::handle)
+		.add();
+
+		CHANNEL.messageBuilder(MessageClientChessParticles.class, id++)
+		.encoder(MessageClientChessParticles::serialize)
+		.decoder(MessageClientChessParticles::deserialize)
+		.consumerMainThread(MessageClientChessParticles::handle)
 		.add();
 
 		// Server Messages
@@ -126,6 +141,36 @@ public static final String NETWORK_PROTOCOL = "1";
 		.encoder(MessageServerOpenGUIWithServerPlayer::serialize)
 		.decoder(MessageServerOpenGUIWithServerPlayer::deserialize)
 		.consumerMainThread(MessageServerOpenGUIWithServerPlayer::handle)
+		.add();
+
+		CHANNEL.messageBuilder(MessageServerAdjustChessTimerTime.class, id++)
+		.encoder(MessageServerAdjustChessTimerTime::serialize)
+		.decoder(MessageServerAdjustChessTimerTime::deserialize)
+		.consumerMainThread(MessageServerAdjustChessTimerTime::handle)
+		.add();
+
+		CHANNEL.messageBuilder(MessageServerChessVisuals.class, id++)
+		.encoder(MessageServerChessVisuals::serialize)
+		.decoder(MessageServerChessVisuals::deserialize)
+		.consumerMainThread(MessageServerChessVisuals::handle)
+		.add();
+
+		CHANNEL.messageBuilder(MessageServerDoPawnPromotion.class, id++)
+		.encoder(MessageServerDoPawnPromotion::serialize)
+		.decoder(MessageServerDoPawnPromotion::deserialize)
+		.consumerMainThread(MessageServerDoPawnPromotion::handle)
+		.add();
+
+		CHANNEL.messageBuilder(MessageServerResetChessTimer.class, id++)
+		.encoder(MessageServerResetChessTimer::serialize)
+		.decoder(MessageServerResetChessTimer::deserialize)
+		.consumerMainThread(MessageServerResetChessTimer::handle)
+		.add();
+
+		CHANNEL.messageBuilder(MessageServerPauseChessTimer.class, id++)
+		.encoder(MessageServerPauseChessTimer::serialize)
+		.decoder(MessageServerPauseChessTimer::deserialize)
+		.consumerMainThread(MessageServerPauseChessTimer::handle)
 		.add();
 	}
 }

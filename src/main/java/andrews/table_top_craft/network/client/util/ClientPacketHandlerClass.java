@@ -10,13 +10,19 @@ import andrews.table_top_craft.animation.system.core.types.EasingTypes;
 import andrews.table_top_craft.animation.system.core.types.TransformTypes;
 import andrews.table_top_craft.animation.system.core.types.util.EasingType;
 import andrews.table_top_craft.game_logic.chess.board.Board;
-import andrews.table_top_craft.network.client.MessageClientChessAnimationState;
-import andrews.table_top_craft.network.client.MessageClientOpenChessPieceSelectionScreen;
+import andrews.table_top_craft.network.client.*;
+import andrews.table_top_craft.objects.blocks.ChessBlock;
+import andrews.table_top_craft.particles.options.ChessShatterParticleOptions;
+import andrews.table_top_craft.registry.TTCParticles;
+import andrews.table_top_craft.screens.chess.menus.ChessPawnPromotionScreen;
 import andrews.table_top_craft.screens.chess.menus.ChessPieceSelectionScreen;
 import andrews.table_top_craft.tile_entities.ChessTileEntity;
+import andrews.table_top_craft.util.NBTColorSaving;
 import net.minecraft.client.Minecraft;
 import net.minecraft.client.animation.KeyframeAnimations;
 import net.minecraft.core.BlockPos;
+import net.minecraft.sounds.SoundEvents;
+import net.minecraft.sounds.SoundSource;
 import net.minecraftforge.network.NetworkEvent;
 
 import java.util.concurrent.atomic.AtomicReference;
@@ -33,6 +39,80 @@ public class ClientPacketHandlerClass
         if(Minecraft.getInstance().player.getLevel().getBlockEntity(pos) != null && Minecraft.getInstance().player.getLevel().getBlockEntity(pos) instanceof ChessTileEntity chessTileEntity)
         {
             Minecraft.getInstance().setScreen(new ChessPieceSelectionScreen(chessTileEntity, isStandardSetUnlocked, isClassicSetUnlocked, isPandorasCreaturesSetUnlocked));
+        }
+    }
+
+    public static void handleOpenChessPromotionPacket(MessageClientOpenChessPromotionScreen msg, Supplier<NetworkEvent.Context> ctx)
+    {
+        BlockPos pos = msg.pos;
+        boolean isWhite = msg.isWhite;
+        if(Minecraft.getInstance().player.getLevel().getBlockEntity(pos) != null && Minecraft.getInstance().player.getLevel().getBlockEntity(pos) instanceof ChessTileEntity chessTileEntity)
+        {
+            Minecraft.getInstance().setScreen(new ChessPawnPromotionScreen(chessTileEntity, isWhite));
+        }
+    }
+
+    public static void handlePlayChessTimerSoundPacket(MessageClientPlayChessTimerSound msg, Supplier<NetworkEvent.Context> ctx)
+    {
+        BlockPos pos = msg.pos;
+        byte id = msg.id;
+        if(Minecraft.getInstance().level != null)
+        {
+            switch (id)
+            {
+                case 0 -> Minecraft.getInstance().level.playLocalSound(pos, SoundEvents.LEVER_CLICK, SoundSource.BLOCKS, 1.0F, 0.6F, false);
+                case 1 -> {
+                    Minecraft.getInstance().level.playLocalSound(pos, SoundEvents.LEVER_CLICK, SoundSource.BLOCKS, 1.0F, 0.6F, false);
+                    Minecraft.getInstance().level.playLocalSound(pos, SoundEvents.AMETHYST_BLOCK_BREAK, SoundSource.BLOCKS, 3.0F, 1.2F, false);
+                }
+            }
+        }
+    }
+
+    public static void handlePlayChessParticlesPacket(MessageClientChessParticles msg, Supplier<NetworkEvent.Context> ctx)
+    {
+        BlockPos pos = msg.pos;
+        byte destCord = msg.destCord;
+        boolean isWhite = msg.isWhite;
+        float xSpeed = msg.xSpeed;
+        float ySpeed = msg.ySpeed;
+        float zSpeed = msg.zSpeed;
+        if(Minecraft.getInstance().level != null)
+        {
+            double xOffset = 0.0;
+            double zOffset = 0.0;
+            switch (Minecraft.getInstance().level.getBlockState(pos).getValue(ChessBlock.FACING))
+            {
+                case NORTH -> {
+                    xOffset = (destCord % 8) * 0.125 + 0.0625;
+                    zOffset = (destCord / 8) * 0.125 + 0.0625;
+                }
+                case SOUTH -> {
+                    xOffset = 1 - (destCord % 8) * 0.125 - 0.0625;
+                    zOffset = 1 - (destCord / 8) * 0.125 - 0.0625;
+                }
+                case WEST -> {
+                    zOffset = 1 - (destCord % 8) * 0.125 - 0.0625;
+                    xOffset = (destCord / 8) * 0.125 + 0.0625;
+                }
+                case EAST -> {
+                    zOffset = (destCord % 8) * 0.125 + 0.0625;
+                    xOffset = 1 - (destCord / 8) * 0.125 - 0.0625;
+                }
+            }
+
+            if(Minecraft.getInstance().level.getBlockEntity(pos) instanceof ChessTileEntity blockEntity)
+            {
+                String color = isWhite ? blockEntity.getWhitePiecesColor() : blockEntity.getBlackPiecesColor();
+                int red = NBTColorSaving.getRed(color);
+                int green = NBTColorSaving.getGreen(color);
+                int blue = NBTColorSaving.getBlue(color);
+
+                for(int i = 0; i < 10; i++)
+                    Minecraft.getInstance().level.addParticle(TTCParticles.TINY_POOF.get(), pos.getX() + xOffset, pos.getY() + (0.0625F * 13.5F), pos.getZ() + zOffset, 0, 0, 0);
+                for(int i = 0; i < 14; i++)
+                    Minecraft.getInstance().level.addParticle(new ChessShatterParticleOptions(red, green, blue), pos.getX() + xOffset, pos.getY() + (0.0625F * 12.5F), pos.getZ() + zOffset, xSpeed, ySpeed, zSpeed);
+            }
         }
     }
 

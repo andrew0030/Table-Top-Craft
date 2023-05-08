@@ -1,10 +1,7 @@
 package andrews.table_top_craft;
 
 import andrews.table_top_craft.network.TTCNetwork;
-import andrews.table_top_craft.registry.TTCBlocks;
-import andrews.table_top_craft.registry.TTCItems;
-import andrews.table_top_craft.registry.TTCLootItemFunctions;
-import andrews.table_top_craft.registry.TTCTileEntities;
+import andrews.table_top_craft.registry.*;
 import andrews.table_top_craft.tile_entities.model.chess.ChessBoardPlateModel;
 import andrews.table_top_craft.tile_entities.model.chess.ChessHighlightModel;
 import andrews.table_top_craft.tile_entities.model.chess.ChessTilesInfoModel;
@@ -12,34 +9,31 @@ import andrews.table_top_craft.tile_entities.model.chess.GhostModel;
 import andrews.table_top_craft.tile_entities.model.piece_figure.ChessPieceFigureStandModel;
 import andrews.table_top_craft.tile_entities.model.tic_tac_toe.TicTacToeModel;
 import andrews.table_top_craft.util.Reference;
+import andrews.table_top_craft.util.shader_compat.ShaderCompatHandler;
 import com.mojang.blaze3d.vertex.DefaultVertexFormat;
-import net.minecraft.ChatFormatting;
 import net.minecraft.client.renderer.ShaderInstance;
 import net.minecraft.resources.ResourceLocation;
 import net.minecraftforge.api.distmarker.Dist;
 import net.minecraftforge.client.event.EntityRenderersEvent;
+import net.minecraftforge.client.event.RegisterParticleProvidersEvent;
 import net.minecraftforge.client.event.RegisterShadersEvent;
 import net.minecraftforge.eventbus.api.EventPriority;
 import net.minecraftforge.eventbus.api.IEventBus;
-import net.minecraftforge.fml.*;
+import net.minecraftforge.fml.DistExecutor;
 import net.minecraftforge.fml.common.Mod;
 import net.minecraftforge.fml.event.lifecycle.FMLClientSetupEvent;
 import net.minecraftforge.fml.event.lifecycle.FMLCommonSetupEvent;
 import net.minecraftforge.fml.javafmlmod.FMLJavaModLoadingContext;
-import org.checkerframework.checker.units.qual.A;
 
 import javax.annotation.Nullable;
 import java.io.IOException;
 import java.util.Objects;
-import java.util.concurrent.atomic.AtomicBoolean;
 
 @Mod(value = Reference.MODID)
 public class TableTopCraft
 {
 	@Nullable
 	public static ShaderInstance rendertypeSolidBlockEntityShader;
-	// Shader Compatibility Mode
-	public static AtomicBoolean shaderCompatMode = new AtomicBoolean(false);
 
 	/**
 	 * @return The Table Top Craft chess piece Shader.
@@ -57,21 +51,21 @@ public class TableTopCraft
 		TTCBlocks.BLOCKS.register(modEventBus);
 		TTCTileEntities.BLOCK_ENTITY_TYPES.register(modEventBus);
 		TTCLootItemFunctions.ITEM_FUNCTION_TYPES.register(modEventBus);
+		TTCParticles.PARTICLES.register(modEventBus);
 		
 		DistExecutor.runWhenOn(Dist.CLIENT, () -> () ->
 		{
 			modEventBus.addListener(EventPriority.LOWEST, this::setupClient);
 			modEventBus.addListener(this::setupLayers);
 			modEventBus.addListener(this::registerShaders);
+			modEventBus.addListener(this::registerParticles);
 		});
 		modEventBus.addListener(EventPriority.LOWEST, this::setupCommon);
 
 		try {
 			Class<?> clazz = Class.forName("net.optifine.Config");
 			if (clazz != null)
-			{
-				TableTopCraft.shaderCompatMode.set(true);
-			}
+				ShaderCompatHandler.initOFCompat();
 		} catch (Throwable ignored) {}
 	}
 	
@@ -107,5 +101,10 @@ public class TableTopCraft
 		{
 			e.printStackTrace();
 		}
+	}
+
+	void registerParticles(final RegisterParticleProvidersEvent event)
+	{
+		TTCParticles.registerParticles();
 	}
 }

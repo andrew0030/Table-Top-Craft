@@ -71,6 +71,8 @@ public class MessageServerLoadFEN
 						chessTileEntity.getMoveLog().clear();
 						chessTileEntity.setHumanMovedPiece(null);
 						chessTileEntity.setSourceTile(null);
+						chessTileEntity.setWaitingForPromotion(false);
+						chessTileEntity.setPromotionCoordinate((byte) -1);
 						chessTileEntity.doingAnimationTimer = 0;
 						chessTileEntity.move = null;
 						chessTileEntity.transition = null;

@@ -1,8 +1,5 @@
 package andrews.table_top_craft.tile_entities.render;
 
-import andrews.table_top_craft.TableTopCraft;
-import andrews.table_top_craft.animation.system.core.AdvancedAnimationState;
-import andrews.table_top_craft.animation.system.core.Animation;
 import andrews.table_top_craft.animation.system.core.AnimationHandler;
 import andrews.table_top_craft.game_logic.chess.PieceColor;
 import andrews.table_top_craft.game_logic.chess.board.Board;
@@ -14,7 +11,6 @@ import andrews.table_top_craft.game_logic.chess.pieces.BasePiece.PieceType;
 import andrews.table_top_craft.game_logic.chess.player.BlackChessPlayer;
 import andrews.table_top_craft.game_logic.chess.player.MoveTransition;
 import andrews.table_top_craft.game_logic.chess.player.WhiteChessPlayer;
-import andrews.table_top_craft.network.client.util.ClientPacketHandlerClass;
 import andrews.table_top_craft.objects.blocks.ChessBlock;
 import andrews.table_top_craft.tile_entities.ChessTileEntity;
 import andrews.table_top_craft.tile_entities.model.chess.ChessBoardPlateModel;
@@ -22,6 +18,7 @@ import andrews.table_top_craft.tile_entities.model.chess.ChessHighlightModel;
 import andrews.table_top_craft.tile_entities.model.chess.ChessTilesInfoModel;
 import andrews.table_top_craft.tile_entities.model.chess.GhostModel;
 import andrews.table_top_craft.util.*;
+import andrews.table_top_craft.util.shader_compat.ShaderCompatHandler;
 import com.google.common.collect.ImmutableList;
 import com.google.common.primitives.Ints;
 import com.mojang.blaze3d.platform.NativeImage;
@@ -31,7 +28,10 @@ import com.mojang.blaze3d.vertex.VertexBuffer;
 import com.mojang.blaze3d.vertex.VertexConsumer;
 import com.mojang.math.Axis;
 import net.minecraft.client.Minecraft;
-import net.minecraft.client.renderer.*;
+import net.minecraft.client.renderer.LightTexture;
+import net.minecraft.client.renderer.MultiBufferSource;
+import net.minecraft.client.renderer.RenderType;
+import net.minecraft.client.renderer.ShaderInstance;
 import net.minecraft.client.renderer.blockentity.BlockEntityRenderer;
 import net.minecraft.client.renderer.blockentity.BlockEntityRendererProvider;
 import net.minecraft.client.renderer.texture.DynamicTexture;
@@ -73,6 +73,8 @@ public class ChessTileEntityRenderer implements BlockEntityRenderer<ChessTileEnt
 	private final List<Integer> destinationCoordinates = new ArrayList<>();
 	private final List<BasePiece> whiteTakenPieces = new ArrayList<>();
 	private final List<BasePiece> blackTakenPieces = new ArrayList<>();
+
+	int cachedIdx;
 
 	static
 	{
@@ -181,7 +183,7 @@ public class ChessTileEntityRenderer implements BlockEntityRenderer<ChessTileEnt
 			RenderType type = TTCRenderTypes.getChessPieceSolid(resourceLocation);
 			type.setupRenderState();
 			ShaderInstance shaderinstance = RenderSystem.getShader();
-			if (!TableTopCraft.shaderCompatMode.get()) {
+			if (!ShaderCompatHandler.isShaderActive()) {
 				if (shaderinstance.PROJECTION_MATRIX != null)
 					shaderinstance.PROJECTION_MATRIX.set(RenderSystem.getProjectionMatrix());
 				BufferHelpers.setupRender(RenderSystem.getShader(), lightU, lightV);
@@ -301,7 +303,7 @@ public class ChessTileEntityRenderer implements BlockEntityRenderer<ChessTileEnt
 							Color colorB = new Color(Math.round(255 * bR), Math.round(255 * bG), Math.round(255 * bB));
 							float brightnessB = (0.2126F * colorB.getRed()) + (0.7152F * colorB.getGreen()) + (0.0722F * colorB.getBlue());
 
-							if (!TableTopCraft.shaderCompatMode.get()) {
+							if (!ShaderCompatHandler.isShaderActive()) {
 								poseStack.pushPose();
 								poseStack.scale(1.001F, 1.001F, 1.001F);
 								RenderSystem.polygonMode(GL11.GL_FRONT_AND_BACK, GL11.GL_LINE);
@@ -315,7 +317,7 @@ public class ChessTileEntityRenderer implements BlockEntityRenderer<ChessTileEnt
 							colorW = brightnessW > 128 ? colorW.darker(0.8F, 0.0F) : colorW.brighter(0.8F, 0.0F);
 							colorB = brightnessB > 128 ? colorB.darker(0.8F, 0.0F) : colorB.brighter(0.8F, 0.0F);
 							// Depending on the render mode we call the corresponding renderer
-							if (TableTopCraft.shaderCompatMode.get()) {
+							if (ShaderCompatHandler.isShaderActive()) {
 								DrawScreenHelper.CHESS_PIECE_MODEL.render(poseStack, consumer, pieceType, set, pieceColor.isWhite() ? colorW.getRed() / 255F : colorB.getRed() / 255F, pieceColor.isWhite() ? colorW.getGreen() / 255F : colorB.getGreen() / 255F, pieceColor.isWhite() ? colorW.getBlue() / 255F : colorB.getBlue() / 255F, combinedLightIn);
 							} else {
 								renderPiece(poseStack, tileEntityIn.getPieceSet(), pieceType, pieceColor, colorW.getRed() / 255F, colorW.getGreen() / 255F, colorW.getBlue() / 255F, colorB.getRed() / 255F, colorB.getGreen() / 255F, colorB.getBlue() / 255F);
@@ -324,7 +326,7 @@ public class ChessTileEntityRenderer implements BlockEntityRenderer<ChessTileEnt
 						else
 						{
 							// Depending on the render mode we call the corresponding renderer
-							if (TableTopCraft.shaderCompatMode.get()) {
+							if (ShaderCompatHandler.isShaderActive()) {
 								DrawScreenHelper.CHESS_PIECE_MODEL.render(poseStack, consumer, pieceType, set, pieceColor.isWhite() ? wR : bR, pieceColor.isWhite() ? wG : bG, pieceColor.isWhite() ? wB : bB, combinedLightIn);
 							} else {
 								renderPiece(poseStack, tileEntityIn.getPieceSet(), pieceType, pieceColor, wR, wG, wB, bR, bG, bB);
@@ -339,10 +341,10 @@ public class ChessTileEntityRenderer implements BlockEntityRenderer<ChessTileEnt
 
 			// Renders the taken pieces in the piece storage bellow the chess plate
 			// Moves the pieces down into the taken Pieces area
-			poseStack.translate(CHESS_SCALE * -6.5D, 0.556D, CHESS_SCALE * 0.3D);
+			poseStack.translate(CHESS_SCALE * -6.5D, 0.58725D, 0.0625D);
 			renderTakenPieces(poseStack, bufferIn, tileEntityIn, combinedLightIn);
 			// clear render state
-			if (!TableTopCraft.shaderCompatMode.get()) {
+			if (!ShaderCompatHandler.isShaderActive()) {
 				VertexBuffer.unbind();
 				shaderinstance.clear();
 				type.clearRenderState();
@@ -507,10 +509,10 @@ public class ChessTileEntityRenderer implements BlockEntityRenderer<ChessTileEnt
 				stack.mulPose(Axis.YN.rotationDegrees(180F));
 			
 			if(!isWhite)
-				stack.translate((CHESS_SCALE * 0.855D) * 7D, 0.0D, 0.8D);
+				stack.translate((CHESS_SCALE * 0.855D) * 7D, 0.0D, 0.0625D * 12);
 			stack.translate((CHESS_SCALE * 0.855D) * -currentCoordinate, 0.0D, CHESS_SCALE * -currentRank);
 			// Depending on the render mode we call the corresponding renderer
-			if (TableTopCraft.shaderCompatMode.get()) {
+			if (ShaderCompatHandler.isShaderActive()) {
 				DrawScreenHelper.CHESS_PIECE_MODEL.render(stack, consumer, piece.getPieceType(), set, isWhite ? wR : bR, isWhite ? wG : bG, isWhite ? wB : bB, packedLight);
 			} else {
 				renderPiece(stack, chessTileEntity.getPieceSet(), piece.getPieceType(), piece.getPieceColor(), wR, wG, wB, bR, bG, bB);

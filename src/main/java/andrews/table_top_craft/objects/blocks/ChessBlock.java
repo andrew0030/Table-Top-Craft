@@ -1,6 +1,7 @@
 package andrews.table_top_craft.objects.blocks;
 
 import andrews.table_top_craft.screens.chess.menus.ChessBoardSettingsScreen;
+import andrews.table_top_craft.screens.chess.menus.ChessPawnPromotionScreen;
 import andrews.table_top_craft.tile_entities.ChessTileEntity;
 import andrews.table_top_craft.util.NetworkUtil;
 import net.minecraft.core.BlockPos;
@@ -33,40 +34,40 @@ public class ChessBlock extends HorizontalDirectionalBlock implements EntityBloc
 	public static final BooleanProperty SHOW_PLATE = BooleanProperty.create("show_plate");
 	// Used by both variants
 	private static final VoxelShape TOP_PLATE = Block.box(0.0D, 11.0D, 0.0D, 16.0D, 12.0D, 16.0D);
-	private static final VoxelShape LEG1 = Block.box(0.0D, 0.0D, 0.0D, 1.0D, 11.0D, 1.0D);
-	private static final VoxelShape LEG2 = Block.box(15.0D, 0.0D, 0.0D, 16.0D, 11.0D, 1.0D);
-	private static final VoxelShape LEG3 = Block.box(0.0D, 0.0D, 15.0D, 1.0D, 11.0D, 16.0D);
-	private static final VoxelShape LEG4 = Block.box(15.0D, 0.0D, 15.0D, 16.0D, 11.0D, 16.0D);
+	private static final VoxelShape LEG1 = Block.box(0.0D, 0.0D, 0.0D, 2.0D, 4.0D, 2.0D);
+	private static final VoxelShape LEG2 = Block.box(14.0D, 0.0D, 0.0D, 16.0D, 4.0D, 2.0D);
+	private static final VoxelShape LEG3 = Block.box(0.0D, 0.0D, 14.0D, 2.0D, 4.0D, 16.0D);
+	private static final VoxelShape LEG4 = Block.box(14.0D, 0.0D, 14.0D, 16.0D, 4.0D, 16.0D);
 	// X Axis
-	private static final VoxelShape X_SIDE1 = Block.box(1.0D, 5.0D, 0.0D, 7.0D, 11.0D, 1.0D);
-	private static final VoxelShape X_SIDE2 = Block.box(9.0D, 5.0D, 0.0D, 15.0D, 11.0D, 1.0D);
-	private static final VoxelShape X_BAR1 = Block.box(1.0D, 4.0D, 0.0D, 15.0D, 5.0D, 1.0D);
-	private static final VoxelShape X_SIDE3 = Block.box(1.0D, 5.0D, 15.0D, 7.0D, 11.0D, 16.0D);
-	private static final VoxelShape X_SIDE4 = Block.box(9.0D, 5.0D, 15.0D, 15.0D, 11.0D, 16.0D);
-	private static final VoxelShape X_BAR2 = Block.box(1.0D, 4.0D, 15.0D, 15.0D, 5.0D, 16.0D);
+	private static final VoxelShape X_SIDE1 = Block.box(0.0D, 4.0D, 0.0D, 6.0D, 11.0D, 1.0D);
+	private static final VoxelShape X_SIDE2 = Block.box(10.0D, 4.0D, 0.0D, 16.0D, 11.0D, 1.0D);
+	private static final VoxelShape X_BAR1 = Block.box(6.0D, 4.0D, 0.0D, 10.0D, 5.0D, 1.0D);
+	private static final VoxelShape X_SIDE3 = Block.box(0.0D, 4.0D, 15.0D, 6.0D, 11.0D, 16.0D);
+	private static final VoxelShape X_SIDE4 = Block.box(10.0D, 4.0D, 15.0D, 16.0D, 11.0D, 16.0D);
+	private static final VoxelShape X_BAR2 = Block.box(6.0D, 4.0D, 15.0D, 10.0D, 5.0D, 16.0D);
+	private static final VoxelShape X_STORAGE1 = Block.box(0.0D, 4.0D, 1.0D, 6.0D, 5.0D, 15.0D);
+	private static final VoxelShape X_STORAGE2 = Block.box(10.0D, 4.0D, 1.0D, 16.0D, 5.0D, 15.0D);
 	private static final VoxelShape X_INSIDE_WALL1 = Block.box(5.0D, 5.0D, 1.0D, 6.0D, 11.0D, 15.0D);
 	private static final VoxelShape X_INSIDE_WALL2 = Block.box(10.0D, 5.0D, 1.0D, 11.0D, 11.0D, 15.0D);
-	private static final VoxelShape X_STORAGE1 = Block.box(0.5D, 5.0D, 1.0D, 5.0D, 5.5D, 15.0D);
-	private static final VoxelShape X_STORAGE2 = Block.box(11.0D, 5.0D, 1.0D, 15.5D, 5.5D, 15.0D);
-	private static final VoxelShape X_COVER1 = Block.box(0.0D, 5.0D, 1.0D, 0.5D, 6.0D, 15.0D);
-	private static final VoxelShape X_COVER2 = Block.box(15.5D, 5.0D, 1.0D, 16.0D, 6.0D, 15.0D);
+	private static final VoxelShape X_LIP1 = Block.box(0.0D, 5.0D, 1.0D, 1.0D, 6.0D, 15.0D);
+	private static final VoxelShape X_LIP2 = Block.box(15.0D, 5.0D, 1.0D, 16.0D, 6.0D, 15.0D);
 	// Y Axis
-	private static final VoxelShape Y_SIDE1 = Block.box(0.0D, 5.0D, 1.0D, 1.0D, 11.0D, 7.0D);
-	private static final VoxelShape Y_SIDE2 = Block.box(0.0D, 5.0D, 9.0D, 1.0D, 11.0D, 15.0D);
-	private static final VoxelShape Y_BAR1 = Block.box(0.0D, 4.0D, 1.0D, 1.0D, 5.0D, 15.0D);
-	private static final VoxelShape Y_SIDE3 = Block.box(15.0D, 5.0D, 1.0D, 16.0D, 11.0D, 7.0D);
-	private static final VoxelShape Y_SIDE4 = Block.box(15.0D, 5.0D, 9.0D, 16.0D, 11.0D, 15.0D);
-	private static final VoxelShape Y_BAR2 = Block.box(15.0D, 4.0D, 1.0D, 16.0D, 5.0D, 15.0D);
+	private static final VoxelShape Y_SIDE1 = Block.box(0.0D, 4.0D, 0.0D, 1.0D, 11.0D, 6.0D);
+	private static final VoxelShape Y_SIDE2 = Block.box(0.0D, 4.0D, 10.0D, 1.0D, 11.0D, 16.0D);
+	private static final VoxelShape Y_BAR1 = Block.box(0.0D, 4.0D, 6.0D, 1.0D, 5.0D, 10.0D);
+	private static final VoxelShape Y_SIDE3 = Block.box(15.0D, 4.0D, 0.0D, 16.0D, 11.0D, 6.0D);
+	private static final VoxelShape Y_SIDE4 = Block.box(15.0D, 4.0D, 10.0D, 16.0D, 11.0D, 16.0D);
+	private static final VoxelShape Y_BAR2 = Block.box(15.0D, 4.0D, 6.0D, 16.0D, 5.0D, 10.0D);
+	private static final VoxelShape Y_STORAGE1 = Block.box(1.0D, 4.0D, 0.0D, 15.0D, 5.0D, 6.0D);
+	private static final VoxelShape Y_STORAGE2 = Block.box(1.0D, 4.0D, 10.0D, 15.0D, 5.0D, 16.0D);
 	private static final VoxelShape Y_INSIDE_WALL1 = Block.box(1.0D, 5.0D, 5.0D, 15.0D, 11.0D, 6.0D);
 	private static final VoxelShape Y_INSIDE_WALL2 = Block.box(1.0D, 5.0D, 10.0D, 15.0D, 11.0D, 11.0D);
-	private static final VoxelShape Y_STORAGE1 = Block.box(1.0D, 5.0D, 0.5D, 15.0D, 5.5D, 5.0D);
-	private static final VoxelShape Y_STORAGE2 = Block.box(1.0D, 5.0D, 11.0D, 15.0D, 5.5D, 15.5D);
-	private static final VoxelShape Y_COVER1 = Block.box(1.0D, 5.0D, 0.0D, 15.0D, 6.0D, 0.5D);
-	private static final VoxelShape Y_COVER2 = Block.box(1.0D, 5.0D, 15.5D, 15.0D, 6.0D, 16.0D);
+	private static final VoxelShape Y_LIP1 = Block.box(1.0D, 5.0D, 0.0D, 15.0D, 6.0D, 1.0D);
+	private static final VoxelShape Y_LIP2 = Block.box(1.0D, 5.0D, 15.0D, 15.0D, 6.0D, 16.0D);
 	// AABB's
-	private static final VoxelShape X_AXIS_AABB = Shapes.or(TOP_PLATE, LEG1, LEG2, LEG3, LEG4, X_SIDE1, X_SIDE2, X_BAR1, X_SIDE3, X_SIDE4, X_BAR2, X_INSIDE_WALL1, X_INSIDE_WALL2, X_STORAGE1, X_STORAGE2, X_COVER1, X_COVER2);
-	private static final VoxelShape Y_AXIS_AABB = Shapes.or(TOP_PLATE, LEG1, LEG2, LEG3, LEG4, Y_SIDE1, Y_SIDE2, Y_BAR1, Y_SIDE3, Y_SIDE4, Y_BAR2, Y_INSIDE_WALL1, Y_INSIDE_WALL2, Y_STORAGE1, Y_STORAGE2, Y_COVER1, Y_COVER2);
-	
+	private static final VoxelShape X_AXIS_AABB = Shapes.or(TOP_PLATE, LEG1, LEG2, LEG3, LEG4, X_SIDE1, X_SIDE2, X_BAR1, X_SIDE3, X_SIDE4, X_BAR2, X_STORAGE1, X_STORAGE2, X_INSIDE_WALL1, X_INSIDE_WALL2, X_LIP1, X_LIP2);
+	private static final VoxelShape Y_AXIS_AABB = Shapes.or(TOP_PLATE, LEG1, LEG2, LEG3, LEG4, Y_SIDE1, Y_SIDE2, Y_BAR1, Y_SIDE3, Y_SIDE4, Y_BAR2, Y_INSIDE_WALL1, Y_INSIDE_WALL2, Y_STORAGE1, Y_STORAGE2, Y_LIP1, Y_LIP2);
+
 	public ChessBlock()
 	{
 		super(getProperties());
@@ -131,15 +132,26 @@ public class ChessBlock extends HorizontalDirectionalBlock implements EntityBloc
 		}
 		else
 		{
-			Direction face = hit.getDirection();
-			if (face.equals(Direction.UP) && (hit.getLocation().y - pos.getY()) > 0.7)
+			if(level.getBlockEntity(pos) instanceof ChessTileEntity chessTileEntity && chessTileEntity.getWaitingForPromotion())
 			{
-				Direction facing = state.getValue(FACING);
-				int chessRank = this.getChessRank(hit.getLocation(), facing) + 1;
-				int chessColumn = this.getChessColumn(hit.getLocation(), facing);
-				byte tileCoordinate = (byte)Mth.clamp((8 - chessRank) * 8 + chessColumn, 0, 63);
-				if (level.isClientSide)
-					NetworkUtil.doChessBoardInteraction(pos, tileCoordinate);
+				// If we find a block entity (should be the case unless something is going horribly wrong)
+				// we check if we are waiting for a pawn promotion, and if so we open the selection menu.
+				if(level.isClientSide())
+					ChessPawnPromotionScreen.open(chessTileEntity, chessTileEntity.getBoard().getCurrentChessPlayer().getOpponent().getPieceColor().isWhite());
+			}
+			else
+			{
+				// If the game isn't waiting for a pawn promotion, we just do as we normally would
+				Direction face = hit.getDirection();
+				if (face.equals(Direction.UP) && (hit.getLocation().y - pos.getY()) > 0.7)
+				{
+					Direction facing = state.getValue(FACING);
+					int chessRank = this.getChessRank(hit.getLocation(), facing) + 1;
+					int chessColumn = this.getChessColumn(hit.getLocation(), facing);
+					byte tileCoordinate = (byte)Mth.clamp((8 - chessRank) * 8 + chessColumn, 0, 63);
+					if (level.isClientSide)
+						NetworkUtil.doChessBoardInteraction(pos, tileCoordinate);
+				}
 			}
 		}
 		return InteractionResult.SUCCESS;

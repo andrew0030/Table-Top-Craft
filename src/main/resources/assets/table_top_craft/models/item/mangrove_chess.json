@@ -1,3 +1,1 @@
-{
-  "parent": "table_top_craft:block/mangrove_chess"
-}
+{"parent":"table_top_craft:block/chess/mangrove_chess"}

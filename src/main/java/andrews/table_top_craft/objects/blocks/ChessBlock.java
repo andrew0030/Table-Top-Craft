@@ -68,24 +68,21 @@ public class ChessBlock extends HorizontalDirectionalBlock implements EntityBloc
 	private static final VoxelShape X_AXIS_AABB = Shapes.or(TOP_PLATE, LEG1, LEG2, LEG3, LEG4, X_SIDE1, X_SIDE2, X_BAR1, X_SIDE3, X_SIDE4, X_BAR2, X_STORAGE1, X_STORAGE2, X_INSIDE_WALL1, X_INSIDE_WALL2, X_LIP1, X_LIP2);
 	private static final VoxelShape Y_AXIS_AABB = Shapes.or(TOP_PLATE, LEG1, LEG2, LEG3, LEG4, Y_SIDE1, Y_SIDE2, Y_BAR1, Y_SIDE3, Y_SIDE4, Y_BAR2, Y_INSIDE_WALL1, Y_INSIDE_WALL2, Y_STORAGE1, Y_STORAGE2, Y_LIP1, Y_LIP2);
 
-	public ChessBlock()
+	public ChessBlock(Material material, SoundType soundType)
 	{
-		super(getProperties());
+		super(getProperties(material, soundType));
 		this.registerDefaultState(this.stateDefinition.any().setValue(FACING, Direction.NORTH).setValue(SHOW_PLATE, true));
 	}
 
 	/**
 	 * @return - The properties for this Block
 	 */
-	private static Properties getProperties()
+	private static Properties getProperties(Material material, SoundType soundType)
 	{	
-		Properties properties = Block.Properties.of(Material.WOOD);
+		Properties properties = Block.Properties.of(material);
+		properties.sound(soundType);
 		properties.strength(2.0F);
-		// harvestTool() Has been removed and is now handled through Tags.
-		// properties.harvestTool(ToolType.AXE);
 		properties.noOcclusion();
-		properties.sound(SoundType.WOOD);
-		
 		return properties;
 	}
 	

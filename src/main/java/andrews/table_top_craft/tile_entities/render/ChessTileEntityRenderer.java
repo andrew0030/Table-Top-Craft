@@ -137,8 +137,8 @@ public class ChessTileEntityRenderer implements BlockEntityRenderer<ChessTileEnt
 			board = tileEntityIn.getBoard();
 			WhiteChessPlayer whiteChessPlayer = (WhiteChessPlayer) board.getWhiteChessPlayer();
 			BlackChessPlayer blackChessPlayer = (BlackChessPlayer) board.getBlackChessPlayer();
-			boolean isWhiteInCheckmate = whiteChessPlayer.isInCheckMate();
-			boolean isBlackInCheckmate = blackChessPlayer.isInCheckMate();
+			boolean isWhiteInCheckmate = tileEntityIn.isWhiteCheckMate();
+			boolean isBlackInCheckmate = tileEntityIn.isBlackCheckMate();
 
 			poseStack.pushPose(); // Master Rotation and Position
 			poseStack.translate(0.5D, 0.9D, 0.5D);

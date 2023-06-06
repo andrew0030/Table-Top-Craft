@@ -1,0 +1,30 @@
+{
+  "display": {
+    "title": {
+      "translate": "advancements.table_top_craft.chess_timer.title"
+    },
+    "description": {
+      "translate": "advancements.table_top_craft.chess_timer.description"
+    },
+    "icon": {
+      "item": "table_top_craft:lime_concrete_chess_timer"
+    },
+    "frame": "task",
+    "show_toast": true,
+    "announce_to_chat": true,
+    "hidden": false
+  },
+  "criteria": {
+    "tic_tac_toe": {
+      "trigger": "minecraft:inventory_changed",
+      "conditions": {
+        "items": [
+          {
+            "tag": "table_top_craft:chess_timers"
+          }
+        ]
+      }
+    }
+  },
+  "parent": "table_top_craft:root"
+}

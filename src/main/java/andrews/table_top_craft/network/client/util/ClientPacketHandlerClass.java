@@ -17,12 +17,14 @@ import andrews.table_top_craft.registry.TTCParticles;
 import andrews.table_top_craft.screens.chess.menus.ChessPawnPromotionScreen;
 import andrews.table_top_craft.screens.chess.menus.ChessPieceSelectionScreen;
 import andrews.table_top_craft.tile_entities.ChessTileEntity;
+import andrews.table_top_craft.tile_entities.ConnectFourBlockEntity;
 import andrews.table_top_craft.util.NBTColorSaving;
 import net.minecraft.client.Minecraft;
 import net.minecraft.client.animation.KeyframeAnimations;
 import net.minecraft.core.BlockPos;
 import net.minecraft.sounds.SoundEvents;
 import net.minecraft.sounds.SoundSource;
+import net.minecraft.util.Mth;
 import net.minecraftforge.network.NetworkEvent;
 
 import java.util.concurrent.atomic.AtomicReference;
@@ -144,6 +146,34 @@ public class ClientPacketHandlerClass
                 chessTileEntity.moveState = new AdvancedAnimationState(new AtomicReference<>(animation));
                 chessTileEntity.moveState.start(chessTileEntity.getTicksExisted());
             }
+        }
+    }
+
+    public static void handleConnectFourAnimationPacket(MessageClientConnectFourAnimationState msg, Supplier<NetworkEvent.Context> ctx)
+    {
+        BlockPos pos = msg.pos;
+        byte destCord = msg.destCord;
+        if(Minecraft.getInstance().player.getLevel().getBlockEntity(pos) instanceof ConnectFourBlockEntity blockEntity)
+        {
+            // We update the value of the falling piece on the clients
+            blockEntity.movingPiece = destCord;
+            // We get the height of the piece to adjust the Animation accordingly
+            int heightMod = destCord % 6;
+            // We create the Animation
+            float animLength = 1.0F - (heightMod * 0.1F);
+            AnimationBuilder builder = AnimationBuilder.withLength(animLength);
+            builder.addAnimation("root", new KeyframeGroup(TransformTypes.POSITION,
+                    new BasicKeyframe(0.2F, KeyframeAnimations.posVec(0F, 13F - (heightMod * 2), 0F), EasingTypes.LINEAR),
+                    new BasicKeyframe(animLength, KeyframeAnimations.posVec(0F, 0F, 0F), EasingBuilder.type(EasingType.EASE_IN_BOUNCE).argument(0.2F - (0.2F * (heightMod * 0.15F))).build())));
+            builder.addAnimation("root", new KeyframeGroup(TransformTypes.ROTATION,
+                    new BasicKeyframe(0.0F, KeyframeAnimations.degreeVec(0F, 90F, 0F), EasingTypes.LINEAR),
+                    new BasicKeyframe(0.3F, KeyframeAnimations.degreeVec(0F, 0F, 0F), EasingTypes.LINEAR)));
+            builder.addAnimation("root", new KeyframeGroup(TransformTypes.SCALE,
+                    new BasicKeyframe(0.0F, KeyframeAnimations.scaleVec(0.1F, 0.1F, 0.1F), EasingTypes.LINEAR),
+                    new BasicKeyframe(0.3F, KeyframeAnimations.scaleVec(1F, 1F, 1F), EasingTypes.LINEAR)));
+            Animation animation = builder.build();
+            blockEntity.moveState = new AdvancedAnimationState(new AtomicReference<>(animation));
+            blockEntity.moveState.start(blockEntity.getTicksExisted());
         }
     }
 

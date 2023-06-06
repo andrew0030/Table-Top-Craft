@@ -52,6 +52,12 @@ public class TTCNetwork
 		.consumerMainThread(MessageClientChessParticles::handle)
 		.add();
 
+		CHANNEL.messageBuilder(MessageClientConnectFourAnimationState.class, id++)
+		.encoder(MessageClientConnectFourAnimationState::serialize)
+		.decoder(MessageClientConnectFourAnimationState::deserialize)
+		.consumerMainThread(MessageClientConnectFourAnimationState::handle)
+		.add();
+
 		// Server Messages
 		CHANNEL.messageBuilder(MessageServerNewChessGame.class, id++)
 		.encoder(MessageServerNewChessGame::serialize)
@@ -171,6 +177,12 @@ public class TTCNetwork
 		.encoder(MessageServerPauseChessTimer::serialize)
 		.decoder(MessageServerPauseChessTimer::deserialize)
 		.consumerMainThread(MessageServerPauseChessTimer::handle)
+		.add();
+
+		CHANNEL.messageBuilder(MessageServerDoConnectFourInteraction.class, id++)
+		.encoder(MessageServerDoConnectFourInteraction::serialize)
+		.decoder(MessageServerDoConnectFourInteraction::deserialize)
+		.consumerMainThread(MessageServerDoConnectFourInteraction::handle)
 		.add();
 	}
 }

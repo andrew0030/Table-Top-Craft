@@ -27,6 +27,11 @@ public class NetworkUtil
 		NetworkUtil.setChessAnimationForAllTracking(level, pos, actionType, (byte) 0, (byte) 0);
 	}
 
+	public static void setConnectFourAnimationForAllTracking(Level level, BlockPos pos, byte destCord)
+	{
+		TTCNetwork.CHANNEL.send(PacketDistributor.TRACKING_CHUNK.with(() -> level.getChunkAt(pos)), new MessageClientConnectFourAnimationState(pos, destCord));
+	}
+
 	public static void openChessPromotionFromServer(BlockPos pos, boolean isWhite, ServerPlayer serverPlayer)
 	{
 		TTCNetwork.CHANNEL.send(PacketDistributor.PLAYER.with(() -> serverPlayer), new MessageClientOpenChessPromotionScreen(pos, isWhite));
@@ -178,5 +183,11 @@ public class NetworkUtil
 	public static void pauseChessTimerTime(BlockPos pos)
 	{
 		TTCNetwork.CHANNEL.sendToServer(new MessageServerPauseChessTimer(pos));
+	}
+
+	@OnlyIn(Dist.CLIENT)
+	public static void doConnectFourInteraction(BlockPos pos, byte column)
+	{
+		TTCNetwork.CHANNEL.sendToServer(new MessageServerDoConnectFourInteraction(pos, column));
 	}
 }

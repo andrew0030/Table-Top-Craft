@@ -1,3 +1,1 @@
-{
-	"parent": "table_top_craft:block/crimson_chess"
-}
+{"parent":"table_top_craft:block/chess/crimson_chess"}

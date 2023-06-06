@@ -55,6 +55,7 @@ mixin {
 
 repositories {
     mavenCentral()
+    maven { url "https://www.cursemaven.com" }
 }
 
 configurations {
@@ -67,6 +68,8 @@ dependencies {
     annotationProcessor 'org.spongepowered:mixin:0.8.5:processor'
     minecraftLibrary 'net.objecthunter:exp4j:0.4.8'
     shade 'net.objecthunter:exp4j:0.4.8'
+    runtimeOnly fg.deobf("curse.maven:jei-238222:4455246")
+    runtimeOnly fg.deobf("curse.maven:spark-361579:4505309")
 }
 
 jar {

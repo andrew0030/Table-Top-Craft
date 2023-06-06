@@ -1,7 +1,1 @@
-{
-  "variants": {
-    "": {
-      "model": "table_top_craft:block/chess_piece_figure"
-    }
-  }
-}
+{"variants":{"":{"model":"table_top_craft:block/chess_piece_figure"}}}

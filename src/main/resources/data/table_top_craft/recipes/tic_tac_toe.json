@@ -7,7 +7,7 @@
   ],
   "key": {
     "C": {
-      "item": "minecraft:coal"
+      "tag": "table_top_craft:tic_tac_toe_dyes"
     },
     "P": {
       "item": "minecraft:paper"

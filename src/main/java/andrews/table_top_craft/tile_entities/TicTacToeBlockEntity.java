@@ -1,6 +1,6 @@
 package andrews.table_top_craft.tile_entities;
 
-import andrews.table_top_craft.registry.TTCTileEntities;
+import andrews.table_top_craft.registry.TTCBlockEntities;
 import net.minecraft.core.BlockPos;
 import net.minecraft.nbt.CompoundTag;
 import net.minecraft.nbt.Tag;
@@ -21,7 +21,7 @@ public class TicTacToeBlockEntity extends BlockEntity
 
     public TicTacToeBlockEntity(BlockPos pos, BlockState state)
     {
-        super(TTCTileEntities.TIC_TAC_TOE.get(), pos, state);
+        super(TTCBlockEntities.TIC_TAC_TOE.get(), pos, state);
     }
 
     // Used to synchronize the BlockEntity with the client when the chunk it is in is loaded
@@ -186,14 +186,14 @@ public class TicTacToeBlockEntity extends BlockEntity
     public String getCircleColor()
     {
         if(circleColor == null)
-            this.circleColor = "255/255/255";
+            this.circleColor = "249/255/254";
         return this.circleColor;
     }
 
     public String getCrossColor()
     {
         if(this.crossColor == null)
-            this.crossColor = "255/255/255";
+            this.crossColor = "249/255/254";
         return this.crossColor;
     }
 

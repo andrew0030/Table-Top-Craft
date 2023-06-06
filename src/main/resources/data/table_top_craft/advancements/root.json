@@ -16,6 +16,38 @@
         "background": "minecraft:textures/block/stripped_oak_log.png"
     },
     "criteria": {
+        "get_chess_timer": {
+            "trigger": "minecraft:inventory_changed",
+            "conditions": {
+                "items": [
+                    {
+                        "tag": "table_top_craft:chess_timers"
+                    }
+                ]
+            }
+        },
+        "get_connect_four": {
+            "trigger": "minecraft:inventory_changed",
+            "conditions": {
+                "items": [
+                    {
+                        "tag": "table_top_craft:connect_four"
+                    }
+                ]
+            }
+        },
+        "get_tic_tac_toe": {
+            "trigger": "minecraft:inventory_changed",
+            "conditions": {
+                "items": [
+                    {
+                        "items": [
+                            "table_top_craft:tic_tac_toe"
+                        ]
+                    }
+                ]
+            }
+        },
         "get_chess_piece": {
             "trigger": "minecraft:inventory_changed",
             "conditions": {
@@ -44,6 +76,9 @@
     },
     "requirements": [
         [
+            "get_chess_timer",
+            "get_connect_four",
+            "get_tic_tac_toe",
             "get_chess_piece",
             "get_chess_board",
             "make_chess_move"

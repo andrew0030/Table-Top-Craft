@@ -21,6 +21,7 @@ import net.minecraft.world.level.block.state.BlockBehaviour;
 import net.minecraft.world.level.block.state.BlockState;
 import net.minecraft.world.level.block.state.StateDefinition;
 import net.minecraft.world.level.block.state.properties.EnumProperty;
+import net.minecraft.world.level.material.Material;
 import net.minecraft.world.phys.BlockHitResult;
 import net.minecraft.world.phys.shapes.CollisionContext;
 import net.minecraft.world.phys.shapes.VoxelShape;
@@ -31,10 +32,19 @@ public class ChessTimerBlock extends HorizontalDirectionalBlock implements Entit
     private static final VoxelShape X_AXIS_AABB = Block.box(5.0D, 0.0D, 1.0D, 11.0D, 6.0D, 15.0D);
     private static final VoxelShape Y_AXIS_AABB = Block.box(1.0D, 0.0D, 5.0D, 15.0D, 6.0D, 11.0D);
 
-    public ChessTimerBlock()
+    public ChessTimerBlock(Material material, SoundType soundType)
     {
-        super(BlockBehaviour.Properties.copy(Blocks.WHITE_CONCRETE));
+        super(getProperties(material, soundType));
         this.registerDefaultState(this.stateDefinition.any().setValue(FACING, Direction.NORTH).setValue(PRESSED_BUTTON, PressedButton.NONE));
+    }
+
+    private static Properties getProperties(Material material, SoundType soundType)
+    {
+        Properties properties = Block.Properties.of(material);
+        properties.sound(soundType);
+        properties.strength(1.8F);
+        properties.noOcclusion();
+        return properties;
     }
 
     @Override

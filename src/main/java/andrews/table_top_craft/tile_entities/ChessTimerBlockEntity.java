@@ -1,7 +1,7 @@
 package andrews.table_top_craft.tile_entities;
 
 import andrews.table_top_craft.objects.blocks.ChessTimerBlock;
-import andrews.table_top_craft.registry.TTCTileEntities;
+import andrews.table_top_craft.registry.TTCBlockEntities;
 import andrews.table_top_craft.util.NetworkUtil;
 import net.minecraft.core.BlockPos;
 import net.minecraft.nbt.CompoundTag;
@@ -25,7 +25,7 @@ public class ChessTimerBlockEntity extends BlockEntity
 
     public ChessTimerBlockEntity(BlockPos pos, BlockState state)
     {
-        super(TTCTileEntities.CHESS_TIMER.get(), pos, state);
+        super(TTCBlockEntities.CHESS_TIMER.get(), pos, state);
     }
 
     @Override

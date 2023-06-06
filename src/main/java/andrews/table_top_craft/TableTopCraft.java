@@ -6,6 +6,9 @@ import andrews.table_top_craft.tile_entities.model.chess.ChessBoardPlateModel;
 import andrews.table_top_craft.tile_entities.model.chess.ChessHighlightModel;
 import andrews.table_top_craft.tile_entities.model.chess.ChessTilesInfoModel;
 import andrews.table_top_craft.tile_entities.model.chess.GhostModel;
+import andrews.table_top_craft.tile_entities.model.connect_four.ConnectFourFallingPieceModel;
+import andrews.table_top_craft.tile_entities.model.connect_four.ConnectFourMeshModel;
+import andrews.table_top_craft.tile_entities.model.connect_four.ConnectFourPieceModel;
 import andrews.table_top_craft.tile_entities.model.piece_figure.ChessPieceFigureStandModel;
 import andrews.table_top_craft.tile_entities.model.tic_tac_toe.TicTacToeModel;
 import andrews.table_top_craft.util.Reference;
@@ -49,7 +52,7 @@ public class TableTopCraft
 		
 		TTCItems.ITEMS.register(modEventBus);
 		TTCBlocks.BLOCKS.register(modEventBus);
-		TTCTileEntities.BLOCK_ENTITY_TYPES.register(modEventBus);
+		TTCBlockEntities.BLOCK_ENTITY_TYPES.register(modEventBus);
 		TTCLootItemFunctions.ITEM_FUNCTION_TYPES.register(modEventBus);
 		TTCParticles.PARTICLES.register(modEventBus);
 		
@@ -76,7 +79,7 @@ public class TableTopCraft
 
 	void setupClient(final FMLClientSetupEvent event)
 	{
-		event.enqueueWork(TTCTileEntities::registerTileRenders);
+		event.enqueueWork(TTCBlockEntities::registerTileRenders);
 	}
 
 	void setupLayers(final EntityRenderersEvent.RegisterLayerDefinitions event)
@@ -87,6 +90,9 @@ public class TableTopCraft
 		event.registerLayerDefinition(ChessPieceFigureStandModel.CHESS_PIECE_FIGURE_LAYER, ChessPieceFigureStandModel::createBodyLayer);
 		event.registerLayerDefinition(TicTacToeModel.TIC_TAC_TOE_LAYER, TicTacToeModel::createBodyLayer);
 		event.registerLayerDefinition(GhostModel.LAYER, GhostModel::createBodyLayer);
+		event.registerLayerDefinition(ConnectFourMeshModel.LAYER, ConnectFourMeshModel::createBodyLayer);
+		event.registerLayerDefinition(ConnectFourPieceModel.LAYER, ConnectFourPieceModel::createBodyLayer);
+		event.registerLayerDefinition(ConnectFourFallingPieceModel.LAYER, ConnectFourFallingPieceModel::createBodyLayer);
 	}
 
 	void registerShaders(final RegisterShadersEvent event)

@@ -13,7 +13,7 @@ import andrews.table_top_craft.game_logic.chess.pgn.FenUtil;
 import andrews.table_top_craft.game_logic.chess.pieces.*;
 import andrews.table_top_craft.game_logic.chess.player.MoveTransition;
 import andrews.table_top_craft.objects.blocks.ChessBlock;
-import andrews.table_top_craft.registry.TTCTileEntities;
+import andrews.table_top_craft.registry.TTCBlockEntities;
 import andrews.table_top_craft.tile_entities.animations.ChessAnimations;
 import andrews.table_top_craft.util.NBTColorSaving;
 import andrews.table_top_craft.util.NetworkUtil;
@@ -35,7 +35,6 @@ import net.minecraftforge.fml.DistExecutor;
 
 import java.util.ArrayList;
 import java.util.List;
-import java.util.Random;
 import java.util.UUID;
 import java.util.concurrent.atomic.AtomicReference;
 
@@ -68,6 +67,8 @@ public class ChessTileEntity extends AnimatedBlockEntity
 	private boolean waitingForPromotion;
 	private byte promotionCoordinate = -1;
 	private UUID promotionPlayerUUID;
+	private boolean whiteCheckMate = false;
+	private boolean blackCheckMate = false;
 	
 	private String tileInfoColor;
 	private String whiteTilesColor;
@@ -80,17 +81,15 @@ public class ChessTileEntity extends AnimatedBlockEntity
 	private String previousMoveColor;
 	private String castleMoveColor;
 
-	private final Random rand = new Random();
 	// The selected Set of Pieces to render
 	private int pieceSet;
-
 	// Available Moves Highlights Cache
 	private BasePiece cachedPiece;
-	private List<MoveTransition> moveTransitionsCache = new ArrayList<>();
+	private final List<MoveTransition> moveTransitionsCache = new ArrayList<>();
 
 	public ChessTileEntity(BlockPos pos, BlockState state)
 	{
-		super(TTCTileEntities.CHESS.get(), pos, state);
+		super(TTCBlockEntities.CHESS.get(), pos, state);
 		DistExecutor.unsafeRunWhenOn(Dist.CLIENT, () -> () -> {
 			selectedPieceState.setAnimation(ChessAnimations.SELECTED_PIECE);
 			placedState.setAnimation(ChessAnimations.PLACED);
@@ -286,6 +285,8 @@ public class ChessTileEntity extends AnimatedBlockEntity
 			chessNBT.putString("FirstMoves", builder.toString());
 			chessNBT.putBoolean("IsWhiteCastled", this.board.getWhiteChessPlayer().isCastled());
 			chessNBT.putBoolean("IsBlackCastled", this.board.getBlackChessPlayer().isCastled());
+			chessNBT.putBoolean("WhiteCheckMate", this.getBoard().getWhiteChessPlayer().isInCheckMate());
+			chessNBT.putBoolean("BlackCheckMate", this.getBoard().getBlackChessPlayer().isInCheckMate());
 		}
 		
 		if(this.moveLog != null)
@@ -416,6 +417,10 @@ public class ChessTileEntity extends AnimatedBlockEntity
 			this.humanMovedPiece = chessNBT.getInt("HumanMovedPiece") == -1 ? null : getBoard().getTile(chessNBT.getInt("HumanMovedPiece")).getPiece();
 		if(chessNBT.contains("PieceSet", Tag.TAG_INT))
 			this.pieceSet = chessNBT.getInt("PieceSet");
+		if(chessNBT.contains("WhiteCheckMate"))
+			this.whiteCheckMate = chessNBT.getBoolean("WhiteCheckMate");
+		if(chessNBT.contains("BlackCheckMate"))
+			this.blackCheckMate = chessNBT.getBoolean("BlackCheckMate");
 	}
 
 	private static float[] calculateSpeedAndTimeMod(BasePiece.PieceType type, boolean isBlack, Direction facing, int deltaY, int deltaX)
@@ -810,5 +815,15 @@ public class ChessTileEntity extends AnimatedBlockEntity
 	public UUID getPromotionPlayerUUID()
 	{
 		return this.promotionPlayerUUID;
+	}
+
+	public boolean isWhiteCheckMate()
+	{
+		return this.whiteCheckMate;
+	}
+
+	public boolean isBlackCheckMate()
+	{
+		return this.blackCheckMate;
 	}
 }

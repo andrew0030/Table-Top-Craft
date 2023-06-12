@@ -1,6 +1,7 @@
 package andrews.table_top_craft.network.server;
 
 import andrews.table_top_craft.tile_entities.ChessTileEntity;
+import andrews.table_top_craft.util.NetworkUtil;
 import net.minecraft.core.BlockPos;
 import net.minecraft.network.FriendlyByteBuf;
 import net.minecraft.world.entity.player.Player;
@@ -61,6 +62,7 @@ public class MessageServerSetPieceSet
                         }
                         level.sendBlockUpdated(message.pos, level.getBlockState(chessPos), level.getBlockState(chessPos), 2);
                         chessTileEntity.setChanged();
+                        NetworkUtil.setChessAnimationForAllTracking(level, chessPos, (byte) 1);
                     }
                 }
             });

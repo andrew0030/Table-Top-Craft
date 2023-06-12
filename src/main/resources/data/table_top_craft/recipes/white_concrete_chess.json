@@ -1,0 +1,23 @@
+{
+  "type": "minecraft:crafting_shaped",
+  "group": "chess",
+  "pattern": [
+    "BWB",
+    "PPP",
+    "P P"
+  ],
+  "key": {
+    "B": {
+      "item": "minecraft:brown_terracotta"
+    },
+    "W": {
+      "item": "minecraft:white_terracotta"
+    },
+    "P": {
+      "item": "minecraft:white_concrete"
+    }
+  },
+  "result": {
+    "item": "table_top_craft:white_concrete_chess"
+  }
+}

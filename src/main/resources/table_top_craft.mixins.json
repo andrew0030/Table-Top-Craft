@@ -4,11 +4,14 @@
   "package": "andrews.table_top_craft.mixins",
   "compatibilityLevel": "JAVA_16",
   "client": [
-    "ScreenMixin",
-    "GameRendererMixin"
+    "GameRendererMixin",
+    "ScreenMixin"
   ],
   "injectors": {
     "defaultRequire": 1
   },
-  "refmap": "table_top_craft.refmap.json"
+  "refmap": "table_top_craft.refmap.json",
+  "mixins": [
+    "ReloadableResourceManagerMixin"
+  ]
 }

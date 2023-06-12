@@ -1,0 +1,1 @@
+Some of the model json's have been minified. Should the need arise to modify them, I recommend a json beautifier to make them easier to read.

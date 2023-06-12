@@ -1,20 +1,14 @@
 package andrews.table_top_craft.game_logic.chess.pieces;
 
-import java.util.ArrayList;
-import java.util.Collection;
-import java.util.List;
-
-import com.google.common.collect.ImmutableList;
-
 import andrews.table_top_craft.game_logic.chess.PieceColor;
 import andrews.table_top_craft.game_logic.chess.board.Board;
 import andrews.table_top_craft.game_logic.chess.board.BoardUtils;
-import andrews.table_top_craft.game_logic.chess.board.moves.BaseMove;
-import andrews.table_top_craft.game_logic.chess.board.moves.PawnAttackMove;
-import andrews.table_top_craft.game_logic.chess.board.moves.PawnEnPassantAttackMove;
-import andrews.table_top_craft.game_logic.chess.board.moves.PawnJumpMove;
-import andrews.table_top_craft.game_logic.chess.board.moves.PawnMove;
-import andrews.table_top_craft.game_logic.chess.board.moves.PawnPromotion;
+import andrews.table_top_craft.game_logic.chess.board.moves.*;
+import com.google.common.collect.ImmutableList;
+
+import java.util.ArrayList;
+import java.util.Collection;
+import java.util.List;
 
 public class PawnPiece extends BasePiece
 {
@@ -177,6 +171,9 @@ public class PawnPiece extends BasePiece
 	 */
 	public BasePiece getPromotionPiece()
 	{
-		return new QueenPiece(this.pieceColor, this.piecePosition, false);//TODO Maybe make a system that allows people to choose the Piece they get
+		// I'm setting it to a Pawn, because I decided to handle the promotion
+		// Logic on the Block Entity level, which is easier since I have to wait
+		// for additional input from the players.
+		return new PawnPiece(this.pieceColor, this.piecePosition, false);
 	}
 }

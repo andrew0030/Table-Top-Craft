@@ -8,6 +8,25 @@
     "table_top_craft:acacia_chess",
     "table_top_craft:dark_oak_chess",
     "table_top_craft:crimson_chess",
-    "table_top_craft:warped_chess"
+    "table_top_craft:warped_chess",
+    "table_top_craft:mangrove_chess",
+    "table_top_craft:oak_chess_timer",
+    "table_top_craft:spruce_chess_timer",
+    "table_top_craft:birch_chess_timer",
+    "table_top_craft:jungle_chess_timer",
+    "table_top_craft:acacia_chess_timer",
+    "table_top_craft:dark_oak_chess_timer",
+    "table_top_craft:crimson_chess_timer",
+    "table_top_craft:warped_chess_timer",
+    "table_top_craft:mangrove_chess_timer",
+    "table_top_craft:oak_connect_four",
+    "table_top_craft:spruce_connect_four",
+    "table_top_craft:birch_connect_four",
+    "table_top_craft:jungle_connect_four",
+    "table_top_craft:acacia_connect_four",
+    "table_top_craft:dark_oak_connect_four",
+    "table_top_craft:crimson_connect_four",
+    "table_top_craft:warped_connect_four",
+    "table_top_craft:mangrove_connect_four"
   ]
 }

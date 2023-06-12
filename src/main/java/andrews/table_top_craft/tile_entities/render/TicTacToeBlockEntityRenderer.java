@@ -52,51 +52,44 @@ public class TicTacToeBlockEntityRenderer implements BlockEntityRenderer<TicTacT
             VertexConsumer vertexconsumer = bufferSource.getBuffer(RenderType.entityCutout(CROSS_TEXTURES.get(6)));
 
             if (rows[0].equals("XXX") || rows[0].equals("OOO")) {
-                poseStack.translate(0.6, 0, 0);
-                poseStack.scale(1, 1, 3.8F);
-                ticTacToeModel.renderToBuffer(poseStack, vertexconsumer, packedLight, packedOverlay, 0F, 0F, 0F, 1.0F);
+                poseStack.translate(0.625, 0, 0);
+                poseStack.scale(1.8F, 1, 3.95F);
             }
             else if(rows[1].equals("XXX") || rows[1].equals("OOO")) {
-                poseStack.scale(1, 1, 3.8F);
-                ticTacToeModel.renderToBuffer(poseStack, vertexconsumer, packedLight, packedOverlay, 0F, 0F, 0F, 1.0F);
+                poseStack.scale(1.8F, 1, 3.95F);
             }
             else if(rows[2].equals("XXX") || rows[2].equals("OOO")) {
-                poseStack.translate(-0.6, 0, 0);
-                poseStack.scale(1, 1, 3.8F);
-                ticTacToeModel.renderToBuffer(poseStack, vertexconsumer, packedLight, packedOverlay, 0F, 0F, 0F, 1.0F);
+                poseStack.translate(-0.625, 0, 0);
+                poseStack.scale(1.8F, 1, 3.95F);
             }
             else if ((rows[0].charAt(0) == 'X' && rows[1].charAt(0) == 'X' && rows[2].charAt(0) == 'X') ||
-                     (rows[0].charAt(0) == 'O' && rows[1].charAt(0) == 'O' && rows[2].charAt(0) == 'O')) {
-                poseStack.translate(0, 0, 0.6);
+                    (rows[0].charAt(0) == 'O' && rows[1].charAt(0) == 'O' && rows[2].charAt(0) == 'O')) {
+                poseStack.translate(0, 0, 0.625);
                 poseStack.mulPose(Vector3f.YN.rotationDegrees(90F));
-                poseStack.scale(1, 1, 3.8F);
-                ticTacToeModel.renderToBuffer(poseStack, vertexconsumer, packedLight, packedOverlay, 0F, 0F, 0F, 1.0F);
+                poseStack.scale(1.8F, 1, 3.95F);
             }
             else if ((rows[0].charAt(1) == 'X' && rows[1].charAt(1) == 'X' && rows[2].charAt(1) == 'X') ||
                     (rows[0].charAt(1) == 'O' && rows[1].charAt(1) == 'O' && rows[2].charAt(1) == 'O')) {
                 poseStack.mulPose(Vector3f.YN.rotationDegrees(90F));
-                poseStack.scale(1, 1, 3.8F);
-                ticTacToeModel.renderToBuffer(poseStack, vertexconsumer, packedLight, packedOverlay, 0F, 0F, 0F, 1.0F);
+                poseStack.scale(1.8F, 1, 3.95F);
             }
             else if ((rows[0].charAt(2) == 'X' && rows[1].charAt(2) == 'X' && rows[2].charAt(2) == 'X') ||
                     (rows[0].charAt(2) == 'O' && rows[1].charAt(2) == 'O' && rows[2].charAt(2) == 'O')) {
-                poseStack.translate(0, 0, -0.6);
+                poseStack.translate(0, 0, -0.625);
                 poseStack.mulPose(Vector3f.YN.rotationDegrees(90F));
-                poseStack.scale(1, 1, 3.8F);
-                ticTacToeModel.renderToBuffer(poseStack, vertexconsumer, packedLight, packedOverlay, 0F, 0F, 0F, 1.0F);
+                poseStack.scale(1.8F, 1, 3.95F);
             }
             else if ((rows[0].charAt(0) == 'X' && rows[1].charAt(1) == 'X' && rows[2].charAt(2) == 'X') ||
                     (rows[0].charAt(0) == 'O' && rows[1].charAt(1) == 'O' && rows[2].charAt(2) == 'O')) {
                 poseStack.mulPose(Vector3f.YP.rotationDegrees(45F));
-                poseStack.scale(1, 1, 5.2F);
-                ticTacToeModel.renderToBuffer(poseStack, vertexconsumer, packedLight, packedOverlay, 0F, 0F, 0F, 1.0F);
+                poseStack.scale(1.8F, 1, 5.2F);
             }
             else if ((rows[0].charAt(2) == 'X' && rows[1].charAt(1) == 'X' && rows[2].charAt(0) == 'X') ||
-                     (rows[0].charAt(2) == 'O' && rows[1].charAt(1) == 'O' && rows[2].charAt(0) == 'O')) {
+                    (rows[0].charAt(2) == 'O' && rows[1].charAt(1) == 'O' && rows[2].charAt(0) == 'O')) {
                 poseStack.mulPose(Vector3f.YN.rotationDegrees(45F));
-                poseStack.scale(1, 1, 5.2F);
-                ticTacToeModel.renderToBuffer(poseStack, vertexconsumer, packedLight, packedOverlay, 0F, 0F, 0F, 1.0F);
+                poseStack.scale(1.8F, 1, 5.2F);
             }
+            ticTacToeModel.renderToBuffer(poseStack, vertexconsumer, packedLight, packedOverlay, 60 / 255F, 50 / 255F, 40 / 255F, 1.0F);
             poseStack.popPose();
         }
 
@@ -116,8 +109,8 @@ public class TicTacToeBlockEntityRenderer implements BlockEntityRenderer<TicTacT
                 if(tileChar == 'O')
                 {
                     poseStack.pushPose();
-                    poseStack.translate(0.6F * -(x - 1), 0, 0);
-                    poseStack.translate(0, 0, 0.6F * -(y - 1));
+                    poseStack.translate(0.625F * -(x - 1), 0, 0);
+                    poseStack.translate(0, 0, 0.625F * -(y - 1));
                     if(blockEntity.getTicTacToeFrame(y + 3 * x) != -1)
                     {
                         VertexConsumer vertexconsumer = bufferSource.getBuffer(RenderType.entityCutout(CIRCLE_TEXTURES.get(blockEntity.getTicTacToeFrame(y + 3 * x))));
@@ -142,8 +135,8 @@ public class TicTacToeBlockEntityRenderer implements BlockEntityRenderer<TicTacT
                 if(tileChar == 'X')
                 {
                     poseStack.pushPose();
-                    poseStack.translate(0.6F * -(x - 1), 0, 0);
-                    poseStack.translate(0, 0, 0.6F * -(y - 1));
+                    poseStack.translate(0.625F * -(x - 1), 0, 0);
+                    poseStack.translate(0, 0, 0.625F * -(y - 1));
                     poseStack.mulPose(Vector3f.YN.rotationDegrees(45F));
                     if((blockEntity.getTicTacToeFrame(y + 3 * x) != -1) && (blockEntity.getTicTacToeFrame(y + 3 * x) <= 13))
                     {

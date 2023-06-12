@@ -1,0 +1,30 @@
+{
+  "display": {
+    "title": {
+      "translate": "advancements.table_top_craft.getting_connect_four.title"
+    },
+    "description": {
+      "translate": "advancements.table_top_craft.getting_connect_four.description"
+    },
+    "icon": {
+      "item": "table_top_craft:acacia_connect_four"
+    },
+    "frame": "task",
+    "show_toast": true,
+    "announce_to_chat": true,
+    "hidden": false
+  },
+  "criteria": {
+    "getting_chess_board": {
+      "trigger": "minecraft:inventory_changed",
+      "conditions": {
+        "items": [
+          {
+            "tag": "table_top_craft:connect_four"
+          }
+        ]
+      }
+    }
+  },
+  "parent": "table_top_craft:root"
+}

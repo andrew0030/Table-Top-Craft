@@ -14,7 +14,7 @@ archivesBaseName = 'table_top_craft'
 java.toolchain.languageVersion = JavaLanguageVersion.of(17)
 
 minecraft {
-    mappings channel: 'parchment', version: '2022.12.18-1.19.3'
+    mappings channel: 'parchment', version: '2023.03.12-1.19.3'
   
     accessTransformer = file('src/main/resources/META-INF/accesstransformer.cfg')
 
@@ -64,7 +64,7 @@ configurations {
 }
 
 dependencies {
-    minecraft 'net.minecraftforge:forge:1.19.3-44.1.8'
+    minecraft 'net.minecraftforge:forge:1.19.3-44.1.23'
     annotationProcessor 'org.spongepowered:mixin:0.8.5:processor'
     minecraftLibrary 'net.objecthunter:exp4j:0.4.8'
     shade 'net.objecthunter:exp4j:0.4.8'

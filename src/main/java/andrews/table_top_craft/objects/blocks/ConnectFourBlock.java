@@ -1,6 +1,6 @@
 package andrews.table_top_craft.objects.blocks;
 
-import andrews.table_top_craft.tile_entities.ConnectFourBlockEntity;
+import andrews.table_top_craft.block_entities.ConnectFourBlockEntity;
 import andrews.table_top_craft.util.Color;
 import andrews.table_top_craft.util.NetworkUtil;
 import net.minecraft.core.BlockPos;

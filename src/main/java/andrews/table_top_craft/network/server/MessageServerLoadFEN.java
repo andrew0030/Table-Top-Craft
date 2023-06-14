@@ -2,7 +2,7 @@ package andrews.table_top_craft.network.server;
 
 import andrews.table_top_craft.game_logic.chess.board.Board;
 import andrews.table_top_craft.game_logic.chess.pgn.FenUtil;
-import andrews.table_top_craft.tile_entities.ChessTileEntity;
+import andrews.table_top_craft.block_entities.ChessBlockEntity;
 import andrews.table_top_craft.util.NetworkUtil;
 import net.minecraft.ChatFormatting;
 import net.minecraft.core.BlockPos;
@@ -55,8 +55,8 @@ public class MessageServerLoadFEN
 				if(level != null)
 				{
 					BlockEntity blockEntity = level.getBlockEntity(chessPos);
-					// We make sure the TileEntity is a ChessTileEntity
-					if(blockEntity instanceof ChessTileEntity chessTileEntity)
+					// We make sure the TileEntity is a ChessBlockEntity
+					if(blockEntity instanceof ChessBlockEntity chessBlockEntity)
 			        {
 						Board board = Board.createStandardBoard();
 						if(FenUtil.isFENValid(FEN))
@@ -67,15 +67,15 @@ public class MessageServerLoadFEN
 						{
 							player.sendSystemMessage(Component.translatable("message.table_top_craft.chess.invalidFEN").withStyle(ChatFormatting.RED));
 						}
-						chessTileEntity.setBoard(board);
-						chessTileEntity.getMoveLog().clear();
-						chessTileEntity.setHumanMovedPiece(null);
-						chessTileEntity.setSourceTile(null);
-						chessTileEntity.setWaitingForPromotion(false);
-						chessTileEntity.setPromotionCoordinate((byte) -1);
-						chessTileEntity.doingAnimationTimer = 0;
-						chessTileEntity.move = null;
-						chessTileEntity.transition = null;
+						chessBlockEntity.setBoard(board);
+						chessBlockEntity.getMoveLog().clear();
+						chessBlockEntity.setHumanMovedPiece(null);
+						chessBlockEntity.setSourceTile(null);
+						chessBlockEntity.setWaitingForPromotion(false);
+						chessBlockEntity.setPromotionCoordinate((byte) -1);
+						chessBlockEntity.doingAnimationTimer = 0;
+						chessBlockEntity.move = null;
+						chessBlockEntity.transition = null;
 						level.sendBlockUpdated(message.pos, level.getBlockState(chessPos), level.getBlockState(chessPos), 2);
 						// We start the placed Animation on server and client
 						NetworkUtil.setChessAnimationForAllTracking(level, chessPos, (byte) 0);

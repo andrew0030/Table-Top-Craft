@@ -2,8 +2,8 @@ package andrews.table_top_craft.network.server;
 
 import java.util.function.Supplier;
 
-import andrews.table_top_craft.tile_entities.ChessPieceFigureBlockEntity;
-import andrews.table_top_craft.tile_entities.ChessTileEntity;
+import andrews.table_top_craft.block_entities.ChessPieceFigureBlockEntity;
+import andrews.table_top_craft.block_entities.ChessBlockEntity;
 import net.minecraft.core.BlockPos;
 import net.minecraft.network.FriendlyByteBuf;
 import net.minecraft.world.entity.player.Player;
@@ -55,20 +55,20 @@ public class MessageServerSetColor
 				if(level != null)
 				{
 					BlockEntity blockEntity = level.getBlockEntity(chessPos);
-					// We make sure the TileEntity is a ChessTileEntity
-					if(blockEntity instanceof ChessTileEntity chessTileEntity)
+					// We make sure the TileEntity is a ChessBlockEntity
+					if(blockEntity instanceof ChessBlockEntity chessBlockEntity)
 			        {
 						switch(message.colorType)
 						{
-							case 0 -> chessTileEntity.setTileInfoColor(color);
-							case 1 -> chessTileEntity.setLegalMoveColor(color);
-							case 2 -> chessTileEntity.setInvalidMoveColor(color);
-							case 3 -> chessTileEntity.setAttackMoveColor(color);
-							case 4 -> chessTileEntity.setPreviousMoveColor(color);
-							case 5 -> chessTileEntity.setCastleMoveColor(color);
+							case 0 -> chessBlockEntity.setTileInfoColor(color);
+							case 1 -> chessBlockEntity.setLegalMoveColor(color);
+							case 2 -> chessBlockEntity.setInvalidMoveColor(color);
+							case 3 -> chessBlockEntity.setAttackMoveColor(color);
+							case 4 -> chessBlockEntity.setPreviousMoveColor(color);
+							case 5 -> chessBlockEntity.setCastleMoveColor(color);
 						}
 						level.sendBlockUpdated(message.pos, level.getBlockState(chessPos), level.getBlockState(chessPos), 2);
-						chessTileEntity.setChanged();
+						chessBlockEntity.setChanged();
 			        }
 					else if(blockEntity instanceof ChessPieceFigureBlockEntity chessPieceFigureBlockEntity)
 					{

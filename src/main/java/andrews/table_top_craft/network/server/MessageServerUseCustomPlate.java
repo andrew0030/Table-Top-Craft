@@ -3,7 +3,7 @@ package andrews.table_top_craft.network.server;
 import java.util.function.Supplier;
 
 import andrews.table_top_craft.objects.blocks.ChessBlock;
-import andrews.table_top_craft.tile_entities.ChessTileEntity;
+import andrews.table_top_craft.block_entities.ChessBlockEntity;
 import net.minecraft.core.BlockPos;
 import net.minecraft.network.FriendlyByteBuf;
 import net.minecraft.world.entity.player.Player;
@@ -46,17 +46,17 @@ public class MessageServerUseCustomPlate
 				if(level != null)
 				{
 					BlockEntity blockEntity = level.getBlockEntity(chessPos);
-					// We make sure the TileEntity is a ChessTileEntity
-					if(blockEntity instanceof ChessTileEntity chessTileEntity)
+					// We make sure the TileEntity is a ChessBlockEntity
+					if(blockEntity instanceof ChessBlockEntity chessBlockEntity)
 			        {
-						if(chessTileEntity.getUseCustomPlate())
+						if(chessBlockEntity.getUseCustomPlate())
 						{
-							chessTileEntity.setUseCustomPlate(false);
+							chessBlockEntity.setUseCustomPlate(false);
 							level.setBlockAndUpdate(message.pos, level.getBlockState(message.pos).setValue(ChessBlock.SHOW_PLATE, true));
 						}
 						else
 						{
-							chessTileEntity.setUseCustomPlate(true);
+							chessBlockEntity.setUseCustomPlate(true);
 							level.setBlockAndUpdate(message.pos, level.getBlockState(message.pos).setValue(ChessBlock.SHOW_PLATE, false));
 						}
 						level.sendBlockUpdated(message.pos, level.getBlockState(chessPos), level.getBlockState(chessPos), 2);

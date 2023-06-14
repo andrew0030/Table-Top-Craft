@@ -1,8 +1,8 @@
-package andrews.table_top_craft.tile_entities.render.item;
+package andrews.table_top_craft.block_entities.render.item;
 
 import andrews.table_top_craft.registry.TTCBlocks;
-import andrews.table_top_craft.tile_entities.ChessPieceFigureBlockEntity;
-import andrews.table_top_craft.tile_entities.render.ChessPieceFigureTileEntityRenderer;
+import andrews.table_top_craft.block_entities.ChessPieceFigureBlockEntity;
+import andrews.table_top_craft.block_entities.render.ChessPieceFigureTileEntityRenderer;
 import andrews.table_top_craft.util.Color;
 import andrews.table_top_craft.util.NBTColorSaving;
 import com.mojang.blaze3d.vertex.PoseStack;
@@ -10,12 +10,12 @@ import net.minecraft.client.Minecraft;
 import net.minecraft.client.model.geom.EntityModelSet;
 import net.minecraft.client.renderer.BlockEntityWithoutLevelRenderer;
 import net.minecraft.client.renderer.MultiBufferSource;
-import net.minecraft.client.renderer.block.model.ItemTransforms;
 import net.minecraft.client.renderer.blockentity.BlockEntityRenderDispatcher;
 import net.minecraft.core.BlockPos;
 import net.minecraft.nbt.CompoundTag;
 import net.minecraft.nbt.Tag;
 import net.minecraft.world.item.BlockItem;
+import net.minecraft.world.item.ItemDisplayContext;
 import net.minecraft.world.item.ItemStack;
 
 public class TTCBlockEntityWithoutLevelRenderer extends BlockEntityWithoutLevelRenderer
@@ -34,7 +34,7 @@ public class TTCBlockEntityWithoutLevelRenderer extends BlockEntityWithoutLevelR
     }
 
     @Override
-    public void renderByItem(ItemStack itemStack, ItemTransforms.TransformType type, PoseStack poseStack, MultiBufferSource buffer, int packedLight, int packedOverlay)
+    public void renderByItem(ItemStack itemStack, ItemDisplayContext type, PoseStack poseStack, MultiBufferSource buffer, int packedLight, int packedOverlay)
     {
         if(itemStack.getItem() == TTCBlocks.CHESS_PIECE_FIGURE.get().asItem())
         {
@@ -75,7 +75,7 @@ public class TTCBlockEntityWithoutLevelRenderer extends BlockEntityWithoutLevelR
                 else
                     chessPieceFigureBlockEntity.setPieceName(null);
 
-                ChessPieceFigureTileEntityRenderer.renderChessPieceFigure(chessPieceFigureBlockEntity, poseStack, buffer, type.equals(ItemTransforms.TransformType.GUI), isHeldOrHead(type), getPartialTicks(), packedLight, packedOverlay);
+                ChessPieceFigureTileEntityRenderer.renderChessPieceFigure(chessPieceFigureBlockEntity, poseStack, buffer, type.equals(ItemDisplayContext.GUI), isHeldOrHead(type), getPartialTicks(), packedLight, packedOverlay);
             }
             catch (Exception e)
             {
@@ -84,9 +84,9 @@ public class TTCBlockEntityWithoutLevelRenderer extends BlockEntityWithoutLevelR
         }
     }
 
-    private boolean isHeldOrHead(ItemTransforms.TransformType type)
+    private boolean isHeldOrHead(ItemDisplayContext type)
     {
-        return type.equals(ItemTransforms.TransformType.HEAD) || type.equals(ItemTransforms.TransformType.THIRD_PERSON_RIGHT_HAND) || type.equals(ItemTransforms.TransformType.THIRD_PERSON_LEFT_HAND);
+        return type.equals(ItemDisplayContext.HEAD) || type.equals(ItemDisplayContext.THIRD_PERSON_RIGHT_HAND) || type.equals(ItemDisplayContext.THIRD_PERSON_LEFT_HAND);
     }
 
     private float getPartialTicks()

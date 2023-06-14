@@ -1,4 +1,4 @@
-package andrews.table_top_craft.tile_entities.render;
+package andrews.table_top_craft.block_entities.render;
 
 import com.mojang.blaze3d.platform.Window;
 import com.mojang.blaze3d.shaders.Uniform;

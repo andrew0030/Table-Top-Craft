@@ -1,4 +1,4 @@
-package andrews.table_top_craft.tile_entities.model.connect_four;
+package andrews.table_top_craft.block_entities.model.connect_four;
 
 import andrews.table_top_craft.util.Reference;
 import com.mojang.blaze3d.vertex.PoseStack;
@@ -10,7 +10,6 @@ import net.minecraft.client.model.geom.PartPose;
 import net.minecraft.client.model.geom.builders.*;
 import net.minecraft.client.renderer.RenderType;
 import net.minecraft.resources.ResourceLocation;
-import org.joml.Vector3f;
 
 public class ConnectFourPieceModel extends Model
 {

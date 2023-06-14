@@ -1,9 +1,8 @@
-package andrews.table_top_craft.tile_entities.render;
+package andrews.table_top_craft.block_entities.render;
 
 import andrews.table_top_craft.objects.blocks.ChessTimerBlock;
 import andrews.table_top_craft.objects.blocks.ChessTimerBlock.PressedButton;
-import andrews.table_top_craft.registry.TTCBlocks;
-import andrews.table_top_craft.tile_entities.ChessTimerBlockEntity;
+import andrews.table_top_craft.block_entities.ChessTimerBlockEntity;
 import com.mojang.blaze3d.vertex.PoseStack;
 import com.mojang.math.Axis;
 import net.minecraft.client.Minecraft;

@@ -1,4 +1,4 @@
-package andrews.table_top_craft.tile_entities.animations;
+package andrews.table_top_craft.block_entities.animations;
 
 import andrews.table_top_craft.animation.system.core.Animation;
 import andrews.table_top_craft.animation.system.core.BasicKeyframe;

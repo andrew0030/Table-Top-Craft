@@ -1,4 +1,4 @@
-package andrews.table_top_craft.tile_entities;
+package andrews.table_top_craft.block_entities;
 
 import andrews.table_top_craft.animation.system.base.AnimatedBlockEntity;
 import andrews.table_top_craft.animation.system.core.AdvancedAnimationState;

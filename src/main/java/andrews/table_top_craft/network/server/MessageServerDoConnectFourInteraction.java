@@ -1,7 +1,7 @@
 package andrews.table_top_craft.network.server;
 
 import andrews.table_top_craft.criteria.TTCCriteriaTriggers;
-import andrews.table_top_craft.tile_entities.ConnectFourBlockEntity;
+import andrews.table_top_craft.block_entities.ConnectFourBlockEntity;
 import andrews.table_top_craft.util.NetworkUtil;
 import net.minecraft.core.BlockPos;
 import net.minecraft.network.FriendlyByteBuf;

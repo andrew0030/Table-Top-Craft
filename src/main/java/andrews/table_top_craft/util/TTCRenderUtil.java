@@ -5,7 +5,6 @@ import com.mojang.blaze3d.vertex.PoseStack;
 import com.mojang.blaze3d.vertex.VertexConsumer;
 import com.mojang.math.Axis;
 import net.minecraft.client.Minecraft;
-import net.minecraft.client.gui.Font;
 import net.minecraft.client.renderer.MultiBufferSource;
 import net.minecraft.network.chat.Component;
 import net.minecraft.util.Mth;
@@ -31,15 +30,15 @@ public class TTCRenderUtil
 
     public static void renderText(Component text, float posX, float posY, float posZ, float scale, PoseStack poseStack, MultiBufferSource buffer, int packedLight)
     {
-        poseStack.pushPose();
-        poseStack.translate(posX, posY, posZ);
-        poseStack.mulPose(Minecraft.getInstance().getEntityRenderDispatcher().cameraOrientation());
-        poseStack.scale(-0.025F, -0.025F, 0.025F);
-        poseStack.scale(scale, scale, scale);
-        Font font = Minecraft.getInstance().font;
-        float centerOffset = (float)(-font.width(text) / 2);
-        font.drawInBatch(text, centerOffset, -9, -1, false, poseStack.last().pose(), buffer, true, 0, packedLight);
-        poseStack.popPose();
+//        poseStack.pushPose();
+//        poseStack.translate(posX, posY, posZ);
+//        poseStack.mulPose(Minecraft.getInstance().getEntityRenderDispatcher().cameraOrientation());
+//        poseStack.scale(-0.025F, -0.025F, 0.025F);
+//        poseStack.scale(scale, scale, scale);
+//        Font font = Minecraft.getInstance().font;
+//        float centerOffset = (float)(-font.width(text) / 2);
+//        font.drawInBatch(text, centerOffset, -9, -1, false, poseStack.last().pose(), buffer, true, 0, packedLight);
+//        poseStack.popPose();
     }
 
     public static void renderQuad(MultiBufferSource buffer, PoseStack poseStack, int red, int green, int blue, float posX, float posY, float posZ, float size)

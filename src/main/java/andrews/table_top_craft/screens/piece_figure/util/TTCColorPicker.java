@@ -5,6 +5,7 @@ import andrews.table_top_craft.util.Reference;
 import com.mojang.blaze3d.systems.RenderSystem;
 import com.mojang.blaze3d.vertex.PoseStack;
 import net.minecraft.client.Minecraft;
+import net.minecraft.client.gui.GuiComponent;
 import net.minecraft.client.gui.components.AbstractSliderButton;
 import net.minecraft.client.gui.screens.Screen;
 import net.minecraft.network.chat.Component;
@@ -56,7 +57,7 @@ public class TTCColorPicker extends AbstractSliderButton
     }
 
     @Override
-    public void renderButton(PoseStack pPoseStack, int pMouseX, int pMouseY, float pPartialTick)
+    public void renderWidget(PoseStack pPoseStack, int pMouseX, int pMouseY, float pPartialTick)
     {
         pPoseStack.pushPose();
         pPoseStack.translate(x, y, 0);
@@ -64,13 +65,13 @@ public class TTCColorPicker extends AbstractSliderButton
         // RGB chart
         RenderSystem.setShaderColor(1.0f, 1.0f, 1.0f, 1.0f);
         RenderSystem.setShaderTexture(0, COLOR_CHART);
-        this.blit(pPoseStack, 0, 0, 0, 0, 256, 256);
+        GuiComponent.blit(pPoseStack, 0, 0, 0, 0, 256, 256);
         // Saturation chart
         RenderSystem.enableBlend();
         if (this.screen instanceof IColorPicker colorPicker)
             RenderSystem.setShaderColor(1.0f, 1.0f, 1.0f, 1F - (colorPicker.getSaturationSlider().getValueInt() / 100F));
         RenderSystem.setShaderTexture(0, SATURATION_CHART);
-        this.blit(pPoseStack, 0, 0, 0, 0, 256, 256);
+        GuiComponent.blit(pPoseStack, 0, 0, 0, 0, 256, 256);
         RenderSystem.disableBlend();
         pPoseStack.popPose();
 
@@ -89,7 +90,6 @@ public class TTCColorPicker extends AbstractSliderButton
         return color.fromHSV(colorHue, colorSaturation, colorValue);
     }
 
-    @Override
     protected void renderBg(PoseStack poseStack, Minecraft minecraft, int mouseX, int mouseY)
     {
         RenderSystem.setShaderTexture(0, WIDGETS_LOCATION);
@@ -104,7 +104,7 @@ public class TTCColorPicker extends AbstractSliderButton
 
         int size = 4;
 
-        ScreenUtils.blitWithBorder(poseStack, WIDGETS_LOCATION, xPosition, yPosition, 0, 46 + offset, size, size, 200, 20, 1, 1, 1, 1, this.getBlitOffset());
+        ScreenUtils.blitWithBorder(poseStack, WIDGETS_LOCATION, xPosition, yPosition, 0, 46 + offset, size, size, 200, 20, 1, 1, 1, 1, 0);
     }
 
     @Override

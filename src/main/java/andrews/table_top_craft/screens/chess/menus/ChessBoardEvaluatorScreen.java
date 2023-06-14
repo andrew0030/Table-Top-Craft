@@ -4,13 +4,14 @@ import andrews.table_top_craft.game_logic.chess.player.ai.StandardBoardEvaluator
 import andrews.table_top_craft.screens.chess.buttons.ChessCancelButton;
 import andrews.table_top_craft.screens.chess.buttons.ChessCancelButton.ChessCancelButtonText;
 import andrews.table_top_craft.screens.chess.buttons.ChessCancelButton.ChessCancelMenuTarget;
-import andrews.table_top_craft.tile_entities.ChessTileEntity;
+import andrews.table_top_craft.block_entities.ChessBlockEntity;
 import andrews.table_top_craft.util.Reference;
 import com.google.common.primitives.Ints;
 import com.mojang.blaze3d.platform.InputConstants;
 import com.mojang.blaze3d.systems.RenderSystem;
 import com.mojang.blaze3d.vertex.PoseStack;
 import net.minecraft.client.Minecraft;
+import net.minecraft.client.gui.GuiComponent;
 import net.minecraft.client.gui.screens.Screen;
 import net.minecraft.client.player.LocalPlayer;
 import net.minecraft.network.chat.Component;
@@ -24,16 +25,16 @@ public class ChessBoardEvaluatorScreen extends Screen
 	private final String blackPlayerText = Component.translatable("gui.table_top_craft.chess.evaluation.black_player").getString();
 	private final String currentScoreText = Component.translatable("gui.table_top_craft.chess.evaluation.current_score").getString();
 	private final String boardEvaluationText;
-	private final ChessTileEntity chessTileEntity;
+	private final ChessBlockEntity chessBlockEntity;
 	private final LocalPlayer clientPlayer;
 	private final int xSize = 177;
 	private final int ySize = 198;
 	
-	public ChessBoardEvaluatorScreen(ChessTileEntity chessTileEntity)
+	public ChessBoardEvaluatorScreen(ChessBlockEntity chessBlockEntity)
 	{
 		super(Component.literal(""));
-		this.chessTileEntity = chessTileEntity;
-		boardEvaluationText = StandardBoardEvaluator.get().evaluationDetails(chessTileEntity.getBoard(), 0);
+		this.chessBlockEntity = chessBlockEntity;
+		boardEvaluationText = StandardBoardEvaluator.get().evaluationDetails(chessBlockEntity.getBoard(), 0);
 		this.clientPlayer = Minecraft.getInstance().player;
 	}
 	
@@ -51,7 +52,7 @@ public class ChessBoardEvaluatorScreen extends Screen
 		int x = (this.width - this.xSize) / 2;
 		int y = (this.height - this.ySize) / 2;
 		// The Buttons in the Gui Menu
-		this.addRenderableWidget(new ChessCancelButton(this.chessTileEntity, ChessCancelMenuTarget.CHESS_BOARD_SETTINGS, ChessCancelButtonText.BACK, (x + (xSize / 2)) - 41, y + 180));
+		this.addRenderableWidget(new ChessCancelButton(this.chessBlockEntity, ChessCancelMenuTarget.CHESS_BOARD_SETTINGS, ChessCancelButtonText.BACK, (x + (xSize / 2)) - 41, y + 180));
 	}
 	
 	@Override
@@ -62,15 +63,15 @@ public class ChessBoardEvaluatorScreen extends Screen
 
 		RenderSystem.setShaderColor(1.0f, 1.0f, 1.0f, 1.0f);
 		RenderSystem.setShaderTexture(0, MENU_TEXTURE);
-		this.blit(poseStack, x, y, 0, 0, this.xSize, this.ySize);
-		this.blit(poseStack, x + 5, y + 152, 0, 224, 167, 12);
+		GuiComponent.blit(poseStack, x, y, 0, 0, this.xSize, this.ySize);
+		GuiComponent.blit(poseStack, x + 5, y + 152, 0, 224, 167, 12);
 		
-		int offset = StandardBoardEvaluator.get().evaluate(chessTileEntity.getBoard(), 1) / 23;
+		int offset = StandardBoardEvaluator.get().evaluate(chessBlockEntity.getBoard(), 1) / 23;
 		offset = Ints.constrainToRange(offset, -80, 84);
 		poseStack.pushPose();
 		poseStack.translate(offset, 0, 0);
 		if(this.clientPlayer.tickCount % 16 <= 8)
-			this.blit(poseStack, x + 83, y + 162, 3, 198, 7, 5);
+			GuiComponent.blit(poseStack, x + 83, y + 162, 3, 198, 7, 5);
 		poseStack.popPose();
 		offset = Ints.constrainToRange(offset, -82 + (this.font.width(this.currentScoreText) / 2), 88 - (this.font.width(this.currentScoreText) / 2));
 		poseStack.pushPose();

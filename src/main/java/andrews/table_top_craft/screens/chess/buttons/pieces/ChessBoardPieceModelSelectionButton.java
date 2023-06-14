@@ -1,9 +1,9 @@
 package andrews.table_top_craft.screens.chess.buttons.pieces;
 
+import andrews.table_top_craft.block_entities.ChessBlockEntity;
+import andrews.table_top_craft.block_entities.ChessPieceFigureBlockEntity;
 import andrews.table_top_craft.game_logic.chess.pieces.BasePiece.PieceModelSet;
 import andrews.table_top_craft.registry.TTCBlocks;
-import andrews.table_top_craft.tile_entities.ChessPieceFigureBlockEntity;
-import andrews.table_top_craft.tile_entities.ChessTileEntity;
 import andrews.table_top_craft.util.NetworkUtil;
 import andrews.table_top_craft.util.Reference;
 import com.mojang.blaze3d.platform.GlStateManager;
@@ -12,9 +12,9 @@ import com.mojang.blaze3d.systems.RenderSystem;
 import com.mojang.blaze3d.vertex.PoseStack;
 import net.minecraft.client.Minecraft;
 import net.minecraft.client.gui.Font;
+import net.minecraft.client.gui.GuiComponent;
 import net.minecraft.client.gui.components.Button;
 import net.minecraft.client.renderer.MultiBufferSource;
-import net.minecraft.client.renderer.block.model.ItemTransforms;
 import net.minecraft.client.renderer.entity.ItemRenderer;
 import net.minecraft.client.renderer.texture.OverlayTexture;
 import net.minecraft.client.renderer.texture.TextureAtlas;
@@ -22,6 +22,7 @@ import net.minecraft.client.resources.model.BakedModel;
 import net.minecraft.core.BlockPos;
 import net.minecraft.network.chat.Component;
 import net.minecraft.resources.ResourceLocation;
+import net.minecraft.world.item.ItemDisplayContext;
 import net.minecraft.world.item.ItemStack;
 
 import java.util.Arrays;
@@ -33,7 +34,7 @@ public class ChessBoardPieceModelSelectionButton extends Button
     private final Component buttonTextClassic = Component.translatable("tooltip.table_top_craft.chess.piece_type.classic");
     private final Component buttonTextPandorasCreatures = Component.translatable("tooltip.table_top_craft.chess.piece_type.pandoras_creatures");
     private final Font fontRenderer;
-    private static ChessTileEntity chessTileEntity;
+    private static ChessBlockEntity chessBlockEntity;
     private static final int buttonWidth = 167;
     private static final int buttonHeight = 37;
     private int u = 0;
@@ -47,11 +48,11 @@ public class ChessBoardPieceModelSelectionButton extends Button
     private final boolean isClassicSetUnlocked;
     private final boolean isPandorasCreaturesSetUnlocked;
 
-    public ChessBoardPieceModelSelectionButton(ChessTileEntity tileEntity, PieceModelSet pieceModelSet, boolean isStandardSetUnlocked, boolean isClassicSetUnlocked, boolean isPandorasCreaturesSetUnlocked, int xPos, int yPos)
+    public ChessBoardPieceModelSelectionButton(ChessBlockEntity tileEntity, PieceModelSet pieceModelSet, boolean isStandardSetUnlocked, boolean isClassicSetUnlocked, boolean isPandorasCreaturesSetUnlocked, int xPos, int yPos)
     {
         super(xPos, yPos, buttonWidth, buttonHeight, Component.literal(""), (button) -> { handleButtonPress(); }, DEFAULT_NARRATION);
         this.fontRenderer = Minecraft.getInstance().font;
-        chessTileEntity = tileEntity;
+        chessBlockEntity = tileEntity;
         chessPieceFigureBlockEntity = new ChessPieceFigureBlockEntity(BlockPos.ZERO, TTCBlocks.CHESS_PIECE_FIGURE.get().defaultBlockState());
         chessPieceStack = new ItemStack(TTCBlocks.CHESS_PIECE_FIGURE.get().asItem());
         this.pieceModelSet = pieceModelSet;
@@ -62,7 +63,7 @@ public class ChessBoardPieceModelSelectionButton extends Button
     }
 
     @Override
-    public void renderButton(PoseStack poseStack, int mouseX, int mouseY, float partialTicks)
+    public void renderWidget(PoseStack poseStack, int mouseX, int mouseY, float partialTicks)
     {
         this.isHovered = mouseX >= x && mouseX < x + width && mouseY >= y && mouseY < y + height || this.isFocused();
 
@@ -77,19 +78,19 @@ public class ChessBoardPieceModelSelectionButton extends Button
         RenderSystem.setShaderTexture(0, TEXTURE);
         poseStack.pushPose();
         RenderSystem.enableBlend();
-        this.blit(poseStack, x, y, u, v, width, height);
+        GuiComponent.blit(poseStack, x, y, u, v, width, height);
         switch (pieceModelSet)
         {
             case STANDARD:
-                if (chessTileEntity.getPieceSet() == 0)
+                if (chessBlockEntity.getPieceSet() == 0)
                     this.blit(poseStack, x - 1, y - 1, 0, 74, width + 2, height + 2);
                 break;
             case CLASSIC:
-                if (chessTileEntity.getPieceSet() == 1)
+                if (chessBlockEntity.getPieceSet() == 1)
                     this.blit(poseStack, x - 1, y - 1, 0, 74, width + 2, height + 2);
                 break;
             case PANDORAS_CREATURES:
-                if (chessTileEntity.getPieceSet() == 2)
+                if (chessBlockEntity.getPieceSet() == 2)
                     this.blit(poseStack, x - 1, y - 1, 0, 74, width + 2, height + 2);
         }
         RenderSystem.disableBlend();
@@ -122,7 +123,7 @@ public class ChessBoardPieceModelSelectionButton extends Button
             RenderSystem.enableBlend();
             RenderSystem.setShaderColor(1.0f, 1.0f, 1.0f, 0.85f);
             RenderSystem.setShaderTexture(0, TEXTURE);
-            this.blit(poseStack, x + 1, y + 11, 0, 113, 165, 15);
+            GuiComponent.blit(poseStack, x + 1, y + 11, 0, 113, 165, 15);
             RenderSystem.setShaderColor(1.0f, 1.0f, 1.0f, 1.0f);
             RenderSystem.disableBlend();
 
@@ -150,7 +151,7 @@ public class ChessBoardPieceModelSelectionButton extends Button
         RenderSystem.applyModelViewMatrix();
         MultiBufferSource.BufferSource bufferSource = Minecraft.getInstance().renderBuffers().bufferSource();
         Lighting.setupForFlatItems();
-        itemRenderer.render(itemStack, ItemTransforms.TransformType.GUI, false, poseStack, bufferSource, 15728880, OverlayTexture.NO_OVERLAY, itemBakedModel);
+        itemRenderer.render(itemStack, ItemDisplayContext.GUI, false, poseStack, bufferSource, 15728880, OverlayTexture.NO_OVERLAY, itemBakedModel);
         bufferSource.endBatch();
         poseStack.popPose();
         RenderSystem.applyModelViewMatrix();
@@ -161,9 +162,9 @@ public class ChessBoardPieceModelSelectionButton extends Button
     {
         switch (pieceModelSet)
         {
-            case STANDARD -> NetworkUtil.setChessPieceSet(chessTileEntity.getBlockPos(), 0);
-            case CLASSIC -> NetworkUtil.setChessPieceSet(chessTileEntity.getBlockPos(), 1);
-            case PANDORAS_CREATURES -> NetworkUtil.setChessPieceSet(chessTileEntity.getBlockPos(), 2);
+            case STANDARD -> NetworkUtil.setChessPieceSet(chessBlockEntity.getBlockPos(), 0);
+            case CLASSIC -> NetworkUtil.setChessPieceSet(chessBlockEntity.getBlockPos(), 1);
+            case PANDORAS_CREATURES -> NetworkUtil.setChessPieceSet(chessBlockEntity.getBlockPos(), 2);
         }
     }
 

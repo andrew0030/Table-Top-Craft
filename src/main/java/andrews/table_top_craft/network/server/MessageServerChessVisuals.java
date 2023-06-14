@@ -1,7 +1,6 @@
 package andrews.table_top_craft.network.server;
 
-import andrews.table_top_craft.objects.blocks.ChessBlock;
-import andrews.table_top_craft.tile_entities.ChessTileEntity;
+import andrews.table_top_craft.block_entities.ChessBlockEntity;
 import net.minecraft.core.BlockPos;
 import net.minecraft.network.FriendlyByteBuf;
 import net.minecraft.world.entity.player.Player;
@@ -51,14 +50,14 @@ public class MessageServerChessVisuals
                 {
                     Level level = player.getLevel();
                     BlockEntity blockEntity = level.getBlockEntity(pos);
-                    if (blockEntity instanceof ChessTileEntity chessTileEntity)
+                    if (blockEntity instanceof ChessBlockEntity chessBlockEntity)
                     {
                         switch (type) {
-                            default -> chessTileEntity.setPlayPieceAnimations(!chessTileEntity.getPlayPieceAnimations());
-                            case 1 -> chessTileEntity.setDisplayParticles(!chessTileEntity.getDisplayParticles());
+                            default -> chessBlockEntity.setPlayPieceAnimations(!chessBlockEntity.getPlayPieceAnimations());
+                            case 1 -> chessBlockEntity.setDisplayParticles(!chessBlockEntity.getDisplayParticles());
                         }
                         level.sendBlockUpdated(pos, level.getBlockState(pos), level.getBlockState(pos), 2);
-                        chessTileEntity.setChanged();
+                        chessBlockEntity.setChanged();
                     }
                 }
             });

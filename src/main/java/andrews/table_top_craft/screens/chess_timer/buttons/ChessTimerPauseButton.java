@@ -1,13 +1,14 @@
 package andrews.table_top_craft.screens.chess_timer.buttons;
 
+import andrews.table_top_craft.block_entities.ChessTimerBlockEntity;
 import andrews.table_top_craft.objects.blocks.ChessTimerBlock;
-import andrews.table_top_craft.tile_entities.ChessTimerBlockEntity;
 import andrews.table_top_craft.util.NetworkUtil;
 import andrews.table_top_craft.util.Reference;
 import com.mojang.blaze3d.systems.RenderSystem;
 import com.mojang.blaze3d.vertex.PoseStack;
 import net.minecraft.client.Minecraft;
 import net.minecraft.client.gui.Font;
+import net.minecraft.client.gui.GuiComponent;
 import net.minecraft.client.gui.components.Button;
 import net.minecraft.network.chat.Component;
 import net.minecraft.resources.ResourceLocation;
@@ -33,7 +34,7 @@ public class ChessTimerPauseButton extends Button
     }
 
     @Override
-    public void renderButton(PoseStack poseStack, int mouseX, int mouseY, float partialTick)
+    public void renderWidget(PoseStack poseStack, int mouseX, int mouseY, float partialTick)
     {
         this.active = false;
         if(Minecraft.getInstance().level != null) {
@@ -44,7 +45,7 @@ public class ChessTimerPauseButton extends Button
 
         RenderSystem.setShaderColor(1.0F, 1.0F, 1.0F, 1.0F);
         RenderSystem.setShaderTexture(0, BUTTONS_TEXTURE);
-        this.blit(poseStack, this.x, this.y, this.isActive() ? ((isHovered || isFocused()) ? 70 : 0) : 140, 52, this.width, this.height);
+        GuiComponent.blit(poseStack, this.x, this.y, this.isActive() ? ((isHovered || isFocused()) ? 70 : 0) : 140, 52, this.width, this.height);
         drawCenteredNoShadow(poseStack, TEXT, this.x + this.width / 2, this.y + 3, 0x000000);
     }
 

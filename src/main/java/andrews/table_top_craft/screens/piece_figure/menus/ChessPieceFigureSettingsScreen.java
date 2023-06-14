@@ -1,5 +1,6 @@
 package andrews.table_top_craft.screens.piece_figure.menus;
 
+import andrews.table_top_craft.block_entities.ChessPieceFigureBlockEntity;
 import andrews.table_top_craft.registry.TTCBlocks;
 import andrews.table_top_craft.screens.chess.buttons.pieces.creative_mode.ChessBoardPieceNextSetButton;
 import andrews.table_top_craft.screens.chess.buttons.pieces.creative_mode.ChessBoardPieceNextTypeButton;
@@ -17,7 +18,6 @@ import andrews.table_top_craft.screens.piece_figure.util.ColorPickerToggleButton
 import andrews.table_top_craft.screens.piece_figure.util.IColorPicker;
 import andrews.table_top_craft.screens.piece_figure.util.SaturationSlider;
 import andrews.table_top_craft.screens.piece_figure.util.TTCColorPicker;
-import andrews.table_top_craft.tile_entities.ChessPieceFigureBlockEntity;
 import andrews.table_top_craft.util.Color;
 import andrews.table_top_craft.util.NBTColorSaving;
 import andrews.table_top_craft.util.Reference;
@@ -27,9 +27,9 @@ import com.mojang.blaze3d.platform.Lighting;
 import com.mojang.blaze3d.systems.RenderSystem;
 import com.mojang.blaze3d.vertex.PoseStack;
 import net.minecraft.client.Minecraft;
+import net.minecraft.client.gui.GuiComponent;
 import net.minecraft.client.gui.screens.Screen;
 import net.minecraft.client.renderer.MultiBufferSource;
-import net.minecraft.client.renderer.block.model.ItemTransforms;
 import net.minecraft.client.renderer.entity.ItemRenderer;
 import net.minecraft.client.renderer.texture.OverlayTexture;
 import net.minecraft.client.renderer.texture.TextureAtlas;
@@ -37,6 +37,7 @@ import net.minecraft.client.resources.model.BakedModel;
 import net.minecraft.core.BlockPos;
 import net.minecraft.network.chat.Component;
 import net.minecraft.resources.ResourceLocation;
+import net.minecraft.world.item.ItemDisplayContext;
 import net.minecraft.world.item.ItemStack;
 import net.minecraftforge.client.gui.widget.ForgeSlider;
 
@@ -125,13 +126,13 @@ public class ChessPieceFigureSettingsScreen extends Screen implements IColorPick
 
         RenderSystem.setShaderColor(1.0f, 1.0f, 1.0f, 1.0f);
         RenderSystem.setShaderTexture(0, MENU_TEXTURE);
-        this.blit(poseStack, x, y, 0, 0, this.xSize, this.ySize);
+        GuiComponent.blit(poseStack, x, y, 0, 0, this.xSize, this.ySize);
 
         if(isColorPickerActive)
         {
             RenderSystem.setShaderColor(1.0f, 1.0f, 1.0f, 1.0f);
             RenderSystem.setShaderTexture(0, COLOR_PICKER_FRAME_TEXTURE);
-            this.blit(poseStack, x - 136, y + 3, 0, 0, 136, 151);
+            GuiComponent.blit(poseStack, x - 136, y + 3, 0, 0, 136, 151);
         }
 
         // The screen text
@@ -166,7 +167,7 @@ public class ChessPieceFigureSettingsScreen extends Screen implements IColorPick
         RenderSystem.applyModelViewMatrix();
         MultiBufferSource.BufferSource bufferSource = Minecraft.getInstance().renderBuffers().bufferSource();
         Lighting.setupForFlatItems();
-        itemRenderer.render(itemStack, ItemTransforms.TransformType.GUI, false, poseStack, bufferSource, 15728880, OverlayTexture.NO_OVERLAY, itemBakedModel);
+        itemRenderer.render(itemStack, ItemDisplayContext.GUI, false, poseStack, bufferSource, 15728880, OverlayTexture.NO_OVERLAY, itemBakedModel);
         bufferSource.endBatch();
         poseStack.popPose();
         RenderSystem.applyModelViewMatrix();

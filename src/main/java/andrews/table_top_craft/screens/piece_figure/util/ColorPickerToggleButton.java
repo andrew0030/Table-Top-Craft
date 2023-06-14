@@ -1,13 +1,14 @@
 package andrews.table_top_craft.screens.piece_figure.util;
 
+import andrews.table_top_craft.block_entities.ChessBlockEntity;
+import andrews.table_top_craft.block_entities.ChessPieceFigureBlockEntity;
 import andrews.table_top_craft.screens.chess.menus.color_selection.*;
 import andrews.table_top_craft.screens.piece_figure.menus.ChessPieceFigureSettingsScreen;
-import andrews.table_top_craft.tile_entities.ChessPieceFigureBlockEntity;
-import andrews.table_top_craft.tile_entities.ChessTileEntity;
 import andrews.table_top_craft.util.Reference;
 import com.mojang.blaze3d.systems.RenderSystem;
 import com.mojang.blaze3d.vertex.PoseStack;
 import net.minecraft.client.Minecraft;
+import net.minecraft.client.gui.GuiComponent;
 import net.minecraft.client.gui.components.Button;
 import net.minecraft.client.gui.screens.Screen;
 import net.minecraft.network.chat.Component;
@@ -34,7 +35,7 @@ public class ColorPickerToggleButton extends Button
     }
 
     @Override
-    public void renderButton(PoseStack poseStack, int mouseX, int mouseY, float partialTicks)
+    public void renderWidget(PoseStack poseStack, int mouseX, int mouseY, float partialTicks)
     {
         this.isHovered = mouseX >= x && mouseX < x + width && mouseY >= y && mouseY < y + height || this.isFocused();
 
@@ -48,7 +49,7 @@ public class ColorPickerToggleButton extends Button
         // The Button
         RenderSystem.setShaderColor(1.0f, 1.0f, 1.0f, 1.0f);
         RenderSystem.setShaderTexture(0, TEXTURE);
-        this.blit(poseStack, x, y, u, v, width, height);
+        GuiComponent.blit(poseStack, x, y, u, v, width, height);
         // The Color inside the Button
         if (screen instanceof IColorPicker colorPicker)
         {
@@ -63,7 +64,7 @@ public class ColorPickerToggleButton extends Button
             }
 
             RenderSystem.setShaderColor(red / 255F, green / 255F, blue / 255F, 1.0f);
-            this.blit(poseStack, x, y, 78, v, width, height);
+            GuiComponent.blit(poseStack, x, y, 78, v, width, height);
         }
         // We disable blend after rendering the "highlight"
         RenderSystem.disableBlend();
@@ -83,49 +84,49 @@ public class ColorPickerToggleButton extends Button
                 else
                     Minecraft.getInstance().setScreen(new ChessPieceFigureSettingsScreen(chessPieceFigureBlockEntity, true));
             }
-            else if(screen instanceof ChessTileInfoColorScreen && blockEntity instanceof ChessTileEntity chessTileEntity)
+            else if(screen instanceof ChessTileInfoColorScreen && blockEntity instanceof ChessBlockEntity chessBlockEntity)
             {
                 if (isColorPickerActive())
-                    Minecraft.getInstance().setScreen(new ChessTileInfoColorScreen(chessTileEntity, false));
+                    Minecraft.getInstance().setScreen(new ChessTileInfoColorScreen(chessBlockEntity, false));
                 else
-                    Minecraft.getInstance().setScreen(new ChessTileInfoColorScreen(chessTileEntity, true));
+                    Minecraft.getInstance().setScreen(new ChessTileInfoColorScreen(chessBlockEntity, true));
             }
-            else if(screen instanceof ChessBoardLegalMoveColorScreen && blockEntity instanceof ChessTileEntity chessTileEntity)
+            else if(screen instanceof ChessBoardLegalMoveColorScreen && blockEntity instanceof ChessBlockEntity chessBlockEntity)
             {
                 if (isColorPickerActive())
-                    Minecraft.getInstance().setScreen(new ChessBoardLegalMoveColorScreen(chessTileEntity, false));
+                    Minecraft.getInstance().setScreen(new ChessBoardLegalMoveColorScreen(chessBlockEntity, false));
                 else
-                    Minecraft.getInstance().setScreen(new ChessBoardLegalMoveColorScreen(chessTileEntity, true));
+                    Minecraft.getInstance().setScreen(new ChessBoardLegalMoveColorScreen(chessBlockEntity, true));
             }
-            else if(screen instanceof ChessBoardInvalidMoveColorScreen && blockEntity instanceof ChessTileEntity chessTileEntity)
+            else if(screen instanceof ChessBoardInvalidMoveColorScreen && blockEntity instanceof ChessBlockEntity chessBlockEntity)
             {
                 if (isColorPickerActive())
-                    Minecraft.getInstance().setScreen(new ChessBoardInvalidMoveColorScreen(chessTileEntity, false));
+                    Minecraft.getInstance().setScreen(new ChessBoardInvalidMoveColorScreen(chessBlockEntity, false));
                 else
-                    Minecraft.getInstance().setScreen(new ChessBoardInvalidMoveColorScreen(chessTileEntity, true));
+                    Minecraft.getInstance().setScreen(new ChessBoardInvalidMoveColorScreen(chessBlockEntity, true));
             }
-            else if(screen instanceof ChessBoardAttackMoveColorScreen && blockEntity instanceof ChessTileEntity chessTileEntity)
+            else if(screen instanceof ChessBoardAttackMoveColorScreen && blockEntity instanceof ChessBlockEntity chessBlockEntity)
             {
                 if (isColorPickerActive())
-                    Minecraft.getInstance().setScreen(new ChessBoardAttackMoveColorScreen(chessTileEntity, false));
+                    Minecraft.getInstance().setScreen(new ChessBoardAttackMoveColorScreen(chessBlockEntity, false));
                 else
-                    Minecraft.getInstance().setScreen(new ChessBoardAttackMoveColorScreen(chessTileEntity, true));
+                    Minecraft.getInstance().setScreen(new ChessBoardAttackMoveColorScreen(chessBlockEntity, true));
             }
-            else if(screen instanceof ChessBoardPreviousMoveColorScreen && blockEntity instanceof ChessTileEntity chessTileEntity)
+            else if(screen instanceof ChessBoardPreviousMoveColorScreen && blockEntity instanceof ChessBlockEntity chessBlockEntity)
             {
                 if (isColorPickerActive())
-                    Minecraft.getInstance().setScreen(new ChessBoardPreviousMoveColorScreen(chessTileEntity, false));
+                    Minecraft.getInstance().setScreen(new ChessBoardPreviousMoveColorScreen(chessBlockEntity, false));
                 else
-                    Minecraft.getInstance().setScreen(new ChessBoardPreviousMoveColorScreen(chessTileEntity, true));
+                    Minecraft.getInstance().setScreen(new ChessBoardPreviousMoveColorScreen(chessBlockEntity, true));
             }
-            else if(screen instanceof ChessBoardCastleMoveColorScreen && blockEntity instanceof ChessTileEntity chessTileEntity)
+            else if(screen instanceof ChessBoardCastleMoveColorScreen && blockEntity instanceof ChessBlockEntity chessBlockEntity)
             {
                 if (isColorPickerActive())
-                    Minecraft.getInstance().setScreen(new ChessBoardCastleMoveColorScreen(chessTileEntity, false));
+                    Minecraft.getInstance().setScreen(new ChessBoardCastleMoveColorScreen(chessBlockEntity, false));
                 else
-                    Minecraft.getInstance().setScreen(new ChessBoardCastleMoveColorScreen(chessTileEntity, true));
+                    Minecraft.getInstance().setScreen(new ChessBoardCastleMoveColorScreen(chessBlockEntity, true));
             }
-            else if(screen instanceof ChessBoardTilesColorScreen && blockEntity instanceof ChessTileEntity chessTileEntity)
+            else if(screen instanceof ChessBoardTilesColorScreen && blockEntity instanceof ChessBlockEntity chessBlockEntity)
             {
                 // We can cast the screen because above we check what screen it is,
                 // and based on that we can be sure it extends both Interfaces.
@@ -134,19 +135,19 @@ public class ColorPickerToggleButton extends Button
                 if(!isOptional)
                 {
                     if(!colorPicker.isColorPickerActive())
-                        Minecraft.getInstance().setScreen(new ChessBoardTilesColorScreen(chessTileEntity, true, false));
+                        Minecraft.getInstance().setScreen(new ChessBoardTilesColorScreen(chessBlockEntity, true, false));
                     else
-                        Minecraft.getInstance().setScreen(new ChessBoardTilesColorScreen(chessTileEntity, false, false));
+                        Minecraft.getInstance().setScreen(new ChessBoardTilesColorScreen(chessBlockEntity, false, false));
                 }
                 else
                 {
                     if(!colorPickerExtended.isOptionalColorPickerActive())
-                        Minecraft.getInstance().setScreen(new ChessBoardTilesColorScreen(chessTileEntity, false, true));
+                        Minecraft.getInstance().setScreen(new ChessBoardTilesColorScreen(chessBlockEntity, false, true));
                     else
-                        Minecraft.getInstance().setScreen(new ChessBoardTilesColorScreen(chessTileEntity, false, false));
+                        Minecraft.getInstance().setScreen(new ChessBoardTilesColorScreen(chessBlockEntity, false, false));
                 }
             }
-            else if(screen instanceof ChessBoardPieceColorsScreen && blockEntity instanceof ChessTileEntity chessTileEntity)
+            else if(screen instanceof ChessBoardPieceColorsScreen && blockEntity instanceof ChessBlockEntity chessBlockEntity)
             {
                 // We can cast the screen because above we check what screen it is,
                 // and based on that we can be sure it extends both Interfaces.
@@ -155,16 +156,16 @@ public class ColorPickerToggleButton extends Button
                 if(!isOptional)
                 {
                     if(!colorPicker.isColorPickerActive())
-                        Minecraft.getInstance().setScreen(new ChessBoardPieceColorsScreen(chessTileEntity, true, false));
+                        Minecraft.getInstance().setScreen(new ChessBoardPieceColorsScreen(chessBlockEntity, true, false));
                     else
-                        Minecraft.getInstance().setScreen(new ChessBoardPieceColorsScreen(chessTileEntity, false, false));
+                        Minecraft.getInstance().setScreen(new ChessBoardPieceColorsScreen(chessBlockEntity, false, false));
                 }
                 else
                 {
                     if(!colorPickerExtended.isOptionalColorPickerActive())
-                        Minecraft.getInstance().setScreen(new ChessBoardPieceColorsScreen(chessTileEntity, false, true));
+                        Minecraft.getInstance().setScreen(new ChessBoardPieceColorsScreen(chessBlockEntity, false, true));
                     else
-                        Minecraft.getInstance().setScreen(new ChessBoardPieceColorsScreen(chessTileEntity, false, false));
+                        Minecraft.getInstance().setScreen(new ChessBoardPieceColorsScreen(chessBlockEntity, false, false));
                 }
             }
         }

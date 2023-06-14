@@ -1,25 +1,23 @@
 package andrews.table_top_craft.screens.chess_timer.menus;
 
 
+import andrews.table_top_craft.block_entities.ChessTimerBlockEntity;
 import andrews.table_top_craft.screens.chess_timer.buttons.ChessTimerPauseButton;
 import andrews.table_top_craft.screens.chess_timer.buttons.ChessTimerResetButton;
 import andrews.table_top_craft.screens.chess_timer.buttons.ChessTimerTimeAlteringButton;
 import andrews.table_top_craft.screens.chess_timer.buttons.ChessTimerTimeAlteringButton.TimeCategory;
 import andrews.table_top_craft.screens.chess_timer.buttons.ChessTimerTimeAlteringButton.TimeModifierType;
-import andrews.table_top_craft.screens.piece_figure.menus.ChessPieceFigureSettingsScreen;
-import andrews.table_top_craft.tile_entities.ChessPieceFigureBlockEntity;
-import andrews.table_top_craft.tile_entities.ChessTimerBlockEntity;
 import andrews.table_top_craft.util.Reference;
 import com.mojang.blaze3d.platform.InputConstants;
 import com.mojang.blaze3d.systems.RenderSystem;
 import com.mojang.blaze3d.vertex.PoseStack;
 import net.minecraft.client.Minecraft;
 import net.minecraft.client.gui.Font;
+import net.minecraft.client.gui.GuiComponent;
 import net.minecraft.client.gui.screens.Screen;
 import net.minecraft.network.chat.Component;
 import net.minecraft.resources.ResourceLocation;
 import net.minecraft.util.FormattedCharSequence;
-import net.minecraft.util.Mth;
 
 public class ChessTimerScreen extends Screen
 {
@@ -60,7 +58,7 @@ public class ChessTimerScreen extends Screen
         // Background
         RenderSystem.setShaderColor(1.0f, 1.0f, 1.0f, 1.0f);
         RenderSystem.setShaderTexture(0, MENU_TEXTURE);
-        this.blit(poseStack, this.xPos, this.yPos, 0, 0, X_SIZE, Y_SIZE);
+        GuiComponent.blit(poseStack, this.xPos, this.yPos, 0, 0, X_SIZE, Y_SIZE);
 
         // Title
         drawCenteredNoShadow(poseStack, TITLE, this.width / 2, this.yPos + 6, 4210752);

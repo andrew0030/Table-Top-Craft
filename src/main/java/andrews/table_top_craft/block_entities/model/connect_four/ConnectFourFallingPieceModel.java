@@ -1,11 +1,11 @@
-package andrews.table_top_craft.tile_entities.model.connect_four;
+package andrews.table_top_craft.block_entities.model.connect_four;
 
 import andrews.table_top_craft.animation.model.AdvancedMeshDefinition;
 import andrews.table_top_craft.animation.model.AdvancedModelPart;
 import andrews.table_top_craft.animation.model.AdvancedPartDefinition;
 import andrews.table_top_craft.animation.model.AnimatedBlockEntityModel;
 import andrews.table_top_craft.animation.system.base.AnimatedBlockEntity;
-import andrews.table_top_craft.tile_entities.ConnectFourBlockEntity;
+import andrews.table_top_craft.block_entities.ConnectFourBlockEntity;
 import andrews.table_top_craft.util.Reference;
 import com.mojang.blaze3d.vertex.PoseStack;
 import com.mojang.blaze3d.vertex.VertexConsumer;

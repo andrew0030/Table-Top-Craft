@@ -1,8 +1,8 @@
 package andrews.table_top_craft.screens.chess.buttons.pieces;
 
+import andrews.table_top_craft.block_entities.ChessBlockEntity;
 import andrews.table_top_craft.registry.TTCBlocks;
 import andrews.table_top_craft.screens.chess.menus.ChessPieceSelectionScreen;
-import andrews.table_top_craft.tile_entities.ChessTileEntity;
 import andrews.table_top_craft.util.NetworkUtil;
 import andrews.table_top_craft.util.Reference;
 import com.mojang.blaze3d.platform.GlStateManager;
@@ -11,15 +11,16 @@ import com.mojang.blaze3d.systems.RenderSystem;
 import com.mojang.blaze3d.vertex.PoseStack;
 import net.minecraft.client.Minecraft;
 import net.minecraft.client.gui.Font;
+import net.minecraft.client.gui.GuiComponent;
 import net.minecraft.client.gui.components.Button;
 import net.minecraft.client.renderer.MultiBufferSource;
-import net.minecraft.client.renderer.block.model.ItemTransforms;
 import net.minecraft.client.renderer.entity.ItemRenderer;
 import net.minecraft.client.renderer.texture.OverlayTexture;
 import net.minecraft.client.renderer.texture.TextureAtlas;
 import net.minecraft.client.resources.model.BakedModel;
 import net.minecraft.network.chat.Component;
 import net.minecraft.resources.ResourceLocation;
+import net.minecraft.world.item.ItemDisplayContext;
 import net.minecraft.world.item.ItemStack;
 
 import java.util.Arrays;
@@ -29,23 +30,23 @@ public class ChessBoardPieceSettingsButton extends Button
     private static final ResourceLocation TEXTURE = new ResourceLocation(Reference.MODID + ":textures/gui/buttons/chess_menu_buttons.png");
     private final Component buttonText = Component.translatable("gui.table_top_craft.chess.button.pieces");
     private final Font fontRenderer;
-    private static ChessTileEntity chessTileEntity;
+    private static ChessBlockEntity chessBlockEntity;
     private static final int buttonWidth = 24;
     private static final int buttonHeight = 24;
     private int u = 48;
     private int v = 26;
     private final ItemStack chessPieceStack;
 
-    public ChessBoardPieceSettingsButton(ChessTileEntity tileEntity, int xPos, int yPos)
+    public ChessBoardPieceSettingsButton(ChessBlockEntity tileEntity, int xPos, int yPos)
     {
         super(xPos, yPos, buttonWidth, buttonHeight, Component.literal(""), (button) -> { handleButtonPress(); }, DEFAULT_NARRATION);
         this.fontRenderer = Minecraft.getInstance().font;
-        chessTileEntity = tileEntity;
+        chessBlockEntity = tileEntity;
         chessPieceStack = new ItemStack(TTCBlocks.CHESS_PIECE_FIGURE.get().asItem());
     }
 
     @Override
-    public void renderButton(PoseStack poseStack, int mouseX, int mouseY, float partialTicks)
+    public void renderWidget(PoseStack poseStack, int mouseX, int mouseY, float partialTicks)
     {
         this.active = !(Minecraft.getInstance().screen instanceof ChessPieceSelectionScreen);
 
@@ -56,7 +57,7 @@ public class ChessBoardPieceSettingsButton extends Button
         RenderSystem.setShaderTexture(0, TEXTURE);
         poseStack.pushPose();
         RenderSystem.enableBlend();
-        this.blit(poseStack, x, y, u, v, width, height);
+        GuiComponent.blit(poseStack, x, y, u, v, width, height);
         RenderSystem.disableBlend();
         poseStack.popPose();
 
@@ -88,7 +89,7 @@ public class ChessBoardPieceSettingsButton extends Button
         RenderSystem.applyModelViewMatrix();
         MultiBufferSource.BufferSource bufferSource = Minecraft.getInstance().renderBuffers().bufferSource();
         Lighting.setupForFlatItems();
-        itemRenderer.render(itemStack, ItemTransforms.TransformType.GUI, false, poseStack, bufferSource, 15728880, OverlayTexture.NO_OVERLAY, itemBakedModel);
+        itemRenderer.render(itemStack, ItemDisplayContext.GUI, false, poseStack, bufferSource, 15728880, OverlayTexture.NO_OVERLAY, itemBakedModel);
         bufferSource.endBatch();
         poseStack.popPose();
         RenderSystem.applyModelViewMatrix();
@@ -99,6 +100,6 @@ public class ChessBoardPieceSettingsButton extends Button
      */
     private static void handleButtonPress()
     {
-        NetworkUtil.openGuiWithServerPlayer(chessTileEntity.getBlockPos());
+        NetworkUtil.openGuiWithServerPlayer(chessBlockEntity.getBlockPos());
     }
 }

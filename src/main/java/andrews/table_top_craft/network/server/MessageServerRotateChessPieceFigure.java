@@ -2,8 +2,7 @@ package andrews.table_top_craft.network.server;
 
 import java.util.function.Supplier;
 
-import andrews.table_top_craft.tile_entities.ChessPieceFigureBlockEntity;
-import andrews.table_top_craft.tile_entities.ChessTileEntity;
+import andrews.table_top_craft.block_entities.ChessPieceFigureBlockEntity;
 import net.minecraft.core.BlockPos;
 import net.minecraft.network.FriendlyByteBuf;
 import net.minecraft.world.entity.player.Player;
@@ -46,7 +45,7 @@ public class MessageServerRotateChessPieceFigure
                 if(level != null)
                 {
                     BlockEntity blockEntity = level.getBlockEntity(chessPieceFigurePos);
-                    // We make sure the TileEntity is a ChessTileEntity
+                    // We make sure the TileEntity is a ChessBlockEntity
                     if(blockEntity instanceof ChessPieceFigureBlockEntity chessPieceFigureBlockEntity)
                     {
                         chessPieceFigureBlockEntity.setRotateChessPieceFigure(!chessPieceFigureBlockEntity.getRotateChessPieceFigure());

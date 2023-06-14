@@ -1,6 +1,6 @@
 package andrews.table_top_craft.network.server;
 
-import andrews.table_top_craft.tile_entities.ChessTimerBlockEntity;
+import andrews.table_top_craft.block_entities.ChessTimerBlockEntity;
 import net.minecraft.core.BlockPos;
 import net.minecraft.network.FriendlyByteBuf;
 import net.minecraft.world.entity.player.Player;

@@ -1,4 +1,4 @@
-package andrews.table_top_craft.tile_entities;
+package andrews.table_top_craft.block_entities;
 
 import andrews.table_top_craft.objects.blocks.ChessTimerBlock;
 import andrews.table_top_craft.registry.TTCBlockEntities;
@@ -8,7 +8,6 @@ import net.minecraft.nbt.CompoundTag;
 import net.minecraft.network.protocol.Packet;
 import net.minecraft.network.protocol.game.ClientGamePacketListener;
 import net.minecraft.network.protocol.game.ClientboundBlockEntityDataPacket;
-import net.minecraft.util.Mth;
 import net.minecraft.world.level.Level;
 import net.minecraft.world.level.block.entity.BlockEntity;
 import net.minecraft.world.level.block.state.BlockState;
@@ -133,12 +132,17 @@ public class ChessTimerBlockEntity extends BlockEntity
 
     public void modifyLeftTimer(long amount)
     {
-        this.leftTimer = Mth.clamp(this.leftTimer + amount, 0, 359999000);
+        this.leftTimer = this.clamp(this.leftTimer + amount, 0, 359999000);
     }
 
     public void modifyRightTimer(long amount)
     {
-        this.rightTimer = Mth.clamp(this.rightTimer + amount, 0, 359999000);
+        this.rightTimer = this.clamp(this.rightTimer + amount, 0, 359999000);
+    }
+
+    private long clamp(long value, long min, long max)
+    {
+        return Math.max(min, Math.min(max, value));
     }
 
     public void resetTimers()

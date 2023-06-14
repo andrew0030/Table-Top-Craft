@@ -1,6 +1,6 @@
 package andrews.table_top_craft.network.server;
 
-import andrews.table_top_craft.tile_entities.ChessTileEntity;
+import andrews.table_top_craft.block_entities.ChessBlockEntity;
 import andrews.table_top_craft.util.NetworkUtil;
 import net.minecraft.core.BlockPos;
 import net.minecraft.network.FriendlyByteBuf;
@@ -51,17 +51,17 @@ public class MessageServerSetPieceSet
                 if(level != null)
                 {
                     BlockEntity blockEntity = level.getBlockEntity(chessPos);
-                    // We make sure the TileEntity is a ChessTileEntity
-                    if(blockEntity instanceof ChessTileEntity chessTileEntity)
+                    // We make sure the TileEntity is a ChessBlockEntity
+                    if(blockEntity instanceof ChessBlockEntity chessBlockEntity)
                     {
                         switch(pieceSet)
                         {
-                            case 0 -> chessTileEntity.setPieceSet(0);
-                            case 1 -> chessTileEntity.setPieceSet(1);
-                            case 2 -> chessTileEntity.setPieceSet(2);
+                            case 0 -> chessBlockEntity.setPieceSet(0);
+                            case 1 -> chessBlockEntity.setPieceSet(1);
+                            case 2 -> chessBlockEntity.setPieceSet(2);
                         }
                         level.sendBlockUpdated(message.pos, level.getBlockState(chessPos), level.getBlockState(chessPos), 2);
-                        chessTileEntity.setChanged();
+                        chessBlockEntity.setChanged();
                         NetworkUtil.setChessAnimationForAllTracking(level, chessPos, (byte) 1);
                     }
                 }

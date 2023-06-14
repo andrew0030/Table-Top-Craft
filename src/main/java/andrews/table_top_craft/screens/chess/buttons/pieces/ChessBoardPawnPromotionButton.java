@@ -1,12 +1,8 @@
 package andrews.table_top_craft.screens.chess.buttons.pieces;
 
-import andrews.table_top_craft.game_logic.chess.pieces.BasePiece;
-import andrews.table_top_craft.game_logic.chess.pieces.BasePiece.PieceType;
+import andrews.table_top_craft.block_entities.ChessBlockEntity;
+import andrews.table_top_craft.block_entities.ChessPieceFigureBlockEntity;
 import andrews.table_top_craft.registry.TTCBlocks;
-import andrews.table_top_craft.tile_entities.ChessPieceFigureBlockEntity;
-import andrews.table_top_craft.tile_entities.ChessTileEntity;
-import andrews.table_top_craft.tile_entities.ChessTimerBlockEntity;
-import andrews.table_top_craft.util.NBTColorSaving;
 import andrews.table_top_craft.util.NetworkUtil;
 import andrews.table_top_craft.util.Reference;
 import com.mojang.blaze3d.platform.GlStateManager;
@@ -14,10 +10,9 @@ import com.mojang.blaze3d.platform.Lighting;
 import com.mojang.blaze3d.systems.RenderSystem;
 import com.mojang.blaze3d.vertex.PoseStack;
 import net.minecraft.client.Minecraft;
+import net.minecraft.client.gui.GuiComponent;
 import net.minecraft.client.gui.components.Button;
-import net.minecraft.client.gui.components.Tooltip;
 import net.minecraft.client.renderer.MultiBufferSource;
-import net.minecraft.client.renderer.block.model.ItemTransforms;
 import net.minecraft.client.renderer.entity.ItemRenderer;
 import net.minecraft.client.renderer.texture.OverlayTexture;
 import net.minecraft.client.renderer.texture.TextureAtlas;
@@ -25,6 +20,7 @@ import net.minecraft.client.resources.model.BakedModel;
 import net.minecraft.core.BlockPos;
 import net.minecraft.network.chat.Component;
 import net.minecraft.resources.ResourceLocation;
+import net.minecraft.world.item.ItemDisplayContext;
 import net.minecraft.world.item.ItemStack;
 
 public class ChessBoardPawnPromotionButton extends Button
@@ -35,10 +31,10 @@ public class ChessBoardPawnPromotionButton extends Button
     private static final Component KNIGHT_TOOLTIP = Component.translatable("tooltip.table_top_craft.chess_piece_figure.type.knight");
     private static final Component ROOK_TOOLTIP = Component.translatable("tooltip.table_top_craft.chess_piece_figure.type.rook");
     private final ItemStack CHESS_PIECE_FIGURE = new ItemStack(TTCBlocks.CHESS_PIECE_FIGURE.get());
-    private final ChessTileEntity blockEntity;
+    private final ChessBlockEntity blockEntity;
     private final PawnPromotionPieceType type;
 
-    public ChessBoardPawnPromotionButton(ChessTileEntity blockEntity, int x, int y, boolean isWhite, PawnPromotionPieceType type)
+    public ChessBoardPawnPromotionButton(ChessBlockEntity blockEntity, int x, int y, boolean isWhite, PawnPromotionPieceType type)
     {
         super(x, y, 43, 43, Component.literal(""), Button::onPress, DEFAULT_NARRATION);
         this.blockEntity = blockEntity;
@@ -50,14 +46,6 @@ public class ChessBoardPawnPromotionButton extends Button
         previewBlockEntity.setPieceColor(isWhite ? blockEntity.getWhitePiecesColor() : blockEntity.getBlackPiecesColor());
         previewBlockEntity.setRotateChessPieceFigure(false);
         previewBlockEntity.saveToItem(CHESS_PIECE_FIGURE);
-
-        // Sets the Tooltip
-        switch (type) {
-            default -> this.setTooltip(Tooltip.create(QUEEN_TOOLTIP));
-            case BISHOP -> this.setTooltip(Tooltip.create(BISHOP_TOOLTIP));
-            case KNIGHT -> this.setTooltip(Tooltip.create(KNIGHT_TOOLTIP));
-            case ROOK -> this.setTooltip(Tooltip.create(ROOK_TOOLTIP));
-        }
     }
 
     @Override
@@ -68,13 +56,27 @@ public class ChessBoardPawnPromotionButton extends Button
     }
 
     @Override
-    public void renderButton(PoseStack poseStack, int mouseX, int mouseY, float partialTick)
+    public void renderWidget(PoseStack poseStack, int mouseX, int mouseY, float partialTick)
     {
         RenderSystem.setShaderColor(1.0F, 1.0F, 1.0F, 1.0F);
         RenderSystem.setShaderTexture(0, BUTTONS_TEXTURE);
-        this.blit(poseStack, this.x, this.y, ((isHovered || isFocused()) ? 43 : 0), 0, 43, 43);
+        GuiComponent.blit(poseStack, this.x, this.y, ((isHovered || isFocused()) ? 43 : 0), 0, 43, 43);
 
         renderChessPiece(poseStack, CHESS_PIECE_FIGURE, x + (43 / 2), y + (43 / 2) - 3, 40);
+
+        if(Minecraft.getInstance().screen != null && this.isHoveredOrFocused())
+        {
+            int posX = this.isHovered() ? mouseX : this.x - 8;
+            int posY = this.isHovered() ? mouseY : this.y;
+            RenderSystem.disableDepthTest();
+            switch (type) {
+                default -> Minecraft.getInstance().screen.renderTooltip(poseStack, QUEEN_TOOLTIP, posX, posY);
+                case BISHOP -> Minecraft.getInstance().screen.renderTooltip(poseStack, BISHOP_TOOLTIP, posX, posY);
+                case KNIGHT -> Minecraft.getInstance().screen.renderTooltip(poseStack, KNIGHT_TOOLTIP, posX, posY);
+                case ROOK -> Minecraft.getInstance().screen.renderTooltip(poseStack, ROOK_TOOLTIP, posX, posY);
+            }
+            RenderSystem.enableDepthTest();
+        }
     }
 
     private void renderChessPiece(PoseStack poseStack, ItemStack itemStack, int pX, int pY, int size)
@@ -93,7 +95,7 @@ public class ChessBoardPawnPromotionButton extends Button
         RenderSystem.applyModelViewMatrix();
         MultiBufferSource.BufferSource bufferSource = Minecraft.getInstance().renderBuffers().bufferSource();
         Lighting.setupForFlatItems();
-        itemRenderer.render(itemStack, ItemTransforms.TransformType.GUI, false, poseStack, bufferSource, 15728880, OverlayTexture.NO_OVERLAY, itemBakedModel);
+        itemRenderer.render(itemStack, ItemDisplayContext.GUI, false, poseStack, bufferSource, 15728880, OverlayTexture.NO_OVERLAY, itemBakedModel);
         bufferSource.endBatch();
         poseStack.popPose();
         RenderSystem.applyModelViewMatrix();

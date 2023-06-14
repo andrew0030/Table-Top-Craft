@@ -9,6 +9,7 @@ import andrews.table_top_craft.animation.system.core.bulders.EasingBuilder;
 import andrews.table_top_craft.animation.system.core.types.EasingTypes;
 import andrews.table_top_craft.animation.system.core.types.TransformTypes;
 import andrews.table_top_craft.animation.system.core.types.util.EasingType;
+import andrews.table_top_craft.block_entities.ChessBlockEntity;
 import andrews.table_top_craft.game_logic.chess.board.Board;
 import andrews.table_top_craft.network.client.*;
 import andrews.table_top_craft.objects.blocks.ChessBlock;
@@ -16,15 +17,13 @@ import andrews.table_top_craft.particles.options.ChessShatterParticleOptions;
 import andrews.table_top_craft.registry.TTCParticles;
 import andrews.table_top_craft.screens.chess.menus.ChessPawnPromotionScreen;
 import andrews.table_top_craft.screens.chess.menus.ChessPieceSelectionScreen;
-import andrews.table_top_craft.tile_entities.ChessTileEntity;
-import andrews.table_top_craft.tile_entities.ConnectFourBlockEntity;
+import andrews.table_top_craft.block_entities.ConnectFourBlockEntity;
 import andrews.table_top_craft.util.NBTColorSaving;
 import net.minecraft.client.Minecraft;
 import net.minecraft.client.animation.KeyframeAnimations;
 import net.minecraft.core.BlockPos;
 import net.minecraft.sounds.SoundEvents;
 import net.minecraft.sounds.SoundSource;
-import net.minecraft.util.Mth;
 import net.minecraftforge.network.NetworkEvent;
 
 import java.util.concurrent.atomic.AtomicReference;
@@ -38,9 +37,9 @@ public class ClientPacketHandlerClass
         boolean isStandardSetUnlocked = msg.isStandardSetUnlocked;
         boolean isClassicSetUnlocked = msg.isClassicSetUnlocked;
         boolean isPandorasCreaturesSetUnlocked = msg.isPandorasCreaturesSetUnlocked;
-        if(Minecraft.getInstance().player.getLevel().getBlockEntity(pos) != null && Minecraft.getInstance().player.getLevel().getBlockEntity(pos) instanceof ChessTileEntity chessTileEntity)
+        if(Minecraft.getInstance().player.getLevel().getBlockEntity(pos) != null && Minecraft.getInstance().player.getLevel().getBlockEntity(pos) instanceof ChessBlockEntity chessBlockEntity)
         {
-            Minecraft.getInstance().setScreen(new ChessPieceSelectionScreen(chessTileEntity, isStandardSetUnlocked, isClassicSetUnlocked, isPandorasCreaturesSetUnlocked));
+            Minecraft.getInstance().setScreen(new ChessPieceSelectionScreen(chessBlockEntity, isStandardSetUnlocked, isClassicSetUnlocked, isPandorasCreaturesSetUnlocked));
         }
     }
 
@@ -48,9 +47,9 @@ public class ClientPacketHandlerClass
     {
         BlockPos pos = msg.pos;
         boolean isWhite = msg.isWhite;
-        if(Minecraft.getInstance().player.getLevel().getBlockEntity(pos) != null && Minecraft.getInstance().player.getLevel().getBlockEntity(pos) instanceof ChessTileEntity chessTileEntity)
+        if(Minecraft.getInstance().player.getLevel().getBlockEntity(pos) != null && Minecraft.getInstance().player.getLevel().getBlockEntity(pos) instanceof ChessBlockEntity chessBlockEntity)
         {
-            Minecraft.getInstance().setScreen(new ChessPawnPromotionScreen(chessTileEntity, isWhite));
+            Minecraft.getInstance().setScreen(new ChessPawnPromotionScreen(chessBlockEntity, isWhite));
         }
     }
 
@@ -103,7 +102,7 @@ public class ClientPacketHandlerClass
                 }
             }
 
-            if(Minecraft.getInstance().level.getBlockEntity(pos) instanceof ChessTileEntity blockEntity)
+            if(Minecraft.getInstance().level.getBlockEntity(pos) instanceof ChessBlockEntity blockEntity)
             {
                 String color = isWhite ? blockEntity.getWhitePiecesColor() : blockEntity.getBlackPiecesColor();
                 int red = NBTColorSaving.getRed(color);
@@ -122,29 +121,29 @@ public class ClientPacketHandlerClass
     {
         BlockPos pos = msg.pos;
         byte actionType = msg.actionType;
-        if(Minecraft.getInstance().player.getLevel().getBlockEntity(pos) instanceof ChessTileEntity chessTileEntity)
+        if(Minecraft.getInstance().player.getLevel().getBlockEntity(pos) instanceof ChessBlockEntity chessBlockEntity)
         {
             if(actionType == 0)
             {
-                chessTileEntity.placedState.start(chessTileEntity.getTicksExisted());
+                chessBlockEntity.placedState.start(chessBlockEntity.getTicksExisted());
                 // We reset the state to null
-                chessTileEntity.moveState = null;
-                chessTileEntity.clearMoveTransitionsCache();
-                chessTileEntity.setCachedPiece(null);
+                chessBlockEntity.moveState = null;
+                chessBlockEntity.clearMoveTransitionsCache();
+                chessBlockEntity.setCachedPiece(null);
             }
             else if(actionType == 1)
             {
-                chessTileEntity.placedState.stop();
-                chessTileEntity.placedState.interpolateAndStart(0.2F, EasingBuilder.type(EasingType.EASE_OUT_QUAD).argument(0.2F).build(), false, chessTileEntity.getTicksExisted());
+                chessBlockEntity.placedState.stop();
+                chessBlockEntity.placedState.interpolateAndStart(0.2F, EasingBuilder.type(EasingType.EASE_OUT_QUAD).argument(0.2F).build(), false, chessBlockEntity.getTicksExisted());
             }
             else if(actionType == 2)
             {
-                chessTileEntity.currentCord = msg.currentCord;
-                chessTileEntity.destCord = msg.destCord;
+                chessBlockEntity.currentCord = msg.currentCord;
+                chessBlockEntity.destCord = msg.destCord;
 
-                Animation animation = ClientPacketHandlerClass.generateAnimation(chessTileEntity, chessTileEntity.currentCord, chessTileEntity.destCord);
-                chessTileEntity.moveState = new AdvancedAnimationState(new AtomicReference<>(animation));
-                chessTileEntity.moveState.start(chessTileEntity.getTicksExisted());
+                Animation animation = ClientPacketHandlerClass.generateAnimation(chessBlockEntity, chessBlockEntity.currentCord, chessBlockEntity.destCord);
+                chessBlockEntity.moveState = new AdvancedAnimationState(new AtomicReference<>(animation));
+                chessBlockEntity.moveState.start(chessBlockEntity.getTicksExisted());
             }
         }
     }
@@ -177,7 +176,7 @@ public class ClientPacketHandlerClass
         }
     }
 
-    public static Animation generateAnimation(ChessTileEntity blockEntity, byte currentCord, byte destCord)
+    public static Animation generateAnimation(ChessBlockEntity blockEntity, byte currentCord, byte destCord)
     {
         Board board = blockEntity.getBoard();
         int startX = currentCord % 8;

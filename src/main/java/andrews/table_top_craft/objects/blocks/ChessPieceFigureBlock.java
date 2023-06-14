@@ -2,7 +2,7 @@ package andrews.table_top_craft.objects.blocks;
 
 import andrews.table_top_craft.registry.TTCBlocks;
 import andrews.table_top_craft.screens.piece_figure.menus.ChessPieceFigureSettingsScreen;
-import andrews.table_top_craft.tile_entities.ChessPieceFigureBlockEntity;
+import andrews.table_top_craft.block_entities.ChessPieceFigureBlockEntity;
 import andrews.table_top_craft.util.TranslationHelper;
 import net.minecraft.client.gui.screens.Screen;
 import net.minecraft.core.BlockPos;

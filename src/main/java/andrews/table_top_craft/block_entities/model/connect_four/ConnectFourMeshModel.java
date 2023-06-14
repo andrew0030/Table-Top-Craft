@@ -1,4 +1,4 @@
-package andrews.table_top_craft.tile_entities.model.tic_tac_toe;
+package andrews.table_top_craft.block_entities.model.connect_four;
 
 import andrews.table_top_craft.util.Reference;
 import com.mojang.blaze3d.vertex.PoseStack;
@@ -11,30 +11,28 @@ import net.minecraft.client.model.geom.builders.*;
 import net.minecraft.client.renderer.RenderType;
 import net.minecraft.resources.ResourceLocation;
 
-public class TicTacToeModel extends Model
+public class ConnectFourMeshModel extends Model
 {
-    public static final ModelLayerLocation TIC_TAC_TOE_LAYER = new ModelLayerLocation(new ResourceLocation(Reference.MODID, "tic_tac_toe_layer"), "main");
-    private final ModelPart base;
+    public static final ModelLayerLocation LAYER = new ModelLayerLocation(new ResourceLocation(Reference.MODID, "connect_four_mesh_layer"), "main");
+    private final ModelPart root;
 
-    public TicTacToeModel(ModelPart root)
+    public ConnectFourMeshModel(ModelPart root)
     {
         super(RenderType::entityCutoutNoCull);
-        this.base = root.getChild("base");
+        this.root = root.getChild("root");
     }
 
     public static LayerDefinition createBodyLayer()
     {
         MeshDefinition meshdefinition = new MeshDefinition();
         PartDefinition partdefinition = meshdefinition.getRoot();
-
-        PartDefinition base = partdefinition.addOrReplaceChild("base", CubeListBuilder.create().texOffs(0, 0).addBox(-3.5F, 0.0F, -3.5F, 7.0F, 1.0F, 7.0F, new CubeDeformation(0.0F)), PartPose.offset(0.0F, 24.0F, 0.0F));
-
+        PartDefinition root = partdefinition.addOrReplaceChild("root", CubeListBuilder.create().texOffs(0, 0).addBox(-6.5F, -11.0F, -0.5F, 13.0F, 11.0F, 1.0F, new CubeDeformation(0.0F)), PartPose.offset(0.0F, 24.0F, 0.0F));
         return LayerDefinition.create(meshdefinition, 32, 16);
     }
 
     @Override
     public void renderToBuffer(PoseStack poseStack, VertexConsumer vertexConsumer, int packedLight, int packedOverlay, float red, float green, float blue, float alpha)
     {
-        base.render(poseStack, vertexConsumer, packedLight, packedOverlay, red, green, blue, alpha);
+        this.root.render(poseStack, vertexConsumer, packedLight, packedOverlay, red, green, blue, alpha);
     }
 }

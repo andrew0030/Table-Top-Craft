@@ -3,8 +3,8 @@ package andrews.table_top_craft.registry;
 import andrews.table_top_craft.objects.blocks.ChessBlock;
 import andrews.table_top_craft.objects.blocks.ChessTimerBlock;
 import andrews.table_top_craft.objects.blocks.ConnectFourBlock;
-import andrews.table_top_craft.tile_entities.*;
-import andrews.table_top_craft.tile_entities.render.*;
+import andrews.table_top_craft.block_entities.*;
+import andrews.table_top_craft.block_entities.render.*;
 import andrews.table_top_craft.util.Reference;
 import com.google.common.collect.Sets;
 import net.minecraft.client.renderer.blockentity.BlockEntityRenderers;
@@ -20,7 +20,7 @@ public class TTCBlockEntities
 {
 	public static final DeferredRegister<BlockEntityType<?>> BLOCK_ENTITY_TYPES = DeferredRegister.create(ForgeRegistries.BLOCK_ENTITY_TYPES, Reference.MODID);
 
-	public static final RegistryObject<BlockEntityType<ChessTileEntity>> CHESS                              = BLOCK_ENTITY_TYPES.register("chess", () -> new BlockEntityType<>(ChessTileEntity::new, TTCBlockEntities.getBlocksOfClass(ChessBlock.class), null));
+	public static final RegistryObject<BlockEntityType<ChessBlockEntity>> CHESS                              = BLOCK_ENTITY_TYPES.register("chess", () -> new BlockEntityType<>(ChessBlockEntity::new, TTCBlockEntities.getBlocksOfClass(ChessBlock.class), null));
     public static final RegistryObject<BlockEntityType<ChessPieceFigureBlockEntity>> CHESS_PIECE_FIGURE     = BLOCK_ENTITY_TYPES.register("chess_piece_figure", () -> new BlockEntityType<>(ChessPieceFigureBlockEntity::new, Sets.newHashSet(TTCBlocks.CHESS_PIECE_FIGURE.get()), null));
     public static final RegistryObject<BlockEntityType<TicTacToeBlockEntity>> TIC_TAC_TOE                   = BLOCK_ENTITY_TYPES.register("tic_tac_toe", () -> new BlockEntityType<>(TicTacToeBlockEntity::new, Sets.newHashSet(TTCBlocks.TIC_TAC_TOE.get()), null));
     public static final RegistryObject<BlockEntityType<ChessTimerBlockEntity>> CHESS_TIMER                  = BLOCK_ENTITY_TYPES.register("chess_timer", () -> new BlockEntityType<>(ChessTimerBlockEntity::new, TTCBlockEntities.getBlocksOfClass(ChessTimerBlock.class), null));

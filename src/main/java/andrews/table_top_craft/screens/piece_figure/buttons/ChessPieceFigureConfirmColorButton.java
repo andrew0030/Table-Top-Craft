@@ -1,9 +1,9 @@
 package andrews.table_top_craft.screens.piece_figure.buttons;
 
+import andrews.table_top_craft.block_entities.ChessPieceFigureBlockEntity;
 import andrews.table_top_craft.screens.chess.sliders.ChessBlueColorSlider;
 import andrews.table_top_craft.screens.chess.sliders.ChessGreenColorSlider;
 import andrews.table_top_craft.screens.chess.sliders.ChessRedColorSlider;
-import andrews.table_top_craft.tile_entities.ChessPieceFigureBlockEntity;
 import andrews.table_top_craft.util.NBTColorSaving;
 import andrews.table_top_craft.util.NetworkUtil;
 import andrews.table_top_craft.util.Reference;
@@ -11,6 +11,7 @@ import com.mojang.blaze3d.systems.RenderSystem;
 import com.mojang.blaze3d.vertex.PoseStack;
 import net.minecraft.client.Minecraft;
 import net.minecraft.client.gui.Font;
+import net.minecraft.client.gui.GuiComponent;
 import net.minecraft.client.gui.components.Button;
 import net.minecraft.network.chat.Component;
 import net.minecraft.resources.ResourceLocation;
@@ -40,7 +41,7 @@ public class ChessPieceFigureConfirmColorButton extends Button
     }
 
     @Override
-    public void renderButton(PoseStack poseStack, int mouseX, int mouseY, float partialTicks)
+    public void renderWidget(PoseStack poseStack, int mouseX, int mouseY, float partialTicks)
     {
         this.isHovered = mouseX >= x && mouseX < x + width && mouseY >= y && mouseY < y + height || this.isFocused();
 
@@ -53,7 +54,7 @@ public class ChessPieceFigureConfirmColorButton extends Button
         RenderSystem.setShaderTexture(0, TEXTURE);
         poseStack.pushPose();
         RenderSystem.enableBlend();
-        this.blit(poseStack, x, y, u, v, width, height);
+        GuiComponent.blit(poseStack, x, y, u, v, width, height);
         RenderSystem.disableBlend();
         poseStack.popPose();
         this.fontRenderer.draw(poseStack, this.buttonText, x + ((this.width / 2) - (this.fontRenderer.width(this.buttonText) / 2)), y + 3, 0x000000);

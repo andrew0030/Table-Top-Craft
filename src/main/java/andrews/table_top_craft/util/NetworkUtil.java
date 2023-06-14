@@ -80,7 +80,7 @@ public class NetworkUtil
 	/**
 	 * Sends a message to the server that the player pressed the set color button
 	 * @param colorType The color that will be set, 0 for tile info, 1 for legal move
-	 * @param pos The BlockPos of the ChessTileEntity
+	 * @param pos The BlockPos of the ChessBlockEntity
 	 * @param color The Color
 	 */
 	@OnlyIn(Dist.CLIENT)
@@ -98,7 +98,7 @@ public class NetworkUtil
 	/**
 	 * Sends a message to the server that the player pressed the set colors button
 	 * @param colorType The colors that will be set, 0 for board tiles, 1 for pieces
-	 * @param pos The BlockPos of the ChessTileEntity
+	 * @param pos The BlockPos of the ChessBlockEntity
 	 * @param color The first Color for the White side
 	 * @param color2 The second Color for the Black side
 	 */

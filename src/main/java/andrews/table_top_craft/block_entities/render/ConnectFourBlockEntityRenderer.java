@@ -1,10 +1,10 @@
-package andrews.table_top_craft.tile_entities.render;
+package andrews.table_top_craft.block_entities.render;
 
 import andrews.table_top_craft.objects.blocks.ConnectFourBlock;
-import andrews.table_top_craft.tile_entities.ConnectFourBlockEntity;
-import andrews.table_top_craft.tile_entities.model.connect_four.ConnectFourFallingPieceModel;
-import andrews.table_top_craft.tile_entities.model.connect_four.ConnectFourMeshModel;
-import andrews.table_top_craft.tile_entities.model.connect_four.ConnectFourPieceModel;
+import andrews.table_top_craft.block_entities.ConnectFourBlockEntity;
+import andrews.table_top_craft.block_entities.model.connect_four.ConnectFourFallingPieceModel;
+import andrews.table_top_craft.block_entities.model.connect_four.ConnectFourMeshModel;
+import andrews.table_top_craft.block_entities.model.connect_four.ConnectFourPieceModel;
 import andrews.table_top_craft.util.Color;
 import andrews.table_top_craft.util.Reference;
 import com.mojang.blaze3d.vertex.PoseStack;
@@ -17,7 +17,6 @@ import net.minecraft.client.renderer.blockentity.BlockEntityRendererProvider;
 import net.minecraft.core.Direction;
 import net.minecraft.resources.ResourceLocation;
 import net.minecraft.util.Mth;
-import org.joml.Vector3f;
 
 import java.util.List;
 

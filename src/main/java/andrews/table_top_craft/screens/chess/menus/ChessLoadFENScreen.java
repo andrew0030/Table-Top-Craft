@@ -1,13 +1,14 @@
 package andrews.table_top_craft.screens.chess.menus;
 
+import andrews.table_top_craft.block_entities.ChessBlockEntity;
 import andrews.table_top_craft.screens.chess.buttons.ChessCancelButton;
 import andrews.table_top_craft.screens.chess.buttons.ChessCancelButton.ChessCancelButtonText;
 import andrews.table_top_craft.screens.chess.buttons.ChessCancelButton.ChessCancelMenuTarget;
 import andrews.table_top_craft.screens.chess.buttons.settings.ChessConfirmFENButton;
-import andrews.table_top_craft.tile_entities.ChessTileEntity;
 import andrews.table_top_craft.util.Reference;
 import com.mojang.blaze3d.systems.RenderSystem;
 import com.mojang.blaze3d.vertex.PoseStack;
+import net.minecraft.client.gui.GuiComponent;
 import net.minecraft.client.gui.components.EditBox;
 import net.minecraft.client.gui.screens.Screen;
 import net.minecraft.network.chat.Component;
@@ -17,15 +18,15 @@ public class ChessLoadFENScreen extends Screen
 {
 	private static final ResourceLocation MENU_TEXTURE = new ResourceLocation(Reference.MODID, "textures/gui/menus/small_chess_menu.png");
 	private final String fenLoaderText = Component.translatable("gui.table_top_craft.chess.fen_loader").getString();
-	private final ChessTileEntity chessTileEntity;
+	private final ChessBlockEntity chessBlockEntity;
 	private EditBox fenStringField;
 	private final int xSize = 177;
 	private final int ySize = 85;
 	
-	public ChessLoadFENScreen(ChessTileEntity chessTileEntity)
+	public ChessLoadFENScreen(ChessBlockEntity chessBlockEntity)
 	{
 		super(Component.literal(""));
-		this.chessTileEntity = chessTileEntity;
+		this.chessBlockEntity = chessBlockEntity;
 	}
 	
 	@Override
@@ -50,11 +51,11 @@ public class ChessLoadFENScreen extends Screen
 		// The Text Field in which the Player enters the FEN String
 		this.fenStringField = new EditBox(this.font, x + 5, y + 20, 167, 16, Component.literal("FEN Field"));
 		this.fenStringField.setMaxLength(100);
-	    this.fenStringField.setFocus(true);
+	    this.fenStringField.setFocused(true);
 		
 		// The Buttons in the Gui Menu
-	    this.addRenderableWidget(new ChessCancelButton(this.chessTileEntity, ChessCancelMenuTarget.CHESS_BOARD_SETTINGS, ChessCancelButtonText.CANCEL, x + 5, y + 39));
-	    this.addRenderableWidget(new ChessConfirmFENButton(this.chessTileEntity, fenStringField, x + 90, y + 39));
+	    this.addRenderableWidget(new ChessCancelButton(this.chessBlockEntity, ChessCancelMenuTarget.CHESS_BOARD_SETTINGS, ChessCancelButtonText.CANCEL, x + 5, y + 39));
+	    this.addRenderableWidget(new ChessConfirmFENButton(this.chessBlockEntity, fenStringField, x + 90, y + 39));
 	}
 	
 	@Override
@@ -65,7 +66,7 @@ public class ChessLoadFENScreen extends Screen
 
 		RenderSystem.setShaderColor(1.0f, 1.0f, 1.0f, 1.0f);
 		RenderSystem.setShaderTexture(0, MENU_TEXTURE);
-		this.blit(poseStack, x, y, 0, 0, this.xSize, this.ySize);
+		GuiComponent.blit(poseStack, x, y, 0, 0, this.xSize, this.ySize);
 		// The Menu Title
 		this.font.draw(poseStack, this.fenLoaderText, ((this.width / 2) - (this.font.width(this.fenLoaderText) / 2)), y + 6, 4210752);
 		// The FEN Text Box

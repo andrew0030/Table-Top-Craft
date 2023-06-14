@@ -2,15 +2,15 @@ package andrews.table_top_craft;
 
 import andrews.table_top_craft.network.TTCNetwork;
 import andrews.table_top_craft.registry.*;
-import andrews.table_top_craft.tile_entities.model.chess.ChessBoardPlateModel;
-import andrews.table_top_craft.tile_entities.model.chess.ChessHighlightModel;
-import andrews.table_top_craft.tile_entities.model.chess.ChessTilesInfoModel;
-import andrews.table_top_craft.tile_entities.model.chess.GhostModel;
-import andrews.table_top_craft.tile_entities.model.connect_four.ConnectFourFallingPieceModel;
-import andrews.table_top_craft.tile_entities.model.connect_four.ConnectFourMeshModel;
-import andrews.table_top_craft.tile_entities.model.connect_four.ConnectFourPieceModel;
-import andrews.table_top_craft.tile_entities.model.piece_figure.ChessPieceFigureStandModel;
-import andrews.table_top_craft.tile_entities.model.tic_tac_toe.TicTacToeModel;
+import andrews.table_top_craft.block_entities.model.chess.ChessBoardPlateModel;
+import andrews.table_top_craft.block_entities.model.chess.ChessHighlightModel;
+import andrews.table_top_craft.block_entities.model.chess.ChessTilesInfoModel;
+import andrews.table_top_craft.block_entities.model.chess.GhostModel;
+import andrews.table_top_craft.block_entities.model.connect_four.ConnectFourFallingPieceModel;
+import andrews.table_top_craft.block_entities.model.connect_four.ConnectFourMeshModel;
+import andrews.table_top_craft.block_entities.model.connect_four.ConnectFourPieceModel;
+import andrews.table_top_craft.block_entities.model.piece_figure.ChessPieceFigureStandModel;
+import andrews.table_top_craft.block_entities.model.tic_tac_toe.TicTacToeModel;
 import andrews.table_top_craft.util.Reference;
 import andrews.table_top_craft.util.shader_compat.ShaderCompatHandler;
 import com.mojang.blaze3d.vertex.DefaultVertexFormat;
@@ -23,6 +23,7 @@ import net.minecraftforge.client.event.RegisterShadersEvent;
 import net.minecraftforge.eventbus.api.EventPriority;
 import net.minecraftforge.eventbus.api.IEventBus;
 import net.minecraftforge.fml.DistExecutor;
+import net.minecraftforge.fml.ModList;
 import net.minecraftforge.fml.common.Mod;
 import net.minecraftforge.fml.event.lifecycle.FMLClientSetupEvent;
 import net.minecraftforge.fml.event.lifecycle.FMLCommonSetupEvent;
@@ -70,6 +71,9 @@ public class TableTopCraft
 			if (clazz != null)
 				ShaderCompatHandler.initOFCompat();
 		} catch (Throwable ignored) {}
+
+		if(ModList.get().isLoaded("oculus"))
+			ShaderCompatHandler.initOculusCompat();
 	}
 	
 	void setupCommon(final FMLCommonSetupEvent event)

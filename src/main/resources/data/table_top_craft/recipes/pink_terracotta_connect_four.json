@@ -1,0 +1,23 @@
+{
+  "type": "minecraft:crafting_shaped",
+  "group": "connect_four",
+  "pattern": [
+    "III",
+    "MGM",
+    "MMM"
+  ],
+  "key": {
+    "I": {
+      "tag": "table_top_craft:connect_four_nuggets"
+    },
+    "G": {
+      "item": "minecraft:iron_bars"
+    },
+    "M": {
+      "item": "minecraft:pink_terracotta"
+    }
+  },
+  "result": {
+    "item": "table_top_craft:pink_terracotta_connect_four"
+  }
+}

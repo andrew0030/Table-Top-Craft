@@ -1,11 +1,12 @@
 package andrews.table_top_craft.network.server;
 
 import andrews.table_top_craft.tile_entities.ChessTileEntity;
+import andrews.table_top_craft.util.NetworkUtil;
 import andrews.table_top_craft.util.Reference;
 import net.fabricmc.fabric.api.networking.v1.ServerPlayNetworking;
 import net.minecraft.core.BlockPos;
 import net.minecraft.resources.ResourceLocation;
-import net.minecraft.world.level.Level;
+import net.minecraft.server.level.ServerLevel;
 import net.minecraft.world.level.block.entity.BlockEntity;
 
 public class MessageServerSetPieceSet
@@ -24,7 +25,7 @@ public class MessageServerSetPieceSet
                 if(serverPlayer == null)
                     return;
 
-                Level level = serverPlayer.getLevel();
+                ServerLevel level = serverPlayer.getLevel();
                 if(level != null)
                 {
                     BlockEntity blockEntity = level.getBlockEntity(pos);
@@ -39,6 +40,7 @@ public class MessageServerSetPieceSet
                         }
                         level.sendBlockUpdated(pos, level.getBlockState(pos), level.getBlockState(pos), 2);
                         chessTileEntity.setChanged();
+                        NetworkUtil.setChessAnimationForAllTracking(level, pos, (byte) 1);
                     }
                 }
             });

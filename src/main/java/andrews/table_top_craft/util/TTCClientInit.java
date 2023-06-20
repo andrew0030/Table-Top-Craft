@@ -1,10 +1,15 @@
 package andrews.table_top_craft.util;
 
 import andrews.table_top_craft.network.TTCNetwork;
-import andrews.table_top_craft.registry.TTCTileEntities;
+import andrews.table_top_craft.registry.TTCBlockEntities;
+import andrews.table_top_craft.registry.TTCParticles;
 import andrews.table_top_craft.tile_entities.model.chess.ChessBoardPlateModel;
 import andrews.table_top_craft.tile_entities.model.chess.ChessHighlightModel;
 import andrews.table_top_craft.tile_entities.model.chess.ChessTilesInfoModel;
+import andrews.table_top_craft.tile_entities.model.chess.GhostModel;
+import andrews.table_top_craft.tile_entities.model.connect_four.ConnectFourFallingPieceModel;
+import andrews.table_top_craft.tile_entities.model.connect_four.ConnectFourMeshModel;
+import andrews.table_top_craft.tile_entities.model.connect_four.ConnectFourPieceModel;
 import andrews.table_top_craft.tile_entities.model.piece_figure.ChessPieceFigureStandModel;
 import andrews.table_top_craft.tile_entities.model.tic_tac_toe.TicTacToeModel;
 import andrews.table_top_craft.tile_entities.render.item.TTCBlockEntityWithoutLevelRenderer;
@@ -38,9 +43,16 @@ public class TTCClientInit implements ClientModInitializer
 		EntityModelLayerRegistry.registerModelLayer(ChessTilesInfoModel.CHESS_TILES_INFO_LAYER, ChessTilesInfoModel::createBodyLayer);
 		EntityModelLayerRegistry.registerModelLayer(ChessPieceFigureStandModel.CHESS_PIECE_FIGURE_LAYER, ChessPieceFigureStandModel::createBodyLayer);
 		EntityModelLayerRegistry.registerModelLayer(TicTacToeModel.TIC_TAC_TOE_LAYER, TicTacToeModel::createBodyLayer);
+		EntityModelLayerRegistry.registerModelLayer(GhostModel.LAYER, GhostModel::createBodyLayer);
+		EntityModelLayerRegistry.registerModelLayer(ConnectFourMeshModel.LAYER, ConnectFourMeshModel::createBodyLayer);
+		EntityModelLayerRegistry.registerModelLayer(ConnectFourPieceModel.LAYER, ConnectFourPieceModel::createBodyLayer);
+		EntityModelLayerRegistry.registerModelLayer(ConnectFourFallingPieceModel.LAYER, ConnectFourFallingPieceModel::createBodyLayer);
 		// Block Entity Renderers
-        TTCTileEntities.registerBlockEntityRenderers();
+        TTCBlockEntities.registerBlockEntityRenderers();
 		TTCBlockEntityWithoutLevelRenderer.init();
+		// Particles
+		TTCParticles.registerParticles();
+		// Networking
 		TTCNetwork.registerClientNetworkMessages();
     }
 }

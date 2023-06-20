@@ -41,3 +41,16 @@ accessible class net/minecraft/client/renderer/RenderType$CompositeState
 
 # again, this is public when working with forge, soooo "shrug"
 accessible method net/minecraft/client/renderer/RenderType create (Ljava/lang/String;Lcom/mojang/blaze3d/vertex/VertexFormat;Lcom/mojang/blaze3d/vertex/VertexFormat$Mode;IZZLnet/minecraft/client/renderer/RenderType$CompositeState;)Lnet/minecraft/client/renderer/RenderType$CompositeRenderType;
+
+# Stuff we need to make our own PartDefinition
+accessible method net/minecraft/client/model/geom/builders/PartDefinition <init> (Ljava/util/List;Lnet/minecraft/client/model/geom/PartPose;)V
+accessible field net/minecraft/client/model/geom/builders/PartDefinition cubes Ljava/util/List;
+accessible field net/minecraft/client/model/geom/builders/PartDefinition partPose Lnet/minecraft/client/model/geom/PartPose;
+accessible field net/minecraft/client/model/geom/builders/PartDefinition children Ljava/util/Map;
+# Stuff we need to make our own ModelPart
+extendable class net/minecraft/client/model/geom/ModelPart
+accessible field net/minecraft/client/model/geom/ModelPart cubes Ljava/util/List;
+accessible field net/minecraft/client/model/geom/ModelPart children Ljava/util/Map;
+# Stuff we need to make our own AnimationState
+accessible field net/minecraft/world/entity/AnimationState lastTime J
+accessible field net/minecraft/world/entity/AnimationState accumulatedTime J

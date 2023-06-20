@@ -8,10 +8,10 @@
     "LootTablesMixin"
   ],
   "client": [
-    "ScreenMixin",
+    "BlockEntityWithoutLevelRendererMixin",
     "GameRendererMixin",
-    "ShaderInstanceMixin",
-    "BlockEntityWithoutLevelRendererMixin"
+    "ScreenMixin",
+    "ShaderInstanceMixin"
   ],
   "injectors": {
     "defaultRequire": 1

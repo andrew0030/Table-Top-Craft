@@ -77,25 +77,15 @@ public class TicTacToeBlock extends BaseEntityBlock
 
                 if(player.getItemInHand(hand).getItem() instanceof DyeItem dyeItem)
                 {
-                    switch (dyeItem.getDyeColor())
-                    {
-                        case WHITE -> setProperColor(tileCoordinate - 1, ticTacToeBlockEntity, "255/255/255");
-                        case ORANGE -> setProperColor(tileCoordinate - 1, ticTacToeBlockEntity, "255/145/0");
-                        case MAGENTA -> setProperColor(tileCoordinate - 1, ticTacToeBlockEntity, "220/110/235");
-                        case LIGHT_BLUE -> setProperColor(tileCoordinate - 1, ticTacToeBlockEntity, "100/212/250");
-                        case YELLOW -> setProperColor(tileCoordinate - 1, ticTacToeBlockEntity, "255/255/0");
-                        case LIME -> setProperColor(tileCoordinate - 1, ticTacToeBlockEntity, "0/255/0");
-                        case PINK -> setProperColor(tileCoordinate - 1, ticTacToeBlockEntity, "255/148/220");
-                        case GRAY -> setProperColor(tileCoordinate - 1, ticTacToeBlockEntity, "130/130/130");
-                        case LIGHT_GRAY -> setProperColor(tileCoordinate - 1, ticTacToeBlockEntity, "200/200/200");
-                        case CYAN -> setProperColor(tileCoordinate - 1, ticTacToeBlockEntity, "0/150/170");
-                        case PURPLE -> setProperColor(tileCoordinate - 1, ticTacToeBlockEntity, "140/60/210");
-                        case BLUE -> setProperColor(tileCoordinate - 1, ticTacToeBlockEntity, "52/52/255");
-                        case BROWN -> setProperColor(tileCoordinate - 1, ticTacToeBlockEntity, "110/55/0");
-                        case GREEN -> setProperColor(tileCoordinate - 1, ticTacToeBlockEntity, "75/130/0");
-                        case RED -> setProperColor(tileCoordinate - 1, ticTacToeBlockEntity, "255/0/0");
-                        case BLACK -> setProperColor(tileCoordinate - 1, ticTacToeBlockEntity, "0/0/0");
-                    }
+                    // If there was no X or O that was clicked we cancel
+                    if(ticTacToeBlockEntity.getTicTacToeCharAt(tileCoordinate - 1) == '-')
+                        return InteractionResult.CONSUME;
+                    // Otherwise, we continue normally
+                    float[] rgb = dyeItem.getDyeColor().getTextureDiffuseColors();
+                    int red = Mth.clamp(Math.round(255 * rgb[0]), 0, 255);
+                    int green = Mth.clamp(Math.round(255 * rgb[1]), 0, 255);
+                    int blue = Mth.clamp(Math.round(255 * rgb[2]), 0, 255);
+                    this.setProperColor(tileCoordinate - 1, ticTacToeBlockEntity, red + "/" + green + "/" + blue);
                     // Sync the Block
                     level.sendBlockUpdated(pos, level.getBlockState(pos), level.getBlockState(pos), 2);
 

@@ -23,11 +23,9 @@ public class MessageClientOpenChessPieceSelectionScreen
 
             client.execute(() ->
             {
-                if(Minecraft.getInstance().level == null) {
-                    return;
-                }
+                if(Minecraft.getInstance().player == null) return;
 
-                if(Minecraft.getInstance().player.getLevel().getBlockEntity(pos) != null && Minecraft.getInstance().player.getLevel().getBlockEntity(pos) instanceof ChessTileEntity chessTileEntity)
+                if(Minecraft.getInstance().player.getLevel().getBlockEntity(pos) instanceof ChessTileEntity chessTileEntity)
                     ClientPacketHandlerClass.handleOpenChessPieceSelectionPacket(chessTileEntity, isStandardSetUnlocked, isClassicSetUnlocked, isPandorasCreaturesSetUnlocked);
             });
         });

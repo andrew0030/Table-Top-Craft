@@ -22,7 +22,7 @@ public class ShaderInstanceMixin
 	{
 		return fix(src);
 	}
-	
+
 	@ModifyVariable(
 			method = "getOrCreate",
 			at = @At(value = "STORE"),
@@ -33,7 +33,7 @@ public class ShaderInstanceMixin
 	{
 		return fix(src);
 	}
-	
+
 	@Unique
 	private static String fix(String src)
 	{

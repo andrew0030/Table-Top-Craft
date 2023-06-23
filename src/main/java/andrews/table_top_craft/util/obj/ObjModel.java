@@ -22,7 +22,7 @@ public class ObjModel
     private final Vec2[] vt;
     private final Vector3f[] vn;
     private final Face[] faces;
-    
+
     private ObjModel(Vector3f[] v, Vec2[] vt, Vector3f[] vn, Face[] faces)
     {
         this.v = v;

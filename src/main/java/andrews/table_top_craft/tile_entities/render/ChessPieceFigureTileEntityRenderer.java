@@ -179,7 +179,7 @@ public class ChessPieceFigureTileEntityRenderer implements BlockEntityRenderer<C
 
             // setup render state
             TTCRenderTypes.getChessPieceSolid(resourceLocation).setupRenderState();
-//        shaderinstance.apply();
+            shaderinstance.apply();
             BufferHelpers.draw(pawnBuffer);
             // clear render state
             VertexBuffer.unbind();

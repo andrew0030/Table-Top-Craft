@@ -521,16 +521,15 @@ public class ChessTileEntity extends AnimatedBlockEntity
 
 	private BasePiece getPieceFromType(String pieceType, PieceColor pieceColor, int piecePosition)
 	{
-		return switch (pieceType)
-				{
-					case "P" -> new PawnPiece(getOppositeColor(pieceColor), piecePosition);
-					case "R" -> new RookPiece(getOppositeColor(pieceColor), piecePosition);
-					case "N" -> new KnightPiece(getOppositeColor(pieceColor), piecePosition);
-					case "B" -> new BishopPiece(getOppositeColor(pieceColor), piecePosition);
-					case "Q" -> new QueenPiece(getOppositeColor(pieceColor), piecePosition);
-					case "K" -> new KingPiece(getOppositeColor(pieceColor), piecePosition, true, true);
-					default -> null;
-				};
+		return switch (pieceType) {
+			case "P" -> new PawnPiece(getOppositeColor(pieceColor), piecePosition);
+			case "R" -> new RookPiece(getOppositeColor(pieceColor), piecePosition);
+			case "N" -> new KnightPiece(getOppositeColor(pieceColor), piecePosition);
+			case "B" -> new BishopPiece(getOppositeColor(pieceColor), piecePosition);
+			case "Q" -> new QueenPiece(getOppositeColor(pieceColor), piecePosition);
+			case "K" -> new KingPiece(getOppositeColor(pieceColor), piecePosition, true, true);
+			default -> null;
+		};
 	}
 
 	private PieceColor getOppositeColor(PieceColor color)

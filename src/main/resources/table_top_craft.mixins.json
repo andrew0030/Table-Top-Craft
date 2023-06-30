@@ -1,17 +1,19 @@
 {
   "required": true,
+  "compatibilityLevel": "JAVA_16",
   "minVersion": "0.8",
   "package": "andrews.table_top_craft.mixins",
-  "compatibilityLevel": "JAVA_16",
+  "refmap": "table_top_craft.refmap.json",
+  "mixins": [
+
+  ],
   "client": [
     "GameRendererMixin",
+    "Matrix3fMixin",
+    "Matrix4fMixin",
     "ScreenMixin"
   ],
   "injectors": {
     "defaultRequire": 1
-  },
-  "refmap": "table_top_craft.refmap.json",
-  "mixins": [
-
-  ]
+  }
 }

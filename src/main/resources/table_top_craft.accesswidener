@@ -3,35 +3,6 @@ accessWidener v1 named
 # to partialTicks, so in order to have smooth transformations we get them manually
 accessible field net/minecraft/client/Minecraft pausePartialTick F
 
-# used to manually transform, as by default a new Matrix4f and Matrix3f is created each time
-# Matrix4f
-accessible field com/mojang/math/Matrix4f m00 F
-accessible field com/mojang/math/Matrix4f m01 F
-accessible field com/mojang/math/Matrix4f m02 F
-accessible field com/mojang/math/Matrix4f m03 F
-accessible field com/mojang/math/Matrix4f m10 F
-accessible field com/mojang/math/Matrix4f m11 F
-accessible field com/mojang/math/Matrix4f m12 F
-accessible field com/mojang/math/Matrix4f m13 F
-accessible field com/mojang/math/Matrix4f m20 F
-accessible field com/mojang/math/Matrix4f m21 F
-accessible field com/mojang/math/Matrix4f m22 F
-accessible field com/mojang/math/Matrix4f m23 F
-accessible field com/mojang/math/Matrix4f m30 F
-accessible field com/mojang/math/Matrix4f m31 F
-accessible field com/mojang/math/Matrix4f m32 F
-accessible field com/mojang/math/Matrix4f m33 F
-# Matrix3f
-accessible field com/mojang/math/Matrix3f m00 F
-accessible field com/mojang/math/Matrix3f m01 F
-accessible field com/mojang/math/Matrix3f m02 F
-accessible field com/mojang/math/Matrix3f m10 F
-accessible field com/mojang/math/Matrix3f m11 F
-accessible field com/mojang/math/Matrix3f m12 F
-accessible field com/mojang/math/Matrix3f m20 F
-accessible field com/mojang/math/Matrix3f m21 F
-accessible field com/mojang/math/Matrix3f m22 F
-
 # used to turn this mods advancements tab from pauseGame true to false
 accessible field net/minecraft/client/gui/screens/advancements/AdvancementsScreen selectedTab Lnet/minecraft/client/gui/screens/advancements/AdvancementTab;
 

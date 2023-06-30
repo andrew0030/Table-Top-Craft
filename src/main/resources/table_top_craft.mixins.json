@@ -11,6 +11,8 @@
   "client": [
     "BlockEntityWithoutLevelRendererMixin",
     "GameRendererMixin",
+    "Matrix3fMixin",
+    "Matrix4fMixin",
     "ScreenMixin",
     "ShaderInstanceMixin"
   ],

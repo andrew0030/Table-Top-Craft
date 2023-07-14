@@ -1,6 +1,7 @@
 package andrews.table_top_craft.objects.blocks;
 
 import andrews.table_top_craft.screens.chess.menus.ChessBoardSettingsScreen;
+import andrews.table_top_craft.screens.chess.menus.ChessPawnPromotionScreen;
 import andrews.table_top_craft.tile_entities.ChessTileEntity;
 import andrews.table_top_craft.util.NetworkUtil;
 import net.minecraft.core.BlockPos;
@@ -14,6 +15,8 @@ import net.minecraft.world.level.BlockGetter;
 import net.minecraft.world.level.Level;
 import net.minecraft.world.level.block.*;
 import net.minecraft.world.level.block.entity.BlockEntity;
+import net.minecraft.world.level.block.entity.BlockEntityTicker;
+import net.minecraft.world.level.block.entity.BlockEntityType;
 import net.minecraft.world.level.block.state.BlockState;
 import net.minecraft.world.level.block.state.StateDefinition;
 import net.minecraft.world.level.block.state.properties.BooleanProperty;
@@ -22,32 +25,64 @@ import net.minecraft.world.level.material.Material;
 import net.minecraft.world.phys.BlockHitResult;
 import net.minecraft.world.phys.Vec3;
 import net.minecraft.world.phys.shapes.CollisionContext;
+import net.minecraft.world.phys.shapes.Shapes;
 import net.minecraft.world.phys.shapes.VoxelShape;
 
 public class ChessBlock extends HorizontalDirectionalBlock implements EntityBlock
 {
 	public static final DirectionProperty FACING = HorizontalDirectionalBlock.FACING;
 	public static final BooleanProperty SHOW_PLATE = BooleanProperty.create("show_plate");
-	protected static final VoxelShape CHESS_BLOCK_AABB = Block.box(0.0D, 0.0D, 0.0D, 16.0D, 12.0D, 16.0D);
-	
-	public ChessBlock()
+	// Used by both variants
+	private static final VoxelShape TOP_PLATE = Block.box(0.0D, 11.0D, 0.0D, 16.0D, 12.0D, 16.0D);
+	private static final VoxelShape LEG1 = Block.box(0.0D, 0.0D, 0.0D, 2.0D, 4.0D, 2.0D);
+	private static final VoxelShape LEG2 = Block.box(14.0D, 0.0D, 0.0D, 16.0D, 4.0D, 2.0D);
+	private static final VoxelShape LEG3 = Block.box(0.0D, 0.0D, 14.0D, 2.0D, 4.0D, 16.0D);
+	private static final VoxelShape LEG4 = Block.box(14.0D, 0.0D, 14.0D, 16.0D, 4.0D, 16.0D);
+	// X Axis
+	private static final VoxelShape X_SIDE1 = Block.box(0.0D, 4.0D, 0.0D, 6.0D, 11.0D, 1.0D);
+	private static final VoxelShape X_SIDE2 = Block.box(10.0D, 4.0D, 0.0D, 16.0D, 11.0D, 1.0D);
+	private static final VoxelShape X_BAR1 = Block.box(6.0D, 4.0D, 0.0D, 10.0D, 5.0D, 1.0D);
+	private static final VoxelShape X_SIDE3 = Block.box(0.0D, 4.0D, 15.0D, 6.0D, 11.0D, 16.0D);
+	private static final VoxelShape X_SIDE4 = Block.box(10.0D, 4.0D, 15.0D, 16.0D, 11.0D, 16.0D);
+	private static final VoxelShape X_BAR2 = Block.box(6.0D, 4.0D, 15.0D, 10.0D, 5.0D, 16.0D);
+	private static final VoxelShape X_STORAGE1 = Block.box(0.0D, 4.0D, 1.0D, 6.0D, 5.0D, 15.0D);
+	private static final VoxelShape X_STORAGE2 = Block.box(10.0D, 4.0D, 1.0D, 16.0D, 5.0D, 15.0D);
+	private static final VoxelShape X_INSIDE_WALL1 = Block.box(5.0D, 5.0D, 1.0D, 6.0D, 11.0D, 15.0D);
+	private static final VoxelShape X_INSIDE_WALL2 = Block.box(10.0D, 5.0D, 1.0D, 11.0D, 11.0D, 15.0D);
+	private static final VoxelShape X_LIP1 = Block.box(0.0D, 5.0D, 1.0D, 1.0D, 6.0D, 15.0D);
+	private static final VoxelShape X_LIP2 = Block.box(15.0D, 5.0D, 1.0D, 16.0D, 6.0D, 15.0D);
+	// Y Axis
+	private static final VoxelShape Y_SIDE1 = Block.box(0.0D, 4.0D, 0.0D, 1.0D, 11.0D, 6.0D);
+	private static final VoxelShape Y_SIDE2 = Block.box(0.0D, 4.0D, 10.0D, 1.0D, 11.0D, 16.0D);
+	private static final VoxelShape Y_BAR1 = Block.box(0.0D, 4.0D, 6.0D, 1.0D, 5.0D, 10.0D);
+	private static final VoxelShape Y_SIDE3 = Block.box(15.0D, 4.0D, 0.0D, 16.0D, 11.0D, 6.0D);
+	private static final VoxelShape Y_SIDE4 = Block.box(15.0D, 4.0D, 10.0D, 16.0D, 11.0D, 16.0D);
+	private static final VoxelShape Y_BAR2 = Block.box(15.0D, 4.0D, 6.0D, 16.0D, 5.0D, 10.0D);
+	private static final VoxelShape Y_STORAGE1 = Block.box(1.0D, 4.0D, 0.0D, 15.0D, 5.0D, 6.0D);
+	private static final VoxelShape Y_STORAGE2 = Block.box(1.0D, 4.0D, 10.0D, 15.0D, 5.0D, 16.0D);
+	private static final VoxelShape Y_INSIDE_WALL1 = Block.box(1.0D, 5.0D, 5.0D, 15.0D, 11.0D, 6.0D);
+	private static final VoxelShape Y_INSIDE_WALL2 = Block.box(1.0D, 5.0D, 10.0D, 15.0D, 11.0D, 11.0D);
+	private static final VoxelShape Y_LIP1 = Block.box(1.0D, 5.0D, 0.0D, 15.0D, 6.0D, 1.0D);
+	private static final VoxelShape Y_LIP2 = Block.box(1.0D, 5.0D, 15.0D, 15.0D, 6.0D, 16.0D);
+	// AABB's
+	private static final VoxelShape X_AXIS_AABB = Shapes.or(TOP_PLATE, LEG1, LEG2, LEG3, LEG4, X_SIDE1, X_SIDE2, X_BAR1, X_SIDE3, X_SIDE4, X_BAR2, X_STORAGE1, X_STORAGE2, X_INSIDE_WALL1, X_INSIDE_WALL2, X_LIP1, X_LIP2);
+	private static final VoxelShape Y_AXIS_AABB = Shapes.or(TOP_PLATE, LEG1, LEG2, LEG3, LEG4, Y_SIDE1, Y_SIDE2, Y_BAR1, Y_SIDE3, Y_SIDE4, Y_BAR2, Y_INSIDE_WALL1, Y_INSIDE_WALL2, Y_STORAGE1, Y_STORAGE2, Y_LIP1, Y_LIP2);
+
+	public ChessBlock(Material material, SoundType soundType)
 	{
-		super(getProperties());
+		super(getProperties(material, soundType));
 		this.registerDefaultState(this.stateDefinition.any().setValue(FACING, Direction.NORTH).setValue(SHOW_PLATE, true));
 	}
 
 	/**
 	 * @return - The properties for this Block
 	 */
-	private static Properties getProperties()
-	{	
-		Properties properties = Block.Properties.of(Material.WOOD);
+	private static Properties getProperties(Material material, SoundType soundType)
+	{
+		Properties properties = Block.Properties.of(material);
+		properties.sound(soundType);
 		properties.strength(2.0F);
-		// harvestTool() Has been removed and is now handled through Tags.
-		// properties.harvestTool(ToolType.AXE);
 		properties.noOcclusion();
-		properties.sound(SoundType.WOOD);
-		
 		return properties;
 	}
 	
@@ -72,9 +107,12 @@ public class ChessBlock extends HorizontalDirectionalBlock implements EntityBloc
 	}
 
 	@Override
-	public VoxelShape getShape(BlockState pState, BlockGetter pLevel, BlockPos pPos, CollisionContext pContext)
+	public VoxelShape getShape(BlockState state, BlockGetter level, BlockPos pos, CollisionContext context)
 	{
-		return CHESS_BLOCK_AABB;
+		return switch (state.getValue(FACING)) {
+			default -> X_AXIS_AABB;
+			case NORTH, SOUTH -> Y_AXIS_AABB;
+		};
 	}
 
 	@Override
@@ -90,15 +128,26 @@ public class ChessBlock extends HorizontalDirectionalBlock implements EntityBloc
 		}
 		else
 		{
-			Direction face = hit.getDirection();
-			if (face.equals(Direction.UP))
+			if(level.getBlockEntity(pos) instanceof ChessTileEntity chessTileEntity && chessTileEntity.getWaitingForPromotion())
 			{
-				Direction facing = state.getValue(FACING);
-				int chessRank = this.getChessRank(hit.getLocation(), facing) + 1;
-				int chessColumn = this.getChessColumn(hit.getLocation(), facing);
-				byte tileCoordinate = (byte)Mth.clamp((8 - chessRank) * 8 + chessColumn, 0, 63);
-				if (level.isClientSide)
-					NetworkUtil.doChessBoardInteraction(pos, tileCoordinate);
+				// If we find a block entity (should be the case unless something is going horribly wrong)
+				// we check if we are waiting for a pawn promotion, and if so we open the selection menu.
+				if(level.isClientSide())
+					ChessPawnPromotionScreen.open(chessTileEntity, chessTileEntity.getBoard().getCurrentChessPlayer().getOpponent().getPieceColor().isWhite());
+			}
+			else
+			{
+				// If the game isn't waiting for a pawn promotion, we just do as we normally would
+				Direction face = hit.getDirection();
+				if (face.equals(Direction.UP) && (hit.getLocation().y - pos.getY()) > 0.7)
+				{
+					Direction facing = state.getValue(FACING);
+					int chessRank = this.getChessRank(hit.getLocation(), facing) + 1;
+					int chessColumn = this.getChessColumn(hit.getLocation(), facing);
+					byte tileCoordinate = (byte)Mth.clamp((8 - chessRank) * 8 + chessColumn, 0, 63);
+					if (level.isClientSide)
+						NetworkUtil.doChessBoardInteraction(pos, tileCoordinate);
+				}
 			}
 		}
 		return InteractionResult.SUCCESS;
@@ -117,6 +166,12 @@ public class ChessBlock extends HorizontalDirectionalBlock implements EntityBloc
 	{
 		return RenderShape.MODEL;
 	}
+
+	@Override
+	public <T extends BlockEntity> BlockEntityTicker<T> getTicker(Level level, BlockState state, BlockEntityType<T> blockEntityType)
+	{
+		return (level1, pos, state1, blockEntity) -> ChessTileEntity.tick(level1, pos, state1, (ChessTileEntity) blockEntity);
+	}
 	
 	/**
 	 * @param vec3d The Vector of the BlockPosition
@@ -126,21 +181,19 @@ public class ChessBlock extends HorizontalDirectionalBlock implements EntityBloc
 	private int getChessRank(Vec3 vec3d, Direction facing)
 	{
 		double value = facing == Direction.NORTH || facing == Direction.SOUTH ? vec3d.z : vec3d.x;
-		
-		
+
 		// We floor the value and subtract it from the original, that way we get rid of the block position value
 		value -= Math.floor(value);
 		// We multiply the value with 100 to make it easier to use
 		value *= 100;
 
-		return switch(facing)
-		{
+		return switch(facing) {
 			// We have to add DOWN and UP because this is an enhanced switch
 			case NORTH, WEST, DOWN, UP -> (int) (7 - Math.floor(value / 12.5D));
 			case SOUTH, EAST -> (int) Math.floor(value / 12.5D);
 		};
 	}
-	
+
 	/**
 	 * @param vec3d The Vector of the BlockPosition
 	 * @param facing The Direction this Block is facing
@@ -155,8 +208,7 @@ public class ChessBlock extends HorizontalDirectionalBlock implements EntityBloc
 		// We multiply the value with 100 to make it easier to use
 		value *= 100;
 
-		return switch (facing)
-		{
+		return switch (facing) {
 			// We have to add DOWN and UP because this is an enhanced switch
 			case NORTH, EAST, DOWN, UP -> (int) Math.floor(value / 12.5D);
 			case SOUTH, WEST -> (int) (7 - Math.floor(value / 12.5D));

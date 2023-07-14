@@ -21,7 +21,8 @@ import org.spongepowered.asm.mixin.injection.callback.CallbackInfo;
 @Mixin(BlockEntityWithoutLevelRenderer.class)
 public class BlockEntityWithoutLevelRendererMixin
 {
-    @Inject(method = "renderByItem", at = @At(value = "INVOKE", target = "Lnet/minecraft/world/item/ItemStack;getItem()Lnet/minecraft/world/item/Item;", shift = At.Shift.AFTER))
+    // optifine calls this method "renderRaw"
+    @Inject(method = {"renderByItem", "renderRaw"}, at = @At(value = "HEAD"), require = 1, cancellable = true)
     private void renderByItem(ItemStack itemStack, ItemTransforms.TransformType type, PoseStack poseStack, MultiBufferSource buffer, int packedLight, int packedOverlay, CallbackInfo ci)
     {
         if(itemStack.getItem() == TTCBlocks.CHESS_PIECE_FIGURE.asItem())
@@ -77,6 +78,7 @@ public class BlockEntityWithoutLevelRendererMixin
             {
                 System.err.println(e.getMessage());
             }
+            ci.cancel();
         }
     }
 }

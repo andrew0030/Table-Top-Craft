@@ -41,4 +41,14 @@ public class ChessObjModel
 		MODELS.get(Pair.of(pieceModelSet, pieceType)).render(stack, buffer);
 		stack.popPose();
 	}
+
+	public void render(PoseStack stack, VertexConsumer buffer, PieceType pieceType, PieceModelSet pieceModelSet, float red, float green, float blue, int packedLight)
+	{
+		stack.pushPose();
+		stack.scale(1F, -1F, -1F);
+		stack.scale(0.1F, 0.1F, 0.1F);
+		if(MODELS.get(Pair.of(pieceModelSet, pieceType)) != null)
+			MODELS.get(Pair.of(pieceModelSet, pieceType)).render(stack, buffer, red, green, blue, packedLight);
+		stack.popPose();
+	}
 }

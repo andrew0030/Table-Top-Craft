@@ -77,20 +77,12 @@ public class BufferHelpers {
 	}
 
 	public static void draw(VertexBuffer buffer) {
-		//buffer.bindVertexArray(); TODO fix this
 		ShaderInstance instance = RenderSystem.getShader();
-//		buffer.bindVertexArray(); TODO make sure this works
 		if (buffer != null) {
 			if (instance.MODEL_VIEW_MATRIX != null) instance.MODEL_VIEW_MATRIX.upload();
 			if (instance.COLOR_MODULATOR != null) instance.COLOR_MODULATOR.upload();
 			buffer.bind();
-//			RenderSystem.drawElements(buffer.mode.asGLMode, buffer.indexCount, buffer.indexType.asGLType);
 			buffer.draw();
 		}
-	}
-	
-	public static void teardownRender() {
-		VertexBuffer.unbind();
-//		VertexBuffer.unbindVertexArray(); TODO make sure this works
 	}
 }

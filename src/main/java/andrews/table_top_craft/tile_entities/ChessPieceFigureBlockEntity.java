@@ -1,6 +1,6 @@
 package andrews.table_top_craft.tile_entities;
 
-import andrews.table_top_craft.registry.TTCTileEntities;
+import andrews.table_top_craft.registry.TTCBlockEntities;
 import andrews.table_top_craft.util.NBTColorSaving;
 import net.minecraft.core.BlockPos;
 import net.minecraft.nbt.CompoundTag;
@@ -25,7 +25,7 @@ public class ChessPieceFigureBlockEntity extends BlockEntity
 
     public ChessPieceFigureBlockEntity(BlockPos pos, BlockState state)
     {
-        super(TTCTileEntities.CHESS_PIECE_FIGURE, pos, state);
+        super(TTCBlockEntities.CHESS_PIECE_FIGURE, pos, state);
     }
 
     // Used to synchronize the BlockEntity with the client when the chunk it is in is loaded

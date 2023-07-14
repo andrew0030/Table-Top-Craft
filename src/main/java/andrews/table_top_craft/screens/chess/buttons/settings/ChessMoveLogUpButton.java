@@ -20,7 +20,7 @@ public class ChessMoveLogUpButton extends Button
 	private static ChessBoardSettingsScreen screen;
 	private static ChessMoveLog moveLog;
 	
-	public ChessMoveLogUpButton(int xPos, int yPos, ChessBoardSettingsScreen currentScreen, ChessTileEntity tileEntity) 
+	public ChessMoveLogUpButton(int xPos, int yPos, ChessBoardSettingsScreen currentScreen, ChessTileEntity tileEntity)
 	{
 		super(xPos, yPos, buttonWidth, buttonHeight, Component.literal(""), (button) -> { handleButtonPress(); }, DEFAULT_NARRATION);
 		screen = currentScreen;

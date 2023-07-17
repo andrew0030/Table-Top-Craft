@@ -41,10 +41,6 @@ public class TTCClientInit implements ClientModInitializer
     @Override
     public void onInitializeClient()
     {
-		// Shaders
-//		CoreShaderRegistrationCallback.EVENT.register(context -> {
-//			context.register(new ResourceLocation(Reference.MODID, "rendertype_solid"), DefaultVertexFormat.BLOCK, shader -> rendertypeSolidBlockEntityShader = shader);
-//		}); TODO maybe remove?
         // Model Layers
         EntityModelLayerRegistry.registerModelLayer(ChessBoardPlateModel.CHESS_BOARD_PLATE_LAYER, ChessBoardPlateModel::createBodyLayer);
 		EntityModelLayerRegistry.registerModelLayer(ChessHighlightModel.CHESS_HIGHLIGHT_LAYER, ChessHighlightModel::createBodyLayer);

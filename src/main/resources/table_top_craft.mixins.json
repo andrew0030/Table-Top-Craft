@@ -5,13 +5,13 @@
   "compatibilityLevel": "JAVA_17",
   "plugin": "andrews.table_top_craft.util.MixinPlugin",
   "mixins": [
-    "GameRendererMixin$HackToGetReloadManager",
     "LootTableMixin",
     "LootTablesMixin"
   ],
   "client": [
     "BlockEntityWithoutLevelRendererMixin",
     "GameRendererMixin",
+    "GameRendererMixin$HackToGetReloadManager",
     "ScreenMixin",
     "ShaderInstanceJankFixMixin",
     "ShaderInstanceMixin"

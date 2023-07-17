@@ -9,7 +9,7 @@ import org.spongepowered.asm.mixin.injection.At;
 import org.spongepowered.asm.mixin.injection.ModifyArg;
 import org.spongepowered.asm.mixin.injection.ModifyVariable;
 
-@Mixin(value = ShaderInstance.class, priority = 2000)
+@Mixin(value = ShaderInstance.class, priority = 2000) // High priority so it runs after Fabrics Mixin
 public class ShaderInstanceJankFixMixin
 {
     @ModifyArg(method = "<init>", at = @At(value = "INVOKE", target = "Lnet/minecraft/resources/ResourceLocation;<init>(Ljava/lang/String;)V", ordinal = 0), require = 0)

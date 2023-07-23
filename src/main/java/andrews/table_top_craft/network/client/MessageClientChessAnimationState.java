@@ -1,7 +1,7 @@
 package andrews.table_top_craft.network.client;
 
 import andrews.table_top_craft.network.client.util.ClientPacketHandlerClass;
-import andrews.table_top_craft.tile_entities.ChessTileEntity;
+import andrews.table_top_craft.block_entities.ChessBlockEntity;
 import andrews.table_top_craft.util.Reference;
 import net.fabricmc.fabric.api.client.networking.v1.ClientPlayNetworking;
 import net.minecraft.client.Minecraft;
@@ -25,8 +25,8 @@ public class MessageClientChessAnimationState
             {
                 if(Minecraft.getInstance().level == null) return;
 
-                if(Minecraft.getInstance().level.getBlockEntity(pos) instanceof ChessTileEntity chessTileEntity)
-                    ClientPacketHandlerClass.handleChessAnimationPacket(chessTileEntity, actionType, currentCord, destCord);
+                if(Minecraft.getInstance().level.getBlockEntity(pos) instanceof ChessBlockEntity chessBlockEntity)
+                    ClientPacketHandlerClass.handleChessAnimationPacket(chessBlockEntity, actionType, currentCord, destCord);
             });
         });
     }

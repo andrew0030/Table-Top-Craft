@@ -1,7 +1,7 @@
 package andrews.table_top_craft.network.client;
 
 import andrews.table_top_craft.network.client.util.ClientPacketHandlerClass;
-import andrews.table_top_craft.tile_entities.ChessTimerBlockEntity;
+import andrews.table_top_craft.block_entities.ChessTimerBlockEntity;
 import andrews.table_top_craft.util.Reference;
 import net.fabricmc.fabric.api.client.networking.v1.ClientPlayNetworking;
 import net.minecraft.client.Minecraft;

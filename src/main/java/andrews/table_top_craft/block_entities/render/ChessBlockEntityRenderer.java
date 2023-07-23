@@ -1,6 +1,7 @@
-package andrews.table_top_craft.tile_entities.render;
+package andrews.table_top_craft.block_entities.render;
 
 import andrews.table_top_craft.animation.system.core.AnimationHandler;
+import andrews.table_top_craft.block_entities.ChessBlockEntity;
 import andrews.table_top_craft.game_logic.chess.PieceColor;
 import andrews.table_top_craft.game_logic.chess.board.Board;
 import andrews.table_top_craft.game_logic.chess.board.BoardUtils;
@@ -12,11 +13,10 @@ import andrews.table_top_craft.game_logic.chess.player.BlackChessPlayer;
 import andrews.table_top_craft.game_logic.chess.player.MoveTransition;
 import andrews.table_top_craft.game_logic.chess.player.WhiteChessPlayer;
 import andrews.table_top_craft.objects.blocks.ChessBlock;
-import andrews.table_top_craft.tile_entities.ChessTileEntity;
-import andrews.table_top_craft.tile_entities.model.chess.ChessBoardPlateModel;
-import andrews.table_top_craft.tile_entities.model.chess.ChessHighlightModel;
-import andrews.table_top_craft.tile_entities.model.chess.ChessTilesInfoModel;
-import andrews.table_top_craft.tile_entities.model.chess.GhostModel;
+import andrews.table_top_craft.block_entities.model.chess.ChessBoardPlateModel;
+import andrews.table_top_craft.block_entities.model.chess.ChessHighlightModel;
+import andrews.table_top_craft.block_entities.model.chess.ChessTilesInfoModel;
+import andrews.table_top_craft.block_entities.model.chess.GhostModel;
 import andrews.table_top_craft.util.*;
 import andrews.table_top_craft.util.shader_compat.ShaderCompatHandler;
 import com.google.common.collect.ImmutableList;
@@ -46,7 +46,7 @@ import java.util.Collection;
 import java.util.Collections;
 import java.util.List;
 
-public class ChessTileEntityRenderer implements BlockEntityRenderer<ChessTileEntity>
+public class ChessBlockEntityRenderer implements BlockEntityRenderer<ChessBlockEntity>
 {
 	private static final ResourceLocation HIGHLIGHT_TEXTURE = new ResourceLocation(Reference.MODID, "textures/tile/chess/highlight.png");
 	private static final ResourceLocation TILES_INFO_TEXTURE = new ResourceLocation(Reference.MODID, "textures/tile/chess/chess_tiles_info.png");
@@ -83,7 +83,7 @@ public class ChessTileEntityRenderer implements BlockEntityRenderer<ChessTileEnt
 		resourceLocation = Minecraft.getInstance().getTextureManager().register("table_top_craft_dummy", texture);
 	}
 
-	public ChessTileEntityRenderer(BlockEntityRendererProvider.Context context)
+	public ChessBlockEntityRenderer(BlockEntityRendererProvider.Context context)
 	{
 		highlightModel = new ChessHighlightModel(context.bakeLayer(ChessHighlightModel.CHESS_HIGHLIGHT_LAYER));
 		tilesInfoModel = new ChessTilesInfoModel(context.bakeLayer(ChessTilesInfoModel.CHESS_TILES_INFO_LAYER));
@@ -92,7 +92,7 @@ public class ChessTileEntityRenderer implements BlockEntityRenderer<ChessTileEnt
 	}
 	
 	@Override
-	public void render(ChessTileEntity tileEntityIn, float partialTicks, PoseStack poseStack, MultiBufferSource bufferIn, int combinedLightIn, int combinedOverlayIn)
+	public void render(ChessBlockEntity tileEntityIn, float partialTicks, PoseStack poseStack, MultiBufferSource bufferIn, int combinedLightIn, int combinedOverlayIn)
 	{
 		ghostModel.updateAnimations(tileEntityIn, partialTicks);
 		Board board;
@@ -434,7 +434,7 @@ public class ChessTileEntityRenderer implements BlockEntityRenderer<ChessTileEnt
 		}
 	}
 	
-	private void renderTakenPieces(PoseStack stack, MultiBufferSource buffer, ChessTileEntity chessBlockEntity, int packedLight)
+	private void renderTakenPieces(PoseStack stack, MultiBufferSource buffer, ChessBlockEntity chessBlockEntity, int packedLight)
 	{
 		ChessMoveLog moveLog = chessBlockEntity.getMoveLog();
 
@@ -475,7 +475,7 @@ public class ChessTileEntityRenderer implements BlockEntityRenderer<ChessTileEnt
 		blackTakenPieces.clear();
 	}
 	
-	private void renderTakenPiecesFigures(PoseStack stack, MultiBufferSource buffer, ChessTileEntity chessBlockEntity, final List<BasePiece> pieceList, final boolean isWhite, int packedLight)
+	private void renderTakenPiecesFigures(PoseStack stack, MultiBufferSource buffer, ChessBlockEntity chessBlockEntity, final List<BasePiece> pieceList, final boolean isWhite, int packedLight)
 	{
 		int currentCoordinate = -1;
 		int currentRank = 0;
@@ -539,10 +539,10 @@ public class ChessTileEntityRenderer implements BlockEntityRenderer<ChessTileEnt
 	}
 	
 	/**
-	 * @param chessBlockEntity - The ChessTileEntity
+	 * @param chessBlockEntity - The ChessBlockEntity
 	 * @return - A Collection of legal Moves this Piece can perform
 	 */
-	private Collection<BaseMove> pieceLegalMoves(ChessTileEntity chessBlockEntity)
+	private Collection<BaseMove> pieceLegalMoves(ChessBlockEntity chessBlockEntity)
 	{
 		if(chessBlockEntity.getHumanMovedPiece() != null && chessBlockEntity.getHumanMovedPiece().getPieceColor() == chessBlockEntity.getBoard().getCurrentChessPlayer().getPieceColor())
 		{
@@ -559,7 +559,7 @@ public class ChessTileEntityRenderer implements BlockEntityRenderer<ChessTileEnt
 		return Collections.emptyList();
 	}
 	
-	private void renderHighlight(PoseStack poseStack, MultiBufferSource bufferIn, int combinedLightIn, int combinedOverlayIn, HighlightType highlightType, ChessTileEntity chessBlockEntity)
+	private void renderHighlight(PoseStack poseStack, MultiBufferSource bufferIn, int combinedLightIn, int combinedOverlayIn, HighlightType highlightType, ChessBlockEntity chessBlockEntity)
 	{
 		VertexConsumer builderHighlight = bufferIn.getBuffer(TTCRenderTypes.getEmissiveTransluscent(HIGHLIGHT_TEXTURE, false));
 		poseStack.pushPose();
@@ -606,7 +606,7 @@ public class ChessTileEntityRenderer implements BlockEntityRenderer<ChessTileEnt
 		poseStack.popPose();
 	}
 	
-	private void renderTilesInfo(PoseStack poseStack, MultiBufferSource bufferIn, int combinedLightIn, int combinedOverlayIn, ChessTileEntity chessBlockEntity)
+	private void renderTilesInfo(PoseStack poseStack, MultiBufferSource bufferIn, int combinedLightIn, int combinedOverlayIn, ChessBlockEntity chessBlockEntity)
 	{
 		VertexConsumer builderTilesInfo = bufferIn.getBuffer(TTCRenderTypes.getEmissiveTransluscent(TILES_INFO_TEXTURE, false));
 
@@ -621,7 +621,7 @@ public class ChessTileEntityRenderer implements BlockEntityRenderer<ChessTileEnt
 		poseStack.popPose();
 	}
 	
-	private void renderChessBoardPlate(PoseStack poseStack, MultiBufferSource bufferIn, int combinedLightIn, int combinedOverlayIn, ChessTileEntity chessBlockEntity)
+	private void renderChessBoardPlate(PoseStack poseStack, MultiBufferSource bufferIn, int combinedLightIn, int combinedOverlayIn, ChessBlockEntity chessBlockEntity)
 	{	
 		float whiteR = NBTColorSaving.getRed(chessBlockEntity.getWhiteTilesColor()) / 255F;
 		float whiteG = NBTColorSaving.getGreen(chessBlockEntity.getWhiteTilesColor()) / 255F;

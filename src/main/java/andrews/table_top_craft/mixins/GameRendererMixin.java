@@ -1,6 +1,6 @@
 package andrews.table_top_craft.mixins;
 
-import andrews.table_top_craft.tile_entities.render.BufferHelpers;
+import andrews.table_top_craft.block_entities.render.BufferHelpers;
 import andrews.table_top_craft.util.DrawScreenHelper;
 import net.minecraft.client.renderer.GameRenderer;
 import net.minecraft.server.packs.resources.ResourceManager;

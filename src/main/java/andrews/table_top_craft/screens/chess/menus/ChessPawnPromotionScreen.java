@@ -1,8 +1,8 @@
 package andrews.table_top_craft.screens.chess.menus;
 
+import andrews.table_top_craft.block_entities.ChessBlockEntity;
 import andrews.table_top_craft.screens.chess.buttons.pieces.ChessBoardPawnPromotionButton;
 import andrews.table_top_craft.screens.chess.buttons.pieces.ChessBoardPawnPromotionButton.PawnPromotionPieceType;
-import andrews.table_top_craft.tile_entities.ChessTileEntity;
 import andrews.table_top_craft.util.Reference;
 import com.mojang.blaze3d.systems.RenderSystem;
 import com.mojang.blaze3d.vertex.PoseStack;
@@ -19,13 +19,13 @@ public class ChessPawnPromotionScreen extends Screen
     private static final Component TITLE = Component.translatable("gui.table_top_craft.chess.pawn_promotion.title");
     private static final int X_SIZE = 193;
     private static final int Y_SIZE = 71;
-    private final ChessTileEntity blockEntity;
+    private final ChessBlockEntity blockEntity;
     private final boolean isWhite;
     private int xPos;
     private int yPos;
 
 
-    public ChessPawnPromotionScreen(ChessTileEntity blockEntity, boolean isWhite)
+    public ChessPawnPromotionScreen(ChessBlockEntity blockEntity, boolean isWhite)
     {
         super(TITLE);
         this.blockEntity = blockEntity;
@@ -85,7 +85,7 @@ public class ChessPawnPromotionScreen extends Screen
     /**
      * Used to open this Gui, because class loading is a little child that screams if it does not like you
      */
-    public static void open(ChessTileEntity blockEntity, boolean isWhite)
+    public static void open(ChessBlockEntity blockEntity, boolean isWhite)
     {
         Minecraft.getInstance().setScreen(new ChessPawnPromotionScreen(blockEntity, isWhite));
     }

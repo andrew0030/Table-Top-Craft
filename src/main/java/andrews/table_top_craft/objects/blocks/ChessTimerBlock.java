@@ -1,7 +1,7 @@
 package andrews.table_top_craft.objects.blocks;
 
 import andrews.table_top_craft.screens.chess_timer.menus.ChessTimerScreen;
-import andrews.table_top_craft.tile_entities.ChessTimerBlockEntity;
+import andrews.table_top_craft.block_entities.ChessTimerBlockEntity;
 import net.minecraft.core.BlockPos;
 import net.minecraft.core.Direction;
 import net.minecraft.sounds.SoundEvents;

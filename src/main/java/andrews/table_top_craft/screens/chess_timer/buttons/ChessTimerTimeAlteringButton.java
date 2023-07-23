@@ -1,14 +1,14 @@
 package andrews.table_top_craft.screens.chess_timer.buttons;
 
+import andrews.table_top_craft.block_entities.ChessTimerBlockEntity;
 import andrews.table_top_craft.objects.blocks.ChessTimerBlock;
-import andrews.table_top_craft.tile_entities.ChessTimerBlockEntity;
 import andrews.table_top_craft.util.NetworkUtil;
 import andrews.table_top_craft.util.Reference;
 import com.mojang.blaze3d.systems.RenderSystem;
 import com.mojang.blaze3d.vertex.PoseStack;
 import net.minecraft.client.Minecraft;
+import net.minecraft.client.gui.GuiComponent;
 import net.minecraft.client.gui.components.Button;
-import net.minecraft.client.gui.screens.Screen;
 import net.minecraft.network.chat.Component;
 import net.minecraft.resources.ResourceLocation;
 import net.minecraft.util.Mth;
@@ -47,7 +47,7 @@ public class ChessTimerTimeAlteringButton extends Button
         if (this.visible)
         {
             this.isHovered = mouseX >= this.x && mouseY >= this.y && mouseX < this.x + this.width && mouseY < this.y + this.height;
-            this.renderButton(poseStack, mouseX, mouseY, pPartialTick);
+            this.renderWidget(poseStack, mouseX, mouseY, pPartialTick);
             if (this.isActive())
             {
                 boolean highlighted = this.isHoveredOrFocused();
@@ -82,7 +82,7 @@ public class ChessTimerTimeAlteringButton extends Button
     }
 
     @Override
-    public void renderButton(PoseStack poseStack, int mouseX, int mouseY, float partialTick)
+    public void renderWidget(PoseStack poseStack, int mouseX, int mouseY, float partialTick)
     {
         this.active = false;
         if(Minecraft.getInstance().level != null) {
@@ -93,7 +93,7 @@ public class ChessTimerTimeAlteringButton extends Button
 
         RenderSystem.setShaderColor(1.0F, 1.0F, 1.0F, 1.0F);
         RenderSystem.setShaderTexture(0, BUTTONS_TEXTURE);
-        this.blit(poseStack, this.x, this.y, this.isActive() ? ((isHovered || isFocused()) ? 13 : 0) : 26, this.type.getTexturePos(), 13, 13);
+        GuiComponent.blit(poseStack, this.x, this.y, this.isActive() ? ((isHovered || isFocused()) ? 13 : 0) : 26, this.type.getTexturePos(), 13, 13);
     }
 
     public enum TimeModifierType

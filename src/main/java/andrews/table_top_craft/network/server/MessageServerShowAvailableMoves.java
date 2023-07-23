@@ -1,6 +1,6 @@
 package andrews.table_top_craft.network.server;
 
-import andrews.table_top_craft.tile_entities.ChessTileEntity;
+import andrews.table_top_craft.block_entities.ChessBlockEntity;
 import andrews.table_top_craft.util.Reference;
 import net.fabricmc.fabric.api.networking.v1.ServerPlayNetworking;
 import net.minecraft.core.BlockPos;
@@ -27,10 +27,10 @@ public class MessageServerShowAvailableMoves
 				if(level != null)
 				{
 					BlockEntity blockEntity = level.getBlockEntity(pos);
-					// We make sure the TileEntity is a ChessTileEntity
-					if(blockEntity instanceof ChessTileEntity chessTileEntity)
+					// We make sure the TileEntity is a ChessBlockEntity
+					if(blockEntity instanceof ChessBlockEntity chessBlockEntity)
 			        {
-						chessTileEntity.setShowAvailableMoves(!chessTileEntity.getShowAvailableMoves());
+						chessBlockEntity.setShowAvailableMoves(!chessBlockEntity.getShowAvailableMoves());
 						level.sendBlockUpdated(pos, level.getBlockState(pos), level.getBlockState(pos), 2);
 			        }
 				}

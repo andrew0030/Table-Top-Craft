@@ -1,7 +1,7 @@
 package andrews.table_top_craft.network.server;
 
+import andrews.table_top_craft.block_entities.ChessBlockEntity;
 import andrews.table_top_craft.objects.blocks.ChessBlock;
-import andrews.table_top_craft.tile_entities.ChessTileEntity;
 import andrews.table_top_craft.util.Reference;
 import net.fabricmc.fabric.api.networking.v1.ServerPlayNetworking;
 import net.minecraft.core.BlockPos;
@@ -28,17 +28,17 @@ public class MessageServerUseCustomPlate
 				if(level != null)
 				{
 					BlockEntity blockEntity = level.getBlockEntity(pos);
-					// We make sure the TileEntity is a ChessTileEntity
-					if(blockEntity instanceof ChessTileEntity chessTileEntity)
+					// We make sure the TileEntity is a ChessBlockEntity
+					if(blockEntity instanceof ChessBlockEntity chessBlockEntity)
 			        {
-						if(chessTileEntity.getUseCustomPlate())
+						if(chessBlockEntity.getUseCustomPlate())
 						{
-							chessTileEntity.setUseCustomPlate(false);
+							chessBlockEntity.setUseCustomPlate(false);
 							level.setBlockAndUpdate(pos, level.getBlockState(pos).setValue(ChessBlock.SHOW_PLATE, true));
 						}
 						else
 						{
-							chessTileEntity.setUseCustomPlate(true);
+							chessBlockEntity.setUseCustomPlate(true);
 							level.setBlockAndUpdate(pos, level.getBlockState(pos).setValue(ChessBlock.SHOW_PLATE, false));
 						}
 						level.sendBlockUpdated(pos, level.getBlockState(pos), level.getBlockState(pos), 2);

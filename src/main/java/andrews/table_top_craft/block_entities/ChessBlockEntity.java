@@ -1,4 +1,4 @@
-package andrews.table_top_craft.tile_entities;
+package andrews.table_top_craft.block_entities;
 
 import andrews.table_top_craft.animation.system.base.AnimatedBlockEntity;
 import andrews.table_top_craft.animation.system.core.AdvancedAnimationState;
@@ -14,7 +14,7 @@ import andrews.table_top_craft.game_logic.chess.pieces.*;
 import andrews.table_top_craft.game_logic.chess.player.MoveTransition;
 import andrews.table_top_craft.objects.blocks.ChessBlock;
 import andrews.table_top_craft.registry.TTCBlockEntities;
-import andrews.table_top_craft.tile_entities.animations.ChessAnimations;
+import andrews.table_top_craft.block_entities.animations.ChessAnimations;
 import andrews.table_top_craft.util.NBTColorSaving;
 import andrews.table_top_craft.util.NetworkUtil;
 import net.fabricmc.api.EnvType;
@@ -37,7 +37,7 @@ import java.util.List;
 import java.util.UUID;
 import java.util.concurrent.atomic.AtomicReference;
 
-public class ChessTileEntity extends AnimatedBlockEntity
+public class ChessBlockEntity extends AnimatedBlockEntity
 {
 	public final List<AdvancedAnimationState> lingeringStates = new ArrayList<>();
 	public final AdvancedAnimationState selectedPieceState = new AdvancedAnimationState(new AtomicReference<>());
@@ -86,7 +86,7 @@ public class ChessTileEntity extends AnimatedBlockEntity
 	private BasePiece cachedPiece;
 	private final List<MoveTransition> moveTransitionsCache = new ArrayList<>();
 
-	public ChessTileEntity(BlockPos pos, BlockState state)
+	public ChessBlockEntity(BlockPos pos, BlockState state)
 	{
 		super(TTCBlockEntities.CHESS, pos, state);
 		if(FabricLoader.getInstance().getEnvironmentType().equals(EnvType.CLIENT))
@@ -129,7 +129,7 @@ public class ChessTileEntity extends AnimatedBlockEntity
 		this.loadFromNBT(compound);
 	}
 
-	public static void tick(Level level, BlockPos pos, BlockState state, ChessTileEntity blockEntity)
+	public static void tick(Level level, BlockPos pos, BlockState state, ChessBlockEntity blockEntity)
 	{
 		blockEntity.incTicksExisted();
 
@@ -175,7 +175,7 @@ public class ChessTileEntity extends AnimatedBlockEntity
 						deltaX = !isBlack ? -deltaX : deltaX;
 
 						// Helper method to calculate speed and timeMod
-						float[] result = ChessTileEntity.calculateSpeedAndTimeMod(type, isBlack, blockEntity.getBlockState().getValue(ChessBlock.FACING), deltaY, deltaX);
+						float[] result = ChessBlockEntity.calculateSpeedAndTimeMod(type, isBlack, blockEntity.getBlockState().getValue(ChessBlock.FACING), deltaY, deltaX);
 
 						zSpeed = result[0];
 						xSpeed = result[1];

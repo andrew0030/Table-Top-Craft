@@ -4,7 +4,7 @@ import andrews.table_top_craft.game_logic.chess.board.Board;
 import andrews.table_top_craft.game_logic.chess.board.moves.BaseMove;
 import andrews.table_top_craft.game_logic.chess.board.moves.PawnPromotion;
 import andrews.table_top_craft.game_logic.chess.pieces.*;
-import andrews.table_top_craft.tile_entities.ChessTileEntity;
+import andrews.table_top_craft.block_entities.ChessBlockEntity;
 import andrews.table_top_craft.util.Reference;
 import net.fabricmc.fabric.api.networking.v1.ServerPlayNetworking;
 import net.minecraft.core.BlockPos;
@@ -32,16 +32,16 @@ public class MessageServerDoPawnPromotion
                 if(level != null)
                 {
                     BlockEntity blockEntity = level.getBlockEntity(pos);
-                    // We make sure the TileEntity is a ChessTileEntity
-                    if(blockEntity instanceof ChessTileEntity chessTileEntity && chessTileEntity.getWaitingForPromotion())
+                    // We make sure the TileEntity is a ChessBlockEntity
+                    if(blockEntity instanceof ChessBlockEntity chessBlockEntity && chessBlockEntity.getWaitingForPromotion())
                     {
-                        Board board = chessTileEntity.getBoard();
+                        Board board = chessBlockEntity.getBoard();
                         Board.Builder builder = new Board.Builder();
                         for(int i = 0; i < 64; i++)
                         {
                             if (board.getTile(i).isTileOccupied())
                             {
-                                if(chessTileEntity.getPromotionCoordinate() == i)
+                                if(chessBlockEntity.getPromotionCoordinate() == i)
                                 {
                                     BasePiece piece = board.getTile(i).getPiece();
                                     switch (type) {
@@ -58,23 +58,23 @@ public class MessageServerDoPawnPromotion
                             }
                         }
                         builder.setMoveMaker(board.getCurrentChessPlayer().getPieceColor());
-                        chessTileEntity.setBoard(builder.build());
+                        chessBlockEntity.setBoard(builder.build());
 
-                        if(chessTileEntity.getMoveLog().getMoves().get(chessTileEntity.getMoveLog().getMoves().size() - 1).isPawnPromotion())
+                        if(chessBlockEntity.getMoveLog().getMoves().get(chessBlockEntity.getMoveLog().getMoves().size() - 1).isPawnPromotion())
                         {
-                            BaseMove move = chessTileEntity.getMoveLog().getMoves().get(chessTileEntity.getMoveLog().getMoves().size() - 1);
+                            BaseMove move = chessBlockEntity.getMoveLog().getMoves().get(chessBlockEntity.getMoveLog().getMoves().size() - 1);
                             switch (type) {
-                                default -> chessTileEntity.getMoveLog().getMoves().set(chessTileEntity.getMoveLog().getMoves().size() - 1, new PawnPromotion(move, "Q"));
-                                case 3 -> chessTileEntity.getMoveLog().getMoves().set(chessTileEntity.getMoveLog().getMoves().size() - 1, new PawnPromotion(move, "B"));
-                                case 4 -> chessTileEntity.getMoveLog().getMoves().set(chessTileEntity.getMoveLog().getMoves().size() - 1, new PawnPromotion(move, "N"));
-                                case 2 -> chessTileEntity.getMoveLog().getMoves().set(chessTileEntity.getMoveLog().getMoves().size() - 1, new PawnPromotion(move, "R"));
+                                default -> chessBlockEntity.getMoveLog().getMoves().set(chessBlockEntity.getMoveLog().getMoves().size() - 1, new PawnPromotion(move, "Q"));
+                                case 3 -> chessBlockEntity.getMoveLog().getMoves().set(chessBlockEntity.getMoveLog().getMoves().size() - 1, new PawnPromotion(move, "B"));
+                                case 4 -> chessBlockEntity.getMoveLog().getMoves().set(chessBlockEntity.getMoveLog().getMoves().size() - 1, new PawnPromotion(move, "N"));
+                                case 2 -> chessBlockEntity.getMoveLog().getMoves().set(chessBlockEntity.getMoveLog().getMoves().size() - 1, new PawnPromotion(move, "R"));
                             }
                         }
 
-                        chessTileEntity.setWaitingForPromotion(false);
-                        chessTileEntity.setPromotionCoordinate((byte) -1);
+                        chessBlockEntity.setWaitingForPromotion(false);
+                        chessBlockEntity.setPromotionCoordinate((byte) -1);
                         level.sendBlockUpdated(pos, level.getBlockState(pos), level.getBlockState(pos), 2);
-                        chessTileEntity.setChanged();
+                        chessBlockEntity.setChanged();
                     }
                 }
             });

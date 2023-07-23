@@ -1,12 +1,13 @@
 package andrews.table_top_craft.screens.chess.buttons.pieces.creative_mode;
 
-import andrews.table_top_craft.tile_entities.ChessPieceFigureBlockEntity;
+import andrews.table_top_craft.block_entities.ChessPieceFigureBlockEntity;
 import andrews.table_top_craft.util.NetworkUtil;
 import andrews.table_top_craft.util.Reference;
 import com.mojang.blaze3d.systems.RenderSystem;
 import com.mojang.blaze3d.vertex.PoseStack;
 import net.minecraft.client.Minecraft;
 import net.minecraft.client.gui.Font;
+import net.minecraft.client.gui.GuiComponent;
 import net.minecraft.client.gui.components.Button;
 import net.minecraft.network.chat.Component;
 import net.minecraft.resources.ResourceLocation;
@@ -30,7 +31,7 @@ public class ChessBoardPieceNextSetButton extends Button
     }
 
     @Override
-    public void renderButton(PoseStack poseStack, int mouseX, int mouseY, float partialTicks)
+    public void renderWidget(PoseStack poseStack, int mouseX, int mouseY, float partialTicks)
     {
         this.active = this.visible = Minecraft.getInstance().player.isCreative();
 
@@ -45,7 +46,7 @@ public class ChessBoardPieceNextSetButton extends Button
         RenderSystem.setShaderTexture(0, TEXTURE);
         poseStack.pushPose();
         RenderSystem.enableBlend();
-        this.blit(poseStack, x, y, u, v, width, height);
+        GuiComponent.blit(poseStack, x, y, u, v, width, height);
         RenderSystem.disableBlend();
         poseStack.popPose();
 

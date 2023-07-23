@@ -1,6 +1,6 @@
 package andrews.table_top_craft.objects.blocks;
 
-import andrews.table_top_craft.tile_entities.TicTacToeBlockEntity;
+import andrews.table_top_craft.block_entities.TicTacToeBlockEntity;
 import net.minecraft.core.BlockPos;
 import net.minecraft.core.Direction;
 import net.minecraft.util.Mth;

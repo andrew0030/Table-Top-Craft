@@ -2,7 +2,7 @@ package andrews.table_top_craft.util.loot_table;
 
 import andrews.table_top_craft.registry.TTCBlocks;
 import andrews.table_top_craft.registry.TTCLootItemFunctions;
-import andrews.table_top_craft.tile_entities.ChessPieceFigureBlockEntity;
+import andrews.table_top_craft.block_entities.ChessPieceFigureBlockEntity;
 import com.google.gson.JsonDeserializationContext;
 import com.google.gson.JsonObject;
 import com.google.gson.JsonSerializationContext;
@@ -13,8 +13,6 @@ import net.minecraft.world.level.storage.loot.LootContext;
 import net.minecraft.world.level.storage.loot.functions.LootItemConditionalFunction;
 import net.minecraft.world.level.storage.loot.functions.LootItemFunctionType;
 import net.minecraft.world.level.storage.loot.predicates.LootItemCondition;
-
-import java.util.Random;
 
 public class GeneratePieceNBTFunction extends LootItemConditionalFunction
 {

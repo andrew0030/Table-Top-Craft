@@ -1,6 +1,6 @@
 package andrews.table_top_craft.network.server;
 
-import andrews.table_top_craft.tile_entities.ChessTileEntity;
+import andrews.table_top_craft.block_entities.ChessBlockEntity;
 import andrews.table_top_craft.util.NetworkUtil;
 import andrews.table_top_craft.util.Reference;
 import net.fabricmc.fabric.api.networking.v1.ServerPlayNetworking;
@@ -30,8 +30,8 @@ public class MessageServerOpenGUIWithServerPlayer
                 if(level != null)
                 {
                     BlockEntity blockEntity = level.getBlockEntity(pos);
-                    // We make sure the TileEntity is a ChessTileEntity
-                    if(blockEntity instanceof ChessTileEntity chessTileEntity)
+                    // We make sure the TileEntity is a ChessBlockEntity
+                    if(blockEntity instanceof ChessBlockEntity chessBlockEntity)
                     {
                         ServerAdvancementManager serveradvancementmanager = serverPlayer.getServer().getAdvancements();
                         // We get the piece set advancements

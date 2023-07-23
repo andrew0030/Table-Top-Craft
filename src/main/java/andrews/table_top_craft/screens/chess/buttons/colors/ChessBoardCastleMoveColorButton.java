@@ -1,12 +1,13 @@
 package andrews.table_top_craft.screens.chess.buttons.colors;
 
+import andrews.table_top_craft.block_entities.ChessBlockEntity;
 import andrews.table_top_craft.screens.chess.menus.color_selection.ChessBoardCastleMoveColorScreen;
-import andrews.table_top_craft.tile_entities.ChessTileEntity;
 import andrews.table_top_craft.util.Reference;
 import com.mojang.blaze3d.systems.RenderSystem;
 import com.mojang.blaze3d.vertex.PoseStack;
 import net.minecraft.client.Minecraft;
 import net.minecraft.client.gui.Font;
+import net.minecraft.client.gui.GuiComponent;
 import net.minecraft.client.gui.components.Button;
 import net.minecraft.network.chat.Component;
 import net.minecraft.resources.ResourceLocation;
@@ -16,21 +17,21 @@ public class ChessBoardCastleMoveColorButton extends Button
 	private static final ResourceLocation TEXTURE = new ResourceLocation(Reference.MODID + ":textures/gui/buttons/chess_menu_buttons.png");
 	private final String buttonTileInfoColorText = Component.translatable("gui.table_top_craft.chess.color.button.castle_move").getString();
 	private final Font fontRenderer;
-	private static ChessTileEntity chessTileEntity;
+	private static ChessBlockEntity chessBlockEntity;
 	private static final int buttonWidth = 167;
 	private static final int buttonHeight = 13;
 	private int u = 0;
 	private int v = 50;
 	
-	public ChessBoardCastleMoveColorButton(ChessTileEntity tileEntity, int xPos, int yPos) 
+	public ChessBoardCastleMoveColorButton(ChessBlockEntity tileEntity, int xPos, int yPos)
 	{
 		super(xPos, yPos, buttonWidth, buttonHeight, Component.literal(""), (button) -> { handleButtonPress(); }, DEFAULT_NARRATION);
 		this.fontRenderer = Minecraft.getInstance().font;
-		chessTileEntity = tileEntity;
+		chessBlockEntity = tileEntity;
 	}
 	
 	@Override
-	public void renderButton(PoseStack poseStack, int mouseX, int mouseY, float partialTicks)
+	public void renderWidget(PoseStack poseStack, int mouseX, int mouseY, float partialTicks)
 	{
 		this.isHovered = mouseX >= x && mouseX < x + width && mouseY >= y && mouseY < y + height || this.isFocused();
 		
@@ -43,7 +44,7 @@ public class ChessBoardCastleMoveColorButton extends Button
 		RenderSystem.setShaderTexture(0, TEXTURE);
 		poseStack.pushPose();
 		RenderSystem.enableBlend();
-		this.blit(poseStack, x, y, u, v, width, height);
+		GuiComponent.blit(poseStack, x, y, u, v, width, height);
 		RenderSystem.disableBlend();
 		poseStack.popPose();
 		this.fontRenderer.draw(poseStack, this.buttonTileInfoColorText, x + ((this.width / 2) - (this.fontRenderer.width(this.buttonTileInfoColorText) / 2)), y + 3, 0x000000);
@@ -54,6 +55,6 @@ public class ChessBoardCastleMoveColorButton extends Button
 	 */
 	private static void handleButtonPress()
 	{
-		Minecraft.getInstance().setScreen(new ChessBoardCastleMoveColorScreen(chessTileEntity, false));
+		Minecraft.getInstance().setScreen(new ChessBoardCastleMoveColorScreen(chessBlockEntity, false));
 	}
 }

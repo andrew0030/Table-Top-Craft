@@ -1,9 +1,9 @@
 package andrews.table_top_craft.screens.chess.menus;
 
+import andrews.table_top_craft.block_entities.ChessBlockEntity;
 import andrews.table_top_craft.screens.chess.buttons.colors.*;
 import andrews.table_top_craft.screens.chess.buttons.pieces.ChessBoardPieceSettingsButton;
 import andrews.table_top_craft.screens.chess.buttons.settings.ChessBoardSettingsButton;
-import andrews.table_top_craft.tile_entities.ChessTileEntity;
 import andrews.table_top_craft.util.Reference;
 import com.mojang.blaze3d.systems.RenderSystem;
 import com.mojang.blaze3d.vertex.PoseStack;
@@ -18,14 +18,14 @@ public class ChessColorSettingsScreen extends Screen
 	private final String useCustomPlateText = Component.translatable("gui.table_top_craft.chess.use_custom_plate").getString();
 	private final String playPieceAnimationsText = Component.translatable("gui.table_top_craft.chess.play_piece_animations").getString();
 	private final String displayParticlesText = Component.translatable("gui.table_top_craft.chess.display_particles").getString();
-	private final ChessTileEntity chessTileEntity;
+	private final ChessBlockEntity chessBlockEntity;
 	private final int xSize = 177;
 	private final int ySize = 198;
 	
-	public ChessColorSettingsScreen(ChessTileEntity chessTileEntity)
+	public ChessColorSettingsScreen(ChessBlockEntity chessBlockEntity)
 	{
 		super(Component.literal(""));
-		this.chessTileEntity = chessTileEntity;
+		this.chessBlockEntity = chessBlockEntity;
 	}
 	
 	@Override
@@ -42,21 +42,21 @@ public class ChessColorSettingsScreen extends Screen
 		int x = (this.width - this.xSize) / 2;
 		int y = (this.height - this.ySize) / 2;
 		// The Buttons in the Gui Menu
-		this.addRenderableWidget(new ChessBoardSettingsButton(this.chessTileEntity, x - 24, y + 16));
-		this.addRenderableWidget(new ChessBoardColorSettingsButton(this.chessTileEntity, x - 24, y + 42));
-		this.addRenderableWidget(new ChessBoardPieceSettingsButton(this.chessTileEntity, x - 24, y + 68));
+		this.addRenderableWidget(new ChessBoardSettingsButton(this.chessBlockEntity, x - 24, y + 16));
+		this.addRenderableWidget(new ChessBoardColorSettingsButton(this.chessBlockEntity, x - 24, y + 42));
+		this.addRenderableWidget(new ChessBoardPieceSettingsButton(this.chessBlockEntity, x - 24, y + 68));
 
-		this.addRenderableWidget(new ChessPlayAnimationsButton(this.chessTileEntity, x + 5, y + 20));
-		this.addRenderableWidget(new ChessDisplayParticlesButton(this.chessTileEntity, x + 5, y + 35));
-		this.addRenderableWidget(new ChessTileInfoColorsButton(this.chessTileEntity, x + 5, y + 50));
-		this.addRenderableWidget(new ChessUseCustomPlateButton(this.chessTileEntity, x + 5, y + 65));
-		this.addRenderableWidget(new ChessBoardTilesColorButton(this.chessTileEntity, x + 5, y + 80));
-		this.addRenderableWidget(new ChessBoardPieceColorsButton(this.chessTileEntity, x + 5, y + 95));
-		this.addRenderableWidget(new ChessBoardLegalMoveColorButton(this.chessTileEntity, x + 5, y + 110));
-		this.addRenderableWidget(new ChessBoardInvalidMoveColorButton(this.chessTileEntity, x + 5, y + 125));
-		this.addRenderableWidget(new ChessBoardAttackMoveColorButton(this.chessTileEntity, x + 5, y + 140));
-		this.addRenderableWidget(new ChessBoardPreviousMoveColorButton(this.chessTileEntity, x + 5, y + 155));
-		this.addRenderableWidget(new ChessBoardCastleMoveColorButton(this.chessTileEntity, x + 5, y + 170));
+		this.addRenderableWidget(new ChessPlayAnimationsButton(this.chessBlockEntity, x + 5, y + 20));
+		this.addRenderableWidget(new ChessDisplayParticlesButton(this.chessBlockEntity, x + 5, y + 35));
+		this.addRenderableWidget(new ChessTileInfoColorsButton(this.chessBlockEntity, x + 5, y + 50));
+		this.addRenderableWidget(new ChessUseCustomPlateButton(this.chessBlockEntity, x + 5, y + 65));
+		this.addRenderableWidget(new ChessBoardTilesColorButton(this.chessBlockEntity, x + 5, y + 80));
+		this.addRenderableWidget(new ChessBoardPieceColorsButton(this.chessBlockEntity, x + 5, y + 95));
+		this.addRenderableWidget(new ChessBoardLegalMoveColorButton(this.chessBlockEntity, x + 5, y + 110));
+		this.addRenderableWidget(new ChessBoardInvalidMoveColorButton(this.chessBlockEntity, x + 5, y + 125));
+		this.addRenderableWidget(new ChessBoardAttackMoveColorButton(this.chessBlockEntity, x + 5, y + 140));
+		this.addRenderableWidget(new ChessBoardPreviousMoveColorButton(this.chessBlockEntity, x + 5, y + 155));
+		this.addRenderableWidget(new ChessBoardCastleMoveColorButton(this.chessBlockEntity, x + 5, y + 170));
 	}
 	
 	@Override

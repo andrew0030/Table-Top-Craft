@@ -1,9 +1,9 @@
-package andrews.table_top_craft.tile_entities.render;
+package andrews.table_top_craft.block_entities.render;
 
 import andrews.table_top_craft.game_logic.chess.pieces.BasePiece;
 import andrews.table_top_craft.objects.blocks.ChessPieceFigureBlock;
-import andrews.table_top_craft.tile_entities.ChessPieceFigureBlockEntity;
-import andrews.table_top_craft.tile_entities.model.piece_figure.ChessPieceFigureStandModel;
+import andrews.table_top_craft.block_entities.ChessPieceFigureBlockEntity;
+import andrews.table_top_craft.block_entities.model.piece_figure.ChessPieceFigureStandModel;
 import andrews.table_top_craft.util.*;
 import andrews.table_top_craft.util.shader_compat.ShaderCompatHandler;
 import com.mojang.blaze3d.platform.NativeImage;
@@ -24,7 +24,7 @@ import net.minecraft.resources.ResourceLocation;
 import net.minecraft.world.level.block.state.BlockState;
 import org.joml.Matrix4f;
 
-public class ChessPieceFigureTileEntityRenderer implements BlockEntityRenderer<ChessPieceFigureBlockEntity>
+public class ChessPieceFigureBlockEntityRenderer implements BlockEntityRenderer<ChessPieceFigureBlockEntity>
 {
     // Dynamic Texture
     private static final NativeImage image = new NativeImage(NativeImage.Format.RGBA, 1, 1, true);
@@ -45,7 +45,7 @@ public class ChessPieceFigureTileEntityRenderer implements BlockEntityRenderer<C
         resourceLocation = Minecraft.getInstance().getTextureManager().register("table_top_craft_dummy", texture);
     }
 
-    public ChessPieceFigureTileEntityRenderer(BlockEntityRendererProvider.Context context)
+    public ChessPieceFigureBlockEntityRenderer(BlockEntityRendererProvider.Context context)
     {
         chessPieceFigureStandModel = new ChessPieceFigureStandModel(context.bakeLayer(ChessPieceFigureStandModel.CHESS_PIECE_FIGURE_LAYER));
     }

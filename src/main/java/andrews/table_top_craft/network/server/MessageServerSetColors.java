@@ -1,6 +1,6 @@
 package andrews.table_top_craft.network.server;
 
-import andrews.table_top_craft.tile_entities.ChessTileEntity;
+import andrews.table_top_craft.block_entities.ChessBlockEntity;
 import andrews.table_top_craft.util.Reference;
 import net.fabricmc.fabric.api.networking.v1.ServerPlayNetworking;
 import net.minecraft.core.BlockPos;
@@ -30,24 +30,24 @@ public class MessageServerSetColors
 				if(level != null)
 				{
 					BlockEntity blockEntity = level.getBlockEntity(pos);
-					// We make sure the TileEntity is a ChessTileEntity
-					if(blockEntity instanceof ChessTileEntity chessTileEntity)
+					// We make sure the TileEntity is a ChessBlockEntity
+					if(blockEntity instanceof ChessBlockEntity chessBlockEntity)
 			        {
 						switch (colorType)
 						{
 							case 0 ->
 							{
-								chessTileEntity.setWhiteTilesColor(color);
-								chessTileEntity.setBlackTilesColor(color2);
+								chessBlockEntity.setWhiteTilesColor(color);
+								chessBlockEntity.setBlackTilesColor(color2);
 							}
 							case 1 ->
 							{
-								chessTileEntity.setWhitePiecesColor(color);
-								chessTileEntity.setBlackPiecesColor(color2);
+								chessBlockEntity.setWhitePiecesColor(color);
+								chessBlockEntity.setBlackPiecesColor(color2);
 							}
 						}
 						level.sendBlockUpdated(pos, level.getBlockState(pos), level.getBlockState(pos), 2);
-						chessTileEntity.setChanged();
+						chessBlockEntity.setChanged();
 			        }
 				}
 			});

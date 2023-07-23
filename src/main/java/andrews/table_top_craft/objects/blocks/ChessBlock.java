@@ -1,8 +1,8 @@
 package andrews.table_top_craft.objects.blocks;
 
+import andrews.table_top_craft.block_entities.ChessBlockEntity;
 import andrews.table_top_craft.screens.chess.menus.ChessBoardSettingsScreen;
 import andrews.table_top_craft.screens.chess.menus.ChessPawnPromotionScreen;
-import andrews.table_top_craft.tile_entities.ChessTileEntity;
 import andrews.table_top_craft.util.NetworkUtil;
 import net.minecraft.core.BlockPos;
 import net.minecraft.core.Direction;
@@ -95,8 +95,8 @@ public class ChessBlock extends HorizontalDirectionalBlock implements EntityBloc
 	@Override
 	public void onPlace(BlockState state, Level level, BlockPos pos, BlockState oldState, boolean isMoving)
 	{
-		if(level.getBlockEntity(pos) instanceof ChessTileEntity chessTileEntity)
-			if(chessTileEntity.getUseCustomPlate())
+		if(level.getBlockEntity(pos) instanceof ChessBlockEntity chessBlockEntity)
+			if(chessBlockEntity.getUseCustomPlate())
 				level.setBlockAndUpdate(pos, state.setValue(ChessBlock.SHOW_PLATE, false));
 	}
 
@@ -120,20 +120,20 @@ public class ChessBlock extends HorizontalDirectionalBlock implements EntityBloc
 	{
 		if(player.isShiftKeyDown())
 		{
-			if(level.getBlockEntity(pos) instanceof ChessTileEntity chessTileEntity)
+			if(level.getBlockEntity(pos) instanceof ChessBlockEntity chessBlockEntity)
 			{
 				if(level.isClientSide)
-					ChessBoardSettingsScreen.open(chessTileEntity);
+					ChessBoardSettingsScreen.open(chessBlockEntity);
 			}
 		}
 		else
 		{
-			if(level.getBlockEntity(pos) instanceof ChessTileEntity chessTileEntity && chessTileEntity.getWaitingForPromotion())
+			if(level.getBlockEntity(pos) instanceof ChessBlockEntity chessBlockEntity && chessBlockEntity.getWaitingForPromotion())
 			{
 				// If we find a block entity (should be the case unless something is going horribly wrong)
 				// we check if we are waiting for a pawn promotion, and if so we open the selection menu.
 				if(level.isClientSide())
-					ChessPawnPromotionScreen.open(chessTileEntity, chessTileEntity.getBoard().getCurrentChessPlayer().getOpponent().getPieceColor().isWhite());
+					ChessPawnPromotionScreen.open(chessBlockEntity, chessBlockEntity.getBoard().getCurrentChessPlayer().getOpponent().getPieceColor().isWhite());
 			}
 			else
 			{
@@ -156,7 +156,7 @@ public class ChessBlock extends HorizontalDirectionalBlock implements EntityBloc
 	@Override
 	public BlockEntity newBlockEntity(BlockPos pos, BlockState state)
 	{
-		return new ChessTileEntity(pos, state);
+		return new ChessBlockEntity(pos, state);
 	}
 
 	// We have to do this as we use both a JSON and Java model on the same block,
@@ -170,7 +170,7 @@ public class ChessBlock extends HorizontalDirectionalBlock implements EntityBloc
 	@Override
 	public <T extends BlockEntity> BlockEntityTicker<T> getTicker(Level level, BlockState state, BlockEntityType<T> blockEntityType)
 	{
-		return (level1, pos, state1, blockEntity) -> ChessTileEntity.tick(level1, pos, state1, (ChessTileEntity) blockEntity);
+		return (level1, pos, state1, blockEntity) -> ChessBlockEntity.tick(level1, pos, state1, (ChessBlockEntity) blockEntity);
 	}
 	
 	/**

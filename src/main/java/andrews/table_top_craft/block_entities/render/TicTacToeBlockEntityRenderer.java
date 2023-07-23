@@ -1,7 +1,7 @@
-package andrews.table_top_craft.tile_entities.render;
+package andrews.table_top_craft.block_entities.render;
 
-import andrews.table_top_craft.tile_entities.TicTacToeBlockEntity;
-import andrews.table_top_craft.tile_entities.model.tic_tac_toe.TicTacToeModel;
+import andrews.table_top_craft.block_entities.TicTacToeBlockEntity;
+import andrews.table_top_craft.block_entities.model.tic_tac_toe.TicTacToeModel;
 import andrews.table_top_craft.util.Reference;
 import com.mojang.blaze3d.systems.RenderSystem;
 import com.mojang.blaze3d.vertex.PoseStack;

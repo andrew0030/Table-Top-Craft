@@ -1,8 +1,8 @@
 package andrews.table_top_craft.mixins;
 
 import andrews.table_top_craft.registry.TTCBlocks;
-import andrews.table_top_craft.tile_entities.render.ChessPieceFigureTileEntityRenderer;
-import andrews.table_top_craft.tile_entities.render.item.TTCBlockEntityWithoutLevelRenderer;
+import andrews.table_top_craft.block_entities.render.ChessPieceFigureBlockEntityRenderer;
+import andrews.table_top_craft.block_entities.render.item.TTCBlockEntityWithoutLevelRenderer;
 import andrews.table_top_craft.util.NBTColorSaving;
 import com.mojang.blaze3d.vertex.PoseStack;
 import net.minecraft.client.Minecraft;
@@ -12,6 +12,7 @@ import net.minecraft.client.renderer.block.model.ItemTransforms;
 import net.minecraft.nbt.CompoundTag;
 import net.minecraft.nbt.Tag;
 import net.minecraft.world.item.BlockItem;
+import net.minecraft.world.item.ItemDisplayContext;
 import net.minecraft.world.item.ItemStack;
 import org.spongepowered.asm.mixin.Mixin;
 import org.spongepowered.asm.mixin.injection.At;
@@ -23,7 +24,7 @@ public class BlockEntityWithoutLevelRendererMixin
 {
     // optifine calls this method "renderRaw"
     @Inject(method = {"renderByItem", "renderRaw"}, at = @At(value = "HEAD"), require = 1, cancellable = true)
-    private void renderByItem(ItemStack itemStack, ItemTransforms.TransformType type, PoseStack poseStack, MultiBufferSource buffer, int packedLight, int packedOverlay, CallbackInfo ci)
+    private void renderByItem(ItemStack itemStack, ItemDisplayContext type, PoseStack poseStack, MultiBufferSource buffer, int packedLight, int packedOverlay, CallbackInfo ci)
     {
         if(itemStack.getItem() == TTCBlocks.CHESS_PIECE_FIGURE.asItem())
         {
@@ -64,11 +65,11 @@ public class BlockEntityWithoutLevelRendererMixin
                 else
                     TTCBlockEntityWithoutLevelRenderer.chessPieceFigureBlockEntity.setPieceName(null);
 
-                ChessPieceFigureTileEntityRenderer.renderChessPieceFigure(
+                ChessPieceFigureBlockEntityRenderer.renderChessPieceFigure(
                         TTCBlockEntityWithoutLevelRenderer.chessPieceFigureBlockEntity,
                         poseStack,
                         buffer,
-                        type.equals(ItemTransforms.TransformType.GUI),
+                        type.equals(ItemDisplayContext.GUI),
                         TTCBlockEntityWithoutLevelRenderer.isHeldOrHead(type),
                         TTCBlockEntityWithoutLevelRenderer.getPartialTicks(),
                         packedLight,

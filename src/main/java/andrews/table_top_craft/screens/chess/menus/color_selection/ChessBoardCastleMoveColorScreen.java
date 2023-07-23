@@ -1,5 +1,6 @@
 package andrews.table_top_craft.screens.chess.menus.color_selection;
 
+import andrews.table_top_craft.block_entities.ChessBlockEntity;
 import andrews.table_top_craft.screens.chess.buttons.ChessCancelButton;
 import andrews.table_top_craft.screens.chess.buttons.ChessCancelButton.ChessCancelButtonText;
 import andrews.table_top_craft.screens.chess.buttons.ChessCancelButton.ChessCancelMenuTarget;
@@ -17,7 +18,6 @@ import andrews.table_top_craft.screens.piece_figure.util.IColorPicker;
 import andrews.table_top_craft.screens.piece_figure.util.SaturationSlider;
 import andrews.table_top_craft.screens.piece_figure.util.TTCColorPicker;
 import andrews.table_top_craft.screens.util.BaseSlider;
-import andrews.table_top_craft.tile_entities.ChessTileEntity;
 import andrews.table_top_craft.util.Color;
 import andrews.table_top_craft.util.NBTColorSaving;
 import andrews.table_top_craft.util.Reference;
@@ -34,7 +34,7 @@ public class ChessBoardCastleMoveColorScreen extends Screen implements IColorPic
 	private static final ResourceLocation COLOR_PICKER_FRAME_TEXTURE = new ResourceLocation(Reference.MODID, "textures/gui/color_picker/color_picker_frame.png");
 	private final String colorSelectionText = Component.translatable("gui.table_top_craft.chess.color.castle_move").getString();
 	private final String previewColorText = Component.translatable("gui.table_top_craft.chess.color.color_preview").getString();
-	private final ChessTileEntity chessTileEntity;
+	private final ChessBlockEntity chessBlockEntity;
 	private final int xSize = 177;
 	private final int ySize = 131;
 	private ChessAlphaColorSlider alphaColorSlider;
@@ -45,10 +45,10 @@ public class ChessBoardCastleMoveColorScreen extends Screen implements IColorPic
 	private SaturationSlider saturationSlider;
 	private final boolean isColorPickerActive;
 	
-	public ChessBoardCastleMoveColorScreen(ChessTileEntity chessTileEntity, boolean isColorPickerActive)
+	public ChessBoardCastleMoveColorScreen(ChessBlockEntity chessBlockEntity, boolean isColorPickerActive)
 	{
 		super(Component.literal(""));
-		this.chessTileEntity = chessTileEntity;
+		this.chessBlockEntity = chessBlockEntity;
 		this.isColorPickerActive = isColorPickerActive;
 	}
 	
@@ -66,19 +66,19 @@ public class ChessBoardCastleMoveColorScreen extends Screen implements IColorPic
 		int x = (this.width - (this.xSize - (this.isColorPickerActive ? 136 : 0))) / 2;
 		int y = (this.height - this.ySize) / 2;
 
-		this.addRenderableWidget(new ColorPickerToggleButton(this.chessTileEntity, this, false, x + 48, y + 47));
+		this.addRenderableWidget(new ColorPickerToggleButton(this.chessBlockEntity, this, false, x + 48, y + 47));
 
 		// RGBA Sliders
-	    this.addRenderableWidget(this.redColorSlider = new ChessRedColorSlider(x + 5, y + 61, 167, 12, NBTColorSaving.getRed(this.chessTileEntity.getCastleMoveColor()), this));
-	    this.addRenderableWidget(this.greenColorSlider = new ChessGreenColorSlider(x + 5, y + 74, 167, 12, NBTColorSaving.getGreen(this.chessTileEntity.getCastleMoveColor()), this));
-	    this.addRenderableWidget(this.blueColorSlider = new ChessBlueColorSlider(x + 5, y + 87, 167, 12, NBTColorSaving.getBlue(this.chessTileEntity.getCastleMoveColor()), this));
-	    this.addRenderableWidget(this.alphaColorSlider = new ChessAlphaColorSlider(x + 5, y + 100, 167, 12, NBTColorSaving.getAlpha(this.chessTileEntity.getCastleMoveColor())));
+	    this.addRenderableWidget(this.redColorSlider = new ChessRedColorSlider(x + 5, y + 61, 167, 12, NBTColorSaving.getRed(this.chessBlockEntity.getCastleMoveColor()), this));
+	    this.addRenderableWidget(this.greenColorSlider = new ChessGreenColorSlider(x + 5, y + 74, 167, 12, NBTColorSaving.getGreen(this.chessBlockEntity.getCastleMoveColor()), this));
+	    this.addRenderableWidget(this.blueColorSlider = new ChessBlueColorSlider(x + 5, y + 87, 167, 12, NBTColorSaving.getBlue(this.chessBlockEntity.getCastleMoveColor()), this));
+	    this.addRenderableWidget(this.alphaColorSlider = new ChessAlphaColorSlider(x + 5, y + 100, 167, 12, NBTColorSaving.getAlpha(this.chessBlockEntity.getCastleMoveColor())));
 		
 		// The Buttons in the Gui Menu
 	    this.addRenderableWidget(new ChessRandomColorButton(this, x + 69, y + 33));
 	    this.addRenderableWidget(new ChessResetColorButton(DefaultColorType.CASTLE_MOVE, this, x + 69, y + 47));
-	    this.addRenderableWidget(new ChessCancelButton(this.chessTileEntity, ChessCancelMenuTarget.CHESS_BOARD_COLORS, ChessCancelButtonText.CANCEL, x + 5, y + 113));
-	    this.addRenderableWidget(new ChessConfirmColorButton(ColorMenuType.CASTLE_MOVE, this.chessTileEntity, this.redColorSlider, this.greenColorSlider, this.blueColorSlider, this.alphaColorSlider, x + 90, y + 113));
+	    this.addRenderableWidget(new ChessCancelButton(this.chessBlockEntity, ChessCancelMenuTarget.CHESS_BOARD_COLORS, ChessCancelButtonText.CANCEL, x + 5, y + 113));
+	    this.addRenderableWidget(new ChessConfirmColorButton(ColorMenuType.CASTLE_MOVE, this.chessBlockEntity, this.redColorSlider, this.greenColorSlider, this.blueColorSlider, this.alphaColorSlider, x + 90, y + 113));
 
 		if(isColorPickerActive)
 		{

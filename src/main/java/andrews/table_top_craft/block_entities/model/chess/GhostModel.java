@@ -1,11 +1,11 @@
-package andrews.table_top_craft.tile_entities.model.chess;
+package andrews.table_top_craft.block_entities.model.chess;
 
 import andrews.table_top_craft.animation.model.AdvancedMeshDefinition;
 import andrews.table_top_craft.animation.model.AdvancedModelPart;
 import andrews.table_top_craft.animation.model.AdvancedPartDefinition;
 import andrews.table_top_craft.animation.model.AnimatedBlockEntityModel;
 import andrews.table_top_craft.animation.system.base.AnimatedBlockEntity;
-import andrews.table_top_craft.tile_entities.ChessTileEntity;
+import andrews.table_top_craft.block_entities.ChessBlockEntity;
 import andrews.table_top_craft.util.Reference;
 import com.mojang.blaze3d.vertex.PoseStack;
 import com.mojang.blaze3d.vertex.VertexConsumer;
@@ -48,7 +48,7 @@ public class GhostModel extends AnimatedBlockEntityModel
     @Override
     public void updateAnimations(AnimatedBlockEntity blockEntity, float partialTick)
     {
-        if(blockEntity instanceof ChessTileEntity animated)
+        if(blockEntity instanceof ChessBlockEntity animated)
         {
             this.root.getAllParts().forEach(ModelPart::resetPose);
             animated.lingeringStates.removeIf(state -> !state.isStarted());

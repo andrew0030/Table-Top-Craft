@@ -1,28 +1,23 @@
 package andrews.table_top_craft.util;
 
+import andrews.table_top_craft.block_entities.model.chess.ChessBoardPlateModel;
+import andrews.table_top_craft.block_entities.model.chess.ChessHighlightModel;
+import andrews.table_top_craft.block_entities.model.chess.ChessTilesInfoModel;
+import andrews.table_top_craft.block_entities.model.chess.GhostModel;
+import andrews.table_top_craft.block_entities.model.connect_four.ConnectFourFallingPieceModel;
+import andrews.table_top_craft.block_entities.model.connect_four.ConnectFourMeshModel;
+import andrews.table_top_craft.block_entities.model.connect_four.ConnectFourPieceModel;
+import andrews.table_top_craft.block_entities.model.piece_figure.ChessPieceFigureStandModel;
+import andrews.table_top_craft.block_entities.model.tic_tac_toe.TicTacToeModel;
+import andrews.table_top_craft.block_entities.render.item.TTCBlockEntityWithoutLevelRenderer;
 import andrews.table_top_craft.network.TTCNetwork;
 import andrews.table_top_craft.registry.TTCBlockEntities;
 import andrews.table_top_craft.registry.TTCParticles;
-import andrews.table_top_craft.tile_entities.model.chess.ChessBoardPlateModel;
-import andrews.table_top_craft.tile_entities.model.chess.ChessHighlightModel;
-import andrews.table_top_craft.tile_entities.model.chess.ChessTilesInfoModel;
-import andrews.table_top_craft.tile_entities.model.chess.GhostModel;
-import andrews.table_top_craft.tile_entities.model.connect_four.ConnectFourFallingPieceModel;
-import andrews.table_top_craft.tile_entities.model.connect_four.ConnectFourMeshModel;
-import andrews.table_top_craft.tile_entities.model.connect_four.ConnectFourPieceModel;
-import andrews.table_top_craft.tile_entities.model.piece_figure.ChessPieceFigureStandModel;
-import andrews.table_top_craft.tile_entities.model.tic_tac_toe.TicTacToeModel;
-import andrews.table_top_craft.tile_entities.render.item.TTCBlockEntityWithoutLevelRenderer;
-import com.mojang.blaze3d.vertex.DefaultVertexFormat;
-import com.mojang.blaze3d.vertex.VertexFormat;
 import net.fabricmc.api.ClientModInitializer;
-import net.fabricmc.fabric.api.client.rendering.v1.CoreShaderRegistrationCallback;
 import net.fabricmc.fabric.api.client.rendering.v1.EntityModelLayerRegistry;
 import net.minecraft.client.renderer.ShaderInstance;
-import net.minecraft.resources.ResourceLocation;
+import org.jetbrains.annotations.Nullable;
 
-import javax.annotation.Nullable;
-import java.io.IOException;
 import java.util.Objects;
 
 public class TTCClientInit implements ClientModInitializer

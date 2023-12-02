@@ -10,6 +10,7 @@ import andrews.table_top_craft.animation.system.core.types.EasingTypes;
 import andrews.table_top_craft.animation.system.core.types.TransformTypes;
 import andrews.table_top_craft.animation.system.core.types.util.EasingType;
 import andrews.table_top_craft.block_entities.ChessBlockEntity;
+import andrews.table_top_craft.block_entities.ConnectFourBlockEntity;
 import andrews.table_top_craft.game_logic.chess.board.Board;
 import andrews.table_top_craft.network.client.*;
 import andrews.table_top_craft.objects.blocks.ChessBlock;
@@ -17,7 +18,6 @@ import andrews.table_top_craft.particles.options.ChessShatterParticleOptions;
 import andrews.table_top_craft.registry.TTCParticles;
 import andrews.table_top_craft.screens.chess.menus.ChessPawnPromotionScreen;
 import andrews.table_top_craft.screens.chess.menus.ChessPieceSelectionScreen;
-import andrews.table_top_craft.block_entities.ConnectFourBlockEntity;
 import andrews.table_top_craft.util.NBTColorSaving;
 import net.minecraft.client.Minecraft;
 import net.minecraft.client.animation.KeyframeAnimations;
@@ -37,7 +37,7 @@ public class ClientPacketHandlerClass
         boolean isStandardSetUnlocked = msg.isStandardSetUnlocked;
         boolean isClassicSetUnlocked = msg.isClassicSetUnlocked;
         boolean isPandorasCreaturesSetUnlocked = msg.isPandorasCreaturesSetUnlocked;
-        if(Minecraft.getInstance().player.getLevel().getBlockEntity(pos) != null && Minecraft.getInstance().player.getLevel().getBlockEntity(pos) instanceof ChessBlockEntity chessBlockEntity)
+        if(Minecraft.getInstance().player.level().getBlockEntity(pos) != null && Minecraft.getInstance().player.level().getBlockEntity(pos) instanceof ChessBlockEntity chessBlockEntity)
         {
             Minecraft.getInstance().setScreen(new ChessPieceSelectionScreen(chessBlockEntity, isStandardSetUnlocked, isClassicSetUnlocked, isPandorasCreaturesSetUnlocked));
         }
@@ -47,7 +47,7 @@ public class ClientPacketHandlerClass
     {
         BlockPos pos = msg.pos;
         boolean isWhite = msg.isWhite;
-        if(Minecraft.getInstance().player.getLevel().getBlockEntity(pos) != null && Minecraft.getInstance().player.getLevel().getBlockEntity(pos) instanceof ChessBlockEntity chessBlockEntity)
+        if(Minecraft.getInstance().player.level().getBlockEntity(pos) != null && Minecraft.getInstance().player.level().getBlockEntity(pos) instanceof ChessBlockEntity chessBlockEntity)
         {
             Minecraft.getInstance().setScreen(new ChessPawnPromotionScreen(chessBlockEntity, isWhite));
         }
@@ -121,7 +121,7 @@ public class ClientPacketHandlerClass
     {
         BlockPos pos = msg.pos;
         byte actionType = msg.actionType;
-        if(Minecraft.getInstance().player.getLevel().getBlockEntity(pos) instanceof ChessBlockEntity chessBlockEntity)
+        if(Minecraft.getInstance().player.level().getBlockEntity(pos) instanceof ChessBlockEntity chessBlockEntity)
         {
             if(actionType == 0)
             {
@@ -152,7 +152,7 @@ public class ClientPacketHandlerClass
     {
         BlockPos pos = msg.pos;
         byte destCord = msg.destCord;
-        if(Minecraft.getInstance().player.getLevel().getBlockEntity(pos) instanceof ConnectFourBlockEntity blockEntity)
+        if(Minecraft.getInstance().player.level().getBlockEntity(pos) instanceof ConnectFourBlockEntity blockEntity)
         {
             // We update the value of the falling piece on the clients
             blockEntity.movingPiece = destCord;

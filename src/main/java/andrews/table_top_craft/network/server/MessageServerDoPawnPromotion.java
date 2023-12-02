@@ -1,10 +1,10 @@
 package andrews.table_top_craft.network.server;
 
+import andrews.table_top_craft.block_entities.ChessBlockEntity;
 import andrews.table_top_craft.game_logic.chess.board.Board;
 import andrews.table_top_craft.game_logic.chess.board.moves.BaseMove;
 import andrews.table_top_craft.game_logic.chess.board.moves.PawnPromotion;
 import andrews.table_top_craft.game_logic.chess.pieces.*;
-import andrews.table_top_craft.block_entities.ChessBlockEntity;
 import net.minecraft.core.BlockPos;
 import net.minecraft.network.FriendlyByteBuf;
 import net.minecraft.world.entity.player.Player;
@@ -52,7 +52,7 @@ public class MessageServerDoPawnPromotion
             {
                 if(player != null)
                 {
-                    Level level = player.getLevel();
+                    Level level = player.level();
                     BlockEntity blockEntity = level.getBlockEntity(pos);
                     // We make sure the TileEntity is a ChessBlockEntity
                     if(blockEntity instanceof ChessBlockEntity chessBlockEntity && chessBlockEntity.getWaitingForPromotion())

@@ -56,6 +56,7 @@ public class TableTopCraft
 		TTCBlockEntities.BLOCK_ENTITY_TYPES.register(modEventBus);
 		TTCLootItemFunctions.ITEM_FUNCTION_TYPES.register(modEventBus);
 		TTCParticles.PARTICLES.register(modEventBus);
+		TTCCreativeTab.TABS.register(modEventBus);
 		
 		DistExecutor.runWhenOn(Dist.CLIENT, () -> () ->
 		{

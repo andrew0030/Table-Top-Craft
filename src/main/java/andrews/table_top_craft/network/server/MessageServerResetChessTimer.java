@@ -43,7 +43,7 @@ public class MessageServerResetChessTimer
             {
                 if(player != null)
                 {
-                    Level level = player.getLevel();
+                    Level level = player.level();
                     BlockEntity blockEntity = level.getBlockEntity(pos);
                     if(blockEntity instanceof ChessTimerBlockEntity chessTimerBlockEntity)
                     {

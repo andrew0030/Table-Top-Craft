@@ -1,7 +1,7 @@
 package andrews.table_top_craft.network.server;
 
-import andrews.table_top_craft.criteria.TTCCriteriaTriggers;
 import andrews.table_top_craft.block_entities.ConnectFourBlockEntity;
+import andrews.table_top_craft.criteria.TTCCriteriaTriggers;
 import andrews.table_top_craft.util.NetworkUtil;
 import net.minecraft.core.BlockPos;
 import net.minecraft.network.FriendlyByteBuf;
@@ -50,7 +50,7 @@ public class MessageServerDoConnectFourInteraction
             {
                 if(player != null)
                 {
-                    Level level = player.getLevel();
+                    Level level = player.level();
                     BlockEntity blockEntity = level.getBlockEntity(pos);
                     if(blockEntity instanceof ConnectFourBlockEntity connectFourBlockEntity)
                     {

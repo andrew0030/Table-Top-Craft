@@ -1,8 +1,8 @@
 package andrews.table_top_craft.network.server;
 
+import andrews.table_top_craft.block_entities.ChessBlockEntity;
 import andrews.table_top_craft.game_logic.chess.board.Board;
 import andrews.table_top_craft.game_logic.chess.pgn.FenUtil;
-import andrews.table_top_craft.block_entities.ChessBlockEntity;
 import andrews.table_top_craft.util.NetworkUtil;
 import net.minecraft.ChatFormatting;
 import net.minecraft.core.BlockPos;
@@ -44,7 +44,6 @@ public class MessageServerLoadFEN
 	{
 		NetworkEvent.Context context = ctx.get();
 		Player player = context.getSender();
-		Level level = player.getLevel();
 		BlockPos chessPos = message.pos;
 		String FEN = message.FEN;
 		
@@ -52,8 +51,9 @@ public class MessageServerLoadFEN
 		{
 			context.enqueueWork(() ->
 			{
-				if(level != null)
+				if(player != null)
 				{
+					Level level = player.level();
 					BlockEntity blockEntity = level.getBlockEntity(chessPos);
 					// We make sure the TileEntity is a ChessBlockEntity
 					if(blockEntity instanceof ChessBlockEntity chessBlockEntity)

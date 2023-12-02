@@ -1,8 +1,8 @@
 package andrews.table_top_craft.objects.blocks;
 
+import andrews.table_top_craft.block_entities.ChessPieceFigureBlockEntity;
 import andrews.table_top_craft.registry.TTCBlocks;
 import andrews.table_top_craft.screens.piece_figure.menus.ChessPieceFigureSettingsScreen;
-import andrews.table_top_craft.block_entities.ChessPieceFigureBlockEntity;
 import andrews.table_top_craft.util.TranslationHelper;
 import net.minecraft.client.gui.screens.Screen;
 import net.minecraft.core.BlockPos;
@@ -30,8 +30,8 @@ import net.minecraft.world.level.block.state.BlockState;
 import net.minecraft.world.level.block.state.StateDefinition;
 import net.minecraft.world.level.block.state.properties.BlockStateProperties;
 import net.minecraft.world.level.block.state.properties.IntegerProperty;
-import net.minecraft.world.level.material.Material;
-import net.minecraft.world.level.storage.loot.LootContext;
+import net.minecraft.world.level.material.MapColor;
+import net.minecraft.world.level.storage.loot.LootParams;
 import net.minecraft.world.level.storage.loot.parameters.LootContextParams;
 import net.minecraft.world.phys.BlockHitResult;
 import net.minecraft.world.phys.HitResult;
@@ -59,7 +59,8 @@ public class ChessPieceFigureBlock extends Block implements EntityBlock
      */
     private static Properties getProperties()
     {
-        Properties properties = Block.Properties.of(Material.STONE);
+        Properties properties = Block.Properties.of();
+        properties.mapColor(MapColor.STONE);
         properties.strength(0.5F);
         properties.sound(SoundType.STONE);
 
@@ -121,7 +122,7 @@ public class ChessPieceFigureBlock extends Block implements EntityBlock
     }
 
     @Override
-    public List<ItemStack> getDrops(BlockState state, LootContext.Builder builder)
+    public List<ItemStack> getDrops(BlockState state, LootParams.Builder builder)
     {
         List<ItemStack> items = super.getDrops(state, builder);
         BlockEntity blockentity = builder.getOptionalParameter(LootContextParams.BLOCK_ENTITY);

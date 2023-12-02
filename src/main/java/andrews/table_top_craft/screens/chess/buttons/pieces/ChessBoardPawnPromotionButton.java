@@ -10,8 +10,9 @@ import com.mojang.blaze3d.platform.Lighting;
 import com.mojang.blaze3d.systems.RenderSystem;
 import com.mojang.blaze3d.vertex.PoseStack;
 import net.minecraft.client.Minecraft;
-import net.minecraft.client.gui.GuiComponent;
-import net.minecraft.client.gui.components.Button;
+import net.minecraft.client.gui.GuiGraphics;
+import net.minecraft.client.gui.components.AbstractButton;
+import net.minecraft.client.gui.narration.NarrationElementOutput;
 import net.minecraft.client.renderer.MultiBufferSource;
 import net.minecraft.client.renderer.entity.ItemRenderer;
 import net.minecraft.client.renderer.texture.OverlayTexture;
@@ -23,20 +24,20 @@ import net.minecraft.resources.ResourceLocation;
 import net.minecraft.world.item.ItemDisplayContext;
 import net.minecraft.world.item.ItemStack;
 
-public class ChessBoardPawnPromotionButton extends Button
+public class ChessBoardPawnPromotionButton extends AbstractButton
 {
-    private static final ResourceLocation BUTTONS_TEXTURE = new ResourceLocation(Reference.MODID, "textures/gui/buttons/chess_pawn_promotion_buttons.png");
-    private static final Component QUEEN_TOOLTIP = Component.translatable("tooltip.table_top_craft.chess_piece_figure.type.queen");
-    private static final Component BISHOP_TOOLTIP = Component.translatable("tooltip.table_top_craft.chess_piece_figure.type.bishop");
-    private static final Component KNIGHT_TOOLTIP = Component.translatable("tooltip.table_top_craft.chess_piece_figure.type.knight");
-    private static final Component ROOK_TOOLTIP = Component.translatable("tooltip.table_top_craft.chess_piece_figure.type.rook");
-    private final ItemStack CHESS_PIECE_FIGURE = new ItemStack(TTCBlocks.CHESS_PIECE_FIGURE.get());
+    private static final ResourceLocation TEXTURE = new ResourceLocation(Reference.MODID, "textures/gui/buttons/chess_pawn_promotion_buttons.png");
+    private static final Component QUEEN_TXT = Component.translatable("tooltip.table_top_craft.chess_piece_figure.type.queen");
+    private static final Component BISHOP_TXT = Component.translatable("tooltip.table_top_craft.chess_piece_figure.type.bishop");
+    private static final Component KNIGHT_TXT = Component.translatable("tooltip.table_top_craft.chess_piece_figure.type.knight");
+    private static final Component ROOK_TXT = Component.translatable("tooltip.table_top_craft.chess_piece_figure.type.rook");
+    private final ItemStack chessPieceFigure = new ItemStack(TTCBlocks.CHESS_PIECE_FIGURE.get());
     private final ChessBlockEntity blockEntity;
     private final PawnPromotionPieceType type;
 
-    public ChessBoardPawnPromotionButton(ChessBlockEntity blockEntity, int x, int y, boolean isWhite, PawnPromotionPieceType type)
+    public ChessBoardPawnPromotionButton(ChessBlockEntity blockEntity, int pX, int pY, boolean isWhite, PawnPromotionPieceType type)
     {
-        super(x, y, 43, 43, Component.literal(""), Button::onPress, DEFAULT_NARRATION);
+        super(pX, pY, 43, 43, Component.literal(""));
         this.blockEntity = blockEntity;
         this.type = type;
 
@@ -45,37 +46,30 @@ public class ChessBoardPawnPromotionButton extends Button
         previewBlockEntity.setPieceType(type.getPieceType());
         previewBlockEntity.setPieceColor(isWhite ? blockEntity.getWhitePiecesColor() : blockEntity.getBlackPiecesColor());
         previewBlockEntity.setRotateChessPieceFigure(false);
-        previewBlockEntity.saveToItem(CHESS_PIECE_FIGURE);
+        previewBlockEntity.saveToItem(this.chessPieceFigure);
     }
 
     @Override
-    public void onPress()
+    public void renderWidget(GuiGraphics graphics, int mouseX, int mouseY, float partialTick)
     {
-        NetworkUtil.doPawnPromotion(this.blockEntity.getBlockPos(), (byte) this.type.getPieceType());
-        Minecraft.getInstance().player.closeContainer();
-    }
-
-    @Override
-    public void renderWidget(PoseStack poseStack, int mouseX, int mouseY, float partialTick)
-    {
-        RenderSystem.setShaderColor(1.0F, 1.0F, 1.0F, 1.0F);
-        RenderSystem.setShaderTexture(0, BUTTONS_TEXTURE);
-        GuiComponent.blit(poseStack, this.x, this.y, ((isHovered || isFocused()) ? 43 : 0), 0, 43, 43);
-
-        renderChessPiece(poseStack, CHESS_PIECE_FIGURE, x + (43 / 2), y + (43 / 2) - 3, 40);
+        graphics.setColor(1.0F, 1.0F, 1.0F, 1.0F);
+        graphics.blit(TEXTURE, this.x, this.y, (this.isHoveredOrFocused() ? 43 : 0), 0, 43, 43);
+        this.renderChessPiece(graphics.pose(), this.chessPieceFigure, this.x + (43 / 2), this.y + (43 / 2) - 3, 40);
 
         if(Minecraft.getInstance().screen != null && this.isHoveredOrFocused())
         {
             int posX = this.isHovered() ? mouseX : this.x - 8;
             int posY = this.isHovered() ? mouseY : this.y;
+            graphics.pose().pushPose();
             RenderSystem.disableDepthTest();
             switch (type) {
-                default -> Minecraft.getInstance().screen.renderTooltip(poseStack, QUEEN_TOOLTIP, posX, posY);
-                case BISHOP -> Minecraft.getInstance().screen.renderTooltip(poseStack, BISHOP_TOOLTIP, posX, posY);
-                case KNIGHT -> Minecraft.getInstance().screen.renderTooltip(poseStack, KNIGHT_TOOLTIP, posX, posY);
-                case ROOK -> Minecraft.getInstance().screen.renderTooltip(poseStack, ROOK_TOOLTIP, posX, posY);
+                default -> graphics.renderTooltip(Minecraft.getInstance().font, QUEEN_TXT, posX, posY);
+                case BISHOP -> graphics.renderTooltip(Minecraft.getInstance().font, BISHOP_TXT, posX, posY);
+                case KNIGHT -> graphics.renderTooltip(Minecraft.getInstance().font, KNIGHT_TXT, posX, posY);
+                case ROOK -> graphics.renderTooltip(Minecraft.getInstance().font, ROOK_TXT, posX, posY);
             }
             RenderSystem.enableDepthTest();
+            graphics.pose().popPose();
         }
     }
 
@@ -99,6 +93,19 @@ public class ChessBoardPawnPromotionButton extends Button
         bufferSource.endBatch();
         poseStack.popPose();
         RenderSystem.applyModelViewMatrix();
+    }
+
+    @Override
+    public void onPress()
+    {
+        NetworkUtil.doPawnPromotion(this.blockEntity.getBlockPos(), (byte) this.type.getPieceType());
+        Minecraft.getInstance().player.closeContainer();
+    }
+
+    @Override
+    protected void updateWidgetNarration(NarrationElementOutput output)
+    {
+        this.defaultButtonNarrationText(output);
     }
 
     public enum PawnPromotionPieceType

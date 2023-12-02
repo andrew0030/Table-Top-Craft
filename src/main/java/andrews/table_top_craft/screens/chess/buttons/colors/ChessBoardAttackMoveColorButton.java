@@ -1,60 +1,25 @@
 package andrews.table_top_craft.screens.chess.buttons.colors;
 
 import andrews.table_top_craft.block_entities.ChessBlockEntity;
+import andrews.table_top_craft.screens.base.buttons.BaseTextButton;
 import andrews.table_top_craft.screens.chess.menus.color_selection.ChessBoardAttackMoveColorScreen;
-import andrews.table_top_craft.util.Reference;
-import com.mojang.blaze3d.systems.RenderSystem;
-import com.mojang.blaze3d.vertex.PoseStack;
 import net.minecraft.client.Minecraft;
-import net.minecraft.client.gui.Font;
-import net.minecraft.client.gui.GuiComponent;
-import net.minecraft.client.gui.components.Button;
 import net.minecraft.network.chat.Component;
-import net.minecraft.resources.ResourceLocation;
 
-public class ChessBoardAttackMoveColorButton extends Button
+public class ChessBoardAttackMoveColorButton extends BaseTextButton
 {
-	private static final ResourceLocation TEXTURE = new ResourceLocation(Reference.MODID + ":textures/gui/buttons/chess_menu_buttons.png");
-	private final String buttonTileInfoColorText = Component.translatable("gui.table_top_craft.chess.color.button.attack_move").getString();
-	private final Font fontRenderer;
-	private static ChessBlockEntity chessBlockEntity;
-	private static final int buttonWidth = 167;
-	private static final int buttonHeight = 13;
-	private int u = 0;
-	private int v = 50;
+	private static final Component TEXT = Component.translatable("gui.table_top_craft.chess.color.button.attack_move");
+	private final ChessBlockEntity blockEntity;
 	
-	public ChessBoardAttackMoveColorButton(ChessBlockEntity tileEntity, int xPos, int yPos)
+	public ChessBoardAttackMoveColorButton(ChessBlockEntity blockEntity, int pX, int pY)
 	{
-		super(xPos, yPos, buttonWidth, buttonHeight, Component.literal(""), (button) -> { handleButtonPress(); }, DEFAULT_NARRATION);
-		this.fontRenderer = Minecraft.getInstance().font;
-		chessBlockEntity = tileEntity;
+		super(pX, pY, TEXT);
+		this.blockEntity = blockEntity;
 	}
-	
+
 	@Override
-	public void renderWidget(PoseStack poseStack, int mouseX, int mouseY, float partialTicks)
+	public void onPress()
 	{
-		this.isHovered = mouseX >= x && mouseX < x + width && mouseY >= y && mouseY < y + height || this.isFocused();
-		
-		this.v = 50;
-		if(this.isHovered)
-			this.v += 13;
-		
-		// Renders the Button
-		RenderSystem.setShaderColor(1.0f, 1.0f, 1.0f, 1.0f);
-		RenderSystem.setShaderTexture(0, TEXTURE);
-		poseStack.pushPose();
-		RenderSystem.enableBlend();
-		GuiComponent.blit(poseStack, x, y, u, v, width, height);
-		RenderSystem.disableBlend();
-		poseStack.popPose();
-		this.fontRenderer.draw(poseStack, this.buttonTileInfoColorText, x + ((this.width / 2) - (this.fontRenderer.width(this.buttonTileInfoColorText) / 2)), y + 3, 0x000000);
-	}
-	
-	/**
-	 * Gets called when the Button gets pressed
-	 */
-	private static void handleButtonPress()
-	{
-		Minecraft.getInstance().setScreen(new ChessBoardAttackMoveColorScreen(chessBlockEntity, false));
+		Minecraft.getInstance().setScreen(new ChessBoardAttackMoveColorScreen(this.blockEntity, false));
 	}
 }

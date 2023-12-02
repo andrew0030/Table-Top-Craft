@@ -40,7 +40,6 @@ public class MessageServerSetPieceSet
     {
         NetworkEvent.Context context = ctx.get();
         Player player = context.getSender();
-        Level level = player.getLevel();
         BlockPos chessPos = message.pos;
         int pieceSet = message.pieceSet;
 
@@ -48,8 +47,9 @@ public class MessageServerSetPieceSet
         {
             context.enqueueWork(() ->
             {
-                if(level != null)
+                if(player != null)
                 {
+                    Level level = player.level();
                     BlockEntity blockEntity = level.getBlockEntity(chessPos);
                     // We make sure the TileEntity is a ChessBlockEntity
                     if(blockEntity instanceof ChessBlockEntity chessBlockEntity)

@@ -39,15 +39,15 @@ public class MessageServerOpenGUIWithServerPlayer
     {
         NetworkEvent.Context context = ctx.get();
         ServerPlayer player = context.getSender();
-        Level level = player.getLevel();
         BlockPos pos = message.pos;
 
         if(context.getDirection().getReceptionSide() == LogicalSide.SERVER)
         {
             context.enqueueWork(() ->
             {
-                if(level != null)
+                if(player != null)
                 {
+                    Level level = player.level();
                     BlockEntity blockEntity = level.getBlockEntity(pos);
                     // We make sure the TileEntity is a ChessBlockEntity
                     if(blockEntity instanceof ChessBlockEntity chessBlockEntity)

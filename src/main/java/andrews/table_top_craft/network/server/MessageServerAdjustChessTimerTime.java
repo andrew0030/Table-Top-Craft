@@ -1,8 +1,8 @@
 package andrews.table_top_craft.network.server;
 
+import andrews.table_top_craft.block_entities.ChessTimerBlockEntity;
 import andrews.table_top_craft.screens.chess_timer.buttons.ChessTimerTimeAlteringButton.TimeCategory;
 import andrews.table_top_craft.screens.chess_timer.buttons.ChessTimerTimeAlteringButton.TimeModifierType;
-import andrews.table_top_craft.block_entities.ChessTimerBlockEntity;
 import net.minecraft.core.BlockPos;
 import net.minecraft.network.FriendlyByteBuf;
 import net.minecraft.world.entity.player.Player;
@@ -56,7 +56,7 @@ public class MessageServerAdjustChessTimerTime
             {
                 if(player != null && type != null && category != null)
                 {
-                    Level level = player.getLevel();
+                    Level level = player.level();
                     BlockEntity blockEntity = level.getBlockEntity(pos);
                     if(blockEntity instanceof ChessTimerBlockEntity chessTimerBlockEntity)
                     {

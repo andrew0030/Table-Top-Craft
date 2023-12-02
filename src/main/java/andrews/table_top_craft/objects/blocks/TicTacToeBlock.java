@@ -18,7 +18,7 @@ import net.minecraft.world.level.block.entity.BlockEntity;
 import net.minecraft.world.level.block.entity.BlockEntityTicker;
 import net.minecraft.world.level.block.entity.BlockEntityType;
 import net.minecraft.world.level.block.state.BlockState;
-import net.minecraft.world.level.material.Material;
+import net.minecraft.world.level.material.MapColor;
 import net.minecraft.world.phys.BlockHitResult;
 import net.minecraft.world.phys.Vec3;
 import net.minecraft.world.phys.shapes.CollisionContext;
@@ -36,7 +36,8 @@ public class TicTacToeBlock extends BaseEntityBlock
 
     private static Properties getProperties()
     {
-        Properties properties = Block.Properties.of(Material.CLOTH_DECORATION);
+        Properties properties = Block.Properties.of();
+        properties.mapColor(MapColor.WOOL);
         properties.strength(0.2F);
         properties.sound(SoundType.BIG_DRIPLEAF);
         return properties;

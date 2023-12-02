@@ -43,7 +43,7 @@ public class MessageServerPauseChessTimer
             {
                 if(player != null)
                 {
-                    Level level = player.getLevel();
+                    Level level = player.level();
                     level.setBlock(pos, level.getBlockState(pos).setValue(ChessTimerBlock.PRESSED_BUTTON, ChessTimerBlock.PressedButton.NONE), 2);
                     NetworkUtil.playChesTimerSoundFromServer(level, pos, (byte) 0);
                 }

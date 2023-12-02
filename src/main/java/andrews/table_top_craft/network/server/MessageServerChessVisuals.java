@@ -48,7 +48,7 @@ public class MessageServerChessVisuals
             {
                 if (player != null)
                 {
-                    Level level = player.getLevel();
+                    Level level = player.level();
                     BlockEntity blockEntity = level.getBlockEntity(pos);
                     if (blockEntity instanceof ChessBlockEntity chessBlockEntity)
                     {

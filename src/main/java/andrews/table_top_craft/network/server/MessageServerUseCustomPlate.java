@@ -1,9 +1,7 @@
 package andrews.table_top_craft.network.server;
 
-import java.util.function.Supplier;
-
-import andrews.table_top_craft.objects.blocks.ChessBlock;
 import andrews.table_top_craft.block_entities.ChessBlockEntity;
+import andrews.table_top_craft.objects.blocks.ChessBlock;
 import net.minecraft.core.BlockPos;
 import net.minecraft.network.FriendlyByteBuf;
 import net.minecraft.world.entity.player.Player;
@@ -11,6 +9,8 @@ import net.minecraft.world.level.Level;
 import net.minecraft.world.level.block.entity.BlockEntity;
 import net.minecraftforge.fml.LogicalSide;
 import net.minecraftforge.network.NetworkEvent;
+
+import java.util.function.Supplier;
 
 public class MessageServerUseCustomPlate
 {
@@ -36,15 +36,15 @@ public class MessageServerUseCustomPlate
 	{
 		NetworkEvent.Context context = ctx.get();
 		Player player = context.getSender();
-		Level level = player.getLevel();
 		BlockPos chessPos = message.pos;
 		
 		if(context.getDirection().getReceptionSide() == LogicalSide.SERVER)
 		{
 			context.enqueueWork(() ->
 			{
-				if(level != null)
+				if(player != null)
 				{
+					Level level = player.level();
 					BlockEntity blockEntity = level.getBlockEntity(chessPos);
 					// We make sure the TileEntity is a ChessBlockEntity
 					if(blockEntity instanceof ChessBlockEntity chessBlockEntity)

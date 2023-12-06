@@ -7,7 +7,7 @@ plugins {
     id 'com.github.johnrengelman.shadow' version '7.1.2'
 }
 
-version = '1.20-6.0.0'
+version = '1.20-6.1.0'
 group = 'com.andrews.table_top_craft'
 archivesBaseName = 'table_top_craft'
 

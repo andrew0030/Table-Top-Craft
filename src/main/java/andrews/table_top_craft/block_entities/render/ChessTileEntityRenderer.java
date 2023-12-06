@@ -37,6 +37,7 @@ import net.minecraft.client.renderer.blockentity.BlockEntityRendererProvider;
 import net.minecraft.client.renderer.texture.DynamicTexture;
 import net.minecraft.core.Direction;
 import net.minecraft.resources.ResourceLocation;
+import net.minecraft.util.Mth;
 import net.minecraft.world.level.block.state.BlockState;
 import org.joml.Quaternionf;
 import org.lwjgl.opengl.GL11;
@@ -565,6 +566,7 @@ public class ChessTileEntityRenderer implements BlockEntityRenderer<ChessBlockEn
 		poseStack.pushPose();
 		poseStack.translate(0, -1.345F, 0);
 		poseStack.scale(CHESS_PIECE_SCALE * 10, CHESS_PIECE_SCALE * 10, CHESS_PIECE_SCALE * 10);
+		poseStack.last().normal().rotationZYX(0F, 180F * Mth.DEG_TO_RAD, 0F);
 		switch(highlightType)
 		{
 		default:
@@ -617,6 +619,7 @@ public class ChessTileEntityRenderer implements BlockEntityRenderer<ChessBlockEn
 		poseStack.pushPose();
 		poseStack.mulPose(Axis.YN.rotationDegrees(180.0F));
 		poseStack.translate(0.0F, -1.32F, 0.0F);
+		poseStack.last().normal().rotationZYX(0F, 180F * Mth.DEG_TO_RAD, 0F);
 		tilesInfoModel.renderToBuffer(poseStack, builderTilesInfo, combinedLightIn, combinedOverlayIn, red, green, blue, 1.0F);
 		poseStack.popPose();
 	}

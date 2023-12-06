@@ -72,13 +72,12 @@ public class TTCColorPicker extends AbstractSliderButton
         graphics.pose().popPose();
 
         // The Color Indicator in the Picker
-        int offset = (this.isHoveredOrFocused() ? 2 : 1) * 20;
         int begTexOffset = 1;
         int destTexOffset = 2;
         int xPosition = this.x + (int) (this.value * (this.width - destTexOffset)) - begTexOffset;
         int yPosition = this.y + (int) (this.valueY * (this.height - destTexOffset)) - begTexOffset;
         int size = 4;
-        graphics.blitWithBorder(SLIDER_LOCATION, xPosition, yPosition, 0, this.getHandleTextureY(), size, size, 200, 20, 2, 3, 2, 2);
+        graphics.blitNineSliced(SLIDER_LOCATION, xPosition, yPosition, size, size, 2, 3, 200, 20, 0, (this.isHoveredOrFocused() ? 60 : 40));
     }
 
     // We override with an empty method to disable the sound

@@ -31,6 +31,8 @@ public class TTCBlocks
 	public static final RegistryObject<Block> CRIMSON_CHESS				  	= createBlock("crimson_chess", () -> new ChessBlock(MapColor.WOOD, SoundType.WOOD));
 	public static final RegistryObject<Block> WARPED_CHESS				  	= createBlock("warped_chess", () -> new ChessBlock(MapColor.WOOD, SoundType.WOOD));
 	public static final RegistryObject<Block> MANGROVE_CHESS			  	= createBlock("mangrove_chess", () -> new ChessBlock(MapColor.WOOD, SoundType.WOOD));
+	public static final RegistryObject<Block> CHERRY_CHESS				  	= createBlock("cherry_chess", () -> new ChessBlock(MapColor.WOOD, SoundType.WOOD));
+	public static final RegistryObject<Block> BAMBOO_CHESS				  	= createBlock("bamboo_chess", () -> new ChessBlock(MapColor.WOOD, SoundType.WOOD));
 	public static final RegistryObject<Block> WHITE_TERRACOTTA_CHESS 	  	= createBlock("white_terracotta_chess", () -> new ChessBlock(MapColor.STONE, SoundType.STONE));
 	public static final RegistryObject<Block> ORANGE_TERRACOTTA_CHESS 	  	= createBlock("orange_terracotta_chess", () -> new ChessBlock(MapColor.STONE, SoundType.STONE));
 	public static final RegistryObject<Block> MAGENTA_TERRACOTTA_CHESS 	  	= createBlock("magenta_terracotta_chess", () -> new ChessBlock(MapColor.STONE, SoundType.STONE));
@@ -73,6 +75,8 @@ public class TTCBlocks
 	public static final RegistryObject<Block> CRIMSON_CHESS_TIMER         	= createBlock("crimson_chess_timer", () -> new ChessTimerBlock(MapColor.WOOD, SoundType.WOOD));
 	public static final RegistryObject<Block> WARPED_CHESS_TIMER          	= createBlock("warped_chess_timer", () -> new ChessTimerBlock(MapColor.WOOD, SoundType.WOOD));
 	public static final RegistryObject<Block> MANGROVE_CHESS_TIMER        	= createBlock("mangrove_chess_timer", () -> new ChessTimerBlock(MapColor.WOOD, SoundType.WOOD));
+	public static final RegistryObject<Block> CHERRY_CHESS_TIMER        	= createBlock("cherry_chess_timer", () -> new ChessTimerBlock(MapColor.WOOD, SoundType.WOOD));
+	public static final RegistryObject<Block> BAMBOO_CHESS_TIMER        	= createBlock("bamboo_chess_timer", () -> new ChessTimerBlock(MapColor.WOOD, SoundType.WOOD));
 	public static final RegistryObject<Block> WHITE_TERRACOTTA_CHESS_TIMER  = createBlock("white_terracotta_chess_timer", () -> new ChessTimerBlock(MapColor.STONE, SoundType.STONE));
 	public static final RegistryObject<Block> ORANGE_TERRACOTTA_CHESS_TIMER = createBlock("orange_terracotta_chess_timer", () -> new ChessTimerBlock(MapColor.STONE, SoundType.STONE));
 	public static final RegistryObject<Block> MAGENTA_TERRACOTTA_CHESS_TIMER = createBlock("magenta_terracotta_chess_timer", () -> new ChessTimerBlock(MapColor.STONE, SoundType.STONE));
@@ -115,6 +119,8 @@ public class TTCBlocks
 	public static final RegistryObject<Block> CRIMSON_CONNECT_FOUR  		= createBlock("crimson_connect_four", () -> new ConnectFourBlock(MapColor.WOOD, SoundType.WOOD));
 	public static final RegistryObject<Block> WARPED_CONNECT_FOUR   		= createBlock("warped_connect_four", () -> new ConnectFourBlock(MapColor.WOOD, SoundType.WOOD));
 	public static final RegistryObject<Block> MANGROVE_CONNECT_FOUR 		= createBlock("mangrove_connect_four", () -> new ConnectFourBlock(MapColor.WOOD, SoundType.WOOD));
+	public static final RegistryObject<Block> CHERRY_CONNECT_FOUR 			= createBlock("cherry_connect_four", () -> new ConnectFourBlock(MapColor.WOOD, SoundType.WOOD));
+	public static final RegistryObject<Block> BAMBOO_CONNECT_FOUR 			= createBlock("bamboo_connect_four", () -> new ConnectFourBlock(MapColor.WOOD, SoundType.WOOD));
 	public static final RegistryObject<Block> WHITE_TERRACOTTA_CONNECT_FOUR = createBlock("white_terracotta_connect_four", () -> new ConnectFourBlock(MapColor.STONE, SoundType.STONE));
 	public static final RegistryObject<Block> ORANGE_TERRACOTTA_CONNECT_FOUR = createBlock("orange_terracotta_connect_four", () -> new ConnectFourBlock(MapColor.STONE, SoundType.STONE));
 	public static final RegistryObject<Block> MAGENTA_TERRACOTTA_CONNECT_FOUR = createBlock("magenta_terracotta_connect_four", () -> new ConnectFourBlock(MapColor.STONE, SoundType.STONE));

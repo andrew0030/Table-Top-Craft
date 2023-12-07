@@ -20,7 +20,7 @@ import net.minecraft.world.level.block.entity.BlockEntityType;
 import net.minecraft.world.level.block.state.BlockState;
 import net.minecraft.world.level.block.state.StateDefinition;
 import net.minecraft.world.level.block.state.properties.DirectionProperty;
-import net.minecraft.world.level.material.Material;
+import net.minecraft.world.level.material.MapColor;
 import net.minecraft.world.phys.BlockHitResult;
 import net.minecraft.world.phys.Vec3;
 import net.minecraft.world.phys.shapes.CollisionContext;
@@ -45,15 +45,16 @@ public class ConnectFourBlock extends Block  implements EntityBlock
     private static final VoxelShape X_AXIS_AABB = Shapes.or(BASE_X, LEFT_POLE_X, RIGHT_POLE_X, CENTER_X);
     private static final VoxelShape Y_AXIS_AABB = Shapes.or(BASE_Y, LEFT_POLE_Y, RIGHT_POLE_Y, CENTER_Y);
 
-    public ConnectFourBlock(Material material, SoundType soundType)
+    public ConnectFourBlock(MapColor mapColor, SoundType soundType)
     {
-        super(getProperties(material, soundType));
+        super(getProperties(mapColor, soundType));
         this.registerDefaultState(this.stateDefinition.any().setValue(FACING, Direction.NORTH));
     }
 
-    private static Properties getProperties(Material material, SoundType soundType)
+    private static Properties getProperties(MapColor mapColor, SoundType soundType)
     {
-        Properties properties = Block.Properties.of(material);
+        Properties properties = Block.Properties.of();
+        properties.mapColor(mapColor);
         properties.sound(soundType);
         properties.strength(2.0F);
         properties.noOcclusion();

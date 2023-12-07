@@ -23,7 +23,7 @@ public class MessageServerPauseChessTimer
                 if(serverPlayer == null)
                     return;
 
-                ServerLevel level = serverPlayer.getLevel();
+                ServerLevel level = serverPlayer.serverLevel();
                 if(level != null)
                 {
                     level.setBlock(pos, level.getBlockState(pos).setValue(ChessTimerBlock.PRESSED_BUTTON, ChessTimerBlock.PressedButton.NONE), 2);

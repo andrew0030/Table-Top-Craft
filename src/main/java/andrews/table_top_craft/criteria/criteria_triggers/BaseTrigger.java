@@ -2,8 +2,8 @@ package andrews.table_top_craft.criteria.criteria_triggers;
 
 import com.google.gson.JsonObject;
 import net.minecraft.advancements.critereon.AbstractCriterionTriggerInstance;
+import net.minecraft.advancements.critereon.ContextAwarePredicate;
 import net.minecraft.advancements.critereon.DeserializationContext;
-import net.minecraft.advancements.critereon.EntityPredicate;
 import net.minecraft.advancements.critereon.SimpleCriterionTrigger;
 import net.minecraft.resources.ResourceLocation;
 import net.minecraft.server.level.ServerPlayer;
@@ -33,7 +33,7 @@ public class BaseTrigger extends SimpleCriterionTrigger<BaseTrigger.TriggerInsta
     }
 
     @Override
-    protected BaseTrigger.TriggerInstance createInstance(JsonObject json, EntityPredicate.Composite player, DeserializationContext context)
+    protected BaseTrigger.TriggerInstance createInstance(JsonObject json, ContextAwarePredicate player, DeserializationContext context)
     {
         return new TriggerInstance(this.id, player);
     }
@@ -49,7 +49,7 @@ public class BaseTrigger extends SimpleCriterionTrigger<BaseTrigger.TriggerInsta
 
     public static class TriggerInstance extends AbstractCriterionTriggerInstance
     {
-        public TriggerInstance(ResourceLocation id, EntityPredicate.Composite player)
+        public TriggerInstance(ResourceLocation id, ContextAwarePredicate player)
         {
             super(id, player);
         }

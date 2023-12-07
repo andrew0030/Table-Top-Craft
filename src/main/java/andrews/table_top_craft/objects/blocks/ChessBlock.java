@@ -6,10 +6,14 @@ import andrews.table_top_craft.screens.chess.menus.ChessPawnPromotionScreen;
 import andrews.table_top_craft.util.NetworkUtil;
 import net.minecraft.core.BlockPos;
 import net.minecraft.core.Direction;
+import net.minecraft.nbt.CompoundTag;
 import net.minecraft.util.Mth;
 import net.minecraft.world.InteractionHand;
 import net.minecraft.world.InteractionResult;
+import net.minecraft.world.entity.LivingEntity;
 import net.minecraft.world.entity.player.Player;
+import net.minecraft.world.item.BlockItem;
+import net.minecraft.world.item.ItemStack;
 import net.minecraft.world.item.context.BlockPlaceContext;
 import net.minecraft.world.level.BlockGetter;
 import net.minecraft.world.level.Level;
@@ -21,12 +25,13 @@ import net.minecraft.world.level.block.state.BlockState;
 import net.minecraft.world.level.block.state.StateDefinition;
 import net.minecraft.world.level.block.state.properties.BooleanProperty;
 import net.minecraft.world.level.block.state.properties.DirectionProperty;
-import net.minecraft.world.level.material.Material;
+import net.minecraft.world.level.material.MapColor;
 import net.minecraft.world.phys.BlockHitResult;
 import net.minecraft.world.phys.Vec3;
 import net.minecraft.world.phys.shapes.CollisionContext;
 import net.minecraft.world.phys.shapes.Shapes;
 import net.minecraft.world.phys.shapes.VoxelShape;
+import org.jetbrains.annotations.Nullable;
 
 public class ChessBlock extends HorizontalDirectionalBlock implements EntityBlock
 {
@@ -68,18 +73,19 @@ public class ChessBlock extends HorizontalDirectionalBlock implements EntityBloc
 	private static final VoxelShape X_AXIS_AABB = Shapes.or(TOP_PLATE, LEG1, LEG2, LEG3, LEG4, X_SIDE1, X_SIDE2, X_BAR1, X_SIDE3, X_SIDE4, X_BAR2, X_STORAGE1, X_STORAGE2, X_INSIDE_WALL1, X_INSIDE_WALL2, X_LIP1, X_LIP2);
 	private static final VoxelShape Y_AXIS_AABB = Shapes.or(TOP_PLATE, LEG1, LEG2, LEG3, LEG4, Y_SIDE1, Y_SIDE2, Y_BAR1, Y_SIDE3, Y_SIDE4, Y_BAR2, Y_INSIDE_WALL1, Y_INSIDE_WALL2, Y_STORAGE1, Y_STORAGE2, Y_LIP1, Y_LIP2);
 
-	public ChessBlock(Material material, SoundType soundType)
+	public ChessBlock(MapColor mapColor, SoundType soundType)
 	{
-		super(getProperties(material, soundType));
+		super(getProperties(mapColor, soundType));
 		this.registerDefaultState(this.stateDefinition.any().setValue(FACING, Direction.NORTH).setValue(SHOW_PLATE, true));
 	}
 
 	/**
 	 * @return - The properties for this Block
 	 */
-	private static Properties getProperties(Material material, SoundType soundType)
+	private static Properties getProperties(MapColor mapColor, SoundType soundType)
 	{
-		Properties properties = Block.Properties.of(material);
+		Properties properties = Block.Properties.of();
+		properties.mapColor(mapColor);
 		properties.sound(soundType);
 		properties.strength(2.0F);
 		properties.noOcclusion();
@@ -93,7 +99,7 @@ public class ChessBlock extends HorizontalDirectionalBlock implements EntityBloc
 	}
 
 	@Override
-	public void onPlace(BlockState state, Level level, BlockPos pos, BlockState oldState, boolean isMoving)
+	public void setPlacedBy(Level level, BlockPos pos, BlockState state, @Nullable LivingEntity entity, ItemStack stack)
 	{
 		if(level.getBlockEntity(pos) instanceof ChessBlockEntity chessBlockEntity)
 			if(chessBlockEntity.getUseCustomPlate())

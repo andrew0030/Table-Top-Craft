@@ -1,8 +1,8 @@
 package andrews.table_top_craft.block_entities.render;
 
+import andrews.table_top_craft.block_entities.ChessTimerBlockEntity;
 import andrews.table_top_craft.objects.blocks.ChessTimerBlock;
 import andrews.table_top_craft.objects.blocks.ChessTimerBlock.PressedButton;
-import andrews.table_top_craft.block_entities.ChessTimerBlockEntity;
 import com.mojang.blaze3d.vertex.PoseStack;
 import com.mojang.math.Axis;
 import net.minecraft.client.Minecraft;
@@ -72,9 +72,9 @@ public class ChessTimerBlockEntityRenderer implements BlockEntityRenderer<ChessT
         poseStack.scale(-0.025F, -0.025F, 0.025F);
         poseStack.scale(scale, scale, scale);
         float centerOffset = -font.width(text) / 2F;
-        font.draw(poseStack, text, centerOffset, -9, 16777215);
+        font.drawInBatch(text, centerOffset, -9, 16777215, false, poseStack.last().pose(), buffer, Font.DisplayMode.NORMAL, 0, packedLight);
         String playerIndicatorText = pressedButton.equals(PressedButton.NONE) ? "-" : (pressedButton.equals(PressedButton.LEFT) ? ">" : "<");
-        font.draw(poseStack, playerIndicatorText, -font.width(playerIndicatorText) / 2F, -9, 0x7a7a7a);
+        font.drawInBatch(playerIndicatorText, -font.width(playerIndicatorText) / 2F, -9, 0x7a7a7a, false, poseStack.last().pose(), buffer, Font.DisplayMode.NORMAL, 0, packedLight);
         poseStack.popPose();
     }
 }

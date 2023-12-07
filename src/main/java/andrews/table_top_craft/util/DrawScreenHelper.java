@@ -40,7 +40,7 @@ public class DrawScreenHelper
         builder.begin(VertexFormat.Mode.TRIANGLES, format);
         CHESS_PIECE_MODEL.render(new PoseStack(), builder, type, set);
         VertexBuffer buffer = BUFFERS.getOrDefault(Pair.of(type, set), null);
-        if (buffer == null) buffer = new VertexBuffer();
+        if (buffer == null) buffer = new VertexBuffer(VertexBuffer.Usage.STATIC);
         upload(buffer, builder);
         return buffer;
     }

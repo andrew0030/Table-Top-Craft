@@ -36,6 +36,8 @@ public class TTCClientInit implements ClientModInitializer
     @Override
     public void onInitializeClient()
     {
+		// Resource Reload Listener
+		TTCResourceManager.init();
         // Model Layers
         EntityModelLayerRegistry.registerModelLayer(ChessBoardPlateModel.CHESS_BOARD_PLATE_LAYER, ChessBoardPlateModel::createBodyLayer);
 		EntityModelLayerRegistry.registerModelLayer(ChessHighlightModel.CHESS_HIGHLIGHT_LAYER, ChessHighlightModel::createBodyLayer);

@@ -23,7 +23,7 @@ public class MessageClientOpenChessPromotionScreen
             {
                 if(Minecraft.getInstance().player == null) return;
 
-                if(Minecraft.getInstance().player.getLevel().getBlockEntity(pos) instanceof ChessBlockEntity chessBlockEntity)
+                if(Minecraft.getInstance().player.level().getBlockEntity(pos) instanceof ChessBlockEntity chessBlockEntity)
                     ClientPacketHandlerClass.handleOpenChessPromotionPacket(chessBlockEntity, isWhite);
             });
         });

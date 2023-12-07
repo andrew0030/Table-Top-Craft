@@ -2,88 +2,69 @@ package andrews.table_top_craft.screens.chess.menus;
 
 import andrews.table_top_craft.block_entities.ChessBlockEntity;
 import andrews.table_top_craft.game_logic.chess.player.ai.StandardBoardEvaluator;
+import andrews.table_top_craft.screens.base.BaseScreen;
 import andrews.table_top_craft.screens.chess.buttons.ChessCancelButton;
 import andrews.table_top_craft.screens.chess.buttons.ChessCancelButton.ChessCancelButtonText;
 import andrews.table_top_craft.screens.chess.buttons.ChessCancelButton.ChessCancelMenuTarget;
 import andrews.table_top_craft.util.Reference;
-import com.google.common.primitives.Ints;
-import com.mojang.blaze3d.systems.RenderSystem;
-import com.mojang.blaze3d.vertex.PoseStack;
 import net.minecraft.client.Minecraft;
-import net.minecraft.client.gui.screens.Screen;
+import net.minecraft.client.gui.GuiGraphics;
 import net.minecraft.client.player.LocalPlayer;
 import net.minecraft.network.chat.Component;
 import net.minecraft.resources.ResourceLocation;
+import net.minecraft.util.Mth;
 
-public class ChessBoardEvaluatorScreen extends Screen
+public class ChessBoardEvaluatorScreen extends BaseScreen
 {
-	private static final ResourceLocation MENU_TEXTURE = new ResourceLocation(Reference.MODID, "textures/gui/menus/chess_menu.png");
-	private final String chessBoardEvaluatorText = Component.translatable("gui.table_top_craft.chess.board_evaluator").getString();
-	private final String whitePlayerText = Component.translatable("gui.table_top_craft.chess.evaluation.white_player").getString();
-	private final String blackPlayerText = Component.translatable("gui.table_top_craft.chess.evaluation.black_player").getString();
-	private final String currentScoreText = Component.translatable("gui.table_top_craft.chess.evaluation.current_score").getString();
+	private static final ResourceLocation TEXTURE = new ResourceLocation(Reference.MODID, "textures/gui/menus/chess_menu.png");
+	private static final Component TITLE = Component.translatable("gui.table_top_craft.chess.board_evaluator");
+	private static final Component WHITE_PLAYER_TXT = Component.translatable("gui.table_top_craft.chess.evaluation.white_player");
+	private static final Component BLACK_PLAYER_TXT = Component.translatable("gui.table_top_craft.chess.evaluation.black_player");
+	private static final Component CURRENT_SCORE_TXT = Component.translatable("gui.table_top_craft.chess.evaluation.current_score");
 	private final String boardEvaluationText;
 	private final ChessBlockEntity chessBlockEntity;
 	private final LocalPlayer clientPlayer;
-	private final int xSize = 177;
-	private final int ySize = 198;
 	
 	public ChessBoardEvaluatorScreen(ChessBlockEntity chessBlockEntity)
 	{
-		super(Component.literal(""));
+		super(TEXTURE, 177, 198, TITLE);
 		this.chessBlockEntity = chessBlockEntity;
-		boardEvaluationText = StandardBoardEvaluator.get().evaluationDetails(chessBlockEntity.getBoard(), 0);
+		this.boardEvaluationText = StandardBoardEvaluator.get().evaluationDetails(chessBlockEntity.getBoard(), 0);
 		this.clientPlayer = Minecraft.getInstance().player;
-	}
-	
-	@Override
-	public boolean isPauseScreen()
-	{
-		return false;
 	}
 	
 	@Override
 	protected void init()
 	{
 		super.init();
-		// Values to calculate the relative position
-		int x = (this.width - this.xSize) / 2;
-		int y = (this.height - this.ySize) / 2;
 		// The Buttons in the Gui Menu
-		this.addRenderableWidget(new ChessCancelButton(this.chessBlockEntity, ChessCancelMenuTarget.CHESS_BOARD_SETTINGS, ChessCancelButtonText.BACK, (x + (xSize / 2)) - 41, y + 180));
+		this.addRenderableWidget(new ChessCancelButton(this.chessBlockEntity, ChessCancelMenuTarget.CHESS_BOARD_SETTINGS, ChessCancelButtonText.BACK, (this.x + (this.textureWidth / 2)) - 41, this.y + 180));
 	}
-	
-	@Override
-	public void render(PoseStack poseStack, int mouseX, int mouseY, float partialTicks)
-	{
-		int x = (this.width - this.xSize) / 2;
-		int y = (this.height - this.ySize) / 2;
 
-		RenderSystem.setShaderColor(1.0f, 1.0f, 1.0f, 1.0f);
-		RenderSystem.setShaderTexture(0, MENU_TEXTURE);
-		this.blit(poseStack, x, y, 0, 0, this.xSize, this.ySize);
-		this.blit(poseStack, x + 5, y + 152, 0, 224, 167, 12);
-		
+	@Override
+	public void renderScreenContents(GuiGraphics graphics, int mouseX, int mouseY, float partialTick)
+	{
+		// Gradient Bar at the bottom of the Menu
+		graphics.blit(TEXTURE, this.x + 5, this.y + 152, 0, 224, 167, 12);
+		// Blinking Score Indicator Triangle and Text
 		int offset = StandardBoardEvaluator.get().evaluate(chessBlockEntity.getBoard(), 1) / 23;
-		offset = Ints.constrainToRange(offset, -80, 84);
-		poseStack.pushPose();
-		poseStack.translate(offset, 0, 0);
+		offset = Mth.clamp(offset, -80, 84);
+		graphics.pose().pushPose();
+		graphics.pose().translate(offset, 0, 0);
 		if(this.clientPlayer.tickCount % 16 <= 8)
-			this.blit(poseStack, x + 83, y + 162, 3, 198, 7, 5);
-		poseStack.popPose();
-		offset = Ints.constrainToRange(offset, -82 + (this.font.width(this.currentScoreText) / 2), 88 - (this.font.width(this.currentScoreText) / 2));
-		poseStack.pushPose();
-		poseStack.translate(offset, 0, 0);
-		this.font.draw(poseStack, this.currentScoreText, ((x + 86) - (this.font.width(this.currentScoreText) / 2)), y + 168, 0x000000);
-		poseStack.popPose();
-		
-		this.font.draw(poseStack, this.chessBoardEvaluatorText, ((this.width / 2) - (this.font.width(this.chessBoardEvaluatorText) / 2)), y + 6, 4210752);
-		this.font.draw(poseStack, this.blackPlayerText, x + 7, y + 154, 0xffffff);
-		this.font.draw(poseStack, this.whitePlayerText, ((x + xSize) - (this.font.width(this.whitePlayerText) + 6)), y + 154, 0x000000);
-		renderEvaluationText(poseStack, x, y);
-		
-		// Renders the Buttons we added in init
-		super.render(poseStack, mouseX, mouseY, partialTicks);
+			graphics.blit(TEXTURE, this.x + 83, this.y + 162, 3, 198, 7, 5);
+		graphics.pose().popPose();
+		offset = Mth.clamp(offset, -82 + (this.font.width(CURRENT_SCORE_TXT) / 2), 88 - (this.font.width(CURRENT_SCORE_TXT) / 2));
+		graphics.pose().pushPose();
+		graphics.pose().translate(offset, 0, 0);
+//		this.font.draw(poseStack, this.currentScoreText, ((x + 86) - (this.font.width(this.currentScoreText) / 2)), y + 168, 0x000000);
+		this.drawCenteredString(CURRENT_SCORE_TXT, this.x + 86, this.y + 168, 0x000000, false, graphics);
+		graphics.pose().popPose();
+		// The Title
+		this.drawCenteredString(TITLE, this.width / 2, this.y + 6, 4210752, false, graphics);
+		graphics.drawString(this.font, BLACK_PLAYER_TXT, this.x + 7, this.y + 154, 0xffffff, false);
+		graphics.drawString(this.font, WHITE_PLAYER_TXT, ((this.x + this.textureWidth) - (this.font.width(WHITE_PLAYER_TXT) + 6)), this.y + 154, 0x000000, false);
+		this.renderEvaluationText(graphics, this.x, this.y);
 	}
 	
 	@Override
@@ -94,18 +75,24 @@ public class ChessBoardEvaluatorScreen extends Screen
 			this.onClose();
 		return true;
 	}
-	
+
+	@Override
+	public boolean isPauseScreen()
+	{
+		return false;
+	}
+
 	/**
-	 * @param poseStack The PoseStack
+	 * @param graphics The GuiGraphics
 	 * @param x The X Position
 	 * @param y The Y Position
 	 */
-	private void renderEvaluationText(PoseStack poseStack, int x, int y)
+	private void renderEvaluationText(GuiGraphics graphics, int x, int y)
 	{
 		String[] evaluationLines = this.boardEvaluationText.split("\n");
 		for (String evaluationLine : evaluationLines)
 		{
-			this.font.draw(poseStack, evaluationLine, x + 5, y + 17, 0x000000);
+			graphics.drawString(this.font, evaluationLine, x + 5, y + 17, 0x000000, false);
 			y += 9;
 		}
 	}

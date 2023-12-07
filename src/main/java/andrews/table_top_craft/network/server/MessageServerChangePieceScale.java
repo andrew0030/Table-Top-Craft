@@ -24,7 +24,7 @@ public class MessageServerChangePieceScale
                 if(serverPlayer == null)
                     return;
 
-                Level level = serverPlayer.getLevel();
+                Level level = serverPlayer.level();
                 if(level != null)
                 {
                     BlockEntity blockEntity = level.getBlockEntity(pos);

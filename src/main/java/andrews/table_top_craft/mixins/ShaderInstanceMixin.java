@@ -10,7 +10,7 @@ import org.spongepowered.asm.mixin.injection.ModifyVariable;
 /* Author: GiantLuigi4 */
 /* For the targets, I took reference from: https://github.com/Fabricators-of-Create/Porting-Lib/blob/1.18.2-dev/src/main/java/io/github/fabricators_of_create/porting_lib/mixin/client/ShaderInstanceMixin.java */
 /* this should be a part of fapi */
-@Mixin(value = ShaderInstance.class, priority = 0)
+@Mixin(value = ShaderInstance.class, priority = 5000)
 public class ShaderInstanceMixin
 {
 	@ModifyArg(

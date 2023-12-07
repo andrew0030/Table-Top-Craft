@@ -24,7 +24,7 @@ public class TTCRenderTypes extends RenderStateShard
 				.setCullState(NO_CULL)
 				.setLightmapState(LIGHTMAP)
 				.createCompositeState(outline);
-		return RenderType.create(Reference.MODID + ":emmisive_translucent", DefaultVertexFormat.POSITION_COLOR_TEX_LIGHTMAP, VertexFormat.Mode.QUADS, RenderType.TRANSIENT_BUFFER_SIZE, true, true, state);
+		return RenderType.create(Reference.MODID + ":emmisive_translucent", DefaultVertexFormat.BLOCK, VertexFormat.Mode.QUADS, RenderType.TRANSIENT_BUFFER_SIZE, true, true, state);
 	};
 
 	public static RenderType getChessPieceSolid(ResourceLocation texture)

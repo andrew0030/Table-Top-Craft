@@ -1,10 +1,10 @@
 package andrews.table_top_craft.network.server;
 
+import andrews.table_top_craft.block_entities.ChessBlockEntity;
 import andrews.table_top_craft.game_logic.chess.board.Board;
 import andrews.table_top_craft.game_logic.chess.board.moves.BaseMove;
 import andrews.table_top_craft.game_logic.chess.board.moves.PawnPromotion;
 import andrews.table_top_craft.game_logic.chess.pieces.*;
-import andrews.table_top_craft.block_entities.ChessBlockEntity;
 import andrews.table_top_craft.util.Reference;
 import net.fabricmc.fabric.api.networking.v1.ServerPlayNetworking;
 import net.minecraft.core.BlockPos;
@@ -28,7 +28,7 @@ public class MessageServerDoPawnPromotion
                 if(serverPlayer == null)
                     return;
 
-                Level level = serverPlayer.getLevel();
+                Level level = serverPlayer.level();
                 if(level != null)
                 {
                     BlockEntity blockEntity = level.getBlockEntity(pos);

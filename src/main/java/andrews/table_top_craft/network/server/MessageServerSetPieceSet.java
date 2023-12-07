@@ -25,7 +25,7 @@ public class MessageServerSetPieceSet
                 if(serverPlayer == null)
                     return;
 
-                ServerLevel level = serverPlayer.getLevel();
+                ServerLevel level = serverPlayer.serverLevel();
                 if(level != null)
                 {
                     BlockEntity blockEntity = level.getBlockEntity(pos);

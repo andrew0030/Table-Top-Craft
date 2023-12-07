@@ -18,6 +18,9 @@ accessible method net/minecraft/client/renderer/RenderType create (Ljava/lang/St
 accessible field net/minecraft/client/gui/components/AbstractWidget x I
 accessible field net/minecraft/client/gui/components/AbstractWidget y I
 
+# there is jank happening with fabric api, so I need access to this to fix the jank my self
+accessible field net/minecraft/client/renderer/GameRenderer shaders Ljava/util/Map;
+
 # Stuff we need to make our own PartDefinition
 accessible method net/minecraft/client/model/geom/builders/PartDefinition <init> (Ljava/util/List;Lnet/minecraft/client/model/geom/PartPose;)V
 accessible field net/minecraft/client/model/geom/builders/PartDefinition cubes Ljava/util/List;

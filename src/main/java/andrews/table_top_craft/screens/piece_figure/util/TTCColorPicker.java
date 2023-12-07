@@ -1,12 +1,9 @@
 package andrews.table_top_craft.screens.piece_figure.util;
 
-import andrews.table_top_craft.screens.util.GuiUtils;
 import andrews.table_top_craft.util.Color;
 import andrews.table_top_craft.util.Reference;
 import com.mojang.blaze3d.systems.RenderSystem;
-import com.mojang.blaze3d.vertex.PoseStack;
-import net.minecraft.client.Minecraft;
-import net.minecraft.client.gui.GuiComponent;
+import net.minecraft.client.gui.GuiGraphics;
 import net.minecraft.client.gui.components.AbstractSliderButton;
 import net.minecraft.client.gui.screens.Screen;
 import net.minecraft.network.chat.Component;
@@ -16,6 +13,7 @@ import org.lwjgl.glfw.GLFW;
 
 public class TTCColorPicker extends AbstractSliderButton
 {
+    private static final ResourceLocation SLIDER_LOCATION = new ResourceLocation("textures/gui/slider.png");
     private static final ResourceLocation COLOR_CHART = new ResourceLocation(Reference.MODID + ":textures/gui/color_picker/color_chart.png");
     private static final ResourceLocation SATURATION_CHART = new ResourceLocation(Reference.MODID + ":textures/gui/color_picker/saturation_chart.png");
     private final Screen screen;
@@ -57,26 +55,65 @@ public class TTCColorPicker extends AbstractSliderButton
     }
 
     @Override
-    public void renderWidget(PoseStack pPoseStack, int pMouseX, int pMouseY, float pPartialTick)
+    public void renderWidget(GuiGraphics graphics, int mouseX, int mouseY, float partialTick)
     {
-        pPoseStack.pushPose();
-        pPoseStack.translate(x, y, 0);
-        pPoseStack.scale(0.5F, 0.5F, 0.5F);
+        graphics.pose().pushPose();
+        graphics.pose().translate(this.x, this.y, 0);
+        graphics.pose().scale(0.5F, 0.5F, 0.5F);
+        graphics.setColor(1.0F, 1.0F, 1.0F, 1.0F);
         // RGB chart
-        RenderSystem.setShaderColor(1.0f, 1.0f, 1.0f, 1.0f);
-        RenderSystem.setShaderTexture(0, COLOR_CHART);
-        GuiComponent.blit(pPoseStack, 0, 0, 0, 0, 256, 256);
+        graphics.blit(COLOR_CHART, 0, 0, 0, 0, 256, 256);
         // Saturation chart
         RenderSystem.enableBlend();
         if (this.screen instanceof IColorPicker colorPicker)
-            RenderSystem.setShaderColor(1.0f, 1.0f, 1.0f, 1F - (colorPicker.getSaturationSlider().getValueInt() / 100F));
-        RenderSystem.setShaderTexture(0, SATURATION_CHART);
-        GuiComponent.blit(pPoseStack, 0, 0, 0, 0, 256, 256);
+            graphics.setColor(1.0f, 1.0f, 1.0f, 1F - (colorPicker.getSaturationSlider().getValueInt() / 100F));
+        graphics.blit(SATURATION_CHART, 0, 0, 0, 0, 256, 256);
         RenderSystem.disableBlend();
-        pPoseStack.popPose();
+        graphics.setColor(1.0F, 1.0F, 1.0F, 1.0F);
+        graphics.pose().popPose();
 
-        Minecraft mc = Minecraft.getInstance();
-        this.renderBg(pPoseStack, mc, pMouseX, pMouseY);
+        // The Color Indicator in the Picker
+        int begTexOffset = 1;
+        int destTexOffset = 2;
+        int xPosition = this.x + (int) (this.value * (this.width - destTexOffset)) - begTexOffset;
+        int yPosition = this.y + (int) (this.valueY * (this.height - destTexOffset)) - begTexOffset;
+        int size = 4;
+        graphics.blitNineSliced(SLIDER_LOCATION, xPosition, yPosition, size, size, 2, 3, 200, 20, 0, (this.isHoveredOrFocused() ? 60 : 40));
+    }
+
+    // We override with an empty method to disable the sound
+    @Override
+    public void onRelease(double pMouseX, double pMouseY) {}
+
+    @Override
+    protected void onDrag(double mouseX, double mouseY, double dragX, double dragY)
+    {
+        super.onDrag(mouseX, mouseY, dragX, dragY);
+        this.setValueFromMouse(mouseX, mouseY);
+    }
+
+    @Override
+    public void onClick(double mouseX, double mouseY)
+    {
+        this.setSliderValue((mouseX - (this.x + 1)) / (this.width - 2),
+                (mouseY - (this.y + 1)) / (this.height - 2));
+    }
+
+    @Override
+    protected void updateMessage()
+    {
+        this.setMessage(Component.literal(""));
+    }
+
+    /**
+     * Sets the value for the Color Picker on the X Axis
+     * @param value The new slider value for the X Axis
+     */
+    public void setValueX(double value)
+    {
+        value = value / 360;
+        this.value = this.snapToNearest(value);
+        this.updateMessage();
     }
 
     public Color getColor()
@@ -90,38 +127,7 @@ public class TTCColorPicker extends AbstractSliderButton
         return color.fromHSV(colorHue, colorSaturation, colorValue);
     }
 
-    protected void renderBg(PoseStack poseStack, Minecraft minecraft, int mouseX, int mouseY)
-    {
-        RenderSystem.setShaderTexture(0, WIDGETS_LOCATION);
-        RenderSystem.setShaderColor(1.0F, 1.0F, 1.0F, 1.0F);
-        int offset = (this.isHoveredOrFocused() ? 2 : 1) * 20;
-
-        int begTexOffset = 1;
-        int destTexOffset = 2;
-
-        int xPosition = this.x + (int)(this.value * (float)(this.width - destTexOffset)) - begTexOffset;
-        int yPosition = this.y + (int)(this.valueY * (float)(this.height - destTexOffset)) - begTexOffset;
-
-        int size = 4;
-
-        GuiUtils.drawContinuousTexturedBox(poseStack, WIDGETS_LOCATION, xPosition, yPosition, 0, 46 + offset, size, size, 200, 20, 1, 1, 1, 1, 0);
-    }
-
-    @Override
-    protected void onDrag(double mouseX, double mouseY, double dragX, double dragY)
-    {
-        super.onDrag(mouseX, mouseY, dragX, dragY);
-        this.setValueFromMouse(mouseX, mouseY);
-    }
-
     private void setValueFromMouse(double mouseX, double mouseY)
-    {
-        this.setSliderValue((mouseX - (this.x + 1)) / (this.width - 2),
-                            (mouseY - (this.y + 1)) / (this.height - 2));
-    }
-
-    @Override
-    public void onClick(double mouseX, double mouseY)
     {
         this.setSliderValue((mouseX - (this.x + 1)) / (this.width - 2),
                             (mouseY - (this.y + 1)) / (this.height - 2));
@@ -212,23 +218,6 @@ public class TTCColorPicker extends AbstractSliderButton
         value = Mth.clamp(value, minValue, maxValue);
 
         return Mth.map(value, minValue, maxValue, 0D, 1D);
-    }
-
-    @Override
-    protected void updateMessage()
-    {
-        this.setMessage(Component.literal(""));
-    }
-
-    /**
-     * Sets the value for the Color Picker on the X Axis
-     * @param value The new slider value for the X Axis
-     */
-    public void setValueX(double value)
-    {
-        value = value / 360;
-        this.value = this.snapToNearest(value);
-        this.updateMessage();
     }
 
     /**

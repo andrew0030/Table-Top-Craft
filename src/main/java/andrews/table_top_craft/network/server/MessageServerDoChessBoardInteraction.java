@@ -1,12 +1,12 @@
 package andrews.table_top_craft.network.server;
 
+import andrews.table_top_craft.block_entities.ChessBlockEntity;
 import andrews.table_top_craft.criteria.TTCCriteriaTriggers;
 import andrews.table_top_craft.game_logic.chess.board.moves.BaseMove;
 import andrews.table_top_craft.game_logic.chess.board.moves.MoveFactory;
 import andrews.table_top_craft.game_logic.chess.board.tiles.BaseChessTile;
 import andrews.table_top_craft.game_logic.chess.pieces.BasePiece;
 import andrews.table_top_craft.game_logic.chess.player.MoveTransition;
-import andrews.table_top_craft.block_entities.ChessBlockEntity;
 import andrews.table_top_craft.util.NetworkUtil;
 import andrews.table_top_craft.util.Reference;
 import net.fabricmc.fabric.api.networking.v1.ServerPlayNetworking;
@@ -33,7 +33,7 @@ public class MessageServerDoChessBoardInteraction
             {
                 if(player == null) return;
 
-                ServerLevel level = player.getLevel();
+                ServerLevel level = player.serverLevel();
                 if(level != null)
                 {
                     BlockEntity blockEntity = level.getBlockEntity(pos);
@@ -54,7 +54,7 @@ public class MessageServerDoChessBoardInteraction
                                 chessBlockEntity.setWaitingForPromotion(true);
                                 chessBlockEntity.setPromotionCoordinate((byte) chessBlockEntity.move.getDestinationCoordinate());
 
-                                List<ServerPlayer> players = player.getLevel().players();
+                                List<ServerPlayer> players = player.serverLevel().players();
                                 for(ServerPlayer serverPlayer : players) {
                                     if(serverPlayer.getUUID().equals(chessBlockEntity.getPromotionPlayerUUID()))
                                         NetworkUtil.openChessPromotionFromServer(chessBlockEntity.getBlockPos(), chessBlockEntity.move.getMovedPiece().getPieceColor().isWhite(), serverPlayer);
@@ -151,7 +151,7 @@ public class MessageServerDoChessBoardInteraction
                                         chessBlockEntity.setWaitingForPromotion(true);
                                         chessBlockEntity.setPromotionCoordinate((byte) move.getDestinationCoordinate());
 
-                                        List<ServerPlayer> players = player.getLevel().players();
+                                        List<ServerPlayer> players = player.serverLevel().players();
                                         for(ServerPlayer serverPlayer : players) {
                                             if(serverPlayer.getUUID().equals(chessBlockEntity.getPromotionPlayerUUID()))
                                                 NetworkUtil.openChessPromotionFromServer(chessBlockEntity.getBlockPos(), move.getMovedPiece().getPieceColor().isWhite(), serverPlayer);

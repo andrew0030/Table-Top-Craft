@@ -1,6 +1,6 @@
 package andrews.table_top_craft.screens.piece_figure.util;
 
-import andrews.table_top_craft.screens.util.BaseSlider;
+import andrews.table_top_craft.screens.base.BaseSlider;
 
 public interface IColorPicker
 {

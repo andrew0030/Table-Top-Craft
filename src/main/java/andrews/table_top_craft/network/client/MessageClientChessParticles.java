@@ -27,7 +27,7 @@ public class MessageClientChessParticles
             {
                 if(Minecraft.getInstance().player == null) return;
 
-                if(Minecraft.getInstance().player.getLevel().getBlockEntity(pos) instanceof ChessBlockEntity)
+                if(Minecraft.getInstance().player.level().getBlockEntity(pos) instanceof ChessBlockEntity)
                     ClientPacketHandlerClass.handlePlayChessParticlesPacket(pos, destCord, isWhite, xSpeed, ySpeed, zSpeed);
             });
         });

@@ -1,7 +1,7 @@
 package andrews.table_top_craft.network.server;
 
-import andrews.table_top_craft.criteria.TTCCriteriaTriggers;
 import andrews.table_top_craft.block_entities.ConnectFourBlockEntity;
+import andrews.table_top_craft.criteria.TTCCriteriaTriggers;
 import andrews.table_top_craft.util.NetworkUtil;
 import andrews.table_top_craft.util.Reference;
 import net.fabricmc.fabric.api.networking.v1.ServerPlayNetworking;
@@ -26,7 +26,7 @@ public class MessageServerDoConnectFourInteraction
                 if(serverPlayer == null)
                     return;
 
-                ServerLevel level = serverPlayer.getLevel();
+                ServerLevel level = serverPlayer.serverLevel();
                 if(level != null)
                 {
                     BlockEntity blockEntity = level.getBlockEntity(pos);

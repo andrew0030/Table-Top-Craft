@@ -11,9 +11,9 @@ import com.mojang.blaze3d.platform.Lighting;
 import com.mojang.blaze3d.systems.RenderSystem;
 import com.mojang.blaze3d.vertex.PoseStack;
 import net.minecraft.client.Minecraft;
-import net.minecraft.client.gui.Font;
-import net.minecraft.client.gui.GuiComponent;
-import net.minecraft.client.gui.components.Button;
+import net.minecraft.client.gui.GuiGraphics;
+import net.minecraft.client.gui.components.AbstractButton;
+import net.minecraft.client.gui.narration.NarrationElementOutput;
 import net.minecraft.client.renderer.MultiBufferSource;
 import net.minecraft.client.renderer.entity.ItemRenderer;
 import net.minecraft.client.renderer.texture.OverlayTexture;
@@ -25,111 +25,105 @@ import net.minecraft.resources.ResourceLocation;
 import net.minecraft.world.item.ItemDisplayContext;
 import net.minecraft.world.item.ItemStack;
 
-public class ChessBoardPieceModelSelectionButton extends Button
+import java.util.HashMap;
+
+public class ChessBoardPieceModelSelectionButton extends AbstractButton
 {
     private static final ResourceLocation TEXTURE = new ResourceLocation(Reference.MODID + ":textures/gui/buttons/piece_model_selection_buttons.png");
-    private final Component buttonText = Component.translatable("tooltip.table_top_craft.chess.piece_type.standard");
-    private final Component buttonTextClassic = Component.translatable("tooltip.table_top_craft.chess.piece_type.classic");
-    private final Component buttonTextPandorasCreatures = Component.translatable("tooltip.table_top_craft.chess.piece_type.pandoras_creatures");
-    private final Font fontRenderer;
-    private static ChessBlockEntity chessBlockEntity;
-    private static final int buttonWidth = 167;
-    private static final int buttonHeight = 37;
-    private int u = 0;
-    private int v = 0;
+    private static final Component DEFAULT_BTN_TXT = Component.translatable("tooltip.table_top_craft.chess.piece_type.standard");
+    private static final Component CLASSIC_BTN_TXT = Component.translatable("tooltip.table_top_craft.chess.piece_type.classic");
+    private static final Component PANDORAS_BTN_TXT = Component.translatable("tooltip.table_top_craft.chess.piece_type.pandoras_creatures");
+    private final ChessBlockEntity blockEntity;
     // Chess Pieces on the Button
     private final ChessPieceFigureBlockEntity chessPieceFigureBlockEntity;
     private final ItemStack chessPieceStack;
-    // Piece Set
+    // Piece Set on Button
     private final PieceModelSet pieceModelSet;
-    private final boolean isStandardSetUnlocked;
-    private final boolean isClassicSetUnlocked;
-    private final boolean isPandorasCreaturesSetUnlocked;
+    private final HashMap<PieceModelSet, Boolean> pieceSets = new HashMap<>();
 
-    public ChessBoardPieceModelSelectionButton(ChessBlockEntity tileEntity, PieceModelSet pieceModelSet, boolean isStandardSetUnlocked, boolean isClassicSetUnlocked, boolean isPandorasCreaturesSetUnlocked, int xPos, int yPos)
+    public ChessBoardPieceModelSelectionButton(ChessBlockEntity blockEntity, PieceModelSet pieceModelSet, boolean standardUnlocked, boolean classicUnlocked, boolean pandorasUnlocked, int pX, int pY)
     {
-        super(xPos, yPos, buttonWidth, buttonHeight, Component.literal(""), (button) -> { handleButtonPress(); }, DEFAULT_NARRATION);
-        this.fontRenderer = Minecraft.getInstance().font;
-        chessBlockEntity = tileEntity;
-        chessPieceFigureBlockEntity = new ChessPieceFigureBlockEntity(BlockPos.ZERO, TTCBlocks.CHESS_PIECE_FIGURE.defaultBlockState());
-        chessPieceStack = new ItemStack(TTCBlocks.CHESS_PIECE_FIGURE.asItem());
+        super(pX, pY, 167, 37, Component.literal(""));
+        this.blockEntity = blockEntity;
+        this.chessPieceFigureBlockEntity = new ChessPieceFigureBlockEntity(BlockPos.ZERO, TTCBlocks.CHESS_PIECE_FIGURE.defaultBlockState());
+        this.chessPieceStack = new ItemStack(TTCBlocks.CHESS_PIECE_FIGURE.asItem());
         this.pieceModelSet = pieceModelSet;
-        /* this should probably be done with an array or smt but I cbb ~ andrew */
-        this.isStandardSetUnlocked = isStandardSetUnlocked;
-        this.isClassicSetUnlocked = isClassicSetUnlocked;
-        this.isPandorasCreaturesSetUnlocked = isPandorasCreaturesSetUnlocked;
+        this.pieceSets.put(PieceModelSet.STANDARD, standardUnlocked);
+        this.pieceSets.put(PieceModelSet.CLASSIC, classicUnlocked);
+        this.pieceSets.put(PieceModelSet.PANDORAS_CREATURES, pandorasUnlocked);
+        this.active = !this.shouldButtonBeLocked();
     }
 
     @Override
-    public void renderWidget(PoseStack poseStack, int mouseX, int mouseY, float partialTicks)
+    public void renderWidget(GuiGraphics graphics, int mouseX, int mouseY, float partialTick)
     {
-        this.isHovered = mouseX >= x && mouseX < x + width && mouseY >= y && mouseY < y + height || this.isFocused();
-
-        this.v = 0;
-        if (this.isHovered && !shouldButtonBeLocked())
-            this.v += 37;
-
-        this.active = !shouldButtonBeLocked();
-
+        int u = 0;
+        int v = (this.isHoveredOrFocused() && !this.shouldButtonBeLocked()) ? 37 : 0;
         // Renders the Button
-        RenderSystem.setShaderColor(1.0f, 1.0f, 1.0f, 1.0f);
-        RenderSystem.setShaderTexture(0, TEXTURE);
-        poseStack.pushPose();
+        graphics.setColor(1.0f, 1.0f, 1.0f, 1.0f);
         RenderSystem.enableBlend();
-        GuiComponent.blit(poseStack, x, y, u, v, width, height);
+        graphics.blit(TEXTURE, this.x, this.y, u, v, this.width, this.height);
+        // Renders a highlight around the current selected Button
         switch (pieceModelSet)
         {
-            case STANDARD:
-                if (chessBlockEntity.getPieceSet() == 0)
-                    GuiComponent.blit(poseStack, x - 1, y - 1, 0, 74, width + 2, height + 2);
-                break;
-            case CLASSIC:
-                if (chessBlockEntity.getPieceSet() == 1)
-                    GuiComponent.blit(poseStack, x - 1, y - 1, 0, 74, width + 2, height + 2);
-                break;
-            case PANDORAS_CREATURES:
-                if (chessBlockEntity.getPieceSet() == 2)
-                    GuiComponent.blit(poseStack, x - 1, y - 1, 0, 74, width + 2, height + 2);
+            case STANDARD -> {
+                if (this.blockEntity.getPieceSet() == 0)
+                    graphics.blit(TEXTURE, x - 1, y - 1, 0, 74, width + 2, height + 2);
+            }
+            case CLASSIC -> {
+                if (this.blockEntity.getPieceSet() == 1)
+                    graphics.blit(TEXTURE, x - 1, y - 1, 0, 74, width + 2, height + 2);
+            }
+            case PANDORAS_CREATURES -> {
+                if (this.blockEntity.getPieceSet() == 2)
+                    graphics.blit(TEXTURE, x - 1, y - 1, 0, 74, width + 2, height + 2);
+            }
         }
         RenderSystem.disableBlend();
-        poseStack.popPose();
 
-        switch (pieceModelSet)
+        // We set the Piece Set and make the Figure rotate
+        switch (this.pieceModelSet)
         {
-            case STANDARD -> chessPieceFigureBlockEntity.setPieceSet(1);
-            case CLASSIC -> chessPieceFigureBlockEntity.setPieceSet(2);
-            case PANDORAS_CREATURES -> chessPieceFigureBlockEntity.setPieceSet(3);
+            case STANDARD -> {
+                graphics.renderTooltip(Minecraft.getInstance().font, DEFAULT_BTN_TXT, this.x - 8 + ((this.width / 2) - ((Minecraft.getInstance().font.width(DEFAULT_BTN_TXT) + 8) / 2)), this.y + 1);
+                this.chessPieceFigureBlockEntity.setPieceSet(1);
+            }
+            case CLASSIC -> {
+                graphics.renderTooltip(Minecraft.getInstance().font, CLASSIC_BTN_TXT, this.x - 8 + ((this.width / 2) - ((Minecraft.getInstance().font.width(CLASSIC_BTN_TXT) + 8) / 2)), this.y + 1);
+                this.chessPieceFigureBlockEntity.setPieceSet(2);
+            }
+            case PANDORAS_CREATURES -> {
+                graphics.renderTooltip(Minecraft.getInstance().font, PANDORAS_BTN_TXT, this.x - 8 + ((this.width / 2) - ((Minecraft.getInstance().font.width(PANDORAS_BTN_TXT) + 8) / 2)), this.y + 1);
+                this.chessPieceFigureBlockEntity.setPieceSet(3);
+            }
         }
-        chessPieceFigureBlockEntity.setRotateChessPieceFigure(true);
+        this.chessPieceFigureBlockEntity.setRotateChessPieceFigure(true);
+
+        // Swap through all the Piece Types
         int scale = 32;
         for (int i = 0; i < 6; i++)
         {
-            chessPieceFigureBlockEntity.setPieceType(i + 1);
-            chessPieceFigureBlockEntity.saveToItem(chessPieceStack);
-            renderChessPiece(poseStack, chessPieceStack, x + 16 + (27 * i), y + 16, scale);
+            this.chessPieceFigureBlockEntity.setPieceType(i + 1);
+            this.chessPieceFigureBlockEntity.saveToItem(this.chessPieceStack);
+            this.renderChessPiece(graphics.pose(), this.chessPieceStack, this.x + 16 + (27 * i), this.y + 16, scale);
         }
 
-        switch (pieceModelSet)
+        // Renders all the Locked Button features over the Button if needed
+        if (this.shouldButtonBeLocked())
         {
-            case STANDARD -> Minecraft.getInstance().screen.renderTooltip(poseStack, this.buttonText, x - 8 + ((this.width / 2) - ((this.fontRenderer.width(this.buttonText) + 8) / 2)), y + 1);
-            case CLASSIC -> Minecraft.getInstance().screen.renderTooltip(poseStack, this.buttonTextClassic, x - 8 + ((this.width / 2) - ((this.fontRenderer.width(this.buttonTextClassic) + 8) / 2)), y + 1);
-            case PANDORAS_CREATURES -> Minecraft.getInstance().screen.renderTooltip(poseStack, this.buttonTextPandorasCreatures, x - 8 + ((this.width / 2) - ((this.fontRenderer.width(this.buttonTextPandorasCreatures) + 8) / 2)), y + 1);
-        }
-
-        if (shouldButtonBeLocked())
-        {
+            // Renders the locked bar over the Button
             RenderSystem.enableBlend();
-            RenderSystem.setShaderColor(1.0f, 1.0f, 1.0f, 0.85f);
-            RenderSystem.setShaderTexture(0, TEXTURE);
-            this.blit(poseStack, x + 1, y + 11, 0, 113, 165, 15);
-            RenderSystem.setShaderColor(1.0f, 1.0f, 1.0f, 1.0f);
+            graphics.setColor(1.0f, 1.0f, 1.0f, 0.85f);
+            graphics.blit(TEXTURE, this.x + 1, this.y + 11, 0, 113, 165, 15);
+            graphics.setColor(1.0f, 1.0f, 1.0f, 1.0f);
             RenderSystem.disableBlend();
-
-            poseStack.pushPose();
-            poseStack.translate(0, 0, 200);
-            this.fontRenderer.draw(poseStack, Component.literal("Locked"), x + (this.width / 4) - (this.fontRenderer.width("Locked") / 2), y + 15, 0xffffff);
-            this.fontRenderer.draw(poseStack, Component.literal("Locked"), x + ((this.width / 4) * 3) - (this.fontRenderer.width("Locked") / 2), y + 15, 0xffffff);
-            poseStack.popPose();
+            // Renders the "Locked" text over the Button
+            graphics.pose().pushPose();
+            graphics.pose().translate(0, 0, 200);
+            Component text = Component.literal("Locked");
+            graphics.drawString(Minecraft.getInstance().font, text, this.x + (this.width / 4) - (Minecraft.getInstance().font.width(text) / 2), this.y + 15, 0xffffff, false);
+            graphics.drawString(Minecraft.getInstance().font, text, this.x + ((this.width / 4) * 3) - (Minecraft.getInstance().font.width(text) / 2), this.y + 15, 0xffffff, false);
+            graphics.pose().popPose();
         }
     }
 
@@ -156,34 +150,28 @@ public class ChessBoardPieceModelSelectionButton extends Button
     }
 
     @Override
-    public void onClick(double pMouseX, double pMouseY)
+    public void onPress()
     {
         switch (pieceModelSet)
         {
-            case STANDARD -> NetworkUtil.setChessPieceSet(chessBlockEntity.getBlockPos(), 0);
-            case CLASSIC -> NetworkUtil.setChessPieceSet(chessBlockEntity.getBlockPos(), 1);
-            case PANDORAS_CREATURES -> NetworkUtil.setChessPieceSet(chessBlockEntity.getBlockPos(), 2);
+            case STANDARD -> NetworkUtil.setChessPieceSet(this.blockEntity.getBlockPos(), 0);
+            case CLASSIC -> NetworkUtil.setChessPieceSet(this.blockEntity.getBlockPos(), 1);
+            case PANDORAS_CREATURES -> NetworkUtil.setChessPieceSet(this.blockEntity.getBlockPos(), 2);
         }
     }
 
-    /**
-     * Gets called when the Button gets pressed
-     */
-    private static void handleButtonPress() {}
+    @Override
+    protected void updateWidgetNarration(NarrationElementOutput output)
+    {
+        this.defaultButtonNarrationText(output);
+    }
 
     private boolean shouldButtonBeLocked()
     {
-        if(!Minecraft.getInstance().player.isCreative())
-        {
-            // If the player is in survival we lock the Button based on
-            // whether the player has the given Set unlocked
-            return switch (this.pieceModelSet)
-            {
-                case STANDARD -> !this.isStandardSetUnlocked;
-                case CLASSIC -> !this.isClassicSetUnlocked;
-                case PANDORAS_CREATURES -> !this.isPandorasCreaturesSetUnlocked;
-            };
-        }
+        // If the player is in survival we lock the Button based on
+        // whether the player has the given Set unlocked
+        if(Minecraft.getInstance().player != null && !Minecraft.getInstance().player.isCreative())
+            return !this.pieceSets.get(this.pieceModelSet);
         // If the player is in Creative the Buttons should be unlocked
         return false;
     }

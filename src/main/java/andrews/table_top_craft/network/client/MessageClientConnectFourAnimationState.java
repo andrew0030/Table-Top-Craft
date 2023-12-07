@@ -1,7 +1,7 @@
 package andrews.table_top_craft.network.client;
 
-import andrews.table_top_craft.network.client.util.ClientPacketHandlerClass;
 import andrews.table_top_craft.block_entities.ConnectFourBlockEntity;
+import andrews.table_top_craft.network.client.util.ClientPacketHandlerClass;
 import andrews.table_top_craft.util.Reference;
 import net.fabricmc.fabric.api.client.networking.v1.ClientPlayNetworking;
 import net.minecraft.client.Minecraft;
@@ -23,7 +23,7 @@ public class MessageClientConnectFourAnimationState
             {
                 if(Minecraft.getInstance().player == null) return;
 
-                if(Minecraft.getInstance().player.getLevel().getBlockEntity(pos) instanceof ConnectFourBlockEntity connectFourBlockEntity)
+                if(Minecraft.getInstance().player.level().getBlockEntity(pos) instanceof ConnectFourBlockEntity connectFourBlockEntity)
                     ClientPacketHandlerClass.handleConnectFourAnimationPacket(connectFourBlockEntity, destCord);
             });
         });

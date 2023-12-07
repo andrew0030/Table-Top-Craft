@@ -1,7 +1,11 @@
-package andrews.table_top_craft.screens.util;
+package andrews.table_top_craft.screens.base;
 
+import com.mojang.blaze3d.systems.RenderSystem;
+import net.minecraft.client.Minecraft;
+import net.minecraft.client.gui.GuiGraphics;
 import net.minecraft.client.gui.components.AbstractSliderButton;
 import net.minecraft.network.chat.Component;
+import net.minecraft.resources.ResourceLocation;
 import net.minecraft.util.Mth;
 import org.lwjgl.glfw.GLFW;
 
@@ -9,6 +13,7 @@ import java.text.DecimalFormat;
 
 public class BaseSlider extends AbstractSliderButton
 {
+    private static final ResourceLocation SLIDER_LOCATION = new ResourceLocation("textures/gui/slider.png");
     protected Component prefix;
     protected Component suffix;
     protected double minValue;
@@ -57,6 +62,21 @@ public class BaseSlider extends AbstractSliderButton
     public BaseSlider(int x, int y, int width, int height, Component prefix, Component suffix, double minValue, double maxValue, double currentValue, boolean drawString)
     {
         this(x, y, width, height, prefix, suffix, minValue, maxValue, currentValue, 1D, 0, drawString);
+    }
+
+    @Override
+    public void renderWidget(GuiGraphics guiGraphics, int i, int j, float f)
+    {
+        Minecraft minecraft = Minecraft.getInstance();
+        guiGraphics.setColor(1.0f, 1.0f, 1.0f, this.alpha);
+        RenderSystem.enableBlend();
+        RenderSystem.defaultBlendFunc();
+        RenderSystem.enableDepthTest();
+        guiGraphics.blitNineSliced(SLIDER_LOCATION, this.getX(), this.getY(), this.getWidth(), this.getHeight(), 20, 4, 200, 20, 0, 0);
+        guiGraphics.blitNineSliced(SLIDER_LOCATION, this.getX() + (int)(this.value * (double)(this.width - 8)), this.getY(), 8, 12, 20, 4, 200, 20, 0, (this.isHoveredOrFocused() ? 60 : 40));
+        guiGraphics.setColor(1.0f, 1.0f, 1.0f, 1.0f);
+        int k = this.active ? 0xFFFFFF : 0xA0A0A0;
+        this.renderScrollingString(guiGraphics, minecraft.font, 2, k | Mth.ceil(this.alpha * 255.0f) << 24);
     }
 
     public double getValue()

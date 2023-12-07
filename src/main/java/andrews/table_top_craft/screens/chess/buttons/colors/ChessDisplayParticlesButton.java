@@ -1,35 +1,23 @@
 package andrews.table_top_craft.screens.chess.buttons.colors;
 
 import andrews.table_top_craft.block_entities.ChessBlockEntity;
+import andrews.table_top_craft.screens.base.buttons.BaseToggleButton;
 import andrews.table_top_craft.util.NetworkUtil;
-import andrews.table_top_craft.util.Reference;
-import com.mojang.blaze3d.systems.RenderSystem;
-import com.mojang.blaze3d.vertex.PoseStack;
-import net.minecraft.client.gui.GuiComponent;
-import net.minecraft.client.gui.components.Button;
-import net.minecraft.network.chat.Component;
-import net.minecraft.resources.ResourceLocation;
 
-public class ChessDisplayParticlesButton extends Button
+public class ChessDisplayParticlesButton extends BaseToggleButton
 {
-    private static final ResourceLocation TEXTURE = new ResourceLocation(Reference.MODID + ":textures/gui/buttons/chess_menu_buttons.png");
     private final ChessBlockEntity blockEntity;
 
-    public ChessDisplayParticlesButton(ChessBlockEntity blockEntity, int xPos, int yPos)
+    public ChessDisplayParticlesButton(ChessBlockEntity blockEntity, int pX, int pY)
     {
-        super(xPos, yPos, 13, 13, Component.literal(""), Button::onPress, DEFAULT_NARRATION);
+        super(pX, pY);
         this.blockEntity = blockEntity;
     }
 
     @Override
-    public void renderWidget(PoseStack poseStack, int mouseX, int mouseY, float partialTick)
+    public boolean isToggled()
     {
-        int u = blockEntity.getDisplayParticles() ? 13 : 0;
-        if(this.isHovered || this.isFocused())
-            u += 26;
-        RenderSystem.setShaderColor(1.0f, 1.0f, 1.0f, 1.0f);
-        RenderSystem.setShaderTexture(0, TEXTURE);
-        GuiComponent.blit(poseStack, x, y, u, 13, width, height);
+        return this.blockEntity.getDisplayParticles();
     }
 
     @Override

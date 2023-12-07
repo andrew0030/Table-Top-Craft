@@ -1,61 +1,36 @@
 package andrews.table_top_craft.screens.chess.sliders;
 
+import andrews.table_top_craft.screens.base.BaseSlider;
 import andrews.table_top_craft.screens.piece_figure.util.IColorPicker;
 import andrews.table_top_craft.screens.piece_figure.util.IColorPickerExtended;
-import andrews.table_top_craft.screens.util.BaseSlider;
-import andrews.table_top_craft.screens.util.GuiUtils;
-import com.mojang.blaze3d.systems.RenderSystem;
-import com.mojang.blaze3d.vertex.PoseStack;
-import net.minecraft.client.Minecraft;
 import net.minecraft.client.gui.screens.Screen;
 import net.minecraft.network.chat.Component;
 
 public class ChessGreenColorSlider extends BaseSlider
 {
-	private final static Component greenValueText = Component.translatable("gui.table_top_craft.chess.sliders.green");
-    private final Screen menuIn;
+	private final static Component GREEN_TXT = Component.translatable("gui.table_top_craft.chess.sliders.green");
+    private final Screen screen;
 
-    public ChessGreenColorSlider(int xPos, int yPos, int width, int height, int currentValue, Screen menuIn)
+    public ChessGreenColorSlider(int pX, int pY, int width, int height, int currentValue, Screen screen)
     {
-        super(xPos, yPos, width, height, greenValueText, Component.literal(""), 0, 255, currentValue, true);
-        this.menuIn = menuIn;
+        super(pX, pY, width, height, GREEN_TXT, Component.literal(""), 0, 255, currentValue, true);
+        this.screen = screen;
     }
 
+    // We override with an empty method to disable the sound
     @Override
-    public void renderWidget(PoseStack poseStack, int mouseX, int mouseY, float partialTick)
-    {
-        Minecraft mc = Minecraft.getInstance();
-        GuiUtils.drawContinuousTexturedBox(poseStack, WIDGETS_LOCATION, this.x, this.y, 0, 46, this.width, this.height, 200, 20, 2, 3, 2, 2, 0);
-        this.renderBg(poseStack, mc, mouseX, mouseY);
-
-        Component buttonText = this.getMessage();
-        int strWidth = mc.font.width(buttonText);
-        int ellipsisWidth = mc.font.width("...");
-
-        if (strWidth > width - 6 && strWidth > ellipsisWidth)
-            buttonText = Component.literal(mc.font.substrByWidth(buttonText, width - 6 - ellipsisWidth).getString() + "...");
-
-        drawCenteredString(poseStack, mc.font, buttonText, this.x + this.width / 2, this.y + (this.height - 8) / 2, getFGColor());
-    }
-
-    protected void renderBg(PoseStack poseStack, Minecraft minecraft, int mouseX, int mouseY)
-    {
-        RenderSystem.setShaderTexture(0, WIDGETS_LOCATION);
-        RenderSystem.setShaderColor(1.0F, 1.0F, 1.0F, 1.0F);
-        int offset = (this.isHoveredOrFocused() ? 2 : 1) * 20;
-        GuiUtils.drawContinuousTexturedBox(poseStack, WIDGETS_LOCATION, this.x + (int)(this.value * (float)(this.width - 8)), this.y, 0, 46 + offset, 8, this.height, 200, 20, 2, 3, 2, 2, 0);
-    }
+    public void onRelease(double pMouseX, double pMouseY) {}
 
     @Override
     protected void onDrag(double mouseX, double mouseY, double dragX, double dragY)
     {
         super.onDrag(mouseX, mouseY, dragX, dragY);
-        if(this.menuIn != null && menuIn instanceof IColorPicker colorPicker && menuIn instanceof IColorPickerExtended colorPickerExtended)
+        if(this.screen != null && this.screen instanceof IColorPicker colorPicker && this.screen instanceof IColorPickerExtended colorPickerExtended)
         {
             if(colorPicker.isColorPickerActive() || colorPickerExtended.isOptionalColorPickerActive())
                 colorPicker.getColorPicker().updateColorPickerFromSliders();
         }
-        else if(this.menuIn != null && menuIn instanceof IColorPicker colorPicker)
+        else if(this.screen != null && this.screen instanceof IColorPicker colorPicker)
         {
             if(colorPicker.isColorPickerActive())
                 colorPicker.getColorPicker().updateColorPickerFromSliders();
@@ -66,12 +41,12 @@ public class ChessGreenColorSlider extends BaseSlider
     public void onClick(double mouseX, double mouseY)
     {
         super.onClick(mouseX, mouseY);
-        if(this.menuIn != null && menuIn instanceof IColorPicker colorPicker && menuIn instanceof IColorPickerExtended colorPickerExtended)
+        if(this.screen != null && this.screen instanceof IColorPicker colorPicker && this.screen instanceof IColorPickerExtended colorPickerExtended)
         {
             if(colorPicker.isColorPickerActive() || colorPickerExtended.isOptionalColorPickerActive())
                 colorPicker.getColorPicker().updateColorPickerFromSliders();
         }
-        else if(this.menuIn != null && menuIn instanceof IColorPicker colorPicker)
+        else if(this.screen != null && this.screen instanceof IColorPicker colorPicker)
         {
             if(colorPicker.isColorPickerActive())
                 colorPicker.getColorPicker().updateColorPickerFromSliders();

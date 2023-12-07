@@ -4,17 +4,16 @@ import andrews.table_top_craft.block_entities.ChessTimerBlockEntity;
 import andrews.table_top_craft.objects.blocks.ChessTimerBlock;
 import andrews.table_top_craft.util.NetworkUtil;
 import andrews.table_top_craft.util.Reference;
-import com.mojang.blaze3d.systems.RenderSystem;
-import com.mojang.blaze3d.vertex.PoseStack;
 import net.minecraft.client.Minecraft;
-import net.minecraft.client.gui.GuiComponent;
-import net.minecraft.client.gui.components.Button;
+import net.minecraft.client.gui.GuiGraphics;
+import net.minecraft.client.gui.components.AbstractButton;
+import net.minecraft.client.gui.narration.NarrationElementOutput;
 import net.minecraft.network.chat.Component;
 import net.minecraft.resources.ResourceLocation;
 import net.minecraft.util.Mth;
 import net.minecraft.world.level.block.state.BlockState;
 
-public class ChessTimerTimeAlteringButton extends Button
+public class ChessTimerTimeAlteringButton extends AbstractButton
 {
     private static final ResourceLocation BUTTONS_TEXTURE = new ResourceLocation(Reference.MODID, "textures/gui/buttons/chess_timer_buttons.png");
     private static final String HOUR = "gui.table_top_craft.chess_timer.buttons.hour";
@@ -29,10 +28,56 @@ public class ChessTimerTimeAlteringButton extends Button
 
     public ChessTimerTimeAlteringButton(ChessTimerBlockEntity blockEntity, int x, int y, TimeModifierType type, TimeCategory category)
     {
-        super(x, y, 13, 13, Component.literal(""), Button::onPress, DEFAULT_NARRATION);
+        super(x, y, 13, 13, Component.literal(""));
         this.blockEntity = blockEntity;
         this.type = type;
         this.category = category;
+    }
+
+    @Override
+    public void renderWidget(GuiGraphics graphics, int mouseX, int mouseY, float partialTick)
+    {
+        // Determines whether the Button should be active
+        this.active = false;
+        if(Minecraft.getInstance().level != null)
+        {
+            BlockState state = Minecraft.getInstance().level.getBlockState(blockEntity.getBlockPos());
+            if(state.getValue(ChessTimerBlock.PRESSED_BUTTON).equals(ChessTimerBlock.PressedButton.NONE))
+                this.active = true;
+        }
+        // Renders the Button
+        graphics.setColor(1.0F, 1.0F, 1.0F, 1.0F);
+        graphics.blit(BUTTONS_TEXTURE, this.x, this.y, this.isActive() ? (this.isHoveredOrFocused() ? 13 : 0) : 26, this.type.getTexturePos(), 13, 13);
+        // Renders the Tooltip
+        if (this.isHovered() && this.isActive())
+        {
+            Component component;
+            switch (this.category) {
+                case LEFT_HOUR, RIGHT_HOUR -> {
+                    component = (this.type.equals(TimeModifierType.INCREASE_BIG) || this.type.equals(TimeModifierType.DECREASE_BIG)) ?
+                            Component.translatable(HOURS, ((this.type.equals(TimeModifierType.INCREASE_BIG) ? "+" : "-") + Mth.abs(this.type.getModifier()))) :
+                            Component.translatable(HOUR, ((this.type.equals(TimeModifierType.INCREASE_NORMAL) ? "+" : "-") + Mth.abs(this.type.getModifier())));
+                }
+                case LEFT_MINUTE, RIGHT_MINUTE -> {
+                    component = (this.type.equals(TimeModifierType.INCREASE_BIG) || this.type.equals(TimeModifierType.DECREASE_BIG)) ?
+                            Component.translatable(MINUTES, ((this.type.equals(TimeModifierType.INCREASE_BIG) ? "+" : "-") + Mth.abs(this.type.getModifier()))) :
+                            Component.translatable(MINUTE, ((this.type.equals(TimeModifierType.INCREASE_NORMAL) ? "+" : "-") + Mth.abs(this.type.getModifier())));
+                }
+                case LEFT_SECOND, RIGHT_SECOND -> {
+                    component = (this.type.equals(TimeModifierType.INCREASE_BIG) || this.type.equals(TimeModifierType.DECREASE_BIG)) ?
+                            Component.translatable(SECONDS, ((this.type.equals(TimeModifierType.INCREASE_BIG) ? "+" : "-") + Mth.abs(this.type.getModifier()))) :
+                            Component.translatable(SECOND, ((this.type.equals(TimeModifierType.INCREASE_NORMAL) ? "+" : "-") + Mth.abs(this.type.getModifier())));
+                }
+                default -> component = Component.literal("");
+            }
+            graphics.renderTooltip(Minecraft.getInstance().font, component, mouseX, mouseY);
+        }
+    }
+
+    @Override
+    protected void updateWidgetNarration(NarrationElementOutput output)
+    {
+        this.defaultButtonNarrationText(output);
     }
 
     @Override
@@ -41,60 +86,46 @@ public class ChessTimerTimeAlteringButton extends Button
         NetworkUtil.adjustChessTimerTime(this.blockEntity.getBlockPos(), this.type.getIdx(), this.category.getIdx());
     }
 
-    @Override
-    public void render(PoseStack poseStack, int mouseX, int mouseY, float pPartialTick)
-    {
-        if (this.visible)
-        {
-            this.isHovered = mouseX >= this.x && mouseY >= this.y && mouseX < this.x + this.width && mouseY < this.y + this.height;
-            this.renderWidget(poseStack, mouseX, mouseY, pPartialTick);
-            if (this.isActive())
-            {
-                boolean highlighted = this.isHoveredOrFocused();
-                if (highlighted && Minecraft.getInstance().screen != null)
-                {
-                    // Button Tooltip
-                    RenderSystem.disableDepthTest();
-                    Component component;
-                    switch (this.category) {
-                        case LEFT_HOUR, RIGHT_HOUR -> {
-                            component = (this.type.equals(TimeModifierType.INCREASE_BIG) || this.type.equals(TimeModifierType.DECREASE_BIG)) ?
-                                    Component.translatable(HOURS, ((this.type.equals(TimeModifierType.INCREASE_BIG) ? "+" : "-") + Mth.abs(this.type.getModifier()))) :
-                                    Component.translatable(HOUR, ((this.type.equals(TimeModifierType.INCREASE_NORMAL) ? "+" : "-") + Mth.abs(this.type.getModifier())));
-                        }
-                        case LEFT_MINUTE, RIGHT_MINUTE -> {
-                            component = (this.type.equals(TimeModifierType.INCREASE_BIG) || this.type.equals(TimeModifierType.DECREASE_BIG)) ?
-                                    Component.translatable(MINUTES, ((this.type.equals(TimeModifierType.INCREASE_BIG) ? "+" : "-") + Mth.abs(this.type.getModifier()))) :
-                                    Component.translatable(MINUTE, ((this.type.equals(TimeModifierType.INCREASE_NORMAL) ? "+" : "-") + Mth.abs(this.type.getModifier())));
-                        }
-                        case LEFT_SECOND, RIGHT_SECOND -> {
-                            component = (this.type.equals(TimeModifierType.INCREASE_BIG) || this.type.equals(TimeModifierType.DECREASE_BIG)) ?
-                                    Component.translatable(SECONDS, ((this.type.equals(TimeModifierType.INCREASE_BIG) ? "+" : "-") + Mth.abs(this.type.getModifier()))) :
-                                    Component.translatable(SECOND, ((this.type.equals(TimeModifierType.INCREASE_NORMAL) ? "+" : "-") + Mth.abs(this.type.getModifier())));
-                        }
-                        default -> component = Component.literal("");
-                    }
-                    Minecraft.getInstance().screen.renderTooltip(poseStack, component, mouseX, mouseY);
-                    RenderSystem.enableDepthTest();
-                }
-            }
-        }
-    }
-
-    @Override
-    public void renderWidget(PoseStack poseStack, int mouseX, int mouseY, float partialTick)
-    {
-        this.active = false;
-        if(Minecraft.getInstance().level != null) {
-            BlockState state = Minecraft.getInstance().level.getBlockState(blockEntity.getBlockPos());
-            if(state.getValue(ChessTimerBlock.PRESSED_BUTTON).equals(ChessTimerBlock.PressedButton.NONE))
-                this.active = true;
-        }
-
-        RenderSystem.setShaderColor(1.0F, 1.0F, 1.0F, 1.0F);
-        RenderSystem.setShaderTexture(0, BUTTONS_TEXTURE);
-        GuiComponent.blit(poseStack, this.x, this.y, this.isActive() ? ((isHovered || isFocused()) ? 13 : 0) : 26, this.type.getTexturePos(), 13, 13);
-    }
+//    @Override
+//    public void render(PoseStack poseStack, int pMouseX, int pMouseY, float pPartialTick)
+//    {
+//        if (this.visible)
+//        {
+//            this.isHovered = pMouseX >= this.getX() && pMouseY >= this.getY() && pMouseX < this.getX() + this.width && pMouseY < this.getY() + this.height;
+//            this.renderWidget(poseStack, pMouseX, pMouseY, pPartialTick);
+//            if (this.isActive())
+//            {
+//                if (this.isHovered() && Minecraft.getInstance().screen != null)
+//                {
+//                    // Button Tooltip
+//                    RenderSystem.disableDepthTest();
+//                    Component component;
+//                    switch (this.category) {
+//                        case LEFT_HOUR, RIGHT_HOUR -> {
+//                            component = (this.type.equals(TimeModifierType.INCREASE_BIG) || this.type.equals(TimeModifierType.DECREASE_BIG)) ?
+//                                    Component.translatable(HOURS, ((this.type.equals(TimeModifierType.INCREASE_BIG) ? "+" : "-") + Mth.abs(this.type.getModifier()))) :
+//                                    Component.translatable(HOUR, ((this.type.equals(TimeModifierType.INCREASE_NORMAL) ? "+" : "-") + Mth.abs(this.type.getModifier())));
+//                        }
+//                        case LEFT_MINUTE, RIGHT_MINUTE -> {
+//                            component = (this.type.equals(TimeModifierType.INCREASE_BIG) || this.type.equals(TimeModifierType.DECREASE_BIG)) ?
+//                                    Component.translatable(MINUTES, ((this.type.equals(TimeModifierType.INCREASE_BIG) ? "+" : "-") + Mth.abs(this.type.getModifier()))) :
+//                                    Component.translatable(MINUTE, ((this.type.equals(TimeModifierType.INCREASE_NORMAL) ? "+" : "-") + Mth.abs(this.type.getModifier())));
+//                        }
+//                        case LEFT_SECOND, RIGHT_SECOND -> {
+//                            component = (this.type.equals(TimeModifierType.INCREASE_BIG) || this.type.equals(TimeModifierType.DECREASE_BIG)) ?
+//                                    Component.translatable(SECONDS, ((this.type.equals(TimeModifierType.INCREASE_BIG) ? "+" : "-") + Mth.abs(this.type.getModifier()))) :
+//                                    Component.translatable(SECOND, ((this.type.equals(TimeModifierType.INCREASE_NORMAL) ? "+" : "-") + Mth.abs(this.type.getModifier())));
+//                        }
+//                        default -> component = Component.literal("");
+//                    }
+//                    int posX = this.isHovered() ? pMouseX : this.x;
+//                    int posY = this.isHovered() ? pMouseY : this.y;
+//                    Minecraft.getInstance().screen.renderTooltip(poseStack, component, posX, posY);
+//                    RenderSystem.enableDepthTest();
+//                }
+//            }
+//        }
+//    }
 
     public enum TimeModifierType
     {

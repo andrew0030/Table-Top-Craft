@@ -5,15 +5,12 @@
   "compatibilityLevel": "JAVA_17",
   "plugin": "andrews.table_top_craft.util.MixinPlugin",
   "mixins": [
-    "LootTableMixin",
-    "LootTablesMixin"
   ],
   "client": [
     "BlockEntityWithoutLevelRendererMixin",
     "GameRendererMixin",
     "GameRendererMixin$HackToGetReloadManager",
     "ScreenMixin",
-    "ShaderInstanceJankFixMixin",
     "ShaderInstanceMixin"
   ],
   "injectors": {

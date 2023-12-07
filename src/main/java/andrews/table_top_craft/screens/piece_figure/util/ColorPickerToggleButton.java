@@ -5,51 +5,38 @@ import andrews.table_top_craft.block_entities.ChessPieceFigureBlockEntity;
 import andrews.table_top_craft.screens.chess.menus.color_selection.*;
 import andrews.table_top_craft.screens.piece_figure.menus.ChessPieceFigureSettingsScreen;
 import andrews.table_top_craft.util.Reference;
-import com.mojang.blaze3d.systems.RenderSystem;
-import com.mojang.blaze3d.vertex.PoseStack;
 import net.minecraft.client.Minecraft;
-import net.minecraft.client.gui.GuiComponent;
-import net.minecraft.client.gui.components.Button;
+import net.minecraft.client.gui.GuiGraphics;
+import net.minecraft.client.gui.components.AbstractButton;
+import net.minecraft.client.gui.narration.NarrationElementOutput;
 import net.minecraft.client.gui.screens.Screen;
 import net.minecraft.network.chat.Component;
 import net.minecraft.resources.ResourceLocation;
 import net.minecraft.world.level.block.entity.BlockEntity;
 
-public class ColorPickerToggleButton extends Button
+public class ColorPickerToggleButton extends AbstractButton
 {
     private static final ResourceLocation TEXTURE = new ResourceLocation(Reference.MODID + ":textures/gui/buttons/chess_menu_buttons.png");
-    private static BlockEntity blockEntity;
-    private static final int buttonWidth = 13;
-    private static final int buttonHeight = 13;
-    private int u = 52;
-    private int v = 13;
+    private final BlockEntity blockEntity;
     private final Screen screen;
     private final boolean isOptional;
 
-    public ColorPickerToggleButton(BlockEntity blockEntityIn, Screen screen, boolean isOptional, int xPos, int yPos)
+    public ColorPickerToggleButton(BlockEntity blockEntity, Screen screen, boolean isOptional, int xPos, int yPos)
     {
-        super(xPos, yPos, buttonWidth, buttonHeight, Component.literal(""), (button) -> {}, DEFAULT_NARRATION);
+        super(xPos, yPos, 13, 13, Component.literal(""));
         this.screen = screen;
-        blockEntity = blockEntityIn;
+        this.blockEntity = blockEntity;
         this.isOptional = isOptional;
     }
 
     @Override
-    public void renderWidget(PoseStack poseStack, int mouseX, int mouseY, float partialTicks)
+    public void renderWidget(GuiGraphics graphics, int mouseX, int mouseY, float partialTick)
     {
-        this.isHovered = mouseX >= x && mouseX < x + width && mouseY >= y && mouseY < y + height || this.isFocused();
-
-        this.u = 52;
-        if(this.isHovered || isColorPickerActive())
-            this.u = 65;
-
+        int u = this.isHoveredOrFocused() || this.isColorPickerActive() ? 65 : 52;
+        int v = 13;
         // Renders the Button
-        poseStack.pushPose();
-        RenderSystem.enableBlend();
-        // The Button
-        RenderSystem.setShaderColor(1.0f, 1.0f, 1.0f, 1.0f);
-        RenderSystem.setShaderTexture(0, TEXTURE);
-        GuiComponent.blit(poseStack, x, y, u, v, width, height);
+        graphics.setColor(1.0F, 1.0F, 1.0F, 1.0F);
+        graphics.blit(TEXTURE, this.x, this.y, u, v, this.width, this.height);
         // The Color inside the Button
         if (screen instanceof IColorPicker colorPicker)
         {
@@ -62,19 +49,15 @@ public class ColorPickerToggleButton extends Button
                 green = colorPickerExtended.getOptionalGreenSlider().getValueInt();
                 blue = colorPickerExtended.getOptionalBlueSlider().getValueInt();
             }
-
-            RenderSystem.setShaderColor(red / 255F, green / 255F, blue / 255F, 1.0f);
-            GuiComponent.blit(poseStack, x, y, 78, v, width, height);
+            graphics.setColor(red / 255F, green / 255F, blue / 255F, 1.0f);
+            graphics.blit(TEXTURE, this.x, this.y, 78, v, this.width, this.height);
+            graphics.setColor(1.0F, 1.0F, 1.0F, 1.0F);
         }
-        // We disable blend after rendering the "highlight"
-        RenderSystem.disableBlend();
-        poseStack.popPose();
     }
 
     @Override
     public void onPress()
     {
-        super.onPress();
         if(Minecraft.getInstance().screen != null)
         {
             if(blockEntity instanceof ChessPieceFigureBlockEntity chessPieceFigureBlockEntity)
@@ -171,6 +154,12 @@ public class ColorPickerToggleButton extends Button
         }
     }
 
+    @Override
+    protected void updateWidgetNarration(NarrationElementOutput output)
+    {
+        this.defaultButtonNarrationText(output);
+    }
+
     /**
      * @return whether there is already an active Color Picker on the screen
      */
@@ -178,10 +167,7 @@ public class ColorPickerToggleButton extends Button
     {
         if(screen instanceof IColorPicker colorPicker && screen instanceof IColorPickerExtended colorPickerExtended)
         {
-            if(!isOptional)
-                return colorPicker.isColorPickerActive();
-            else
-                return colorPickerExtended.isOptionalColorPickerActive();
+            return isOptional ? colorPickerExtended.isOptionalColorPickerActive() : colorPicker.isColorPickerActive();
         }
         else if(screen instanceof IColorPicker colorPicker)
         {

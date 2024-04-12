@@ -1,11 +1,10 @@
 package andrews.table_top_craft.util.loot_table;
 
+import andrews.table_top_craft.block_entities.ChessPieceFigureBlockEntity;
 import andrews.table_top_craft.registry.TTCBlocks;
 import andrews.table_top_craft.registry.TTCLootItemFunctions;
-import andrews.table_top_craft.block_entities.ChessPieceFigureBlockEntity;
-import com.google.gson.JsonDeserializationContext;
-import com.google.gson.JsonObject;
-import com.google.gson.JsonSerializationContext;
+import com.mojang.serialization.Codec;
+import com.mojang.serialization.codecs.RecordCodecBuilder;
 import net.minecraft.core.BlockPos;
 import net.minecraft.util.RandomSource;
 import net.minecraft.world.item.ItemStack;
@@ -14,11 +13,21 @@ import net.minecraft.world.level.storage.loot.functions.LootItemConditionalFunct
 import net.minecraft.world.level.storage.loot.functions.LootItemFunctionType;
 import net.minecraft.world.level.storage.loot.predicates.LootItemCondition;
 
+import java.util.List;
+
 public class GeneratePieceNBTFunction extends LootItemConditionalFunction
 {
-    public GeneratePieceNBTFunction(LootItemCondition[] pConditions)
+    public static final Codec<GeneratePieceNBTFunction> CODEC = RecordCodecBuilder.create(instance -> commonFields(instance).apply(instance, GeneratePieceNBTFunction::new));
+
+    public GeneratePieceNBTFunction(List<LootItemCondition> list)
     {
-        super(pConditions);
+        super(list);
+    }
+
+    @Override
+    public LootItemFunctionType getType()
+    {
+        return TTCLootItemFunctions.GEN_PIECE_NBT;
     }
 
     @Override
@@ -35,27 +44,5 @@ public class GeneratePieceNBTFunction extends LootItemConditionalFunction
             blockEntity.saveToItem(stack);
         }
         return stack;
-    }
-
-    @Override
-    public LootItemFunctionType getType()
-    {
-        return TTCLootItemFunctions.GEN_PIECE_NBT;
-    }
-
-    public static class Serializer extends LootItemConditionalFunction.Serializer<GeneratePieceNBTFunction>
-    {
-        @Override
-        public void serialize(JsonObject json, GeneratePieceNBTFunction value, JsonSerializationContext serializationContext)
-        {
-            super.serialize(json, value, serializationContext);
-            // We don't really need to serialize anything, as there is no input from the users.
-        }
-
-        @Override
-        public GeneratePieceNBTFunction deserialize(JsonObject object, JsonDeserializationContext deserializationContext, LootItemCondition[] conditions)
-        {
-            return new GeneratePieceNBTFunction(conditions);
-        }
     }
 }

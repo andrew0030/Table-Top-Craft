@@ -13,6 +13,9 @@ accessible class net/minecraft/client/renderer/RenderType$CompositeState
 # again, this is public when working with forge, soooo "shrug"
 accessible method net/minecraft/client/renderer/RenderType create (Ljava/lang/String;Lcom/mojang/blaze3d/vertex/VertexFormat;Lcom/mojang/blaze3d/vertex/VertexFormat$Mode;IZZLnet/minecraft/client/renderer/RenderType$CompositeState;)Lnet/minecraft/client/renderer/RenderType$CompositeRenderType;
 
+# it seems like in future versions Criteria will get a RegistryType, but currently thats not the case, and I need to register them TODO: remove ASAP, ergo when there is a better registration approach
+accessible field net/minecraft/advancements/CriteriaTriggers CRITERIA Lcom/google/common/collect/BiMap;
+
 # why are these even private in 1.19.3 "What Face" and yes I know there
 # is a geter, but I refuse to go through ALL the code just for that
 accessible field net/minecraft/client/gui/components/AbstractWidget x I

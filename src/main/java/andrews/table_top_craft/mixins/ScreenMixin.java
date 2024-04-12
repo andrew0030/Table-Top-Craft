@@ -21,7 +21,7 @@ public class ScreenMixin
             // We only run the code when on Single Player as on servers the game isn't paused while in any menu
             if(Minecraft.getInstance().getSingleplayerServer() != null)
                 if(advancementsScreen.selectedTab != null) // We make sure there is an active tab
-                    if(advancementsScreen.selectedTab.getAdvancement().getId().equals(Reference.TAB_ID))
+                    if(advancementsScreen.selectedTab.getRootNode().holder().id().equals(Reference.TAB_ID))
                         cir.setReturnValue(false); // If there is a tab and the tabs title is ^^^ we return false
         }
     }

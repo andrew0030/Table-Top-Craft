@@ -5,37 +5,20 @@ import net.minecraft.advancements.critereon.AbstractCriterionTriggerInstance;
 import net.minecraft.advancements.critereon.ContextAwarePredicate;
 import net.minecraft.advancements.critereon.DeserializationContext;
 import net.minecraft.advancements.critereon.SimpleCriterionTrigger;
-import net.minecraft.resources.ResourceLocation;
 import net.minecraft.server.level.ServerPlayer;
 
+import java.util.Optional;
+
 /**
- * An essentially empty CriteriaTrigger class, that allows us to easily add
- * a bunch of Criteria quickly, by just passing a ResourceLocation as an ID.
- * These Criteria are then triggered through code, as there aren't any
- * conditions to trigger them from within a Json.
+ * An essentially empty CriteriaTrigger class, that allows us to easily add a bunch of Criteria quickly.
+ * These Criteria are then triggered through code, as there aren't any conditions to trigger them from within a Json.
  */
 public class BaseTrigger extends SimpleCriterionTrigger<BaseTrigger.TriggerInstance>
 {
-    protected final ResourceLocation id;
-
-    /**
-     * @param id The ID we use inside Json's to call this CriteriaTrigger
-     */
-    public BaseTrigger(ResourceLocation id)
-    {
-        this.id = id;
-    }
-
     @Override
-    public ResourceLocation getId()
+    protected BaseTrigger.TriggerInstance createInstance(JsonObject json, Optional<ContextAwarePredicate> player, DeserializationContext context)
     {
-        return this.id;
-    }
-
-    @Override
-    protected BaseTrigger.TriggerInstance createInstance(JsonObject json, ContextAwarePredicate player, DeserializationContext context)
-    {
-        return new TriggerInstance(this.id, player);
+        return new BaseTrigger.TriggerInstance(player);
     }
 
     /**
@@ -49,9 +32,9 @@ public class BaseTrigger extends SimpleCriterionTrigger<BaseTrigger.TriggerInsta
 
     public static class TriggerInstance extends AbstractCriterionTriggerInstance
     {
-        public TriggerInstance(ResourceLocation id, ContextAwarePredicate player)
+        public TriggerInstance(Optional<ContextAwarePredicate> player)
         {
-            super(id, player);
+            super(player);
         }
     }
 }

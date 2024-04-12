@@ -13,7 +13,9 @@ import java.text.DecimalFormat;
 
 public class BaseSlider extends AbstractSliderButton
 {
-    private static final ResourceLocation SLIDER_LOCATION = new ResourceLocation("textures/gui/slider.png");
+    private static final ResourceLocation SLIDER_SPRITE = new ResourceLocation("widget/slider");
+    private static final ResourceLocation SLIDER_HANDLE_SPRITE = new ResourceLocation("widget/slider_handle");
+    private static final ResourceLocation SLIDER_HANDLE_HIGHLIGHTED_SPRITE = new ResourceLocation("widget/slider_handle_highlighted");
     protected Component prefix;
     protected Component suffix;
     protected double minValue;
@@ -72,11 +74,17 @@ public class BaseSlider extends AbstractSliderButton
         RenderSystem.enableBlend();
         RenderSystem.defaultBlendFunc();
         RenderSystem.enableDepthTest();
-        guiGraphics.blitNineSliced(SLIDER_LOCATION, this.getX(), this.getY(), this.getWidth(), this.getHeight(), 20, 4, 200, 20, 0, 0);
-        guiGraphics.blitNineSliced(SLIDER_LOCATION, this.getX() + (int)(this.value * (double)(this.width - 8)), this.getY(), 8, 12, 20, 4, 200, 20, 0, (this.isHoveredOrFocused() ? 60 : 40));
+
+        guiGraphics.blitSprite(SLIDER_SPRITE, this.getX(), this.getY(), this.getWidth(), this.getHeight());
+        guiGraphics.blitSprite(this.getHandleSprite(), this.getX() + (int)(this.value * (double)(this.width - 8)), this.getY(), 8, this.getHeight());
         guiGraphics.setColor(1.0f, 1.0f, 1.0f, 1.0f);
         int k = this.active ? 0xFFFFFF : 0xA0A0A0;
         this.renderScrollingString(guiGraphics, minecraft.font, 2, k | Mth.ceil(this.alpha * 255.0f) << 24);
+    }
+
+    private ResourceLocation getHandleSprite()
+    {
+        return !this.isHoveredOrFocused() ? SLIDER_HANDLE_SPRITE : SLIDER_HANDLE_HIGHLIGHTED_SPRITE;
     }
 
     public double getValue()

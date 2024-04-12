@@ -26,12 +26,6 @@ public class ChessLoadFENScreen extends BaseScreen
 	}
 	
 	@Override
-	public void tick()
-	{
-		this.fenStringField.tick();
-	}
-	
-	@Override
 	protected void init()
 	{
 		super.init();

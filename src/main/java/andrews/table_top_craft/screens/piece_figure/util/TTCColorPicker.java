@@ -13,7 +13,8 @@ import org.lwjgl.glfw.GLFW;
 
 public class TTCColorPicker extends AbstractSliderButton
 {
-    private static final ResourceLocation SLIDER_LOCATION = new ResourceLocation("textures/gui/slider.png");
+    private static final ResourceLocation SLIDER_HANDLE_SPRITE = new ResourceLocation("widget/slider_handle");
+    private static final ResourceLocation SLIDER_HANDLE_HIGHLIGHTED_SPRITE = new ResourceLocation("widget/slider_handle_highlighted");
     private static final ResourceLocation COLOR_CHART = new ResourceLocation(Reference.MODID + ":textures/gui/color_picker/color_chart.png");
     private static final ResourceLocation SATURATION_CHART = new ResourceLocation(Reference.MODID + ":textures/gui/color_picker/saturation_chart.png");
     private final Screen screen;
@@ -78,7 +79,12 @@ public class TTCColorPicker extends AbstractSliderButton
         int xPosition = this.x + (int) (this.value * (this.width - destTexOffset)) - begTexOffset;
         int yPosition = this.y + (int) (this.valueY * (this.height - destTexOffset)) - begTexOffset;
         int size = 4;
-        graphics.blitNineSliced(SLIDER_LOCATION, xPosition, yPosition, size, size, 2, 3, 200, 20, 0, (this.isHoveredOrFocused() ? 60 : 40));
+        graphics.blitSprite(this.getHandleSprite(), xPosition, yPosition, size, size);
+    }
+
+    private ResourceLocation getHandleSprite()
+    {
+        return !this.isHoveredOrFocused() ? SLIDER_HANDLE_SPRITE : SLIDER_HANDLE_HIGHLIGHTED_SPRITE;
     }
 
     // We override with an empty method to disable the sound

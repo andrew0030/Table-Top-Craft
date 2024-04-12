@@ -9,7 +9,7 @@ import net.minecraft.world.level.storage.loot.functions.LootItemFunctionType;
 
 public class TTCLootItemFunctions
 {
-    public static final LootItemFunctionType GEN_PIECE_NBT    = Registry.register(BuiltInRegistries.LOOT_FUNCTION_TYPE, new ResourceLocation(Reference.MODID, "gen_piece_nbt"), new LootItemFunctionType(new GeneratePieceNBTFunction.Serializer()));
+    public static final LootItemFunctionType GEN_PIECE_NBT    = Registry.register(BuiltInRegistries.LOOT_FUNCTION_TYPE, new ResourceLocation(Reference.MODID, "gen_piece_nbt"), new LootItemFunctionType(GeneratePieceNBTFunction.CODEC));
 
     public static void init() {}
 }

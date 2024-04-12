@@ -4,7 +4,7 @@ import andrews.table_top_craft.block_entities.ChessBlockEntity;
 import andrews.table_top_craft.util.NetworkUtil;
 import andrews.table_top_craft.util.Reference;
 import net.fabricmc.fabric.api.networking.v1.ServerPlayNetworking;
-import net.minecraft.advancements.Advancement;
+import net.minecraft.advancements.AdvancementHolder;
 import net.minecraft.core.BlockPos;
 import net.minecraft.resources.ResourceLocation;
 import net.minecraft.server.ServerAdvancementManager;
@@ -35,9 +35,9 @@ public class MessageServerOpenGUIWithServerPlayer
                     {
                         ServerAdvancementManager serveradvancementmanager = serverPlayer.getServer().getAdvancements();
                         // We get the piece set advancements
-                        Advancement standardAdvancement = serveradvancementmanager.getAdvancement(new ResourceLocation("table_top_craft:standard_piece_collector"));
-                        Advancement classicAdvancement = serveradvancementmanager.getAdvancement(new ResourceLocation("table_top_craft:classic_piece_collector"));
-                        Advancement pandorasCreaturesAdvancement = serveradvancementmanager.getAdvancement(new ResourceLocation("table_top_craft:pandoras_creatures_piece_collector"));
+                        AdvancementHolder standardAdvancement = serveradvancementmanager.get(new ResourceLocation("table_top_craft:standard_piece_collector"));
+                        AdvancementHolder classicAdvancement = serveradvancementmanager.get(new ResourceLocation("table_top_craft:classic_piece_collector"));
+                        AdvancementHolder pandorasCreaturesAdvancement = serveradvancementmanager.get(new ResourceLocation("table_top_craft:pandoras_creatures_piece_collector"));
                         // We check if the player has completed the advancements
                         boolean isStandardSetUnlocked = standardAdvancement == null || serverPlayer.getAdvancements().getOrStartProgress(standardAdvancement).isDone();
                         boolean isClassicSetUnlocked = classicAdvancement == null || serverPlayer.getAdvancements().getOrStartProgress(classicAdvancement).isDone();

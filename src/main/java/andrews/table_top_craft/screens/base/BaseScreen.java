@@ -39,13 +39,28 @@ public class BaseScreen extends Screen
     {
         // Renders background gradient
         if(this.renderGradient())
-            this.renderBackground(graphics);
+            this.renderBg(graphics);
         // Renders screen texture
         graphics.blit(this.texture, this.x, this.y, this.u, this.v, this.textureWidth, this.textureHeight);
         // Renders screen contents
         this.renderScreenContents(graphics, mouseX, mouseX, partialTick);
         // Renders the screens widgets
         super.render(graphics, mouseX, mouseY, partialTick);
+    }
+
+    // Minecraft now renders the buttons in the "background", so I override this and make my own version
+    @Override
+    public void renderBackground(GuiGraphics graphics, int mouseX, int mouseY, float partialTick) {}
+
+    /**
+     * Renders the background of a GUI, used as a replacement for "renderBackground"
+     */
+    public void renderBg(GuiGraphics graphics)
+    {
+        if (this.minecraft.level != null)
+            this.renderTransparentBackground(graphics);
+        else
+            this.renderDirtBackground(graphics);
     }
 
     public void renderScreenContents(GuiGraphics graphics, int mouseX, int mouseY, float partialTick) {}

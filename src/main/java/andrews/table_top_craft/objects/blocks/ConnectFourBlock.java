@@ -3,6 +3,7 @@ package andrews.table_top_craft.objects.blocks;
 import andrews.table_top_craft.block_entities.ConnectFourBlockEntity;
 import andrews.table_top_craft.util.Color;
 import andrews.table_top_craft.util.NetworkUtil;
+import com.mojang.serialization.MapCodec;
 import net.minecraft.core.BlockPos;
 import net.minecraft.core.Direction;
 import net.minecraft.util.Mth;
@@ -13,14 +14,16 @@ import net.minecraft.world.item.DyeItem;
 import net.minecraft.world.item.context.BlockPlaceContext;
 import net.minecraft.world.level.BlockGetter;
 import net.minecraft.world.level.Level;
-import net.minecraft.world.level.block.*;
+import net.minecraft.world.level.block.Block;
+import net.minecraft.world.level.block.EntityBlock;
+import net.minecraft.world.level.block.HorizontalDirectionalBlock;
+import net.minecraft.world.level.block.RenderShape;
 import net.minecraft.world.level.block.entity.BlockEntity;
 import net.minecraft.world.level.block.entity.BlockEntityTicker;
 import net.minecraft.world.level.block.entity.BlockEntityType;
 import net.minecraft.world.level.block.state.BlockState;
 import net.minecraft.world.level.block.state.StateDefinition;
 import net.minecraft.world.level.block.state.properties.DirectionProperty;
-import net.minecraft.world.level.material.MapColor;
 import net.minecraft.world.phys.BlockHitResult;
 import net.minecraft.world.phys.Vec3;
 import net.minecraft.world.phys.shapes.CollisionContext;
@@ -45,20 +48,16 @@ public class ConnectFourBlock extends Block  implements EntityBlock
     private static final VoxelShape X_AXIS_AABB = Shapes.or(BASE_X, LEFT_POLE_X, RIGHT_POLE_X, CENTER_X);
     private static final VoxelShape Y_AXIS_AABB = Shapes.or(BASE_Y, LEFT_POLE_Y, RIGHT_POLE_Y, CENTER_Y);
 
-    public ConnectFourBlock(MapColor mapColor, SoundType soundType)
+    public ConnectFourBlock(Properties properties)
     {
-        super(getProperties(mapColor, soundType));
+        super(properties);
         this.registerDefaultState(this.stateDefinition.any().setValue(FACING, Direction.NORTH));
     }
 
-    private static Properties getProperties(MapColor mapColor, SoundType soundType)
+    @Override
+    public MapCodec<? extends ConnectFourBlock> codec()
     {
-        Properties properties = Block.Properties.of();
-        properties.mapColor(mapColor);
-        properties.sound(soundType);
-        properties.strength(2.0F);
-        properties.noOcclusion();
-        return properties;
+        return ConnectFourBlock.simpleCodec(ConnectFourBlock::new);
     }
 
     @Override

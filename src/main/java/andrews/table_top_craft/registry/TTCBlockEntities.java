@@ -19,7 +19,7 @@ import java.util.List;
 
 public class TTCBlockEntities
 {
-    public static final BlockEntityType<ChessBlockEntity> CHESS                              = Registry.register(BuiltInRegistries.BLOCK_ENTITY_TYPE, new ResourceLocation(Reference.MODID, "chess"), FabricBlockEntityTypeBuilder.create(ChessBlockEntity::new, TTCBlockEntities.getBlocksOfClass(ChessBlock.class)).build(null));
+    public static final BlockEntityType<ChessBlockEntity> CHESS                             = Registry.register(BuiltInRegistries.BLOCK_ENTITY_TYPE, new ResourceLocation(Reference.MODID, "chess"), FabricBlockEntityTypeBuilder.create(ChessBlockEntity::new, TTCBlockEntities.getBlocksOfClass(ChessBlock.class)).build(null));
     public static final BlockEntityType<ChessPieceFigureBlockEntity> CHESS_PIECE_FIGURE     = Registry.register(BuiltInRegistries.BLOCK_ENTITY_TYPE, new ResourceLocation(Reference.MODID, "chess_piece_figure"), FabricBlockEntityTypeBuilder.create(ChessPieceFigureBlockEntity::new, TTCBlocks.CHESS_PIECE_FIGURE).build(null));
     public static final BlockEntityType<TicTacToeBlockEntity> TIC_TAC_TOE                   = Registry.register(BuiltInRegistries.BLOCK_ENTITY_TYPE, new ResourceLocation(Reference.MODID, "tic_tac_toe"), FabricBlockEntityTypeBuilder.create(TicTacToeBlockEntity::new, TTCBlocks.TIC_TAC_TOE).build(null));
     public static final BlockEntityType<ChessTimerBlockEntity> CHESS_TIMER                  = Registry.register(BuiltInRegistries.BLOCK_ENTITY_TYPE, new ResourceLocation(Reference.MODID, "chess_timer"), FabricBlockEntityTypeBuilder.create(ChessTimerBlockEntity::new, TTCBlockEntities.getBlocksOfClass(ChessTimerBlock.class)).build(null));

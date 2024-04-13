@@ -1,11 +1,12 @@
-package andrews.table_top_craft.criteria.criteria_triggers;
+package andrews.table_top_craft.criteria;
 
-import com.google.gson.JsonObject;
-import net.minecraft.advancements.critereon.AbstractCriterionTriggerInstance;
+import com.mojang.serialization.Codec;
+import com.mojang.serialization.codecs.RecordCodecBuilder;
 import net.minecraft.advancements.critereon.ContextAwarePredicate;
-import net.minecraft.advancements.critereon.DeserializationContext;
+import net.minecraft.advancements.critereon.EntityPredicate;
 import net.minecraft.advancements.critereon.SimpleCriterionTrigger;
 import net.minecraft.server.level.ServerPlayer;
+import net.minecraft.util.ExtraCodecs;
 
 import java.util.Optional;
 
@@ -16,9 +17,9 @@ import java.util.Optional;
 public class BaseTrigger extends SimpleCriterionTrigger<BaseTrigger.TriggerInstance>
 {
     @Override
-    protected BaseTrigger.TriggerInstance createInstance(JsonObject json, Optional<ContextAwarePredicate> player, DeserializationContext context)
+    public Codec<BaseTrigger.TriggerInstance> codec()
     {
-        return new BaseTrigger.TriggerInstance(player);
+        return BaseTrigger.TriggerInstance.CODEC;
     }
 
     /**
@@ -30,11 +31,10 @@ public class BaseTrigger extends SimpleCriterionTrigger<BaseTrigger.TriggerInsta
         this.trigger(serverPlayer, triggerInstance -> true);
     }
 
-    public static class TriggerInstance extends AbstractCriterionTriggerInstance
+    public static record TriggerInstance(Optional<ContextAwarePredicate> player) implements SimpleCriterionTrigger.SimpleInstance
     {
-        public TriggerInstance(Optional<ContextAwarePredicate> player)
-        {
-            super(player);
-        }
+        public static final Codec<BaseTrigger.TriggerInstance> CODEC = RecordCodecBuilder.create(instance -> instance.group(
+                ExtraCodecs.strictOptionalField(EntityPredicate.ADVANCEMENT_CODEC, "player").forGetter(BaseTrigger.TriggerInstance::player)
+        ).apply(instance, BaseTrigger.TriggerInstance::new));
     }
 }

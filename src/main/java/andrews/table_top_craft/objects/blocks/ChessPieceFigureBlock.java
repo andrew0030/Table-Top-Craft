@@ -21,16 +21,15 @@ import net.minecraft.world.item.TooltipFlag;
 import net.minecraft.world.item.context.BlockPlaceContext;
 import net.minecraft.world.level.BlockGetter;
 import net.minecraft.world.level.Level;
+import net.minecraft.world.level.LevelReader;
 import net.minecraft.world.level.block.Block;
 import net.minecraft.world.level.block.EntityBlock;
 import net.minecraft.world.level.block.RenderShape;
-import net.minecraft.world.level.block.SoundType;
 import net.minecraft.world.level.block.entity.BlockEntity;
 import net.minecraft.world.level.block.state.BlockState;
 import net.minecraft.world.level.block.state.StateDefinition;
 import net.minecraft.world.level.block.state.properties.BlockStateProperties;
 import net.minecraft.world.level.block.state.properties.IntegerProperty;
-import net.minecraft.world.level.material.MapColor;
 import net.minecraft.world.level.storage.loot.LootParams;
 import net.minecraft.world.level.storage.loot.parameters.LootContextParams;
 import net.minecraft.world.phys.BlockHitResult;
@@ -47,24 +46,13 @@ public class ChessPieceFigureBlock extends Block implements EntityBlock
     // Rotation
     public static final IntegerProperty ROTATION = BlockStateProperties.ROTATION_16;
 
-    public ChessPieceFigureBlock()
+    public ChessPieceFigureBlock(Properties properties)
     {
-        super(getProperties());
+        super(properties);
         this.registerDefaultState(this.stateDefinition.any().setValue(ROTATION, 0));
     }
 
-    /**
-     * @return The properties for this Block
-     */
-    private static Properties getProperties()
-    {
-        Properties properties = Block.Properties.of();
-        properties.mapColor(MapColor.STONE);
-        properties.strength(0.5F);
-        properties.sound(SoundType.STONE);
 
-        return properties;
-    }
 
     @Override
     public RenderShape getRenderShape(BlockState state)
@@ -100,7 +88,7 @@ public class ChessPieceFigureBlock extends Block implements EntityBlock
      * this block
      */
     @Override
-    public void playerWillDestroy(Level level, BlockPos pos, BlockState state, Player player)
+    public BlockState playerWillDestroy(Level level, BlockPos pos, BlockState state, Player player)
     {
         BlockEntity blockentity = level.getBlockEntity(pos);
         if (blockentity instanceof ChessPieceFigureBlockEntity chessPieceFigureBlockEntity)
@@ -117,7 +105,7 @@ public class ChessPieceFigureBlock extends Block implements EntityBlock
                 level.addFreshEntity(itementity);
             }
         }
-        super.playerWillDestroy(level, pos, state, player);
+        return super.playerWillDestroy(level, pos, state, player);
     }
 
     @Override
@@ -206,17 +194,14 @@ public class ChessPieceFigureBlock extends Block implements EntityBlock
     }
 
     @Override
-    public ItemStack getCloneItemStack(BlockGetter level, BlockPos pos, BlockState state)
+    public ItemStack getCloneItemStack(LevelReader level, BlockPos pos, BlockState state)
     {
         ItemStack stack = super.getCloneItemStack(level, pos, state);
-        if(level.getBlockEntity(pos) != null)
+        if(level.getBlockEntity(pos) instanceof ChessPieceFigureBlockEntity chessPieceFigureBlockEntity)
         {
-            if(level.getBlockEntity(pos) instanceof ChessPieceFigureBlockEntity chessPieceFigureBlockEntity)
-            {
-                chessPieceFigureBlockEntity.saveToItem(stack);
-                if(chessPieceFigureBlockEntity.getPieceName() != null)
-                    stack.setHoverName(Component.literal(chessPieceFigureBlockEntity.getPieceName()));
-            }
+            chessPieceFigureBlockEntity.saveToItem(stack);
+            if(chessPieceFigureBlockEntity.getPieceName() != null)
+                stack.setHoverName(Component.literal(chessPieceFigureBlockEntity.getPieceName()));
         }
         return stack;
     }

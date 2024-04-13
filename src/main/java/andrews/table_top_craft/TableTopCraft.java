@@ -1,6 +1,5 @@
 package andrews.table_top_craft;
 
-import andrews.table_top_craft.criteria.TTCCriteriaTriggers;
 import andrews.table_top_craft.network.TTCNetwork;
 import andrews.table_top_craft.registry.*;
 import andrews.table_top_craft.util.loot_table.TTCLootTableHandler;

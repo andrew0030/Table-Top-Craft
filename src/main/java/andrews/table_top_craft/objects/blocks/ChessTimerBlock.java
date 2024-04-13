@@ -2,6 +2,7 @@ package andrews.table_top_craft.objects.blocks;
 
 import andrews.table_top_craft.block_entities.ChessTimerBlockEntity;
 import andrews.table_top_craft.screens.chess_timer.menus.ChessTimerScreen;
+import com.mojang.serialization.MapCodec;
 import net.minecraft.core.BlockPos;
 import net.minecraft.core.Direction;
 import net.minecraft.sounds.SoundEvents;
@@ -17,6 +18,7 @@ import net.minecraft.world.level.block.*;
 import net.minecraft.world.level.block.entity.BlockEntity;
 import net.minecraft.world.level.block.entity.BlockEntityTicker;
 import net.minecraft.world.level.block.entity.BlockEntityType;
+import net.minecraft.world.level.block.state.BlockBehaviour;
 import net.minecraft.world.level.block.state.BlockState;
 import net.minecraft.world.level.block.state.StateDefinition;
 import net.minecraft.world.level.block.state.properties.EnumProperty;
@@ -31,20 +33,16 @@ public class ChessTimerBlock extends HorizontalDirectionalBlock implements Entit
     private static final VoxelShape X_AXIS_AABB = Block.box(5.0D, 0.0D, 1.0D, 11.0D, 6.0D, 15.0D);
     private static final VoxelShape Y_AXIS_AABB = Block.box(1.0D, 0.0D, 5.0D, 15.0D, 6.0D, 11.0D);
 
-    public ChessTimerBlock(MapColor mapColor, SoundType soundType)
+    public ChessTimerBlock(Properties properties)
     {
-        super(getProperties(mapColor, soundType));
+        super(properties);
         this.registerDefaultState(this.stateDefinition.any().setValue(FACING, Direction.NORTH).setValue(PRESSED_BUTTON, PressedButton.NONE));
     }
 
-    private static Properties getProperties(MapColor mapColor, SoundType soundType)
+    @Override
+    public MapCodec<? extends ChessTimerBlock> codec()
     {
-        Properties properties = Block.Properties.of();
-        properties.mapColor(mapColor);
-        properties.sound(soundType);
-        properties.strength(1.8F);
-        properties.noOcclusion();
-        return properties;
+        return ChessTimerBlock.simpleCodec(ChessTimerBlock::new);
     }
 
     @Override

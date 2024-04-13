@@ -1,7 +1,7 @@
 package andrews.table_top_craft.network.server;
 
 import andrews.table_top_craft.block_entities.ChessBlockEntity;
-import andrews.table_top_craft.criteria.TTCCriteriaTriggers;
+import andrews.table_top_craft.registry.TTCCriteriaTriggers;
 import andrews.table_top_craft.game_logic.chess.board.moves.BaseMove;
 import andrews.table_top_craft.game_logic.chess.board.moves.MoveFactory;
 import andrews.table_top_craft.game_logic.chess.board.tiles.BaseChessTile;

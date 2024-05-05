@@ -1,6 +1,6 @@
 {
     "pack": {
-        "description": "Table Top Craft Resources",
+        "description": "${mod_name} Resources",
         "pack_format": 15
     }
 }

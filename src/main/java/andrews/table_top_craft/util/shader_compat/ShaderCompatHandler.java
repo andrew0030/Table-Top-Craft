@@ -1,7 +1,5 @@
 package andrews.table_top_craft.util.shader_compat;
 
-import net.coderbot.iris.Iris;
-
 import java.util.concurrent.atomic.AtomicBoolean;
 
 public class ShaderCompatHandler
@@ -9,10 +7,6 @@ public class ShaderCompatHandler
     private static final AtomicBoolean OF_LOADED = new AtomicBoolean(false);
     private static final AtomicBoolean OCULUS_LOADED = new AtomicBoolean(false);
 
-    /**
-     * Called when OF is used, causes the OF compat class
-     * to load and marks OF as "existing".
-     */
     public static void initOFCompat()
     {
         ShaderCompatHandler.OF_LOADED.set(true);
@@ -22,6 +16,7 @@ public class ShaderCompatHandler
     public static void initOculusCompat()
     {
         ShaderCompatHandler.OCULUS_LOADED.set(true);
+        ShaderCompatOculus.init();
     }
 
     /**
@@ -32,7 +27,7 @@ public class ShaderCompatHandler
         if(ShaderCompatHandler.OF_LOADED.get())
             return ShaderCompatOF.isShaderLoaded();
         if(ShaderCompatHandler.OCULUS_LOADED.get())
-            return Iris.getCurrentPack().isPresent();
+            return ShaderCompatOculus.isShaderLoaded();
         return false;
     }
 }

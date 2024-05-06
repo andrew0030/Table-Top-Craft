@@ -1,5 +1,5 @@
 plugins {
-	id 'fabric-loom' version '1.4-SNAPSHOT'
+	id 'fabric-loom' version '1.6-SNAPSHOT'
 	id 'maven-publish'
 }
 
@@ -40,8 +40,8 @@ dependencies {
 		}
 	}
 	// Sodium and Iris
-	modCompileOnly ("maven.modrinth:sodium:${project.sodium_version}")
-	modCompileOnly ("maven.modrinth:iris:${project.iris_version}")
+	// modImplementation ("maven.modrinth:sodium:${project.sodium_version}")
+	// modImplementation ("maven.modrinth:iris:${project.iris_version}")
 	// exp4j
 	modImplementation 'net.objecthunter:exp4j:0.4.8'
 	include 'net.objecthunter:exp4j:0.4.8'

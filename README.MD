@@ -1,4 +1,4 @@
-![](https://i.imgur.com/j9VIEo6.png)
+![](https://i.imgur.com/Wo5VGTr.png)
 
 <p style="text-align: center;">
   <a href="https://discord.gg/4vBw8kM" rel="nofollow"><img src="https://img.shields.io/discord/626381916316368927?color=cd9a66&amp;label=DISCORD&amp;logo=Discord&amp;logoColor=cd9a66&amp;style=for-the-badge" alt="Discord" width="237" height="32" /></a>
@@ -6,24 +6,28 @@
   <a href="https://www.curseforge.com/members/andrew0030/followers" rel="nofollow"><img src="https://img.shields.io/badge/-PROFILE-cd9a66?logo=CurseForge&amp;logoColor=cd9a66&amp;label=CURSEFORGE&amp;style=for-the-badge" alt="" width="242" height="32" /></a>
 </p>
 
-![](https://i.imgur.com/pcvDS0O.png)
-**Table Top Craft** is a fun little Mod that was developed to add working board games to Minecraft. Currently the Mod only comes with one board game, which is chess. If people are interested in the Mod, I would be happy to add more board games in the future. The board games added by this Mod come with a huge list of customization options and settings. Some of which are: Altering the tile colors, altering the piece colors and changing the move highlight colors. The board games are also playable completely without any GUIs, after choosing your settings. You can simply click on the block and play! This Mod doesn't require two players, but it is recommended to use it on servers. If you are a singleplayer person don't worry you can still use the Block on your own, you just simply wont have an opponent, or you can use the blocks as decoration!
+![](https://i.imgur.com/pcvDS0O.png)  
+**Table Top Craft** is a meticulously crafted Minecraft mod that introduces board games to enhance your gaming experience. With its latest update, this mod now offers an expanded array of games. Immerse yourself in the strategic brilliance of Chess and test your tactical prowess. Or indulge in the nostalgic charm of Tic Tac Toe, perfect for a quick match. But that's not all! In response to the overwhelming support from the community, we are proud to announce the inclusion of Connect Four. The depth of customization options available in Table Top Craft is truly remarkable. Tailor your board games to your exact preferences by altering tile colors, piece colors, and even the move highlight colors. One of the special features of Table Top Craft is its seamless integration into the Minecraft universe. Engage in gameplay that transcends the confines of GUI's, enabling you to simply click on the blocks and play. Whether you're seeking solo adventure or multiplayer excitement, this mod caters to your needs. Utilize the blocks as stunning decorative pieces or challenge your friends!
 
 ![](https://i.imgur.com/NooDmQ9.png)
-![](https://i.imgur.com/TdvyPsf.png)
+![](https://i.imgur.com/Vm6pT87.png)
 
-![](https://i.imgur.com/cou2BB7.png)
-![](https://i.imgur.com/59u2aCr.png)
+![](https://i.imgur.com/cou2BB7.png)  
+For variants replace the **oak planks** with any other valid block, for a more in-depth recipe list use JEI.
+![](https://i.imgur.com/D5bG1kj.png)
 
-![](https://i.imgur.com/vQxWvAC.png)
+![](https://i.imgur.com/vQxWvAC.png)  
 **Q:** Can I use this Mod in my Modpack  
 **A:** Yes absolutely! Feel free to use my Mods in your Modpacks.
 
-**Q:** Can you update the Mod to version \[x\]  
+**Q:** Can you update the Mod to version (x)  
 **A:** I always try to keep my Mods up to date, so if there hasn't been an update it simply means I haven't had time to work on it!
 
-**Q:** Can you backport the Mod to version \[x\]  
+**Q:** Can you backport the Mod to version (x)  
 **A:** No I will not backport my Mods, old versions are versions of the past and I wont go out of my way to support them!
 
+**Q:** How do I unlock the Chess Piece Sets in survival?  
+**A:** You have to get the Set Collector advancements (Acquire all 6 piece types of a Set)
+
 **Q:** What is a "**FEN**"  
-**A:** FEN is short for "****Forsyth-Edwards-Notation****" to put it simply its a standard **notation** for describing a particular board position of a **chess** game.
+**A:** FEN is short for "**Forsyth-Edwards-Notation**" to put it simply its a standard **notation** for describing a particular board position of a **chess** game.

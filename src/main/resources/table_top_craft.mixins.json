@@ -1,8 +1,8 @@
 {
   "required": true,
   "minVersion": "0.8",
-  "package": "andrews.table_top_craft.mixins",
   "compatibilityLevel": "JAVA_17",
+  "package": "andrews.table_top_craft.mixins",
   "plugin": "andrews.table_top_craft.util.MixinPlugin",
   "mixins": [
   ],

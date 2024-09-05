@@ -13,7 +13,6 @@
     "GameRendererMixin",
     "GameRendererMixin$HackToGetReloadManager",
     "ScreenMixin",
-    "ShaderInstanceJankFixMixin",
     "ShaderInstanceMixin"
   ],
   "injectors": {

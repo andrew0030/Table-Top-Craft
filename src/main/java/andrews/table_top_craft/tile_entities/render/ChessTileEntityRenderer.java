@@ -41,7 +41,10 @@ import net.minecraft.resources.ResourceLocation;
 import net.minecraft.world.level.block.state.BlockState;
 import org.lwjgl.opengl.GL11;
 
-import java.util.*;
+import java.util.ArrayList;
+import java.util.Collection;
+import java.util.Collections;
+import java.util.List;
 
 public class ChessTileEntityRenderer implements BlockEntityRenderer<ChessTileEntity>
 {
@@ -228,7 +231,7 @@ public class ChessTileEntityRenderer implements BlockEntityRenderer<ChessTileEnt
 			}
 			// Renders the taken pieces in the piece storage bellow the chess plate
 			// Moves the pieces down into the taken Pieces area
-			poseStack.translate(CHESS_SCALE * -6.5D, 0.556D, CHESS_SCALE * 0.3D);
+			poseStack.translate(CHESS_SCALE * -6.5D, 0.58725D, 0.0625D);
 			renderTakenPieces(poseStack, tileEntityIn.getMoveLog(), tileEntityIn);
 			/* clear render state */
 			type.clearRenderState();
@@ -387,7 +390,7 @@ public class ChessTileEntityRenderer implements BlockEntityRenderer<ChessTileEnt
 				stack.mulPose(Vector3f.YN.rotationDegrees(180F));
 			
 			if(!isWhite)
-				stack.translate((CHESS_SCALE * 0.855D) * 7D, 0.0D, 0.8D);
+				stack.translate((CHESS_SCALE * 0.855D) * 7D, 0.0D, 0.0625D * 12);
 			stack.translate((CHESS_SCALE * 0.855D) * -currentCoordinate, 0.0D, CHESS_SCALE * -currentRank);
 			
 			renderPiece(stack, chessTileEntity.getPieceSet(), piece.getPieceType(), piece.getPieceColor(), wR, wG, wB, bR, bG, bB);

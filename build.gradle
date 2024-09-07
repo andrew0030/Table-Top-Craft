@@ -20,7 +20,7 @@ apply plugin: 'net.minecraftforge.gradle'
 apply plugin: 'org.spongepowered.mixin'
 apply plugin: 'org.parchmentmc.librarian.forgegradle'
 
-version = '1.18.2-2.1.2'
+version = '1.18.2-2.2.0'
 group = 'com.andrews.table_top_craft'
 archivesBaseName = 'table_top_craft'
 
@@ -70,7 +70,7 @@ repositories {
 }
 
 dependencies {
-    minecraft 'net.minecraftforge:forge:1.18.2-40.1.0'
+    minecraft 'net.minecraftforge:forge:1.18.2-40.2.21'
     implementation fg.deobf("curse.maven:spark-361579:3670050")
     annotationProcessor 'org.spongepowered:mixin:0.8.5:processor'
 }

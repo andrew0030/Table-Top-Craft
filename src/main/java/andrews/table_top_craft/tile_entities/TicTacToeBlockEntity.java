@@ -186,14 +186,14 @@ public class TicTacToeBlockEntity extends BlockEntity
     public String getCircleColor()
     {
         if(circleColor == null)
-            this.circleColor = "255/255/255";
+            this.circleColor = "249/255/254";
         return this.circleColor;
     }
 
     public String getCrossColor()
     {
         if(this.crossColor == null)
-            this.crossColor = "255/255/255";
+            this.crossColor = "249/255/254";
         return this.crossColor;
     }
 

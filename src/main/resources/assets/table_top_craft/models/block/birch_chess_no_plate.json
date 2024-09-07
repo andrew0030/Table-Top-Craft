@@ -1,8 +1,0 @@
-{
-  "parent": "table_top_craft:block/oak_chess_no_plate",
-  "textures": {
-  	"planks": "block/birch_planks",
-	"particle": "block/birch_planks",
-	"dark_parts": "table_top_craft:block/dark_parts"
-  }
-}

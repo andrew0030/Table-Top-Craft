@@ -5,6 +5,7 @@ import andrews.table_top_craft.block_entities.ChessBlockEntity;
 import andrews.table_top_craft.game_logic.chess.PieceColor;
 import andrews.table_top_craft.game_logic.chess.board.Board;
 import andrews.table_top_craft.game_logic.chess.board.BoardUtils;
+import andrews.table_top_craft.game_logic.chess.board.ChessMoveLog;
 import andrews.table_top_craft.game_logic.chess.board.moves.BaseMove;
 import andrews.table_top_craft.game_logic.chess.board.tiles.BaseChessTile;
 import andrews.table_top_craft.game_logic.chess.pieces.BasePiece;
@@ -21,25 +22,38 @@ import com.github.andrew0030.pandora_core.client.render.instancing.InstanceForma
 import com.github.andrew0030.pandora_core.client.render.instancing.engine.BatchData;
 import com.github.andrew0030.pandora_core.client.render.instancing.engine.BatchKey;
 import com.github.andrew0030.pandora_core.client.render.renderers.instancing.InstancedBlockEntityRenderer;
+import com.google.common.primitives.Ints;
 import com.mojang.blaze3d.shaders.FogShape;
 import com.mojang.blaze3d.systems.RenderSystem;
 import com.mojang.blaze3d.vertex.PoseStack;
 import com.mojang.blaze3d.vertex.VertexBuffer;
+import com.mojang.blaze3d.vertex.VertexConsumer;
 import com.mojang.math.Axis;
 import net.minecraft.client.Minecraft;
 import net.minecraft.client.renderer.LightTexture;
+import net.minecraft.client.renderer.MultiBufferSource;
 import net.minecraft.client.renderer.RenderType;
 import net.minecraft.core.BlockPos;
 import net.minecraft.core.Direction;
 import net.minecraft.world.level.Level;
+import net.minecraft.world.level.LightLayer;
 import net.minecraft.world.level.block.state.BlockState;
+import org.joml.Matrix3f;
+import org.joml.Matrix4f;
 import org.joml.Quaternionf;
 import org.lwjgl.opengl.GL11;
+
+import java.util.ArrayList;
+import java.util.List;
 
 import static andrews.table_top_craft.block_entities.render.ChessTileEntityRenderer.CHESS_PIECE_SCALE;
 import static andrews.table_top_craft.block_entities.render.ChessTileEntityRenderer.CHESS_SCALE;
 
 public class ChessBoardInstancer extends InstancedBlockEntityRenderer<ChessBlockEntity> {
+    private final PoseStack poseStack = new PoseStack();
+    private final Matrix4f cpyPose = new Matrix4f();
+    private final Matrix3f cpyNorm = new Matrix3f();
+
     public ChessBoardInstancer(InstanceFormat format, CollectiveVBO vbo) {
         super(format, vbo);
     }
@@ -56,6 +70,10 @@ public class ChessBoardInstancer extends InstancedBlockEntityRenderer<ChessBlock
         }
     };
 
+    Quaternionf YN_180 = Axis.YN.rotationDegrees(180F);
+    Quaternionf YN_270 = Axis.YN.rotationDegrees(270F);
+    Quaternionf YN_90 = Axis.YN.rotationDegrees(90F);
+
     @Override
     public void render(Level level, ChessBlockEntity tileEntityIn, BlockPos pos, BatchData batchData) {
 //        ghostModel.updateAnimations(tileEntityIn, partialTicks);
@@ -64,6 +82,12 @@ public class ChessBoardInstancer extends InstancedBlockEntityRenderer<ChessBlock
         if (board == null) return;
 
         BasePiece.PieceModelSet boardSet = BasePiece.PieceModelSet.get(tileEntityIn.getPieceSet() + 1);
+        CollectiveDrawData dataDataStandard = batchData.buildBatch(STANDARD_KEY);
+
+        int lightmapCoord = LightTexture.pack(
+                level.getBrightness(LightLayer.BLOCK, pos),
+                level.getBrightness(LightLayer.SKY, pos)
+        );
 
         WhiteChessPlayer whiteChessPlayer = (WhiteChessPlayer) board.getWhiteChessPlayer();
         BlackChessPlayer blackChessPlayer = (BlackChessPlayer) board.getBlackChessPlayer();
@@ -77,41 +101,44 @@ public class ChessBoardInstancer extends InstancedBlockEntityRenderer<ChessBlock
                 facing = blockstate.getValue(ChessBlock.FACING);
         }
 
-        PoseStack poseStack = new PoseStack();
-
         poseStack.translate(pos.getX(), pos.getY(), pos.getZ());
-
-        poseStack.pushPose(); // Master Rotation and Position
         poseStack.translate(0.5D, 0.9D, 0.5D);
         poseStack.scale(1.0F, -1.0F, -1.0F);
         switch (facing) {
             default:
             case NORTH:
-                poseStack.mulPose(Axis.YN.rotationDegrees(180.0F));
+                poseStack.mulPose(YN_180);
                 break;
             case SOUTH:
                 break;
             case WEST:
-                poseStack.mulPose(Axis.YN.rotationDegrees(270.0F));
+                poseStack.mulPose(YN_270);
                 break;
             case EAST:
-                poseStack.mulPose(Axis.YN.rotationDegrees(90.0F));
+                poseStack.mulPose(YN_90);
         }
 
         // Moves the Piece away from the center of the Board, onto the center of a tile
         poseStack.translate(CHESS_SCALE / 2D, 0.0D, CHESS_SCALE / 2D);
         // Moves the Piece to the first Tile on the Board
         poseStack.translate(CHESS_SCALE * 3, 0.0D, CHESS_SCALE * -4);
-
-        poseStack.pushPose(); // General Chess Piece Positioning
+        // Move the Pieces down to the board surface
+        poseStack.translate(0D, (1 / 16D) * 2.4D, 0D);
 
         /* get board colors */
-        float wR = NBTColorSaving.getRed(tileEntityIn.getWhitePiecesColor()) / 255F;
-        float wG = NBTColorSaving.getGreen(tileEntityIn.getWhitePiecesColor()) / 255F;
-        float wB = NBTColorSaving.getBlue(tileEntityIn.getWhitePiecesColor()) / 255F;
-        float bR = NBTColorSaving.getRed(tileEntityIn.getBlackPiecesColor()) / 255F;
-        float bG = NBTColorSaving.getGreen(tileEntityIn.getBlackPiecesColor()) / 255F;
-        float bB = NBTColorSaving.getBlue(tileEntityIn.getBlackPiecesColor()) / 255F;
+        int white = tileEntityIn.getWhitePiecesColor();
+        int black = tileEntityIn.getBlackPiecesColor();
+        float wR = NBTColorSaving.getRed(white) / 255F;
+        float wG = NBTColorSaving.getGreen(white) / 255F;
+        float wB = NBTColorSaving.getBlue(white) / 255F;
+        float bR = NBTColorSaving.getRed(black) / 255F;
+        float bG = NBTColorSaving.getGreen(black) / 255F;
+        float bB = NBTColorSaving.getBlue(black) / 255F;
+
+
+        // mem efficient push pose
+        cpyPose.set(poseStack.last().pose());
+        cpyNorm.set(poseStack.last().normal());
 
         int currentCoordinate = -1;
         /* loop */
@@ -125,20 +152,16 @@ public class ChessBoardInstancer extends InstancedBlockEntityRenderer<ChessBlock
 
                 // Render all the Pieces
                 if (tile.isTileOccupied()) {
-                    PieceColor pieceColor = tile.getPiece().getPieceColor();
-                    BasePiece.PieceType pieceType = tile.getPiece().getPieceType();
+                    BasePiece piece = tile.getPiece();
+                    PieceColor pieceColor = piece.getPieceColor();
+                    BasePiece.PieceType pieceType = piece.getPieceType();
 
-                    poseStack.pushPose(); // X and Z Position on Chess Board
                     // Offsets the Piece that is about to be rendered to the current Tile
                     poseStack.translate(CHESS_SCALE * -column, 0.0D, CHESS_SCALE * rank);
 
-                    poseStack.pushPose(); // Move Piece to Board surface and victory dance
-                    // Move the Pieces down to the board surface
-                    poseStack.translate(0D, (1 / 16D) * 2.4D, 0D);
-
                     // We rotate the Piece 180 Degrees if its White and supposed to face the other way
                     if (pieceColor.isWhite())
-                        poseStack.mulPose(Axis.YN.rotationDegrees(180F));
+                        poseStack.mulPose(YN_180);
 
                     // The dance the Pieces do when you check mate the enemy
 //                    if (isWhiteInCheckmate && pieceColor.isBlack()) {
@@ -212,10 +235,21 @@ public class ChessBoardInstancer extends InstancedBlockEntityRenderer<ChessBlock
 
                     // Renders The Chess Piece
                     if (isSelectedPiece) {
+                        // this happens so infrequently that there's no real purpose to precomputation
                         Color colorW = new Color(Math.round(255 * wR), Math.round(255 * wG), Math.round(255 * wB));
                         float brightnessW = (0.2126F * colorW.getRed()) + (0.7152F * colorW.getGreen()) + (0.0722F * colorW.getBlue());
                         Color colorB = new Color(Math.round(255 * bR), Math.round(255 * bG), Math.round(255 * bB));
                         float brightnessB = (0.2126F * colorB.getRed()) + (0.7152F * colorB.getGreen()) + (0.0722F * colorB.getBlue());
+
+                        Color colorAW = brightnessW > 128 ? colorW.darker(0.8F, 0.0F) : colorW.brighter(0.8F, 0.0F);
+                        Color colorAB = brightnessB > 128 ? colorB.darker(0.8F, 0.0F) : colorB.brighter(0.8F, 0.0F);
+                        // Depending on the render mode we call the corresponding renderer
+                        renderPiece(
+                                poseStack, boardSet, pieceType, pieceColor,
+                                colorAW.getRed() / 255F, colorAW.getGreen() / 255F, colorAW.getBlue() / 255F,
+                                colorAB.getRed() / 255F, colorAB.getGreen() / 255F, colorAB.getBlue() / 255F,
+                                dataDataStandard, lightmapCoord
+                        );
 
 //                        if (!ShaderCompatHandler.isShaderActive()) {
 //                            poseStack.pushPose();
@@ -227,34 +261,122 @@ public class ChessBoardInstancer extends InstancedBlockEntityRenderer<ChessBlock
 //                            RenderSystem.polygonMode(GL11.GL_FRONT_AND_BACK, GL11.GL_FILL);
 //                            poseStack.popPose();
 //                        }
-
-                        colorW = brightnessW > 128 ? colorW.darker(0.8F, 0.0F) : colorW.brighter(0.8F, 0.0F);
-                        colorB = brightnessB > 128 ? colorB.darker(0.8F, 0.0F) : colorB.brighter(0.8F, 0.0F);
-                        // Depending on the render mode we call the corresponding renderer
-                        renderPiece(
-                                poseStack, boardSet, pieceType, pieceColor, colorW.getRed() / 255F, colorW.getGreen() / 255F, colorW.getBlue() / 255F, colorB.getRed() / 255F, colorB.getGreen() / 255F, colorB.getBlue() / 255F,
-                                batchData
-                        );
                     } else {
                         // Depending on the render mode we call the corresponding renderer
                         renderPiece(
-                                poseStack, boardSet, pieceType, pieceColor, wR, wG, wB, bR, bG, bB,
-                                batchData
+                                poseStack, boardSet, pieceType, pieceColor,
+                                wR, wG, wB,
+                                bR, bG, bB,
+                                dataDataStandard, lightmapCoord
                         );
                     }
 
-                    poseStack.popPose(); // # Move Piece to Board surface and victory dance #
-                    poseStack.popPose(); // # X and Z Position on Chess Board #
+                    // mem efficient pop pose
+                    poseStack.last().pose().set(cpyPose);
+                    poseStack.last().normal().set(cpyNorm);
                 }
             }
         }
 
         // Renders the taken pieces in the piece storage bellow the chess plate
         // Moves the pieces down into the taken Pieces area
+        poseStack.translate(0D, -(1 / 16D) * 2.4D, 0D);
         poseStack.translate(CHESS_SCALE * -6.5D, 0.58725D, 0.0625D);
-//			renderTakenPieces(poseStack, bufferIn, tileEntityIn, combinedLightIn);
+        renderTakenPieces(
+                boardSet, poseStack, tileEntityIn, lightmapCoord, dataDataStandard,
+                wR, wG, wB, bR, bG, bB
+        );
 
-        poseStack.popPose(); // # General Chess Piece Positioning #
+        poseStack.setIdentity();
+    }
+
+    private final List<BasePiece> whiteTakenPieces = new ArrayList<>();
+    private final List<BasePiece> blackTakenPieces = new ArrayList<>();
+
+    private void renderTakenPieces(
+            BasePiece.PieceModelSet boardSet, PoseStack stack, ChessBlockEntity chessBlockEntity, int packedLight, CollectiveDrawData data,
+            float wR, float wG, float wB, float bR, float bG, float bB
+    ) {
+        ChessMoveLog moveLog = chessBlockEntity.getMoveLog();
+
+        for (final BaseMove move : moveLog.getMoves()) {
+            if (move.isAttack()) {
+                final BasePiece takenPiece = move.getAttackedPiece();
+
+                if (takenPiece.getPieceColor().isWhite()) {
+                    whiteTakenPieces.add(takenPiece);
+                } else if (takenPiece.getPieceColor().isBlack()) {
+                    blackTakenPieces.add(takenPiece);
+                } else {
+                    throw new RuntimeException("Attempted to get a Piece that had no PieceColor");
+                }
+            }
+        }
+
+        /* GiantLuigi4: hey just so you know, you probably will want to move this sorting out of render code */
+        // Sorts all White Taken Pieces depending on their Value
+        whiteTakenPieces.sort((piece1, piece2) -> Ints.compare(piece2.getPieceValue(), piece1.getPieceValue()));
+        // Sorts all Black Taken Pieces depending on their Value
+        blackTakenPieces.sort((piece1, piece2) -> Ints.compare(piece2.getPieceValue(), piece1.getPieceValue()));
+
+//        if (!whiteTakenPieces.isEmpty()) {
+//            for (int i = 0; i < 80_000; i++) {
+//                whiteTakenPieces.add(whiteTakenPieces.get(0));
+//            }
+//        }
+//        if (!blackTakenPieces.isEmpty()) {
+//            for (int i = 0; i < 80_000; i++) {
+//                blackTakenPieces.add(blackTakenPieces.get(0));
+//            }
+//        }
+
+        // mem efficient push pose
+        cpyPose.set(poseStack.last().pose());
+        cpyNorm.set(poseStack.last().normal());
+        // draw
+        renderTakenPiecesFigures(boardSet, stack, chessBlockEntity, whiteTakenPieces, true, packedLight, data, wR, wG, wB, bR, bG, bB);
+        renderTakenPiecesFigures(boardSet, stack, chessBlockEntity, blackTakenPieces, false, packedLight, data, wR, wG, wB, bR, bG, bB);
+
+        // We have to clear the lists, otherwise we end up with the endless army of endlessness
+        /* GiantLuigi4: lol */
+        whiteTakenPieces.clear();
+        blackTakenPieces.clear();
+    }
+
+    private void renderTakenPiecesFigures(
+            BasePiece.PieceModelSet boardSet, PoseStack stack, ChessBlockEntity chessBlockEntity, final List<BasePiece> pieceList, final boolean isWhite, int packedLight, CollectiveDrawData data,
+            float wR, float wG, float wB, float bR, float bG, float bB
+    ) {
+        int currentCoordinate = -1;
+        int currentRank = 0;
+
+        for (final BasePiece piece : pieceList) {
+            if (currentCoordinate < 7) {
+                currentCoordinate++;
+            } else {
+                currentCoordinate = 0;
+                currentRank += 1;
+            }
+
+            // Rotates the Pieces if they are white so they face the player
+            if (isWhite)
+                stack.mulPose(YN_180);
+
+            if (!isWhite)
+                stack.translate((CHESS_SCALE * 0.855D) * 7D, 0.0D, 0.0625D * 12);
+            stack.translate((CHESS_SCALE * 0.855D) * -currentCoordinate, 0.0D, CHESS_SCALE * -currentRank);
+            stack.scale(CHESS_PIECE_SCALE, -CHESS_PIECE_SCALE, -CHESS_PIECE_SCALE);
+
+            // Depending on the render mode we call the corresponding renderer
+            renderPiece(
+                    stack, boardSet, piece.getPieceType(), piece.getPieceColor(),
+                    wR, wG, wB, bR, bG, bB,
+                    data, packedLight
+            );
+            // mem efficient pop pose
+            poseStack.last().pose().set(cpyPose);
+            poseStack.last().normal().set(cpyNorm);
+        }
     }
 
     protected CollectiveVBO vbo() {
@@ -265,15 +387,13 @@ public class ChessBoardInstancer extends InstancedBlockEntityRenderer<ChessBlock
             PoseStack poseStack, BasePiece.PieceModelSet pieceSet,
             BasePiece.PieceType pieceType, PieceColor pieceColor,
             float wR, float wG, float wB, float bR, float bG, float bB,
-            BatchData batchData
+            CollectiveDrawData data, int lightmapCoord
     ) {
         CollectiveBufferBuilder.MeshRange range = DrawScreenHelper.getBuffer(
                 pieceSet, pieceType
         );
 
         if (range == null) return;
-
-        CollectiveDrawData data = batchData.buildBatch(STANDARD_KEY);
 
         data.writeMesh(range);
         data.activateData();
@@ -284,7 +404,7 @@ public class ChessBoardInstancer extends InstancedBlockEntityRenderer<ChessBlock
         } else {
             data.writeFloat(bR, bG, bB, 1);
         }
-        data.writeInt(LightTexture.pack(15, 15)); // TODO:
+        data.writeInt(lightmapCoord);
 
         data.finishInstance();
     }

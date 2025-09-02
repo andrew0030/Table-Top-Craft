@@ -73,8 +73,6 @@ public class ChessTileEntityRenderer implements BlockEntityRenderer<ChessBlockEn
 	
 	// Lists
 	private final List<Integer> destinationCoordinates = new ArrayList<>();
-	private final List<BasePiece> whiteTakenPieces = new ArrayList<>();
-	private final List<BasePiece> blackTakenPieces = new ArrayList<>();
 
 	int cachedIdx;
 
@@ -96,6 +94,14 @@ public class ChessTileEntityRenderer implements BlockEntityRenderer<ChessBlockEn
 	@Override
 	public void render(ChessBlockEntity tileEntityIn, float partialTicks, PoseStack poseStack, MultiBufferSource bufferIn, int combinedLightIn, int combinedOverlayIn)
 	{
+		boolean customPlate = tileEntityIn.getUseCustomPlate();
+		boolean showTileInfo = tileEntityIn.getShouldShowTileInfo();
+		boolean showCurrMoves = tileEntityIn.getShowAvailableMoves();
+		boolean showPrevMove = tileEntityIn.getShowPreviousMove();
+
+		if (!customPlate && !showTileInfo && !showCurrMoves && !showPrevMove)
+			return;
+
 		Board board;
 		Direction facing = Direction.NORTH;
 		if(tileEntityIn.hasLevel())
@@ -104,8 +110,6 @@ public class ChessTileEntityRenderer implements BlockEntityRenderer<ChessBlockEn
 			if(blockstate.getBlock() instanceof ChessBlock)
 				facing = blockstate.getValue(ChessBlock.FACING);
 		}
-		int lightU = LightTexture.block(combinedLightIn);
-		int lightV = LightTexture.sky(combinedLightIn);
 
 		poseStack.pushPose(); // Chess Plate and Info
 		poseStack.translate(0.5D, 0.9D, 0.5D);
@@ -126,230 +130,123 @@ public class ChessTileEntityRenderer implements BlockEntityRenderer<ChessBlockEn
 		}
 		
 		// Renders the Custom Plate if needed
-		if(tileEntityIn.getUseCustomPlate())
+		if(customPlate)
 			renderChessBoardPlate(poseStack, bufferIn, combinedLightIn, combinedOverlayIn, tileEntityIn);
 		// Renders the Numbers and Letters around the Chess Block
-		if(tileEntityIn.getShouldShowTileInfo())
+		if(showTileInfo)
 			renderTilesInfo(poseStack, bufferIn, combinedLightIn, combinedOverlayIn, tileEntityIn);
 		poseStack.popPose(); // # Chess Plate and Info #
-		
-		if(tileEntityIn.getBoard() != null)
+
+		if(!(tileEntityIn.getBoard() != null &&
+				showCurrMoves || showPrevMove)
+		) return;
+
+		board = tileEntityIn.getBoard();
+
+		poseStack.pushPose(); // Master Rotation and Position
+		poseStack.translate(0.5D, 0.9D, 0.5D);
+		poseStack.scale(1.0F, -1.0F, -1.0F);
+		switch (facing)
 		{
-			board = tileEntityIn.getBoard();
-			WhiteChessPlayer whiteChessPlayer = (WhiteChessPlayer) board.getWhiteChessPlayer();
-			BlackChessPlayer blackChessPlayer = (BlackChessPlayer) board.getBlackChessPlayer();
-			boolean isWhiteInCheckmate = tileEntityIn.isWhiteCheckMate();
-			boolean isBlackInCheckmate = tileEntityIn.isBlackCheckMate();
+			default:
+			case NORTH:
+				poseStack.mulPose(Axis.YN.rotationDegrees(180.0F));
+				break;
+			case SOUTH:
+				break;
+			case WEST:
+				poseStack.mulPose(Axis.YN.rotationDegrees(270.0F));
+				break;
+			case EAST:
+				poseStack.mulPose(Axis.YN.rotationDegrees(90.0F));
+		}
 
-			poseStack.pushPose(); // Master Rotation and Position
-			poseStack.translate(0.5D, 0.9D, 0.5D);
-			poseStack.scale(1.0F, -1.0F, -1.0F);
-			switch (facing)
+		// Moves the Piece away from the center of the Board, onto the center of a tile
+		poseStack.translate(CHESS_SCALE / 2D, 0.0D, CHESS_SCALE / 2D);
+		// Moves the Piece to the first Tile on the Board
+		poseStack.translate(CHESS_SCALE * 3, 0.0D, CHESS_SCALE * -4);
+
+		int currentCoordinate = -1;
+		// This loop renders all Tile Information related stuff (Available Moves and Previous Moves)
+		// We do this so all pieces are rendered in order to avoid changing the GL State so much
+		for (int rank = 0; rank < BoardUtils.NUM_TILES_PER_ROW; rank++)
+		{
+			for (int column = 0; column < BoardUtils.NUM_TILES_PER_ROW; column++)
 			{
-				default:
-				case NORTH:
-					poseStack.mulPose(Axis.YN.rotationDegrees(180.0F));
-					break;
-				case SOUTH:
-					break;
-				case WEST:
-					poseStack.mulPose(Axis.YN.rotationDegrees(270.0F));
-					break;
-				case EAST:
-					poseStack.mulPose(Axis.YN.rotationDegrees(90.0F));
-			}
+				currentCoordinate++;
+				poseStack.pushPose(); // Tile Info Positioning
+				// Offsets the Tile Info that is about to be rendered to the current Tile
+				poseStack.translate(CHESS_SCALE * -column, 0.0D, CHESS_SCALE * rank);
 
-			// Moves the Piece away from the center of the Board, onto the center of a tile
-			poseStack.translate(CHESS_SCALE / 2D, 0.0D, CHESS_SCALE / 2D);
-			// Moves the Piece to the first Tile on the Board
-			poseStack.translate(CHESS_SCALE * 3, 0.0D, CHESS_SCALE * -4);
-
-			int currentCoordinate = -1;
-			// We set the currentCoordinate back to -1 in order to reuse it instead of making a new variable
-			currentCoordinate = -1;
-			// This loop renders all Tile Information related stuff (Available Moves and Previous Moves)
-			// We do this so all pieces are rendered in order to avoid changing the GL State so much
-			for (int rank = 0; rank < BoardUtils.NUM_TILES_PER_ROW; rank++)
-			{
-				for (int column = 0; column < BoardUtils.NUM_TILES_PER_ROW; column++)
+				// Render the Previous Move Info Tiles
+				if (showPrevMove)
 				{
-					currentCoordinate++;
-					poseStack.pushPose(); // Tile Info Positioning
-					// Offsets the Tile Info that is about to be rendered to the current Tile
-					poseStack.translate(CHESS_SCALE * -column, 0.0D, CHESS_SCALE * rank);
-
-					// Render the Previous Move Info Tiles
-					if (tileEntityIn.getShowPreviousMove())
+					if (tileEntityIn.getMoveLog().getMoves().size() > 0)
 					{
-						if (tileEntityIn.getMoveLog().getMoves().size() > 0)
-						{
-							BaseMove lastMove = tileEntityIn.getMoveLog().getMoves().get(tileEntityIn.getMoveLog().getMoves().size() - 1);
-							for (BaseMove move : pieceLegalMoves(tileEntityIn))
-								destinationCoordinates.add(move.getDestinationCoordinate());
-							if (lastMove.getCurrentCoordinate() == currentCoordinate && (!destinationCoordinates.contains(lastMove.getCurrentCoordinate()) || !tileEntityIn.getShowAvailableMoves()))
-								renderHighlight(poseStack, bufferIn, combinedLightIn, combinedOverlayIn, HighlightType.LAST_MADE_MOVE, tileEntityIn);
-							if (lastMove.getDestinationCoordinate() == currentCoordinate && (!destinationCoordinates.contains(lastMove.getDestinationCoordinate()) || !tileEntityIn.getShowAvailableMoves()))
-								renderHighlight(poseStack, bufferIn, combinedLightIn, combinedOverlayIn, HighlightType.LAST_MADE_MOVE, tileEntityIn);
-							// We clear the list after rendering its contents
-							destinationCoordinates.clear();
-						}
+						BaseMove lastMove = tileEntityIn.getMoveLog().getMoves().get(tileEntityIn.getMoveLog().getMoves().size() - 1);
+						for (BaseMove move : pieceLegalMoves(tileEntityIn))
+							destinationCoordinates.add(move.getDestinationCoordinate());
+						if (lastMove.getCurrentCoordinate() == currentCoordinate && (!destinationCoordinates.contains(lastMove.getCurrentCoordinate()) || !tileEntityIn.getShowAvailableMoves()))
+							renderHighlight(poseStack, bufferIn, combinedLightIn, combinedOverlayIn, HighlightType.LAST_MADE_MOVE, tileEntityIn);
+						if (lastMove.getDestinationCoordinate() == currentCoordinate && (!destinationCoordinates.contains(lastMove.getDestinationCoordinate()) || !tileEntityIn.getShowAvailableMoves()))
+							renderHighlight(poseStack, bufferIn, combinedLightIn, combinedOverlayIn, HighlightType.LAST_MADE_MOVE, tileEntityIn);
+						// We clear the list after rendering its contents
+						destinationCoordinates.clear();
 					}
-					// Handles caching
-					if(tileEntityIn.getHumanMovedPiece() != null && tileEntityIn.getHumanMovedPiece().getPieceColor() == tileEntityIn.getBoard().getCurrentChessPlayer().getPieceColor())
+				}
+				// Handles caching
+				if(tileEntityIn.getHumanMovedPiece() != null && tileEntityIn.getHumanMovedPiece().getPieceColor() == tileEntityIn.getBoard().getCurrentChessPlayer().getPieceColor())
+				{
+					// If the move transitions havent been cached, we cache them
+					if(tileEntityIn.getCachedPiece() == null || !tileEntityIn.getCachedPiece().equals(tileEntityIn.getHumanMovedPiece()))
 					{
-						// If the move transitions havent been cached, we cache them
-						if(tileEntityIn.getCachedPiece() == null || !tileEntityIn.getCachedPiece().equals(tileEntityIn.getHumanMovedPiece()))
+						tileEntityIn.clearMoveTransitionsCache();
+						for (BaseMove move : pieceLegalMoves(tileEntityIn))
 						{
-							tileEntityIn.clearMoveTransitionsCache();
-							for (BaseMove move : pieceLegalMoves(tileEntityIn))
-							{
-								MoveTransition transition = board.getCurrentChessPlayer().makeMove(move);
-								// We add the move transition to the cache
-								tileEntityIn.addToMoveTransitionsCache(transition);
-							}
-							// After we are done caching the transitions we update the currently cached piece
-							tileEntityIn.setCachedPiece(tileEntityIn.getHumanMovedPiece());
+							MoveTransition transition = board.getCurrentChessPlayer().makeMove(move);
+							// We add the move transition to the cache
+							tileEntityIn.addToMoveTransitionsCache(transition);
 						}
+						// After we are done caching the transitions we update the currently cached piece
+						tileEntityIn.setCachedPiece(tileEntityIn.getHumanMovedPiece());
 					}
-					// Render all the Available Moves Tiles
-					if (tileEntityIn.getShowAvailableMoves())
+				}
+				// Render all the Available Moves Tiles
+				if (showCurrMoves)
+				{
+					for (int i = 0; i < pieceLegalMoves(tileEntityIn).size(); i++)
 					{
-						for (int i = 0; i < pieceLegalMoves(tileEntityIn).size(); i++)
+						if(!tileEntityIn.getMoveTransitionsCache().isEmpty())
 						{
-							if(!tileEntityIn.getMoveTransitionsCache().isEmpty())
-							{
-								MoveTransition transition = tileEntityIn.getMoveTransitionsCache().get(i);
-								BaseMove move = transition.getMove();
+							MoveTransition transition = tileEntityIn.getMoveTransitionsCache().get(i);
+							BaseMove move = transition.getMove();
 
-								if (move.getDestinationCoordinate() == currentCoordinate)
+							if (move.getDestinationCoordinate() == currentCoordinate)
+							{
+								// We check if the Move is a Castling Move and if it is we render the Castling Highlight
+								if (move.isCastlingMove())
 								{
-									// We check if the Move is a Castling Move and if it is we render the Castling Highlight
-									if (move.isCastlingMove())
+									renderHighlight(poseStack, bufferIn, combinedLightIn, combinedOverlayIn, HighlightType.CASTLE_MOVE, tileEntityIn);
+								}
+								else
+								{
+									// If it wasn't a Castling Move we check the other cases we want to cover
+									switch (transition.getMoveStatus())
 									{
-										renderHighlight(poseStack, bufferIn, combinedLightIn, combinedOverlayIn, HighlightType.CASTLE_MOVE, tileEntityIn);
-									}
-									else
-									{
-										// If it wasn't a Castling Move we check the other cases we want to cover
-										switch (transition.getMoveStatus())
-										{
-											case DONE -> renderHighlight(poseStack, bufferIn, combinedLightIn, combinedOverlayIn, move.isAttack() ? HighlightType.ATTACK_MOVE : HighlightType.LEGAL_MOVE, tileEntityIn);
-											case LEAVES_PLAYER_IN_CHECK -> renderHighlight(poseStack, bufferIn, combinedLightIn, combinedOverlayIn, HighlightType.LEAVES_PLAYER_IN_CHECK, tileEntityIn);
-										}
+										case DONE -> renderHighlight(poseStack, bufferIn, combinedLightIn, combinedOverlayIn, move.isAttack() ? HighlightType.ATTACK_MOVE : HighlightType.LEGAL_MOVE, tileEntityIn);
+										case LEAVES_PLAYER_IN_CHECK -> renderHighlight(poseStack, bufferIn, combinedLightIn, combinedOverlayIn, HighlightType.LEAVES_PLAYER_IN_CHECK, tileEntityIn);
 									}
 								}
 							}
 						}
 					}
-					poseStack.popPose(); // # Tile Info Positioning #
 				}
-			}
-			poseStack.popPose(); // # Master Rotation and Position #
-		}
-	}
-	
-	private void renderTakenPieces(PoseStack stack, MultiBufferSource buffer, ChessBlockEntity chessBlockEntity, int packedLight)
-	{
-		ChessMoveLog moveLog = chessBlockEntity.getMoveLog();
-
-		for(final BaseMove move : moveLog.getMoves())
-		{
-			if(move.isAttack())
-			{
-				final BasePiece takenPiece = move.getAttackedPiece();
-				
-				if(takenPiece.getPieceColor().isWhite())
-				{
-					whiteTakenPieces.add(takenPiece);
-				}
-				else if(takenPiece.getPieceColor().isBlack())
-				{
-					blackTakenPieces.add(takenPiece);
-				}
-				else
-				{
-					throw new RuntimeException("Attempted to get a Piece that had no PieceColor");
-				}
+				poseStack.popPose(); // # Tile Info Positioning #
 			}
 		}
-		
-		/* GiantLuigi4: hey just so you know, you probably will want to move this sorting out of render code */
-		// Sorts all White Taken Pieces depending on their Value
-		whiteTakenPieces.sort((piece1, piece2) -> Ints.compare(piece2.getPieceValue(), piece1.getPieceValue()));
-		// Sorts all Black Taken Pieces depending on their Value
-		blackTakenPieces.sort((piece1, piece2) -> Ints.compare(piece2.getPieceValue(), piece1.getPieceValue()));
-		
-		// draw
-		renderTakenPiecesFigures(stack, buffer, chessBlockEntity, whiteTakenPieces, true, packedLight);
-		renderTakenPiecesFigures(stack, buffer, chessBlockEntity, blackTakenPieces, false, packedLight);
-
-		// We have to clear the lists, otherwise we end up with the endless army of endlessness
-		/* GiantLuigi4: lol */
-		whiteTakenPieces.clear();
-		blackTakenPieces.clear();
+		poseStack.popPose(); // # Master Rotation and Position #
 	}
-	
-	private void renderTakenPiecesFigures(PoseStack stack, MultiBufferSource buffer, ChessBlockEntity chessBlockEntity, final List<BasePiece> pieceList, final boolean isWhite, int packedLight)
-	{
-		int currentCoordinate = -1;
-		int currentRank = 0;
-		/* GiantLuigi4: I decided to move this color lookup out of the loop */
-		/* reason: reduce redundant lookups, very minimal impact on performance, but it's smth */
-		float wR = NBTColorSaving.getRed(chessBlockEntity.getWhitePiecesColor()) / 255F;
-		float wG = NBTColorSaving.getGreen(chessBlockEntity.getWhitePiecesColor()) / 255F;
-		float wB = NBTColorSaving.getBlue(chessBlockEntity.getWhitePiecesColor()) / 255F;
-		float bR = NBTColorSaving.getRed(chessBlockEntity.getBlackPiecesColor()) / 255F;
-		float bG = NBTColorSaving.getGreen(chessBlockEntity.getBlackPiecesColor()) / 255F;
-		float bB = NBTColorSaving.getBlue(chessBlockEntity.getBlackPiecesColor()) / 255F;
 
-		VertexConsumer consumer = buffer.getBuffer(RenderType.entitySolid(SHADER_COMPAT_WHITE));
-		BasePiece.PieceModelSet set = BasePiece.PieceModelSet.get(chessBlockEntity.getPieceSet() + 1);
-
-		for(final BasePiece piece : pieceList)
-		{
-			if(currentCoordinate < 7)
-			{
-				currentCoordinate++;
-			}
-			else
-			{
-				currentCoordinate = 0;
-				currentRank += 1;
-			}
-			
-			stack.pushPose();
-			// Rotates the Pieces if they are white so they face the player
-			if(isWhite)
-				stack.mulPose(Axis.YN.rotationDegrees(180F));
-			
-			if(!isWhite)
-				stack.translate((CHESS_SCALE * 0.855D) * 7D, 0.0D, 0.0625D * 12);
-			stack.translate((CHESS_SCALE * 0.855D) * -currentCoordinate, 0.0D, CHESS_SCALE * -currentRank);
-			// Depending on the render mode we call the corresponding renderer
-			renderPiece(stack, chessBlockEntity.getPieceSet(), piece.getPieceType(), piece.getPieceColor(), wR, wG, wB, bR, bG, bB);
-			stack.popPose();
-		}
-	}
-	
-	private void renderPiece(PoseStack poseStack, int pieceModelSet, PieceType pieceType, PieceColor pieceColor, float wR, float wG, float wB, float bR, float bG, float bB)
-	{
-		// The RenderType for the chess pieces (the texture is just a dummy texture)
-		ShaderInstance shaderinstance = RenderSystem.getShader();
-		BufferHelpers.updateColor(shaderinstance, new float[]{pieceColor.isWhite() ? wR : bR, pieceColor.isWhite() ? wG : bG, pieceColor.isWhite() ? wB : bB, 1f});
-		poseStack.pushPose();
-		if (shaderinstance.MODEL_VIEW_MATRIX != null) shaderinstance.MODEL_VIEW_MATRIX.set(poseStack.last().pose());
-
-		BasePiece.PieceModelSet set = BasePiece.PieceModelSet.get(pieceModelSet + 1);
-		CollectiveBufferBuilder.MeshRange pawnBuffer = DrawScreenHelper.getBuffer(set, pieceType);
-//		BufferHelpers.draw(pawnBuffer);
-		if (true)
-			throw new RuntimeException("NYI");
-
-		poseStack.popPose();
-		// We reset the shader color to avoid funny business during the next render call
-		RenderSystem.setShaderColor(1F, 1F, 1F, 1F);
-	}
-	
 	/**
 	 * @param chessBlockEntity - The ChessBlockEntity
 	 * @return - A Collection of legal Moves this Piece can perform

@@ -1,11 +1,11 @@
 package andrews.table_top_craft.game_logic.chess.pieces;
 
-import java.util.Collection;
-import java.util.Locale;
-
 import andrews.table_top_craft.game_logic.chess.PieceColor;
 import andrews.table_top_craft.game_logic.chess.board.Board;
 import andrews.table_top_craft.game_logic.chess.board.moves.BaseMove;
+
+import java.util.Collection;
+import java.util.Locale;
 
 public abstract class BasePiece
 {
@@ -203,8 +203,8 @@ public abstract class BasePiece
 			}
 		};
 		
-		private int pieceValue;
-		private String pieceName;
+		private final int pieceValue;
+		private final String pieceName;
 		
 		PieceType(final int pieceValue, final String pieceName)
 		{
@@ -236,12 +236,12 @@ public abstract class BasePiece
 		}
 		
 		/**
-		 * @return - Whether or not this PieceType is a KingPiece
+		 * @return - Whether this PieceType is a KingPiece
 		 */
 		public abstract boolean isKing();
 
 		/**
-		 * @return - Whether or not this PieceType is a RookPiece
+		 * @return - Whether this PieceType is a RookPiece
 		 */
 		public abstract boolean isRook();
 	}
@@ -252,14 +252,14 @@ public abstract class BasePiece
 		CLASSIC("models/pieces/classic/classic_%type%.obj"),
 		PANDORAS_CREATURES("models/pieces/pandoras_creatures/pc_%type%.obj");
 		
-		String PIECE_PATH;
+		private final String piecePath;
 		
-		PieceModelSet(String PIECE_PATH) {
-			this.PIECE_PATH = PIECE_PATH;
+		PieceModelSet(String piecePath) {
+			this.piecePath = piecePath;
 		}
 		
 		public String pathFor(PieceType type) {
-			return PIECE_PATH.replace("%type%", type.name().toLowerCase());
+			return this.piecePath.replace("%type%", type.name().toLowerCase(Locale.ROOT));
 		}
 		
 		public static PieceModelSet get(int pieceSet) {

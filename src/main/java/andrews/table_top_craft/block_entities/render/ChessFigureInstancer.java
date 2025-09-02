@@ -123,14 +123,8 @@ public class ChessFigureInstancer extends InstancedBlockEntityRenderer<ChessPiec
     @Override
     public void flush(Level level, BatchData batchData) {
         RenderSystem.setShaderFogShape(FogShape.SPHERE);
-        RenderSystem.setShaderTexture(0, new ResourceLocation(
-//                "minecraft:dynamic/light_map_1"
-                "minecraft:textures/block/white_concrete.png"
-        ));
         RenderType type = TTCRenderTypes.getChessPieceSolid(
-                new ResourceLocation(
-                        "minecraft:textures/block/white_concrete.png"
-                )
+                ChessPieceFigureTileEntityRenderer.SHADER_COMPAT_WHITE
         );
         type.setupRenderState();
         RenderSystem.getShader().apply();

@@ -19,6 +19,7 @@ import andrews.table_top_craft.block_entities.model.chess.ChessTilesInfoModel;
 import andrews.table_top_craft.block_entities.model.chess.GhostModel;
 import andrews.table_top_craft.util.*;
 import andrews.table_top_craft.util.shader_compat.ShaderCompatHandler;
+import com.github.andrew0030.pandora_core.client.render.collective.CollectiveBufferBuilder;
 import com.google.common.collect.ImmutableList;
 import com.google.common.primitives.Ints;
 import com.mojang.blaze3d.platform.NativeImage;
@@ -318,20 +319,12 @@ public class ChessTileEntityRenderer implements BlockEntityRenderer<ChessBlockEn
 							colorW = brightnessW > 128 ? colorW.darker(0.8F, 0.0F) : colorW.brighter(0.8F, 0.0F);
 							colorB = brightnessB > 128 ? colorB.darker(0.8F, 0.0F) : colorB.brighter(0.8F, 0.0F);
 							// Depending on the render mode we call the corresponding renderer
-							if (ShaderCompatHandler.isShaderActive()) {
-								DrawScreenHelper.CHESS_PIECE_MODEL.render(poseStack, consumer, pieceType, set, pieceColor.isWhite() ? colorW.getRed() / 255F : colorB.getRed() / 255F, pieceColor.isWhite() ? colorW.getGreen() / 255F : colorB.getGreen() / 255F, pieceColor.isWhite() ? colorW.getBlue() / 255F : colorB.getBlue() / 255F, combinedLightIn);
-							} else {
-								renderPiece(poseStack, tileEntityIn.getPieceSet(), pieceType, pieceColor, colorW.getRed() / 255F, colorW.getGreen() / 255F, colorW.getBlue() / 255F, colorB.getRed() / 255F, colorB.getGreen() / 255F, colorB.getBlue() / 255F);
-							}
+							renderPiece(poseStack, tileEntityIn.getPieceSet(), pieceType, pieceColor, colorW.getRed() / 255F, colorW.getGreen() / 255F, colorW.getBlue() / 255F, colorB.getRed() / 255F, colorB.getGreen() / 255F, colorB.getBlue() / 255F);
 						}
 						else
 						{
 							// Depending on the render mode we call the corresponding renderer
-							if (ShaderCompatHandler.isShaderActive()) {
-								DrawScreenHelper.CHESS_PIECE_MODEL.render(poseStack, consumer, pieceType, set, pieceColor.isWhite() ? wR : bR, pieceColor.isWhite() ? wG : bG, pieceColor.isWhite() ? wB : bB, combinedLightIn);
-							} else {
-								renderPiece(poseStack, tileEntityIn.getPieceSet(), pieceType, pieceColor, wR, wG, wB, bR, bG, bB);
-							}
+							renderPiece(poseStack, tileEntityIn.getPieceSet(), pieceType, pieceColor, wR, wG, wB, bR, bG, bB);
 						}
 
 						poseStack.popPose(); // # Move Piece to Board surface and victory dance #
@@ -513,11 +506,7 @@ public class ChessTileEntityRenderer implements BlockEntityRenderer<ChessBlockEn
 				stack.translate((CHESS_SCALE * 0.855D) * 7D, 0.0D, 0.0625D * 12);
 			stack.translate((CHESS_SCALE * 0.855D) * -currentCoordinate, 0.0D, CHESS_SCALE * -currentRank);
 			// Depending on the render mode we call the corresponding renderer
-			if (ShaderCompatHandler.isShaderActive()) {
-				DrawScreenHelper.CHESS_PIECE_MODEL.render(stack, consumer, piece.getPieceType(), set, isWhite ? wR : bR, isWhite ? wG : bG, isWhite ? wB : bB, packedLight);
-			} else {
-				renderPiece(stack, chessBlockEntity.getPieceSet(), piece.getPieceType(), piece.getPieceColor(), wR, wG, wB, bR, bG, bB);
-			}
+			renderPiece(stack, chessBlockEntity.getPieceSet(), piece.getPieceType(), piece.getPieceColor(), wR, wG, wB, bR, bG, bB);
 			stack.popPose();
 		}
 	}
@@ -531,8 +520,10 @@ public class ChessTileEntityRenderer implements BlockEntityRenderer<ChessBlockEn
 		if (shaderinstance.MODEL_VIEW_MATRIX != null) shaderinstance.MODEL_VIEW_MATRIX.set(poseStack.last().pose());
 
 		BasePiece.PieceModelSet set = BasePiece.PieceModelSet.get(pieceModelSet + 1);
-		VertexBuffer pawnBuffer = DrawScreenHelper.getBuffer(set, pieceType);
-		BufferHelpers.draw(pawnBuffer);
+		CollectiveBufferBuilder.MeshRange pawnBuffer = DrawScreenHelper.getBuffer(set, pieceType);
+//		BufferHelpers.draw(pawnBuffer);
+		if (true)
+			throw new RuntimeException("NYI");
 
 		poseStack.popPose();
 		// We reset the shader color to avoid funny business during the next render call

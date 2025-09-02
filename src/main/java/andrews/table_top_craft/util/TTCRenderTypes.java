@@ -1,6 +1,7 @@
 package andrews.table_top_craft.util;
 
 import andrews.table_top_craft.TableTopCraft;
+import com.github.andrew0030.pandora_core.client.utils.shader.PaCoShaderStateShard;
 import com.mojang.blaze3d.vertex.DefaultVertexFormat;
 import com.mojang.blaze3d.vertex.VertexFormat;
 import net.minecraft.client.renderer.RenderStateShard;
@@ -31,7 +32,8 @@ public class TTCRenderTypes extends RenderStateShard
 	public static RenderType getChessPieceSolid(ResourceLocation texture)
 	{
 		RenderType.CompositeState state = RenderType.CompositeState.builder()
-				.setShaderState(RENDERTYPE_SOLID_BLOCK_ENTITY_SHADER)
+//				.setShaderState(RENDERTYPE_SOLID_BLOCK_ENTITY_SHADER)
+				.setShaderState(TTCShaders.CHESS_INSTANCED_SHARD)
 				.setTextureState(new RenderStateShard.TextureStateShard(texture, false, false))
 				.setTransparencyState(NO_TRANSPARENCY)
 				.setLightmapState(LIGHTMAP)

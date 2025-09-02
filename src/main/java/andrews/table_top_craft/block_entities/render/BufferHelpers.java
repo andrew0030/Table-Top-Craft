@@ -1,5 +1,10 @@
 package andrews.table_top_craft.block_entities.render;
 
+import andrews.table_top_craft.util.DrawScreenHelper;
+import com.github.andrew0030.pandora_core.client.render.collective.CollectiveBufferBuilder;
+import com.github.andrew0030.pandora_core.client.render.collective.CollectiveDrawData;
+import com.github.andrew0030.pandora_core.client.render.instancing.InstanceData;
+import com.github.andrew0030.pandora_core.client.shader.templating.wrapper.ShaderWrapper;
 import com.mojang.blaze3d.platform.Window;
 import com.mojang.blaze3d.shaders.Uniform;
 import com.mojang.blaze3d.systems.RenderSystem;
@@ -11,7 +16,7 @@ import net.minecraft.client.renderer.ShaderInstance;
 public class BufferHelpers {
 	public static boolean useFallbackSystem = true;
 	public static boolean shouldRefresh = true;
-	
+
 	public static void setupRender(ShaderInstance pShaderInstance, int lightU, int ilghtV /* GiantLuigi4 (Jason): no I will not correct this typo */) {
 		pShaderInstance.apply();
 		if (shouldRefresh || useFallbackSystem) {
@@ -19,12 +24,12 @@ public class BufferHelpers {
 			BufferUploader.reset();
 
 			Minecraft.getInstance().gameRenderer.lightTexture().turnOnLightLayer();
-			
+
 			for (int i = 0; i < 12; ++i) {
 				int j = RenderSystem.getShaderTexture(i);
 				pShaderInstance.setSampler("Sampler" + i, j);
 			}
-			
+
 			if (pShaderInstance.COLOR_MODULATOR != null)
 				pShaderInstance.COLOR_MODULATOR.set(RenderSystem.getShaderColor());
 			if (pShaderInstance.TEXTURE_MATRIX != null)
@@ -58,7 +63,7 @@ public class BufferHelpers {
 			pShaderInstance.FOG_SHAPE.set(RenderSystem.getShaderFogShape().getIndex());
 			pShaderInstance.FOG_SHAPE.upload();
 		}
-		
+
 		Uniform uniform = pShaderInstance.getUniform("LightUV");
 		if (uniform != null) {
 			uniform.set((float) lightU, ilghtV);
@@ -75,14 +80,16 @@ public class BufferHelpers {
 	public static void updateColor(ShaderInstance pShaderInstance, float[] floats) {
 		if (pShaderInstance.COLOR_MODULATOR != null) pShaderInstance.COLOR_MODULATOR.set(floats);
 	}
-	
-	public static void draw(VertexBuffer buffer) {
+
+	public static void draw(CollectiveDrawData data, ShaderWrapper wrapper) {
 		ShaderInstance instance = RenderSystem.getShader();
-		if (buffer != null) {
+		if (data != null) {
 			if (instance.MODEL_VIEW_MATRIX != null) instance.MODEL_VIEW_MATRIX.upload();
 			if (instance.COLOR_MODULATOR != null) instance.COLOR_MODULATOR.upload();
-			buffer.bind();
-			buffer.draw();
+//			buffer.bind();
+//			buffer.draw();
+
+			throw new RuntimeException("Unsupported");
 		}
 	}
 

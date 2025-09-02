@@ -1,5 +1,6 @@
 package andrews.table_top_craft;
 
+import andrews.table_top_craft.block_entities.render.ChessFigureInstancer;
 import andrews.table_top_craft.network.TTCNetwork;
 import andrews.table_top_craft.registry.*;
 import andrews.table_top_craft.block_entities.model.chess.ChessBoardPlateModel;
@@ -11,8 +12,13 @@ import andrews.table_top_craft.block_entities.model.connect_four.ConnectFourMesh
 import andrews.table_top_craft.block_entities.model.connect_four.ConnectFourPieceModel;
 import andrews.table_top_craft.block_entities.model.piece_figure.ChessPieceFigureStandModel;
 import andrews.table_top_craft.block_entities.model.tic_tac_toe.TicTacToeModel;
+import andrews.table_top_craft.util.DrawScreenHelper;
 import andrews.table_top_craft.util.Reference;
+import andrews.table_top_craft.util.instancing.InstanceFormats;
 import andrews.table_top_craft.util.shader_compat.ShaderCompatHandler;
+import com.github.andrew0030.pandora_core.client.render.renderers.registry.InstancedBERendererRegistry;
+import com.github.andrew0030.pandora_core.registry.test.PaCoBlockEntities;
+import com.github.andrew0030.pandora_core.test.InstancingTestBlockEntityRenderer;
 import com.mojang.blaze3d.vertex.DefaultVertexFormat;
 import net.minecraft.client.renderer.ShaderInstance;
 import net.minecraft.resources.ResourceLocation;
@@ -50,7 +56,7 @@ public class TableTopCraft
 	public TableTopCraft()
 	{
 		final IEventBus modEventBus = FMLJavaModLoadingContext.get().getModEventBus();
-		
+
 		TTCItems.ITEMS.register(modEventBus);
 		TTCBlocks.BLOCKS.register(modEventBus);
 		TTCBlockEntities.BLOCK_ENTITY_TYPES.register(modEventBus);
@@ -60,6 +66,7 @@ public class TableTopCraft
 		
 		DistExecutor.runWhenOn(Dist.CLIENT, () -> () ->
 		{
+			DrawScreenHelper.setup();
 			modEventBus.addListener(EventPriority.LOWEST, this::setupClient);
 			modEventBus.addListener(this::setupLayers);
 			modEventBus.addListener(this::registerShaders);
@@ -85,6 +92,11 @@ public class TableTopCraft
 	void setupClient(final FMLClientSetupEvent event)
 	{
 		event.enqueueWork(TTCBlockEntities::registerTileRenders);
+
+		InstancedBERendererRegistry.register(TTCBlockEntities.CHESS_PIECE_FIGURE.get(), new ChessFigureInstancer(
+				InstanceFormats.TRANSFORM_COLOR_LIGHTMAP,
+				DrawScreenHelper.CHESS_PIECE_MODEL.getCollectiveVBO()
+		));
 	}
 
 	void setupLayers(final EntityRenderersEvent.RegisterLayerDefinitions event)

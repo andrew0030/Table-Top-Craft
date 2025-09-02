@@ -2,59 +2,75 @@ package andrews.table_top_craft.util;
 
 import andrews.table_top_craft.game_logic.chess.pieces.BasePiece.PieceModelSet;
 import andrews.table_top_craft.game_logic.chess.pieces.BasePiece.PieceType;
-import andrews.table_top_craft.util.obj.models.ChessObjModel;
-import com.mojang.blaze3d.vertex.BufferBuilder;
-import com.mojang.blaze3d.vertex.PoseStack;
-import com.mojang.blaze3d.vertex.VertexBuffer;
-import com.mojang.blaze3d.vertex.VertexFormat;
+import andrews.table_top_craft.util.instancing.ChessPieceModels;
+import com.github.andrew0030.pandora_core.client.render.collective.CollectiveBufferBuilder;
+import com.github.andrew0030.pandora_core.client.render.obj.ObjLoader;
+import com.github.andrew0030.pandora_core.client.render.obj.ObjModel;
+import com.github.andrew0030.pandora_core.platform.Services;
+import com.github.andrew0030.pandora_core.utils.LogicalSide;
 import com.mojang.datafixers.util.Pair;
-import net.minecraft.client.renderer.RenderType;
 import net.minecraft.resources.ResourceLocation;
 
-import java.util.HashMap;
+import java.util.List;
 
-public class DrawScreenHelper
-{
-	// The texture path is just a dummy texture used as a placeholder
-	public static final VertexFormat chessVertexFormat = TTCRenderTypes.getChessPieceSolid(new ResourceLocation(Reference.MODID, "textures/tile/chess/pieces.png")).format();
-	// Initializes the models
-	public static final ChessObjModel CHESS_PIECE_MODEL = new ChessObjModel();
-	// The model buffers, used to render the VOBs
-	public static final HashMap<Pair<PieceType, PieceModelSet>, VertexBuffer> BUFFERS = new HashMap<>();
-	
-	public static void setup()
-	{
-		BufferBuilder chessBuilder = new BufferBuilder(RenderType.TRANSIENT_BUFFER_SIZE);
-		
-		for (PieceType type : PieceType.values())
-		{
-			for (PieceModelSet set : PieceModelSet.values())
-			{
-				BUFFERS.put(Pair.of(type, set), generate(chessBuilder, chessVertexFormat, type, set));
-			}
-		}
-	}
-	
-	private static VertexBuffer generate(BufferBuilder builder, VertexFormat format, PieceType type, PieceModelSet set)
-	{
-		builder.begin(VertexFormat.Mode.TRIANGLES, format);
-		CHESS_PIECE_MODEL.render(new PoseStack(), builder, type, set);
-		VertexBuffer buffer = BUFFERS.getOrDefault(Pair.of(type, set), null);
-		if (buffer == null) buffer = new VertexBuffer(VertexBuffer.Usage.STATIC);
-		upload(buffer, builder);
-		return buffer;
-	}
-	
-	private static void upload(VertexBuffer buffer,BufferBuilder builder)
-	{
-		buffer.bind();
-		buffer.upload(builder.end());
-		VertexBuffer.unbind();
-		builder.clear(); // frees up unneeded memory
-	}
-	
-	public static VertexBuffer getBuffer(PieceModelSet set, PieceType piece)
-	{
-		return BUFFERS.get(Pair.of(piece, set));
-	}
+public class DrawScreenHelper {
+    public static final ChessPieceModels CHESS_PIECE_MODEL = new ChessPieceModels();
+
+    private static final ObjLoader loader = new ObjLoader(
+            List.of("models/pieces"),
+            (pth) -> pth.getNamespace().equals("table_top_craft") && pth.getPath().endsWith(".obj"),
+            (loader) -> CHESS_PIECE_MODEL.uploadVBO(
+                    collect(
+                            pieceSet(loader, PieceModelSet.STANDARD),
+                            pieceSet(loader, PieceModelSet.CLASSIC),
+                            pieceSet(loader, PieceModelSet.PANDORAS_CREATURES)
+                    )
+            )
+    );
+
+    public static void setup() {
+        Services.RELOAD_LISTENER.registerResourceLoader((side) -> {
+            if (side == LogicalSide.CLIENT)
+                return List.of(loader);
+            return null;
+        });
+    }
+
+    protected static Triple<PieceModelSet, PieceType, ObjModel>[] collect(
+            Triple<PieceModelSet, PieceType, ObjModel>[]... models
+    ) {
+        int total = 0;
+        for (Triple<PieceModelSet, PieceType, ObjModel>[] model : models) {
+            total += model.length;
+        }
+
+        Triple<PieceModelSet, PieceType, ObjModel>[] full = new Triple[total];
+        int cursor = 0;
+        for (Triple<PieceModelSet, PieceType, ObjModel>[] model : models) {
+            System.arraycopy(model, 0, full, cursor, model.length);
+            cursor += model.length;
+        }
+
+        return full;
+    }
+
+    protected static Triple<PieceModelSet, PieceType, ObjModel>[] pieceSet(ObjLoader loader, PieceModelSet set) {
+        PieceType[] types = PieceType.values();
+        Triple<PieceModelSet, PieceType, ObjModel>[] models = new Triple[types.length];
+        for (int i = 0; i < types.length; i++) {
+            models[i] = Triple.of(
+                    set, types[i],
+                    loader.models.get(new ResourceLocation(Reference.MODID, set.pathFor(types[i])))
+            );
+        }
+        return models;
+    }
+
+    public static CollectiveBufferBuilder.MeshRange getBuffer(PieceModelSet set, PieceType piece) {
+        return CHESS_PIECE_MODEL.get(Pair.of(piece, set));
+    }
+
+    public ChessPieceModels getChessModels() {
+        return CHESS_PIECE_MODEL;
+    }
 }

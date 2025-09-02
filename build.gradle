@@ -51,6 +51,7 @@ mixin {
 repositories {
     mavenCentral()
     maven { url "https://www.cursemaven.com" }
+    flatDir dirs: ["$projectDir/libs"]
 }
 
 configurations {
@@ -62,6 +63,8 @@ dependencies {
     annotationProcessor 'org.spongepowered:mixin:0.8.5:processor'
     minecraftLibrary 'net.objecthunter:exp4j:0.4.8'
     shade 'net.objecthunter:exp4j:0.4.8'
+
+    implementation fg.deobf("org.andrew:paco:1.0")
 
 //  compileOnly fg.deobf("curse.maven:oculus-581495:4767500") // pre 1.7.0 Iris
 //  compileOnly fg.deobf("curse.maven:oculus-581495:5299671") // 1.7.0 Iris

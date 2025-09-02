@@ -19,14 +19,4 @@ public class GameRendererMixin
 		BufferHelpers.shouldRefresh = true;
 		BufferHelpers.useFallbackSystem = false;
 	}
-
-	@Mixin(targets = "net.minecraft.client.renderer.GameRenderer$1")
-	public static class HackToGetReloadManager
-	{
-		@Inject(at = @At("TAIL"), method = "apply(Lnet/minecraft/client/renderer/GameRenderer$ResourceCache;Lnet/minecraft/server/packs/resources/ResourceManager;Lnet/minecraft/util/profiling/ProfilerFiller;)V")
-		public void injectApply(GameRenderer.ResourceCache resourceCache, ResourceManager resourceManager, ProfilerFiller profilerFiller, CallbackInfo ci)
-		{
-			DrawScreenHelper.setup();
-		}
-	}
 }

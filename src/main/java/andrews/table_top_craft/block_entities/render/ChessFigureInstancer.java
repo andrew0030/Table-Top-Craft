@@ -75,7 +75,7 @@ public class ChessFigureInstancer extends InstancedBlockEntityRenderer<ChessPiec
 
         int rotation = 0;
         if (blockEntity.hasLevel()) {
-            BlockState blockstate = blockEntity.getLevel().getBlockState(blockEntity.getBlockPos());
+            BlockState blockstate = blockEntity.getBlockState();
             if (blockstate.getBlock() instanceof ChessPieceFigureBlock) {
                 rotation = blockstate.getValue(ChessPieceFigureBlock.ROTATION);
             }
@@ -112,7 +112,6 @@ public class ChessFigureInstancer extends InstancedBlockEntityRenderer<ChessPiec
         float red = NBTColorSaving.getRed(blockEntity.getPieceColor()) / 255F;
         float green = NBTColorSaving.getGreen(blockEntity.getPieceColor()) / 255F;
         float blue = NBTColorSaving.getBlue(blockEntity.getPieceColor()) / 255F;
-//        float red = 1, green = 1, blue = 1;
         data.writeFloat(red, green, blue, 0);
 
         data.writeInt($$0);

@@ -248,7 +248,7 @@ public abstract class BasePiece
 
 	public enum PieceModelSet
 	{
-		STANDARD("models/pieces/%type%.obj"),
+		STANDARD("models/pieces/standard/%type%.obj"),
 		CLASSIC("models/pieces/classic/classic_%type%.obj"),
 		PANDORAS_CREATURES("models/pieces/pandoras_creatures/pc_%type%.obj");
 		

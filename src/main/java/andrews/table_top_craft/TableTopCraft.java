@@ -1,5 +1,6 @@
 package andrews.table_top_craft;
 
+import andrews.table_top_craft.block_entities.render.ChessBoardInstancer;
 import andrews.table_top_craft.block_entities.render.ChessFigureInstancer;
 import andrews.table_top_craft.network.TTCNetwork;
 import andrews.table_top_craft.registry.*;
@@ -94,6 +95,10 @@ public class TableTopCraft
 		event.enqueueWork(TTCBlockEntities::registerTileRenders);
 
 		InstancedBERendererRegistry.register(TTCBlockEntities.CHESS_PIECE_FIGURE.get(), new ChessFigureInstancer(
+				InstanceFormats.TRANSFORM_COLOR_LIGHTMAP,
+				DrawScreenHelper.CHESS_PIECE_MODEL.getCollectiveVBO()
+		));
+		InstancedBERendererRegistry.register(TTCBlockEntities.CHESS.get(), new ChessBoardInstancer(
 				InstanceFormats.TRANSFORM_COLOR_LIGHTMAP,
 				DrawScreenHelper.CHESS_PIECE_MODEL.getCollectiveVBO()
 		));

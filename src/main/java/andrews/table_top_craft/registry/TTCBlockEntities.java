@@ -29,7 +29,7 @@ public class TTCBlockEntities
     public static void registerTileRenders()
     {
         BlockEntityRenderers.register(CHESS.get(), ChessTileEntityRenderer::new);
-        BlockEntityRenderers.register(CHESS_PIECE_FIGURE.get(), ChessPieceFigureTileEntityRenderer::new);
+//        BlockEntityRenderers.register(CHESS_PIECE_FIGURE.get(), ChessPieceFigureTileEntityRenderer::new);
         BlockEntityRenderers.register(TIC_TAC_TOE.get(), TicTacToeBlockEntityRenderer::new);
         BlockEntityRenderers.register(CHESS_TIMER.get(), ChessTimerBlockEntityRenderer::new);
         BlockEntityRenderers.register(CONNECT_FOUR.get(), ConnectFourBlockEntityRenderer::new);

@@ -83,114 +83,114 @@ public class ChessPieceFigureTileEntityRenderer implements BlockEntityRenderer<C
             if (blockEntity.getRotateChessPieceFigure() && isInGui)
                 poseStack.mulPose(Axis.YP.rotationDegrees(Minecraft.getInstance().player.tickCount + partialTicks));
             VertexConsumer vertexconsumer = bufferSource.getBuffer(RenderType.entitySolid(CHESS_PIECE_FIGURE_TEXTURE));
-            chessPieceFigureStandModel.renderToBuffer(poseStack, vertexconsumer, packedLight, packedOverlay, 1.0F, 1.0F, 1.0F, 1.0F);
+//            chessPieceFigureStandModel.renderToBuffer(poseStack, vertexconsumer, packedLight, packedOverlay, 1.0F, 1.0F, 1.0F, 1.0F);
             poseStack.popPose();
         }
 
-        // Gets the rotation the Figure should have when rendered in the world
-        int rotation = 0;
-        if (blockEntity.hasLevel())
-        {
-            BlockState blockstate = blockEntity.getLevel().getBlockState(blockEntity.getBlockPos());
-            if (blockstate.getBlock() instanceof ChessPieceFigureBlock)
-            {
-                rotation = blockstate.getValue(ChessPieceFigureBlock.ROTATION);
-            }
-        }
-        // The light for the Figure
-        int lightU = LightTexture.block(packedLight);
-        int lightV = LightTexture.sky(packedLight);
-
-        poseStack.pushPose();
-        // Moves the piece to the center and onto the Base Plate
-        poseStack.translate(8 * 0.0625F, 2 * 0.0625F, 8 * 0.0625F);
-        // Rotates the piece based on the rotation
-        poseStack.mulPose(Axis.YN.rotationDegrees(rotation * 22.5F));
-        // Continuously rotates the piece if it was enabled
-        if (blockEntity.getRotateChessPieceFigure())
-            poseStack.mulPose(Axis.YN.rotationDegrees(Minecraft.getInstance().player.tickCount + partialTicks));
-        // We invert the model because Minecraft renders shit inside out.
-        poseStack.scale(3.0F, -3.0F, -3.0F);
-
-        if(blockEntity.getPieceName() != null && blockEntity.getPieceName().equals("Lyzantra"))
-        {
-            poseStack.translate(0.0D, -0.2D * blockEntity.getPieceScale(), 0.0D);
-            poseStack.mulPose(Axis.ZN.rotationDegrees(180));
-        }
-
-        if(blockEntity.hasLevel())
-        {
-            float scale = (float) blockEntity.getPieceScale();
-            poseStack.scale(scale, scale, scale);
-        }
-
-        // We get the colors the Piece should have
-        float red = NBTColorSaving.getRed(blockEntity.getPieceColor()) / 255F;
-        float green = NBTColorSaving.getGreen(blockEntity.getPieceColor()) / 255F;
-        float blue = NBTColorSaving.getBlue(blockEntity.getPieceColor()) / 255F;
-        // Piece Set and Type
-        BasePiece.PieceModelSet set = BasePiece.PieceModelSet.get(blockEntity.getPieceSet());
-        BasePiece.PieceType piece = BasePiece.PieceType.get(blockEntity.getPieceType());
-
-        poseStack.pushPose();
-        RenderType type = TTCRenderTypes.getChessPieceSolid(resourceLocation);
-        type.setupRenderState();
-        ShaderInstance shaderinstance = RenderSystem.getShader();
-        if (shaderinstance.PROJECTION_MATRIX != null)
-            shaderinstance.PROJECTION_MATRIX.set(RenderSystem.getProjectionMatrix());
-        BufferHelpers.setupRender(RenderSystem.getShader(), lightU, lightV);
-        // We set the colors
-        BufferHelpers.updateColor(shaderinstance, new float[]{red, green, blue, 1.0F});
-        poseStack.pushPose();
-        if (shaderinstance.MODEL_VIEW_MATRIX != null)
-        {
-            if (isInGui || isHeldOrHead)
-            {
-                Matrix4f mat4f = new Matrix4f(RenderSystem.getModelViewMatrix());
-                PoseStack stk = new PoseStack();
-                stk.last().pose().mul(mat4f);
-                stk.last().pose().mul(initialMatrix);
-                stk.translate(8 * 0.0625F, 2 * 0.0625F, 8 * 0.0625F);
-                if (blockEntity.getRotateChessPieceFigure())
-                    stk.mulPose(Axis.YN.rotationDegrees(Minecraft.getInstance().player.tickCount + partialTicks));
-                if(blockEntity.getPieceName() != null && blockEntity.getPieceName().equals("Lyzantra"))
-                {
-                    stk.translate(0.0D, 0.85D, 0.0D);
-                    stk.mulPose(Axis.ZN.rotationDegrees(180));
-                }
-                // The scale of the Pieces, if rendered in on Head, Third Person Left/Right we make them slightly smaller to fit the ones in the Level
-                stk.scale(isHeldOrHead ? 3 : 4, isHeldOrHead ? -3 : -4, isHeldOrHead ? -3 : -4);
-                shaderinstance.MODEL_VIEW_MATRIX.set(stk.last().pose());
-            }
-            else
-            {
-                shaderinstance.MODEL_VIEW_MATRIX.set(poseStack.last().pose());
-            }
-
-            CollectiveBufferBuilder.MeshRange pawnBuffer = DrawScreenHelper.getBuffer(set, piece);
-
-            // setup render state
-            TemplatedShader shader = TTCShaders.CHESS_INSTANCED.unwrap(ShaderCapabilities.WORLD_DRAW);
-            TTCRenderTypes.getChessPieceSolid(resourceLocation).setupRenderState();
-            shader.apply();
-            CollectiveDrawData data = new CollectiveDrawData(InstanceFormats.TRANSFORM_COLOR_LIGHTMAP, 2048, VertexBuffer.Usage.STATIC);
-            data.writeMesh(pawnBuffer);
-            data.activateData();
-            data.ensureInstance();
-            data.writeMatrix(poseStack.last().pose());
-            data.writeFloat(red, green, blue, 1);
-            data.writeUV(15, 15); // TODO
-            data.finishInstance();
-            BufferHelpers.draw(data, TTCShaders.CHESS_INSTANCED);
-            data.close();
-            // clear render state
-            VertexBuffer.unbind();
-            shaderinstance.clear();
-            type.clearRenderState();
-
-            poseStack.popPose();
-            poseStack.popPose();
-        }
-        poseStack.popPose();
+//        // Gets the rotation the Figure should have when rendered in the world
+//        int rotation = 0;
+//        if (blockEntity.hasLevel())
+//        {
+//            BlockState blockstate = blockEntity.getLevel().getBlockState(blockEntity.getBlockPos());
+//            if (blockstate.getBlock() instanceof ChessPieceFigureBlock)
+//            {
+//                rotation = blockstate.getValue(ChessPieceFigureBlock.ROTATION);
+//            }
+//        }
+//        // The light for the Figure
+//        int lightU = LightTexture.block(packedLight);
+//        int lightV = LightTexture.sky(packedLight);
+//
+//        poseStack.pushPose();
+//        // Moves the piece to the center and onto the Base Plate
+//        poseStack.translate(8 * 0.0625F, 2 * 0.0625F, 8 * 0.0625F);
+//        // Rotates the piece based on the rotation
+//        poseStack.mulPose(Axis.YN.rotationDegrees(rotation * 22.5F));
+//        // Continuously rotates the piece if it was enabled
+//        if (blockEntity.getRotateChessPieceFigure())
+//            poseStack.mulPose(Axis.YN.rotationDegrees(Minecraft.getInstance().player.tickCount + partialTicks));
+//        // We invert the model because Minecraft renders shit inside out.
+//        poseStack.scale(3.0F, -3.0F, -3.0F);
+//
+//        if(blockEntity.getPieceName() != null && blockEntity.getPieceName().equals("Lyzantra"))
+//        {
+//            poseStack.translate(0.0D, -0.2D * blockEntity.getPieceScale(), 0.0D);
+//            poseStack.mulPose(Axis.ZN.rotationDegrees(180));
+//        }
+//
+//        if(blockEntity.hasLevel())
+//        {
+//            float scale = (float) blockEntity.getPieceScale();
+//            poseStack.scale(scale, scale, scale);
+//        }
+//
+//        // We get the colors the Piece should have
+//        float red = NBTColorSaving.getRed(blockEntity.getPieceColor()) / 255F;
+//        float green = NBTColorSaving.getGreen(blockEntity.getPieceColor()) / 255F;
+//        float blue = NBTColorSaving.getBlue(blockEntity.getPieceColor()) / 255F;
+//        // Piece Set and Type
+//        BasePiece.PieceModelSet set = BasePiece.PieceModelSet.get(blockEntity.getPieceSet());
+//        BasePiece.PieceType piece = BasePiece.PieceType.get(blockEntity.getPieceType());
+//
+//        poseStack.pushPose();
+//        RenderType type = TTCRenderTypes.getChessPieceSolid(resourceLocation);
+//        type.setupRenderState();
+//        ShaderInstance shaderinstance = RenderSystem.getShader();
+//        if (shaderinstance.PROJECTION_MATRIX != null)
+//            shaderinstance.PROJECTION_MATRIX.set(RenderSystem.getProjectionMatrix());
+//        BufferHelpers.setupRender(RenderSystem.getShader(), lightU, lightV);
+//        // We set the colors
+//        BufferHelpers.updateColor(shaderinstance, new float[]{red, green, blue, 1.0F});
+//        poseStack.pushPose();
+//        if (shaderinstance.MODEL_VIEW_MATRIX != null)
+//        {
+//            if (isInGui || isHeldOrHead)
+//            {
+//                Matrix4f mat4f = new Matrix4f(RenderSystem.getModelViewMatrix());
+//                PoseStack stk = new PoseStack();
+//                stk.last().pose().mul(mat4f);
+//                stk.last().pose().mul(initialMatrix);
+//                stk.translate(8 * 0.0625F, 2 * 0.0625F, 8 * 0.0625F);
+//                if (blockEntity.getRotateChessPieceFigure())
+//                    stk.mulPose(Axis.YN.rotationDegrees(Minecraft.getInstance().player.tickCount + partialTicks));
+//                if(blockEntity.getPieceName() != null && blockEntity.getPieceName().equals("Lyzantra"))
+//                {
+//                    stk.translate(0.0D, 0.85D, 0.0D);
+//                    stk.mulPose(Axis.ZN.rotationDegrees(180));
+//                }
+//                // The scale of the Pieces, if rendered in on Head, Third Person Left/Right we make them slightly smaller to fit the ones in the Level
+//                stk.scale(isHeldOrHead ? 3 : 4, isHeldOrHead ? -3 : -4, isHeldOrHead ? -3 : -4);
+//                shaderinstance.MODEL_VIEW_MATRIX.set(stk.last().pose());
+//            }
+//            else
+//            {
+//                shaderinstance.MODEL_VIEW_MATRIX.set(poseStack.last().pose());
+//            }
+//
+//            CollectiveBufferBuilder.MeshRange pawnBuffer = DrawScreenHelper.getBuffer(set, piece);
+//
+//            // setup render state
+////            TemplatedShader shader = TTCShaders.CHESS_INSTANCED.unwrap(ShaderCapabilities.WORLD_DRAW);
+////            TTCRenderTypes.getChessPieceSolid(resourceLocation).setupRenderState();
+////            shader.apply();
+////            CollectiveDrawData data = new CollectiveDrawData(InstanceFormats.TRANSFORM_COLOR_LIGHTMAP, 2048, VertexBuffer.Usage.STATIC);
+////            data.writeMesh(pawnBuffer);
+////            data.activateData();
+////            data.ensureInstance();
+////            data.writeMatrix(poseStack.last().pose());
+////            data.writeFloat(red, green, blue, 1);
+////            data.writeUV(15, 15); // TODO
+////            data.finishInstance();
+////            BufferHelpers.draw(data, TTCShaders.CHESS_INSTANCED);
+////            data.close();
+////            // clear render state
+////            VertexBuffer.unbind();
+////            shaderinstance.clear();
+////            type.clearRenderState();
+//
+//            poseStack.popPose();
+//            poseStack.popPose();
+//        }
+//        poseStack.popPose();
     }
 }

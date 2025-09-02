@@ -58,8 +58,10 @@ public class ChessBoardInstancer extends InstancedBlockEntityRenderer<ChessBlock
         super(format, vbo);
     }
 
+    // TODO: this should not require applying and clearing the shader manually
     private final BatchKey STANDARD_KEY = new BatchKey() {
         public void flush(CollectiveDrawData data) {
+            TTCShaders.CHESS_INSTANCED.apply();
             vbo().setupData(data, TTCShaders.CHESS_INSTANCED);
             data.upload();
             vbo().drawWithShader(
@@ -67,6 +69,23 @@ public class ChessBoardInstancer extends InstancedBlockEntityRenderer<ChessBlock
                     RenderSystem.getProjectionMatrix(),
                     RenderSystem.getShader()
             );
+            TTCShaders.CHESS_INSTANCED.clear();
+        }
+    };
+
+    private final BatchKey LINE_KEY = new BatchKey() {
+        public void flush(CollectiveDrawData data) {
+            TTCShaders.CHESS_INSTANCED.apply();
+            RenderSystem.polygonMode(GL11.GL_FRONT_AND_BACK, GL11.GL_LINE);
+            vbo().setupData(data, TTCShaders.CHESS_INSTANCED);
+            data.upload();
+            vbo().drawWithShader(
+                    RenderSystem.getModelViewMatrix(),
+                    RenderSystem.getProjectionMatrix(),
+                    RenderSystem.getShader()
+            );
+            RenderSystem.polygonMode(GL11.GL_FRONT_AND_BACK, GL11.GL_FILL);
+            TTCShaders.CHESS_INSTANCED.clear();
         }
     };
 
@@ -82,7 +101,8 @@ public class ChessBoardInstancer extends InstancedBlockEntityRenderer<ChessBlock
         if (board == null) return;
 
         BasePiece.PieceModelSet boardSet = BasePiece.PieceModelSet.get(tileEntityIn.getPieceSet() + 1);
-        CollectiveDrawData dataDataStandard = batchData.buildBatch(STANDARD_KEY);
+        CollectiveDrawData batchDataStandard = batchData.buildBatch(STANDARD_KEY);
+        CollectiveDrawData batchDataLine = batchData.buildBatch(LINE_KEY);
 
         int lightmapCoord = LightTexture.pack(
                 level.getBrightness(LightLayer.BLOCK, pos),
@@ -248,26 +268,29 @@ public class ChessBoardInstancer extends InstancedBlockEntityRenderer<ChessBlock
                                 poseStack, boardSet, pieceType, pieceColor,
                                 colorAW.getRed() / 255F, colorAW.getGreen() / 255F, colorAW.getBlue() / 255F,
                                 colorAB.getRed() / 255F, colorAB.getGreen() / 255F, colorAB.getBlue() / 255F,
-                                dataDataStandard, lightmapCoord
+                                batchDataStandard, lightmapCoord
                         );
 
-//                        if (!ShaderCompatHandler.isShaderActive()) {
-//                            poseStack.pushPose();
-//                            poseStack.scale(1.001F, 1.001F, 1.001F);
-//                            RenderSystem.polygonMode(GL11.GL_FRONT_AND_BACK, GL11.GL_LINE);
-//                            float whiteLines = brightnessW * 0.5F / 255F;
-//                            float blackLines = brightnessB * 0.5F / 255F;
-//                            renderPiece(poseStack, tileEntityIn.getPieceSet(), pieceType, pieceColor, whiteLines, whiteLines, whiteLines, blackLines, blackLines, blackLines);
-//                            RenderSystem.polygonMode(GL11.GL_FRONT_AND_BACK, GL11.GL_FILL);
-//                            poseStack.popPose();
-//                        }
+                        if (!ShaderCompatHandler.isShaderActive()) {
+                            poseStack.pushPose();
+                            poseStack.scale(1.001F, 1.001F, 1.001F);
+                            float whiteLines = brightnessW * 0.5F / 255F;
+                            float blackLines = brightnessB * 0.5F / 255F;
+                            renderPiece(
+                                    poseStack, boardSet, pieceType, pieceColor,
+                                    whiteLines, whiteLines, whiteLines,
+                                    blackLines, blackLines, blackLines,
+                                    batchDataLine, lightmapCoord
+                            );
+                            poseStack.popPose();
+                        }
                     } else {
                         // Depending on the render mode we call the corresponding renderer
                         renderPiece(
                                 poseStack, boardSet, pieceType, pieceColor,
                                 wR, wG, wB,
                                 bR, bG, bB,
-                                dataDataStandard, lightmapCoord
+                                batchDataStandard, lightmapCoord
                         );
                     }
 
@@ -283,7 +306,7 @@ public class ChessBoardInstancer extends InstancedBlockEntityRenderer<ChessBlock
         poseStack.translate(0D, -(1 / 16D) * 2.4D, 0D);
         poseStack.translate(CHESS_SCALE * -6.5D, 0.58725D, 0.0625D);
         renderTakenPieces(
-                boardSet, poseStack, tileEntityIn, lightmapCoord, dataDataStandard,
+                boardSet, poseStack, tileEntityIn, lightmapCoord, batchDataStandard,
                 wR, wG, wB, bR, bG, bB
         );
 
@@ -318,17 +341,6 @@ public class ChessBoardInstancer extends InstancedBlockEntityRenderer<ChessBlock
         whiteTakenPieces.sort((piece1, piece2) -> Ints.compare(piece2.getPieceValue(), piece1.getPieceValue()));
         // Sorts all Black Taken Pieces depending on their Value
         blackTakenPieces.sort((piece1, piece2) -> Ints.compare(piece2.getPieceValue(), piece1.getPieceValue()));
-
-//        if (!whiteTakenPieces.isEmpty()) {
-//            for (int i = 0; i < 80_000; i++) {
-//                whiteTakenPieces.add(whiteTakenPieces.get(0));
-//            }
-//        }
-//        if (!blackTakenPieces.isEmpty()) {
-//            for (int i = 0; i < 80_000; i++) {
-//                blackTakenPieces.add(blackTakenPieces.get(0));
-//            }
-//        }
 
         // mem efficient push pose
         cpyPose.set(poseStack.last().pose());

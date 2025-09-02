@@ -2,119 +2,97 @@ package andrews.table_top_craft.util;
 
 public class NBTColorSaving
 {	
-	public static String createWhiteColor()
+	public static int createWhiteColor()
 	{
-		return "255/255/255/255";
+		return Color.pack(255, 255, 255, 255);
 	}
 	
-	public static String createWhiteTilesColor()
+	public static int createWhiteTilesColor()
 	{
-		return "208/177/141/255";
+		return Color.pack(208, 177, 141, 255);
 	}
 	
-	public static String createBlackTilesColor()
+	public static int createBlackTilesColor()
 	{
-		return "139/86/57/255";
+		return Color.pack(139, 86, 57, 255);
 	}
 	
-	public static String createWhitePiecesColor()
+	public static int createWhitePiecesColor()
 	{
-		return "210/188/161/255";
+		return Color.pack(210, 188, 161, 255);
 	}
 	
-	public static String createBlackPiecesColor()
+	public static int createBlackPiecesColor()
 	{
-		return "51/51/51/255";
+		return Color.pack(51, 51, 51, 255);
 	}
 	
-	public static String createLegalMoveColor()
+	public static int createLegalMoveColor()
 	{
-		return "1/255/1/100";
+		return Color.pack(1, 255, 1, 100);
 	}
 	
-	public static String createInvalidMoveColor()
+	public static int createInvalidMoveColor()
 	{
-		return "255/255/1/100";
+		return Color.pack(255, 255, 1, 100);
 	}
 	
-	public static String createAttackMoveColor()
+	public static int createAttackMoveColor()
 	{
-		return "255/1/1/100";
+		return Color.pack(255, 1, 1, 100);
 	}
 	
-	public static String createPreviousMoveColor()
+	public static int createPreviousMoveColor()
 	{
-		return "1/150/125/100";
+		return Color.pack(1, 150, 125, 100);
 	}
 	
-	public static String createCastleMoveColor()
+	public static int createCastleMoveColor()
 	{
-		return "125/1/255/100";
+		return Color.pack(125, 1, 255, 100);
 	}
 	
 	public static String saveColor(int red, int green, int blue)
 	{
-		return Integer.toString(red) + "/" + Integer.toString(green) + "/" + Integer.toString(blue) + "/255";
+		return red + "/" + green + "/" + blue + "/255";
 	}
 	
 	public static String saveColor(int red, int green, int blue, int alpha)
 	{
-		return Integer.toString(red) + "/" + Integer.toString(green) + "/" + Integer.toString(blue) + "/" + Integer.toString(alpha);
+		return red + "/" + green + "/" + blue + "/" + alpha;
 	}
 
-	public static int getRed(String color)
+	public static int getRed(int color)
 	{
-		String[] values = color.split("/");
-		try
-		{
-			return Integer.parseInt(values[0]);
-		}
-		catch(Exception e)
-		{
-			System.out.println(e);
-		}
-		return 255;
+		return (color >> 16) & 0xff;
 	}
 	
-	public static int getGreen(String color)
+	public static int getGreen(int color)
 	{
-		String[] values = color.split("/");
-		try
-		{
-			return Integer.parseInt(values[1]);
-		}
-		catch(Exception e)
-		{
-			System.out.println(e);
-		}
-		return 255;
+		return (color >> 8) & 0xff;
 	}
 	
-	public static int getBlue(String color)
+	public static int getBlue(int color)
 	{
-		String[] values = color.split("/");
-		try
-		{
-			return Integer.parseInt(values[2]);
-		}
-		catch(Exception e)
-		{
-			System.out.println(e);
-		}
-		return 255;
+		return (color) & 0xff;
 	}
 	
-	public static int getAlpha(String color)
+	public static int getAlpha(int color)
 	{
-		String[] values = color.split("/");
-		try
-		{
-			return Integer.parseInt(values[3]);
-		}
-		catch(Exception e)
-		{
-			System.out.println(e);
-		}
-		return 255;
+		return (color >> 24) & 0xff;
+	}
+
+	public static String getString(int color) {
+		return getRed(color) + "/" + getGreen(color) + "/" + getBlue(color) + "/" + getAlpha(color);
+	}
+
+	public static Integer getRGB(String tileInfoColor) {
+		String[] args = tileInfoColor.split("/");
+		return Color.pack(
+				Integer.parseInt(args[0]),
+				Integer.parseInt(args[1]),
+				Integer.parseInt(args[2]),
+				Integer.parseInt(args[3])
+		);
 	}
 }

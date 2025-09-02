@@ -95,7 +95,8 @@ public class ChessFigureInstancer extends InstancedBlockEntityRenderer<ChessPiec
         matrix3f.scale(scale, scale, scale);
         if (blockEntity.getPieceName() != null && blockEntity.getPieceName().equals("Lyzantra")) {
             rotationQuat.mul(Axis.ZN.rotationDegrees(180));
-            matrix3f.translate((float) 0.0D, (float) (-0.4D), (float) 0.0D);
+//            matrix3f.translate((float) 0.0D, (float) (-0.4D), (float) 0.0D);
+            matrix3f.translate((float) 0.0D, (float) (1.75D), (float) 0.0D);
         }
         matrix3f.rotate(rotationQuat);
 
@@ -108,10 +109,10 @@ public class ChessFigureInstancer extends InstancedBlockEntityRenderer<ChessPiec
                 level.getBrightness(LightLayer.SKY, pos)
         );
 
-//        float red = NBTColorSaving.getRed(blockEntity.getPieceColor()) / 255F;
-//        float green = NBTColorSaving.getGreen(blockEntity.getPieceColor()) / 255F;
-//        float blue = NBTColorSaving.getBlue(blockEntity.getPieceColor()) / 255F;
-        float red = 1, green = 1, blue = 1;
+        float red = NBTColorSaving.getRed(blockEntity.getPieceColor()) / 255F;
+        float green = NBTColorSaving.getGreen(blockEntity.getPieceColor()) / 255F;
+        float blue = NBTColorSaving.getBlue(blockEntity.getPieceColor()) / 255F;
+//        float red = 1, green = 1, blue = 1;
         data.writeFloat(red, green, blue, 0);
 
         data.writeInt($$0);

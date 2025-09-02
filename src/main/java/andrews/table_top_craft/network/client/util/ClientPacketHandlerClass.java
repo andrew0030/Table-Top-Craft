@@ -104,7 +104,7 @@ public class ClientPacketHandlerClass
 
             if(Minecraft.getInstance().level.getBlockEntity(pos) instanceof ChessBlockEntity blockEntity)
             {
-                String color = isWhite ? blockEntity.getWhitePiecesColor() : blockEntity.getBlackPiecesColor();
+                int color = isWhite ? blockEntity.getWhitePiecesColor() : blockEntity.getBlackPiecesColor();
                 int red = NBTColorSaving.getRed(color);
                 int green = NBTColorSaving.getGreen(color);
                 int blue = NBTColorSaving.getBlue(color);

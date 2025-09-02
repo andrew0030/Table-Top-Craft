@@ -9,6 +9,7 @@
   },
   "instance_data": [
     "ttc_Transform",
+    "ttc_Color",
     "ttc_Lightmap"
   ]
 }

@@ -70,16 +70,16 @@ public class ChessBlockEntity extends AnimatedBlockEntity
 	private boolean whiteCheckMate = false;
 	private boolean blackCheckMate = false;
 	
-	private String tileInfoColor;
-	private String whiteTilesColor;
-	private String blackTilesColor;
-	private String whitePiecesColor;
-	private String blackPiecesColor;
-	private String legalMoveColor;
-	private String invalidMoveColor;
-	private String attackMoveColor;
-	private String previousMoveColor;
-	private String castleMoveColor;
+	private Integer tileInfoColor;
+	private Integer whiteTilesColor;
+	private Integer blackTilesColor;
+	private Integer whitePiecesColor;
+	private Integer blackPiecesColor;
+	private Integer legalMoveColor;
+	private Integer invalidMoveColor;
+	private Integer attackMoveColor;
+	private Integer previousMoveColor;
+	private Integer castleMoveColor;
 
 	// The selected Set of Pieces to render
 	private int pieceSet;
@@ -308,16 +308,16 @@ public class ChessBlockEntity extends AnimatedBlockEntity
 		chessNBT.putInt("DisplayParticles", !this.displayParticles ? 0 : 1);
 		chessNBT.putInt("WaitingForPromotion", !this.waitingForPromotion ? 0 : 1);
 		chessNBT.putByte("PromotionCoordinate", getPromotionCoordinate());
-		chessNBT.putString("TileInfoColor", getTileInfoColor());
-		chessNBT.putString("WhiteTilesColor", getWhiteTilesColor());
-		chessNBT.putString("BlackTilesColor", getBlackTilesColor());
-		chessNBT.putString("WhitePiecesColor", getWhitePiecesColor());
-		chessNBT.putString("BlackPiecesColor", getBlackPiecesColor());
-		chessNBT.putString("LegalMoveColor", getLegalMoveColor());
-		chessNBT.putString("InvalidMoveColor", getInvalidMoveColor());
-		chessNBT.putString("AttackMoveColor", getAttackMoveColor());
-		chessNBT.putString("PreviousMoveColor", getPreviousMoveColor());
-		chessNBT.putString("CastleMoveColor", getCastleMoveColor());
+		chessNBT.putString("TileInfoColor", NBTColorSaving.getString(getTileInfoColor()));
+		chessNBT.putString("WhiteTilesColor", NBTColorSaving.getString(getWhiteTilesColor()));
+		chessNBT.putString("BlackTilesColor", NBTColorSaving.getString(getBlackTilesColor()));
+		chessNBT.putString("WhitePiecesColor", NBTColorSaving.getString(getWhitePiecesColor()));
+		chessNBT.putString("BlackPiecesColor", NBTColorSaving.getString(getBlackPiecesColor()));
+		chessNBT.putString("LegalMoveColor", NBTColorSaving.getString(getLegalMoveColor()));
+		chessNBT.putString("InvalidMoveColor", NBTColorSaving.getString(getInvalidMoveColor()));
+		chessNBT.putString("AttackMoveColor", NBTColorSaving.getString(getAttackMoveColor()));
+		chessNBT.putString("PreviousMoveColor", NBTColorSaving.getString(getPreviousMoveColor()));
+		chessNBT.putString("CastleMoveColor", NBTColorSaving.getString(getCastleMoveColor()));
 		chessNBT.putInt("SourceTile", this.sourceTile == null ? -1 : this.sourceTile.getTileCoordinate());
 		chessNBT.putInt("HumanMovedPiece", this.humanMovedPiece == null ? -1 : this.humanMovedPiece.getPiecePosition());
 		chessNBT.putInt("PieceSet", this.getPieceSet());
@@ -382,7 +382,7 @@ public class ChessBlockEntity extends AnimatedBlockEntity
 		if(chessNBT.contains("ShowPreviousMove", Tag.TAG_INT))
 			this.showPreviousMove = chessNBT.getInt("ShowPreviousMove") != 0;
 		if(chessNBT.contains("TileInfoColor", Tag.TAG_STRING))
-			this.tileInfoColor = chessNBT.getString("TileInfoColor");
+			this.tileInfoColor = NBTColorSaving.getRGB(chessNBT.getString("TileInfoColor"));
 		if(chessNBT.contains("UseCustomPlate", Tag.TAG_INT))
 			this.useCustomPlate = chessNBT.getInt("UseCustomPlate") != 0;
 		if(chessNBT.contains("PlayPieceAnimations", Tag.TAG_INT))
@@ -394,23 +394,23 @@ public class ChessBlockEntity extends AnimatedBlockEntity
 		if(chessNBT.contains("PromotionCoordinate", Tag.TAG_BYTE))
 			this.promotionCoordinate = chessNBT.getByte("PromotionCoordinate");
 		if(chessNBT.contains("WhiteTilesColor", Tag.TAG_STRING))
-			this.whiteTilesColor = chessNBT.getString("WhiteTilesColor");
+			this.whiteTilesColor = NBTColorSaving.getRGB(chessNBT.getString("WhiteTilesColor"));
 		if(chessNBT.contains("BlackTilesColor", Tag.TAG_STRING))
-			this.blackTilesColor = chessNBT.getString("BlackTilesColor");
+			this.blackTilesColor = NBTColorSaving.getRGB(chessNBT.getString("BlackTilesColor"));
 		if(chessNBT.contains("WhitePiecesColor", Tag.TAG_STRING))
-			this.whitePiecesColor = chessNBT.getString("WhitePiecesColor");
+			this.whitePiecesColor = NBTColorSaving.getRGB(chessNBT.getString("WhitePiecesColor"));
 		if(chessNBT.contains("BlackPiecesColor", Tag.TAG_STRING))
-			this.blackPiecesColor = chessNBT.getString("BlackPiecesColor");
+			this.blackPiecesColor = NBTColorSaving.getRGB(chessNBT.getString("BlackPiecesColor"));
 		if(chessNBT.contains("LegalMoveColor", Tag.TAG_STRING))
-			this.legalMoveColor = chessNBT.getString("LegalMoveColor");
+			this.legalMoveColor = NBTColorSaving.getRGB(chessNBT.getString("LegalMoveColor"));
 		if(chessNBT.contains("InvalidMoveColor", Tag.TAG_STRING))
-			this.invalidMoveColor = chessNBT.getString("InvalidMoveColor");
+			this.invalidMoveColor = NBTColorSaving.getRGB(chessNBT.getString("InvalidMoveColor"));
 		if(chessNBT.contains("AttackMoveColor", Tag.TAG_STRING))
-			this.attackMoveColor = chessNBT.getString("AttackMoveColor");
+			this.attackMoveColor = NBTColorSaving.getRGB(chessNBT.getString("AttackMoveColor"));
 		if(chessNBT.contains("PreviousMoveColor", Tag.TAG_STRING))
-			this.previousMoveColor = chessNBT.getString("PreviousMoveColor");
+			this.previousMoveColor = NBTColorSaving.getRGB(chessNBT.getString("PreviousMoveColor"));
 		if(chessNBT.contains("CastleMoveColor", Tag.TAG_STRING))
-			this.castleMoveColor = chessNBT.getString("CastleMoveColor");
+			this.castleMoveColor = NBTColorSaving.getRGB(chessNBT.getString("CastleMoveColor"));
 		if(chessNBT.contains("SourceTile", Tag.TAG_INT))
 			this.sourceTile = chessNBT.getInt("SourceTile") == -1 ? null : getBoard().getTile(chessNBT.getInt("SourceTile"));
 		if(chessNBT.contains("HumanMovedPiece", Tag.TAG_INT))
@@ -552,100 +552,100 @@ public class ChessBlockEntity extends AnimatedBlockEntity
 	
 	public void setCastleMoveColor(String colorForNBT)
 	{
-		this.castleMoveColor = colorForNBT;
+		this.castleMoveColor = NBTColorSaving.getRGB(colorForNBT);
 	}
 	
-	public String getCastleMoveColor()
+	public int getCastleMoveColor()
 	{
 		return this.castleMoveColor == null ? NBTColorSaving.createCastleMoveColor() : this.castleMoveColor;
 	}
 	
 	public void setPreviousMoveColor(String colorForNBT)
 	{
-		this.previousMoveColor = colorForNBT;
+		this.previousMoveColor = NBTColorSaving.getRGB(colorForNBT);
 	}
 	
-	public String getPreviousMoveColor()
+	public int getPreviousMoveColor()
 	{
 		return this.previousMoveColor == null ? NBTColorSaving.createPreviousMoveColor() : this.previousMoveColor;
 	}
 	
 	public void setAttackMoveColor(String colorForNBT)
 	{
-		this.attackMoveColor = colorForNBT;
+		this.attackMoveColor = NBTColorSaving.getRGB(colorForNBT);
 	}
 	
-	public String getAttackMoveColor()
+	public int getAttackMoveColor()
 	{
 		return this.attackMoveColor == null ? NBTColorSaving.createAttackMoveColor() : this.attackMoveColor;
 	}
 	
 	public void setInvalidMoveColor(String colorForNBT)
 	{
-		this.invalidMoveColor = colorForNBT;
+		this.invalidMoveColor = NBTColorSaving.getRGB(colorForNBT);
 	}
 	
-	public String getInvalidMoveColor()
+	public int getInvalidMoveColor()
 	{
 		return this.invalidMoveColor == null ? NBTColorSaving.createInvalidMoveColor() : this.invalidMoveColor;
 	}
 	
 	public void setLegalMoveColor(String colorForNBT)
 	{
-		this.legalMoveColor = colorForNBT;
+		this.legalMoveColor = NBTColorSaving.getRGB(colorForNBT);
 	}
 	
-	public String getLegalMoveColor()
+	public int getLegalMoveColor()
 	{
 		return this.legalMoveColor == null ? NBTColorSaving.createLegalMoveColor() : this.legalMoveColor;
 	}
 	
 	public void setWhitePiecesColor(String colorForNBT)
 	{
-		this.whitePiecesColor = colorForNBT;
+		this.whitePiecesColor = NBTColorSaving.getRGB(colorForNBT);
 	}
 	
-	public String getWhitePiecesColor()
+	public int getWhitePiecesColor()
 	{
 		return this.whitePiecesColor == null ? NBTColorSaving.createWhitePiecesColor() : this.whitePiecesColor;
 	}
 	
 	public void setBlackPiecesColor(String colorForNBT)
 	{
-		this.blackPiecesColor = colorForNBT;
+		this.blackPiecesColor = NBTColorSaving.getRGB(colorForNBT);
 	}
 	
-	public String getBlackPiecesColor()
+	public int getBlackPiecesColor()
 	{
 		return this.blackPiecesColor == null ? NBTColorSaving.createBlackPiecesColor() : this.blackPiecesColor;
 	}
 	
 	public void setWhiteTilesColor(String colorForNBT)
 	{
-		this.whiteTilesColor = colorForNBT;
+		this.whiteTilesColor = NBTColorSaving.getRGB(colorForNBT);
 	}
 	
-	public String getWhiteTilesColor()
+	public int getWhiteTilesColor()
 	{
 		return this.whiteTilesColor == null ? NBTColorSaving.createWhiteTilesColor() : this.whiteTilesColor;
 	}
 	
 	public void setBlackTilesColor(String colorForNBT)
 	{
-		this.blackTilesColor = colorForNBT;
+		this.blackTilesColor = NBTColorSaving.getRGB(colorForNBT);
 	}
 	
-	public String getBlackTilesColor()
+	public int getBlackTilesColor()
 	{
 		return this.blackTilesColor == null ? NBTColorSaving.createBlackTilesColor() : this.blackTilesColor;
 	}
 	
 	public void setTileInfoColor(String colorForNBT)
 	{
-		this.tileInfoColor = colorForNBT;
+		this.tileInfoColor = NBTColorSaving.getRGB(colorForNBT);
 	}
 	
-	public String getTileInfoColor()
+	public int getTileInfoColor()
 	{
 		return this.tileInfoColor == null ? NBTColorSaving.createWhiteColor() : this.tileInfoColor;
 	}

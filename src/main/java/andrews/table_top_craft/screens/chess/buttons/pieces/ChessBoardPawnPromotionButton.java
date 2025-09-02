@@ -3,6 +3,7 @@ package andrews.table_top_craft.screens.chess.buttons.pieces;
 import andrews.table_top_craft.block_entities.ChessBlockEntity;
 import andrews.table_top_craft.block_entities.ChessPieceFigureBlockEntity;
 import andrews.table_top_craft.registry.TTCBlocks;
+import andrews.table_top_craft.util.NBTColorSaving;
 import andrews.table_top_craft.util.NetworkUtil;
 import andrews.table_top_craft.util.Reference;
 import com.mojang.blaze3d.platform.GlStateManager;
@@ -44,7 +45,7 @@ public class ChessBoardPawnPromotionButton extends AbstractButton
         ChessPieceFigureBlockEntity previewBlockEntity = new ChessPieceFigureBlockEntity(BlockPos.ZERO, TTCBlocks.CHESS_PIECE_FIGURE.get().defaultBlockState());
         previewBlockEntity.setPieceSet(blockEntity.getPieceSet() + 1);
         previewBlockEntity.setPieceType(type.getPieceType());
-        previewBlockEntity.setPieceColor(isWhite ? blockEntity.getWhitePiecesColor() : blockEntity.getBlackPiecesColor());
+        previewBlockEntity.setPieceColor(NBTColorSaving.getString(isWhite ? blockEntity.getWhitePiecesColor() : blockEntity.getBlackPiecesColor()));
         previewBlockEntity.setRotateChessPieceFigure(false);
         previewBlockEntity.saveToItem(this.chessPieceFigure);
     }

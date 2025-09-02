@@ -24,6 +24,13 @@ public class Color
                 ((b & 0xFF) << 0);
     }
 
+    public static int pack(int r, int g, int b, int a) {
+        return ((a & 0xFF) << 24) |
+                ((r & 0xFF) << 16) |
+                ((g & 0xFF) << 8) |
+                ((b & 0xFF) << 0);
+    }
+
     public int getRed()
     {
         return (getRGB() >> 16) & 0xFF;

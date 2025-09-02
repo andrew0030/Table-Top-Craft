@@ -56,7 +56,7 @@ public class TTCBlockEntityWithoutLevelRenderer extends BlockEntityWithoutLevelR
                 if(compoundTag != null && compoundTag.contains("PieceColor", Tag.TAG_STRING))
                     chessPieceFigureBlockEntity.setPieceColor(compoundTag.getString("PieceColor"));
                 else
-                    chessPieceFigureBlockEntity.setPieceColor(NBTColorSaving.createWhitePiecesColor());
+                    chessPieceFigureBlockEntity.setPieceColor(NBTColorSaving.getString(NBTColorSaving.createWhitePiecesColor()));
                 // We get and set the Piece Set
                 if(compoundTag != null && compoundTag.contains("PieceSet", Tag.TAG_INT))
                     chessPieceFigureBlockEntity.setPieceSet(compoundTag.getInt("PieceSet"));

@@ -20,7 +20,7 @@ public class ChessPieceFigureBlockEntity extends BlockEntity
     private final Random rand = new Random();
     private int pieceType;
     private boolean rotateChessPieceFigure;
-    private String pieceColor;
+    private Integer pieceColor;
     private int pieceSet;
     private double pieceScale;
     private String name;
@@ -90,7 +90,7 @@ public class ChessPieceFigureBlockEntity extends BlockEntity
     {
         compound.putInt("PieceType", this.getPieceType());
         compound.putInt("RotateChessPieceFigure", !this.rotateChessPieceFigure ? 0 : 1);
-        compound.putString("PieceColor", getPieceColor());
+        compound.putString("PieceColor", NBTColorSaving.getString(getPieceColor()));
         compound.putInt("PieceSet", this.getPieceSet());
         compound.putDouble("PieceScale", this.getPieceScale());
         if(this.getPieceName() != null)
@@ -106,7 +106,7 @@ public class ChessPieceFigureBlockEntity extends BlockEntity
         if(compound.contains("RotateChessPieceFigure", Tag.TAG_INT))
             this.rotateChessPieceFigure = compound.getInt("RotateChessPieceFigure") != 0;
         if(compound.contains("PieceColor", Tag.TAG_STRING))
-            this.pieceColor = compound.getString("PieceColor");
+            this.pieceColor = NBTColorSaving.getRGB(compound.getString("PieceColor"));
         if(compound.contains("PieceSet", Tag.TAG_INT))
             this.pieceSet = compound.getInt("PieceSet");
         if(compound.contains("PieceScale", Tag.TAG_DOUBLE))
@@ -162,10 +162,10 @@ public class ChessPieceFigureBlockEntity extends BlockEntity
 
     public void setPieceColor(String colorForNBT)
     {
-        this.pieceColor = colorForNBT;
+        this.pieceColor = NBTColorSaving.getRGB(colorForNBT);
     }
 
-    public String getPieceColor()
+    public int getPieceColor()
     {
         return this.pieceColor == null ? NBTColorSaving.createWhitePiecesColor() : this.pieceColor;
     }

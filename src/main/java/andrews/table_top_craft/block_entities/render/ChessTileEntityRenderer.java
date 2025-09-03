@@ -1,38 +1,24 @@
 package andrews.table_top_craft.block_entities.render;
 
-import andrews.table_top_craft.animation.system.core.AnimationHandler;
 import andrews.table_top_craft.block_entities.ChessBlockEntity;
-import andrews.table_top_craft.game_logic.chess.PieceColor;
 import andrews.table_top_craft.game_logic.chess.board.Board;
 import andrews.table_top_craft.game_logic.chess.board.BoardUtils;
-import andrews.table_top_craft.game_logic.chess.board.ChessMoveLog;
 import andrews.table_top_craft.game_logic.chess.board.moves.BaseMove;
-import andrews.table_top_craft.game_logic.chess.pieces.BasePiece;
-import andrews.table_top_craft.game_logic.chess.pieces.BasePiece.PieceType;
-import andrews.table_top_craft.game_logic.chess.player.BlackChessPlayer;
 import andrews.table_top_craft.game_logic.chess.player.MoveTransition;
-import andrews.table_top_craft.game_logic.chess.player.WhiteChessPlayer;
 import andrews.table_top_craft.objects.blocks.ChessBlock;
 import andrews.table_top_craft.block_entities.model.chess.ChessBoardPlateModel;
 import andrews.table_top_craft.block_entities.model.chess.ChessHighlightModel;
 import andrews.table_top_craft.block_entities.model.chess.ChessTilesInfoModel;
 import andrews.table_top_craft.block_entities.model.chess.GhostModel;
 import andrews.table_top_craft.util.*;
-import andrews.table_top_craft.util.shader_compat.ShaderCompatHandler;
-import com.github.andrew0030.pandora_core.client.render.collective.CollectiveBufferBuilder;
 import com.google.common.collect.ImmutableList;
-import com.google.common.primitives.Ints;
 import com.mojang.blaze3d.platform.NativeImage;
-import com.mojang.blaze3d.systems.RenderSystem;
 import com.mojang.blaze3d.vertex.PoseStack;
-import com.mojang.blaze3d.vertex.VertexBuffer;
 import com.mojang.blaze3d.vertex.VertexConsumer;
 import com.mojang.math.Axis;
 import net.minecraft.client.Minecraft;
-import net.minecraft.client.renderer.LightTexture;
 import net.minecraft.client.renderer.MultiBufferSource;
 import net.minecraft.client.renderer.RenderType;
-import net.minecraft.client.renderer.ShaderInstance;
 import net.minecraft.client.renderer.blockentity.BlockEntityRenderer;
 import net.minecraft.client.renderer.blockentity.BlockEntityRendererProvider;
 import net.minecraft.client.renderer.texture.DynamicTexture;
@@ -41,7 +27,6 @@ import net.minecraft.resources.ResourceLocation;
 import net.minecraft.util.Mth;
 import net.minecraft.world.level.block.state.BlockState;
 import org.joml.Quaternionf;
-import org.lwjgl.opengl.GL11;
 
 import java.util.ArrayList;
 import java.util.Collection;
@@ -69,12 +54,14 @@ public class ChessTileEntityRenderer implements BlockEntityRenderer<ChessBlockEn
 	private final ChessHighlightModel highlightModel;
 	private final ChessTilesInfoModel tilesInfoModel;
 	private final ChessBoardPlateModel chessBoardPlateModel;
-	private final GhostModel ghostModel;
+	final GhostModel ghostModel;
 	
 	// Lists
 	private final List<Integer> destinationCoordinates = new ArrayList<>();
 
 	int cachedIdx;
+
+	private static ChessTileEntityRenderer INSTANCE;
 
 	static
 	{
@@ -89,8 +76,19 @@ public class ChessTileEntityRenderer implements BlockEntityRenderer<ChessBlockEn
 		tilesInfoModel = new ChessTilesInfoModel(context.bakeLayer(ChessTilesInfoModel.CHESS_TILES_INFO_LAYER));
 		chessBoardPlateModel = new ChessBoardPlateModel(context.bakeLayer(ChessBoardPlateModel.CHESS_BOARD_PLATE_LAYER));
 		ghostModel = new GhostModel(context.bakeLayer(GhostModel.LAYER));
+
+		INSTANCE = this;
 	}
-	
+
+	public static ChessTileEntityRenderer getInstance() {
+		return INSTANCE;
+	}
+
+	static Quaternionf YN_180 = Axis.YN.rotationDegrees(180F);
+	static Quaternionf YN_270 = Axis.YN.rotationDegrees(270F);
+	static Quaternionf YN_90 = Axis.YN.rotationDegrees(90F);
+	static Quaternionf XN_180 = Axis.XN.rotationDegrees(180F);
+
 	@Override
 	public void render(ChessBlockEntity tileEntityIn, float partialTicks, PoseStack poseStack, MultiBufferSource bufferIn, int combinedLightIn, int combinedOverlayIn)
 	{
@@ -118,15 +116,15 @@ public class ChessTileEntityRenderer implements BlockEntityRenderer<ChessBlockEn
 		{
 			default:
 			case NORTH:
-				poseStack.mulPose(Axis.YN.rotationDegrees(180.0F));
+				poseStack.mulPose(YN_180);
 				break;
 			case SOUTH:
 				break;
 			case WEST:
-				poseStack.mulPose(Axis.YN.rotationDegrees(270.0F));
+				poseStack.mulPose(YN_270);
 				break;
 			case EAST:
-				poseStack.mulPose(Axis.YN.rotationDegrees(90.0F));
+				poseStack.mulPose(YN_90);
 		}
 		
 		// Renders the Custom Plate if needed
@@ -150,15 +148,15 @@ public class ChessTileEntityRenderer implements BlockEntityRenderer<ChessBlockEn
 		{
 			default:
 			case NORTH:
-				poseStack.mulPose(Axis.YN.rotationDegrees(180.0F));
+				poseStack.mulPose(YN_180);
 				break;
 			case SOUTH:
 				break;
 			case WEST:
-				poseStack.mulPose(Axis.YN.rotationDegrees(270.0F));
+				poseStack.mulPose(YN_270);
 				break;
 			case EAST:
-				poseStack.mulPose(Axis.YN.rotationDegrees(90.0F));
+				poseStack.mulPose(YN_90);
 		}
 
 		// Moves the Piece away from the center of the Board, onto the center of a tile
@@ -325,7 +323,7 @@ public class ChessTileEntityRenderer implements BlockEntityRenderer<ChessBlockEn
 		float blue = NBTColorSaving.getBlue(chessBlockEntity.getTileInfoColor()) / 255F;
 		
 		poseStack.pushPose();
-		poseStack.mulPose(Axis.YN.rotationDegrees(180.0F));
+		poseStack.mulPose(YN_180);
 		poseStack.translate(0.0F, -1.32F, 0.0F);
 		poseStack.last().normal().rotationZYX(0F, 180F * Mth.DEG_TO_RAD, 0F);
 		tilesInfoModel.renderToBuffer(poseStack, builderTilesInfo, combinedLightIn, combinedOverlayIn, red, green, blue, 1.0F);
@@ -344,16 +342,16 @@ public class ChessTileEntityRenderer implements BlockEntityRenderer<ChessBlockEn
 		// this is gonna need a custom render type, most likely
 		VertexConsumer builderBoardPlateWhiteTiles = bufferIn.getBuffer(RenderType.entityCutout(PLATE_WHITE_TILES_TEXTURE));
 		poseStack.pushPose();
-		poseStack.mulPose(Axis.XN.rotationDegrees(180));
-		poseStack.mulPose(Axis.YN.rotationDegrees(270));
+		poseStack.mulPose(XN_180);
+		poseStack.mulPose(YN_270);
 		poseStack.translate(0.0F, -1.65D, 0.0F);
 		// TODO: for some reason, this does not change colors?
 		chessBoardPlateModel.renderToBuffer(poseStack, builderBoardPlateWhiteTiles, combinedLightIn, combinedOverlayIn, whiteR, whiteG, whiteB, 1.0F);
 		poseStack.popPose();
 		VertexConsumer builderBoardPlateBlackTiles = bufferIn.getBuffer(RenderType.entityCutout(PLATE_BLACK_TILES_TEXTURE));
 		poseStack.pushPose();
-		poseStack.mulPose(Axis.XN.rotationDegrees(180));
-		poseStack.mulPose(Axis.YN.rotationDegrees(270));
+		poseStack.mulPose(XN_180);
+		poseStack.mulPose(YN_270);
 		poseStack.translate(0.0F, -1.65D, 0.0F);
 		chessBoardPlateModel.renderToBuffer(poseStack, builderBoardPlateBlackTiles, combinedLightIn, combinedOverlayIn, blackR, blackG, blackB, 1.0F);
 		poseStack.popPose();

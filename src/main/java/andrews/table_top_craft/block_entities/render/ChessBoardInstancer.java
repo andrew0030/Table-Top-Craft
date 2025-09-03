@@ -2,6 +2,7 @@ package andrews.table_top_craft.block_entities.render;
 
 import andrews.table_top_craft.animation.system.core.AnimationHandler;
 import andrews.table_top_craft.block_entities.ChessBlockEntity;
+import andrews.table_top_craft.block_entities.model.chess.GhostModel;
 import andrews.table_top_craft.game_logic.chess.PieceColor;
 import andrews.table_top_craft.game_logic.chess.board.Board;
 import andrews.table_top_craft.game_logic.chess.board.BoardUtils;
@@ -10,7 +11,6 @@ import andrews.table_top_craft.game_logic.chess.board.moves.BaseMove;
 import andrews.table_top_craft.game_logic.chess.board.tiles.BaseChessTile;
 import andrews.table_top_craft.game_logic.chess.pieces.BasePiece;
 import andrews.table_top_craft.game_logic.chess.player.BlackChessPlayer;
-import andrews.table_top_craft.game_logic.chess.player.MoveTransition;
 import andrews.table_top_craft.game_logic.chess.player.WhiteChessPlayer;
 import andrews.table_top_craft.objects.blocks.ChessBlock;
 import andrews.table_top_craft.util.*;
@@ -26,12 +26,9 @@ import com.google.common.primitives.Ints;
 import com.mojang.blaze3d.shaders.FogShape;
 import com.mojang.blaze3d.systems.RenderSystem;
 import com.mojang.blaze3d.vertex.PoseStack;
-import com.mojang.blaze3d.vertex.VertexBuffer;
-import com.mojang.blaze3d.vertex.VertexConsumer;
 import com.mojang.math.Axis;
 import net.minecraft.client.Minecraft;
 import net.minecraft.client.renderer.LightTexture;
-import net.minecraft.client.renderer.MultiBufferSource;
 import net.minecraft.client.renderer.RenderType;
 import net.minecraft.core.BlockPos;
 import net.minecraft.core.Direction;
@@ -46,8 +43,7 @@ import org.lwjgl.opengl.GL11;
 import java.util.ArrayList;
 import java.util.List;
 
-import static andrews.table_top_craft.block_entities.render.ChessTileEntityRenderer.CHESS_PIECE_SCALE;
-import static andrews.table_top_craft.block_entities.render.ChessTileEntityRenderer.CHESS_SCALE;
+import static andrews.table_top_craft.block_entities.render.ChessTileEntityRenderer.*;
 
 public class ChessBoardInstancer extends InstancedBlockEntityRenderer<ChessBlockEntity> {
     private final PoseStack poseStack = new PoseStack();
@@ -89,13 +85,85 @@ public class ChessBoardInstancer extends InstancedBlockEntityRenderer<ChessBlock
         }
     };
 
-    Quaternionf YN_180 = Axis.YN.rotationDegrees(180F);
-    Quaternionf YN_270 = Axis.YN.rotationDegrees(270F);
-    Quaternionf YN_90 = Axis.YN.rotationDegrees(90F);
+    private void animate(
+            PoseStack poseStack, ChessBlockEntity tileEntityIn, PieceColor pieceColor,
+            boolean isWhiteInCheckmate, boolean isBlackInCheckmate, float pct,
+            GhostModel ghostModel, int currentCoordinate, Board board
+    ) {
+        // The dance the Pieces do when you check mate the enemy
+        if (isWhiteInCheckmate && pieceColor.isBlack()) {
+            poseStack.translate(0.0F, (float) Math.abs(Math.sin((Minecraft.getInstance().player.tickCount + pct) / 2.5)) * -0.05F, 0F);
+            poseStack.mulPose(Axis.ZN.rotationDegrees((float) Math.cos((Minecraft.getInstance().player.tickCount + pct) / 2.5) * 10));
+        }
+        if (isBlackInCheckmate && pieceColor.isWhite()) {
+            poseStack.translate(0.0F, (float) Math.abs(Math.sin((Minecraft.getInstance().player.tickCount + pct) / 2.5)) * -0.05F, 0F);
+            poseStack.mulPose(Axis.ZN.rotationDegrees((float) Math.cos((Minecraft.getInstance().player.tickCount + pct) / 2.5) * 10));
+        }
+
+        poseStack.translate(CHESS_SCALE * ghostModel.root.x * 0.5F, CHESS_SCALE * ghostModel.root.y * 0.5F, CHESS_SCALE * ghostModel.root.z * 0.5F);
+        if (AnimationHandler.getElapsedSeconds(tileEntityIn.placedState) > tileEntityIn.placedState.getInTime())
+            poseStack.mulPose((new Quaternionf()).rotationZYX(ghostModel.root.zRot, ghostModel.root.yRot, ghostModel.root.xRot));
+        poseStack.scale(ghostModel.root.xScale, ghostModel.root.yScale, ghostModel.root.zScale);
+
+        if (currentCoordinate == tileEntityIn.selectedPiecePos) {
+            poseStack.translate(CHESS_SCALE * ghostModel.selected.x * 0.5F, CHESS_SCALE * ghostModel.selected.y * 0.5F, CHESS_SCALE * ghostModel.selected.z * 0.5F);
+            poseStack.mulPose((new Quaternionf()).rotationZYX(ghostModel.selected.zRot, ghostModel.selected.yRot, ghostModel.selected.xRot));
+        }
+
+        if (tileEntityIn.moveState != null) {
+            // Moved chess piece
+            if (tileEntityIn.currentCord == currentCoordinate) {
+                poseStack.translate(CHESS_SCALE * ghostModel.moved.x * 0.5F, CHESS_SCALE * ghostModel.moved.y * 0.5F, CHESS_SCALE * ghostModel.moved.z * 0.5F);
+                poseStack.mulPose((new Quaternionf()).rotationZYX(ghostModel.moved.zRot, ghostModel.moved.yRot, ghostModel.moved.xRot));
+            }
+            // Affected chess piece
+            if (tileEntityIn.destCord == currentCoordinate) {
+                poseStack.translate(CHESS_SCALE * ghostModel.affected.x * 0.5F, CHESS_SCALE * ghostModel.affected.y * 0.5F, CHESS_SCALE * ghostModel.affected.z * 0.5F);
+                poseStack.mulPose((new Quaternionf()).rotationZYX(ghostModel.affected.zRot, ghostModel.affected.yRot, ghostModel.affected.xRot));
+                poseStack.scale(ghostModel.affected.xScale, ghostModel.affected.yScale, ghostModel.affected.zScale);
+            }
+            // White Castle Moves
+            if (tileEntityIn.currentCord == 60)
+                if (board.getTile(60).getPiece().getPieceType().isKing())
+                    if ((tileEntityIn.destCord == 62 && currentCoordinate == 63) || (tileEntityIn.destCord == 58 && currentCoordinate == 56)) {
+                        poseStack.translate(CHESS_SCALE * ghostModel.affected.x * 0.5F, CHESS_SCALE * ghostModel.affected.y * 0.5F, CHESS_SCALE * ghostModel.affected.z * 0.5F);
+                        poseStack.mulPose((new Quaternionf()).rotationZYX(ghostModel.affected.zRot, ghostModel.affected.yRot, ghostModel.affected.xRot));
+                    }
+            // Black Castle Moves
+            if (tileEntityIn.currentCord == 4)
+                if (board.getTile(4).getPiece().getPieceType().isKing())
+                    if ((tileEntityIn.destCord == 6 && currentCoordinate == 7) || (tileEntityIn.destCord == 2 && currentCoordinate == 0)) {
+                        poseStack.translate(CHESS_SCALE * ghostModel.affected.x * 0.5F, CHESS_SCALE * ghostModel.affected.y * 0.5F, CHESS_SCALE * ghostModel.affected.z * 0.5F);
+                        poseStack.mulPose((new Quaternionf()).rotationZYX(ghostModel.affected.zRot, ghostModel.affected.yRot, ghostModel.affected.xRot));
+                    }
+
+            // White En Passant Move
+            if (board.getTile(tileEntityIn.currentCord).getPiece().getPieceColor().isWhite() && tileEntityIn.currentCord / 8 == 3)
+                if ((tileEntityIn.currentCord % 8) - (tileEntityIn.destCord % 8) == -1 || (tileEntityIn.currentCord % 8) - (tileEntityIn.destCord % 8) == 1)
+                    if (board.getTile(tileEntityIn.destCord).getPiece() == null)
+                        if (currentCoordinate == tileEntityIn.destCord + 8) {
+                            poseStack.translate(CHESS_SCALE * ghostModel.affected.x * 0.5F, CHESS_SCALE * ghostModel.affected.y * 0.5F, CHESS_SCALE * ghostModel.affected.z * 0.5F);
+                            poseStack.mulPose((new Quaternionf()).rotationZYX(ghostModel.affected.zRot, ghostModel.affected.yRot, ghostModel.affected.xRot));
+                            poseStack.scale(ghostModel.affected.xScale, ghostModel.affected.yScale, ghostModel.affected.zScale);
+                        }
+            // Black En Passant Move
+            if (board.getTile(tileEntityIn.currentCord).getPiece().getPieceColor().isBlack() && tileEntityIn.currentCord / 8 == 4)
+                if ((tileEntityIn.currentCord % 8) - (tileEntityIn.destCord % 8) == -1 || (tileEntityIn.currentCord % 8) - (tileEntityIn.destCord % 8) == 1)
+                    if (board.getTile(tileEntityIn.destCord).getPiece() == null)
+                        if (currentCoordinate == tileEntityIn.destCord - 8) {
+                            poseStack.translate(CHESS_SCALE * ghostModel.affected.x * 0.5F, CHESS_SCALE * ghostModel.affected.y * 0.5F, CHESS_SCALE * ghostModel.affected.z * 0.5F);
+                            poseStack.mulPose((new Quaternionf()).rotationZYX(ghostModel.affected.zRot, ghostModel.affected.yRot, ghostModel.affected.xRot));
+                            poseStack.scale(ghostModel.affected.xScale, ghostModel.affected.yScale, ghostModel.affected.zScale);
+                        }
+        }
+    }
 
     @Override
     public void render(Level level, ChessBlockEntity tileEntityIn, BlockPos pos, BatchData batchData) {
-//        ghostModel.updateAnimations(tileEntityIn, partialTicks);
+        GhostModel ghostModel = getInstance().ghostModel;
+
+        float pct = 0;
+        ghostModel.updateAnimations(tileEntityIn, pct);
 
         Board board = tileEntityIn.getBoard();
         if (board == null) return;
@@ -109,8 +177,6 @@ public class ChessBoardInstancer extends InstancedBlockEntityRenderer<ChessBlock
                 level.getBrightness(LightLayer.SKY, pos)
         );
 
-        WhiteChessPlayer whiteChessPlayer = (WhiteChessPlayer) board.getWhiteChessPlayer();
-        BlackChessPlayer blackChessPlayer = (BlackChessPlayer) board.getBlackChessPlayer();
         boolean isWhiteInCheckmate = tileEntityIn.isWhiteCheckMate();
         boolean isBlackInCheckmate = tileEntityIn.isBlackCheckMate();
 
@@ -183,73 +249,11 @@ public class ChessBoardInstancer extends InstancedBlockEntityRenderer<ChessBlock
                     if (pieceColor.isWhite())
                         poseStack.mulPose(YN_180);
 
-                    // The dance the Pieces do when you check mate the enemy
-//                    if (isWhiteInCheckmate && pieceColor.isBlack()) {
-//                        poseStack.translate(0.0F, (float) Math.abs(Math.sin((Minecraft.getInstance().player.tickCount + partialTicks) / 2.5)) * -0.05F, 0F);
-//                        poseStack.mulPose(Axis.ZN.rotationDegrees((float) Math.cos((Minecraft.getInstance().player.tickCount + partialTicks) / 2.5) * 10));
-//                    }
-//                    if (isBlackInCheckmate && pieceColor.isWhite()) {
-//                        poseStack.translate(0.0F, (float) Math.abs(Math.sin((Minecraft.getInstance().player.tickCount + partialTicks) / 2.5)) * -0.05F, 0F);
-//                        poseStack.mulPose(Axis.ZN.rotationDegrees((float) Math.cos((Minecraft.getInstance().player.tickCount + partialTicks) / 2.5) * 10));
-//                    }
-
-//                    poseStack.translate(CHESS_SCALE * ghostModel.root.x * 0.5F, CHESS_SCALE * ghostModel.root.y * 0.5F, CHESS_SCALE * ghostModel.root.z * 0.5F);
-//                    poseStack.translate(CHESS_SCALE, CHESS_SCALE, CHESS_SCALE);
-//                    if (AnimationHandler.getElapsedSeconds(tileEntityIn.placedState) > tileEntityIn.placedState.getInTime())
-//                        poseStack.mulPose((new Quaternionf()).rotationZYX(ghostModel.root.zRot, ghostModel.root.yRot, ghostModel.root.xRot));
-//                    poseStack.scale(ghostModel.root.xScale, ghostModel.root.yScale, ghostModel.root.zScale);
-
-//                    if (currentCoordinate == tileEntityIn.selectedPiecePos) {
-//                        poseStack.translate(CHESS_SCALE * ghostModel.selected.x * 0.5F, CHESS_SCALE * ghostModel.selected.y * 0.5F, CHESS_SCALE * ghostModel.selected.z * 0.5F);
-//                        poseStack.mulPose((new Quaternionf()).rotationZYX(ghostModel.selected.zRot, ghostModel.selected.yRot, ghostModel.selected.xRot));
-//                    }
-
-//                    if (tileEntityIn.moveState != null) {
-//                        // Moved chess piece
-//                        if (tileEntityIn.currentCord == currentCoordinate) {
-//                            poseStack.translate(CHESS_SCALE * ghostModel.moved.x * 0.5F, CHESS_SCALE * ghostModel.moved.y * 0.5F, CHESS_SCALE * ghostModel.moved.z * 0.5F);
-//                            poseStack.mulPose((new Quaternionf()).rotationZYX(ghostModel.moved.zRot, ghostModel.moved.yRot, ghostModel.moved.xRot));
-//                        }
-//                        // Affected chess piece
-//                        if (tileEntityIn.destCord == currentCoordinate) {
-//                            poseStack.translate(CHESS_SCALE * ghostModel.affected.x * 0.5F, CHESS_SCALE * ghostModel.affected.y * 0.5F, CHESS_SCALE * ghostModel.affected.z * 0.5F);
-//                            poseStack.mulPose((new Quaternionf()).rotationZYX(ghostModel.affected.zRot, ghostModel.affected.yRot, ghostModel.affected.xRot));
-//                            poseStack.scale(ghostModel.affected.xScale, ghostModel.affected.yScale, ghostModel.affected.zScale);
-//                        }
-//                        // White Castle Moves
-//                        if (tileEntityIn.currentCord == 60)
-//                            if (board.getTile(60).getPiece().getPieceType().isKing())
-//                                if ((tileEntityIn.destCord == 62 && currentCoordinate == 63) || (tileEntityIn.destCord == 58 && currentCoordinate == 56)) {
-//                                    poseStack.translate(CHESS_SCALE * ghostModel.affected.x * 0.5F, CHESS_SCALE * ghostModel.affected.y * 0.5F, CHESS_SCALE * ghostModel.affected.z * 0.5F);
-//                                    poseStack.mulPose((new Quaternionf()).rotationZYX(ghostModel.affected.zRot, ghostModel.affected.yRot, ghostModel.affected.xRot));
-//                                }
-//                        // Black Castle Moves
-//                        if (tileEntityIn.currentCord == 4)
-//                            if (board.getTile(4).getPiece().getPieceType().isKing())
-//                                if ((tileEntityIn.destCord == 6 && currentCoordinate == 7) || (tileEntityIn.destCord == 2 && currentCoordinate == 0)) {
-//                                    poseStack.translate(CHESS_SCALE * ghostModel.affected.x * 0.5F, CHESS_SCALE * ghostModel.affected.y * 0.5F, CHESS_SCALE * ghostModel.affected.z * 0.5F);
-//                                    poseStack.mulPose((new Quaternionf()).rotationZYX(ghostModel.affected.zRot, ghostModel.affected.yRot, ghostModel.affected.xRot));
-//                                }
-//
-//                        // White En Passant Move
-//                        if (board.getTile(tileEntityIn.currentCord).getPiece().getPieceColor().isWhite() && tileEntityIn.currentCord / 8 == 3)
-//                            if ((tileEntityIn.currentCord % 8) - (tileEntityIn.destCord % 8) == -1 || (tileEntityIn.currentCord % 8) - (tileEntityIn.destCord % 8) == 1)
-//                                if (board.getTile(tileEntityIn.destCord).getPiece() == null)
-//                                    if (currentCoordinate == tileEntityIn.destCord + 8) {
-//                                        poseStack.translate(CHESS_SCALE * ghostModel.affected.x * 0.5F, CHESS_SCALE * ghostModel.affected.y * 0.5F, CHESS_SCALE * ghostModel.affected.z * 0.5F);
-//                                        poseStack.mulPose((new Quaternionf()).rotationZYX(ghostModel.affected.zRot, ghostModel.affected.yRot, ghostModel.affected.xRot));
-//                                        poseStack.scale(ghostModel.affected.xScale, ghostModel.affected.yScale, ghostModel.affected.zScale);
-//                                    }
-//                        // Black En Passant Move
-//                        if (board.getTile(tileEntityIn.currentCord).getPiece().getPieceColor().isBlack() && tileEntityIn.currentCord / 8 == 4)
-//                            if ((tileEntityIn.currentCord % 8) - (tileEntityIn.destCord % 8) == -1 || (tileEntityIn.currentCord % 8) - (tileEntityIn.destCord % 8) == 1)
-//                                if (board.getTile(tileEntityIn.destCord).getPiece() == null)
-//                                    if (currentCoordinate == tileEntityIn.destCord - 8) {
-//                                        poseStack.translate(CHESS_SCALE * ghostModel.affected.x * 0.5F, CHESS_SCALE * ghostModel.affected.y * 0.5F, CHESS_SCALE * ghostModel.affected.z * 0.5F);
-//                                        poseStack.mulPose((new Quaternionf()).rotationZYX(ghostModel.affected.zRot, ghostModel.affected.yRot, ghostModel.affected.xRot));
-//                                        poseStack.scale(ghostModel.affected.xScale, ghostModel.affected.yScale, ghostModel.affected.zScale);
-//                                    }
-//                    }
+                    animate(
+                            poseStack, tileEntityIn, pieceColor,
+                            isWhiteInCheckmate, isBlackInCheckmate, pct,
+                            ghostModel, currentCoordinate, board
+                    );
 
                     poseStack.scale(CHESS_PIECE_SCALE, -CHESS_PIECE_SCALE, -CHESS_PIECE_SCALE);
 

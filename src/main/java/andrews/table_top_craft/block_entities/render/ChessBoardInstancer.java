@@ -57,7 +57,7 @@ public class ChessBoardInstancer extends InstancedBlockEntityRenderer<ChessBlock
     // TODO: this should not require applying and clearing the shader manually
     private final BatchKey STANDARD_KEY = new BatchKey() {
         public void flush(CollectiveDrawData data) {
-            TTCShaders.CHESS_INSTANCED.apply();
+//            TTCShaders.CHESS_INSTANCED.apply();
             vbo().setupData(data, TTCShaders.CHESS_INSTANCED);
             data.upload();
             vbo().drawWithShader(
@@ -65,13 +65,13 @@ public class ChessBoardInstancer extends InstancedBlockEntityRenderer<ChessBlock
                     RenderSystem.getProjectionMatrix(),
                     RenderSystem.getShader()
             );
-            TTCShaders.CHESS_INSTANCED.clear();
+//            TTCShaders.CHESS_INSTANCED.clear();
         }
     };
 
     private final BatchKey LINE_KEY = new BatchKey() {
         public void flush(CollectiveDrawData data) {
-            TTCShaders.CHESS_INSTANCED.apply();
+//            TTCShaders.CHESS_INSTANCED.apply();
             RenderSystem.polygonMode(GL11.GL_FRONT_AND_BACK, GL11.GL_LINE);
             vbo().setupData(data, TTCShaders.CHESS_INSTANCED);
             data.upload();
@@ -81,7 +81,7 @@ public class ChessBoardInstancer extends InstancedBlockEntityRenderer<ChessBlock
                     RenderSystem.getShader()
             );
             RenderSystem.polygonMode(GL11.GL_FRONT_AND_BACK, GL11.GL_FILL);
-            TTCShaders.CHESS_INSTANCED.clear();
+//            TTCShaders.CHESS_INSTANCED.clear();
         }
     };
 
@@ -275,7 +275,7 @@ public class ChessBoardInstancer extends InstancedBlockEntityRenderer<ChessBlock
                                 batchDataStandard, lightmapCoord
                         );
 
-                        if (!ShaderCompatHandler.isShaderActive()) {
+//                        if (!ShaderCompatHandler.isShaderActive()) {
                             poseStack.pushPose();
                             poseStack.scale(1.001F, 1.001F, 1.001F);
                             float whiteLines = brightnessW * 0.5F / 255F;
@@ -287,7 +287,7 @@ public class ChessBoardInstancer extends InstancedBlockEntityRenderer<ChessBlock
                                     batchDataLine, lightmapCoord
                             );
                             poseStack.popPose();
-                        }
+//                        }
                     } else {
                         // Depending on the render mode we call the corresponding renderer
                         renderPiece(

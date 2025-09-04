@@ -45,6 +45,7 @@ public class ChessFigureInstancer extends InstancedBlockEntityRenderer<ChessPiec
 
     private final BatchKey STANDARD_KEY = new BatchKey() {
         public void flush(CollectiveDrawData data) {
+//            TTCShaders.CHESS_INSTANCED.apply();
             vbo().setupData(data, TTCShaders.CHESS_INSTANCED);
             data.upload();
             vbo().drawWithShader(
@@ -52,6 +53,7 @@ public class ChessFigureInstancer extends InstancedBlockEntityRenderer<ChessPiec
                     RenderSystem.getProjectionMatrix(),
                     RenderSystem.getShader()
             );
+//            TTCShaders.CHESS_INSTANCED.clear();
         }
     };
 
@@ -93,12 +95,12 @@ public class ChessFigureInstancer extends InstancedBlockEntityRenderer<ChessPiec
             scale *= (float) blockEntity.getPieceScale();
 
         matrix3f.scale(scale, scale, scale);
+        rotationQuat.mul(Axis.ZN.rotationDegrees(180));
         if (blockEntity.getPieceName() != null && blockEntity.getPieceName().equals("Lyzantra")) {
             rotationQuat.mul(Axis.ZN.rotationDegrees(180));
 //            matrix3f.translate((float) 0.0D, (float) (-0.4D), (float) 0.0D);
             matrix3f.translate((float) 0.0D, (float) (1.75D), (float) 0.0D);
         }
-        matrix3f.rotate(rotationQuat);
 
         data.writeMesh(pawnBuffer);
         data.ensureInstance();
@@ -112,7 +114,7 @@ public class ChessFigureInstancer extends InstancedBlockEntityRenderer<ChessPiec
         float red = NBTColorSaving.getRed(blockEntity.getPieceColor()) / 255F;
         float green = NBTColorSaving.getGreen(blockEntity.getPieceColor()) / 255F;
         float blue = NBTColorSaving.getBlue(blockEntity.getPieceColor()) / 255F;
-        data.writeFloat(red, green, blue, 0);
+        data.writeFloat(red, green, blue, 1);
 
         data.writeInt($$0);
 

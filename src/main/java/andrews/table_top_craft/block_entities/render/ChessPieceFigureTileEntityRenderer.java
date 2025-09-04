@@ -39,7 +39,7 @@ public class ChessPieceFigureTileEntityRenderer implements BlockEntityRenderer<C
     private static final DynamicTexture texture = new DynamicTexture(image);
     private static final ResourceLocation resourceLocation;
     // Shader Compat texture
-    public static final ResourceLocation SHADER_COMPAT_WHITE = new ResourceLocation(Reference.MODID, "textures/tile/compat/full_white.png");
+    public static final ResourceLocation SHADER_COMPAT_WHITE = new ResourceLocation(Reference.MODID, "textures/tile/chess/chess_piece.png");
     // Chess Piece Stand texture and model
     public static final ResourceLocation CHESS_PIECE_FIGURE_TEXTURE = new ResourceLocation(Reference.MODID, "textures/tile/chess_piece_figure/chess_piece_figure.png");
     private static ChessPieceFigureStandModel chessPieceFigureStandModel;

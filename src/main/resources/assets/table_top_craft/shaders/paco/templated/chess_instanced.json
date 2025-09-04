@@ -7,9 +7,9 @@
   "transformer": {
     "vsh": "table_top_craft:shaders/paco/templated/chess_instanced.vsh"
   },
-  "instance_data": [
-    "ttc_Transform",
-    "ttc_Color",
-    "ttc_Lightmap"
-  ]
+  "instance_data": {
+    "ttc_Transform": "mat4",
+    "ttc_Color": "vec4",
+    "ttc_Lightmap": "ivec2"
+  }
 }

@@ -65,6 +65,7 @@ dependencies {
     shade 'net.objecthunter:exp4j:0.4.8'
 
     implementation fg.deobf("org.andrew:paco:1.0")
+    implementation fg.deobf("org.andrew:ss:1.0")
 
 //  compileOnly fg.deobf("curse.maven:oculus-581495:4767500") // pre 1.7.0 Iris
 //  compileOnly fg.deobf("curse.maven:oculus-581495:5299671") // 1.7.0 Iris

@@ -2,7 +2,7 @@ package andrews.table_top_craft.util;
 
 import com.github.andrew0030.pandora_core.modules.templater.TemplateManager;
 import com.github.andrew0030.pandora_core.modules.templater.wrapper.ShaderWrapper;
-import com.github.andrew0030.pandora_core.client.utils.shader.PaCoShaderStateShard;
+import com.github.andrew0030.pandora_core.modules.instancer.state.PaCoShaderStateShard;
 import net.minecraft.resources.ResourceLocation;
 
 public class TTCShaders {

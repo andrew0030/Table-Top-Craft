@@ -15,7 +15,7 @@ import andrews.table_top_craft.game_logic.chess.player.WhiteChessPlayer;
 import andrews.table_top_craft.objects.blocks.ChessBlock;
 import andrews.table_top_craft.util.*;
 import andrews.table_top_craft.util.shader_compat.ShaderCompatHandler;
-import com.github.andrew0030.pandora_core.client.utils.shader.PaCoShaderStateShard;
+import com.github.andrew0030.pandora_core.modules.instancer.state.PaCoShaderStateShard;
 import com.github.andrew0030.pandora_core.modules.instancer.collective.CollectiveBufferBuilder;
 import com.github.andrew0030.pandora_core.modules.instancer.collective.CollectiveDrawData;
 import com.github.andrew0030.pandora_core.modules.instancer.collective.CollectiveVBO;

@@ -67,7 +67,7 @@ public class DrawScreenHelper {
     }
 
     public static CollectiveBufferBuilder.MeshRange getBuffer(PieceModelSet set, PieceType piece) {
-        return CHESS_PIECE_MODEL.get(Pair.of(piece, set));
+        return CHESS_PIECE_MODEL.get(set, piece);
     }
 
     public ChessPieceModels getChessModels() {

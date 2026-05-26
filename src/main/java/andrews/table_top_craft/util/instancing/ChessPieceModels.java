@@ -17,41 +17,42 @@ import java.util.HashMap;
 
 @OnlyIn(Dist.CLIENT)
 public class ChessPieceModels {
-    private static CollectiveVBO collectiveVBO;
-    private static BufferBuilder builder = new BufferBuilder(2048);
-    private static final HashMap<Pair<PieceType, PieceModelSet>, CollectiveBufferBuilder.MeshRange> RANGES = new HashMap<>();
-
-    public void uploadVBO(Triple<PieceModelSet, PieceType, ObjModel>[] all) {
-        if (collectiveVBO == null) {
-            collectiveVBO = new CollectiveVBO(
-                    AcceleratedVBO.AccelerationUsage.STATIC_LOCKED,
-                    InstanceFormats.TRANSFORM_COLOR_LIGHTMAP
-            );
-        }
-
-        BufferBuilderUtils.enforceExtended(builder, VertexFormat.Mode.TRIANGLES, DefaultVertexFormat.NEW_ENTITY);
-        CollectiveBufferBuilder multidrawBuffer = new CollectiveBufferBuilder(builder);
-
-        for (Triple<PieceModelSet, PieceType, ObjModel> toLoad : all) {
-            if (toLoad.getThird() != null) {
-                toLoad.getThird().render(new PoseStack(), multidrawBuffer, 15728640);
-                RANGES.put(
-                        Pair.of(toLoad.getSecond(), toLoad.getFirst()),
-                        multidrawBuffer.endMesh(toLoad.getFirst().pathFor(toLoad.getSecond()))
-                );
-            }
-        }
-
-        collectiveVBO.bind();
-        collectiveVBO.upload(builder.end());
-        VertexBuffer.unbind();
-    }
-
-    public CollectiveBufferBuilder.MeshRange get(Pair<PieceType, PieceModelSet> of) {
-        return RANGES.get(of);
-    }
-
-    public CollectiveVBO getCollectiveVBO() {
-        return collectiveVBO;
-    }
+	private static CollectiveVBO collectiveVBO;
+	private static BufferBuilder builder = new BufferBuilder(2048);
+	//    private static final HashMap<Pair<PieceType, PieceModelSet>, CollectiveBufferBuilder.MeshRange> RANGES = new HashMap<>();
+	private static final CollectiveBufferBuilder.MeshRange[][] RANGES = new CollectiveBufferBuilder.MeshRange[PieceModelSet.values().length][PieceType.values().length];
+	
+	public void uploadVBO(Triple<PieceModelSet, PieceType, ObjModel>[] all) {
+		if (collectiveVBO == null) {
+			collectiveVBO = new CollectiveVBO(
+					AcceleratedVBO.AccelerationUsage.STATIC_LOCKED,
+					InstanceFormats.TRANSFORM_COLOR_LIGHTMAP
+			);
+		}
+		
+		BufferBuilderUtils.enforceExtended(builder, VertexFormat.Mode.TRIANGLES, DefaultVertexFormat.NEW_ENTITY);
+		CollectiveBufferBuilder multidrawBuffer = new CollectiveBufferBuilder(builder);
+		
+		for (Triple<PieceModelSet, PieceType, ObjModel> toLoad : all) {
+			if (toLoad.getThird() != null) {
+				toLoad.getThird().render(new PoseStack(), multidrawBuffer, 15728640);
+				RANGES[toLoad.getFirst().ordinal()][toLoad.getSecond().ordinal()] =
+						multidrawBuffer.endMesh(
+								toLoad.getFirst().pathFor(toLoad.getSecond())
+						);
+			}
+		}
+		
+		collectiveVBO.bind();
+		collectiveVBO.upload(builder.end());
+		VertexBuffer.unbind();
+	}
+	
+	public CollectiveBufferBuilder.MeshRange get(PieceModelSet set, PieceType type) {
+		return RANGES[set.ordinal()][type.ordinal()];
+	}
+	
+	public CollectiveVBO getCollectiveVBO() {
+		return collectiveVBO;
+	}
 }

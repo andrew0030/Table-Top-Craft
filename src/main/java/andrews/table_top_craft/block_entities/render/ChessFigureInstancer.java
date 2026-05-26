@@ -58,7 +58,7 @@ public class ChessFigureInstancer extends InstancedBlockEntityRenderer<ChessPiec
     };
 
     @Override
-    public void render(Level level, ChessPieceFigureBlockEntity blockEntity, BlockPos pos, BatchData batchData) {
+    public void render(Level level, ChessPieceFigureBlockEntity blockEntity, BlockPos pos, BatchData batchData, float pct) {
         BasePiece.PieceModelSet set = BasePiece.PieceModelSet.get(blockEntity.getPieceSet());
         BasePiece.PieceType piece = BasePiece.PieceType.get(blockEntity.getPieceType());
 //        BasePiece.PieceModelSet set = BasePiece.PieceModelSet.STANDARD;
@@ -70,8 +70,6 @@ public class ChessFigureInstancer extends InstancedBlockEntityRenderer<ChessPiec
         // prevent the world from catching on fire
         if (pawnBuffer == null)
             return;
-
-        float pct = 0;
 
         CollectiveDrawData data = batchData.buildBatch(STANDARD_KEY);
 

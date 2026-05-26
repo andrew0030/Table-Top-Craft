@@ -1,15 +1,15 @@
 {
-  "template": {
-    "vanilla": "minecraft:shaders/core/rendertype_entity_solid",
-    "core": "minecraft:shaders/core/rendertype_entity_solid",
-    "iris": "entities_solid"
-  },
-  "transformer": {
-    "vsh": "table_top_craft:shaders/paco/templated/chess_instanced.vsh"
-  },
-  "instance_data": {
-    "ttc_Transform": "mat4",
-    "ttc_Color": "vec4",
-    "ttc_Lightmap": "ivec2"
-  }
+	"template": {
+		"vanilla": "minecraft:shaders/core/rendertype_entity_solid",
+		"core": "minecraft:shaders/core/rendertype_entity_solid",
+		"iris": "entities_solid"
+	},
+	"transformer": {
+		"vsh": "table_top_craft:shaders/paco/templated/chess_instanced.vsh"
+	},
+	"instance_data": {
+		"ttc_Transform": "mat4",
+		"ttc_Color": "vec4",
+		"ttc_Lightmap": "ivec2"
+	}
 }

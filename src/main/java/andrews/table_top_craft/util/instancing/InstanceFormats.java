@@ -1,7 +1,7 @@
 package andrews.table_top_craft.util.instancing;
 
-import com.github.andrew0030.pandora_core.client.render.instancing.InstanceDataElement;
-import com.github.andrew0030.pandora_core.client.render.instancing.InstanceFormat;
+import com.github.andrew0030.pandora_core.modules.instancer.instancing.InstanceDataElement;
+import com.github.andrew0030.pandora_core.modules.instancer.instancing.InstanceFormat;
 import com.github.andrew0030.pandora_core.utils.enums.NumericPrimitive;
 
 public class InstanceFormats {

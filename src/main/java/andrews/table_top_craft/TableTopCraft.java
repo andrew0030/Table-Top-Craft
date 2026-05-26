@@ -17,7 +17,7 @@ import andrews.table_top_craft.util.DrawScreenHelper;
 import andrews.table_top_craft.util.Reference;
 import andrews.table_top_craft.util.instancing.InstanceFormats;
 import andrews.table_top_craft.util.shader_compat.ShaderCompatHandler;
-import com.github.andrew0030.pandora_core.client.render.renderers.registry.InstancedBERendererRegistry;
+import com.github.andrew0030.pandora_core.modules.instancer.registry.InstancedBERendererRegistry;
 import com.github.andrew0030.pandora_core.registry.test.PaCoBlockEntities;
 import com.github.andrew0030.pandora_core.test.InstancingTestBlockEntityRenderer;
 import com.mojang.blaze3d.vertex.DefaultVertexFormat;

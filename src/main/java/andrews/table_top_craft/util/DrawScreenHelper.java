@@ -3,7 +3,7 @@ package andrews.table_top_craft.util;
 import andrews.table_top_craft.game_logic.chess.pieces.BasePiece.PieceModelSet;
 import andrews.table_top_craft.game_logic.chess.pieces.BasePiece.PieceType;
 import andrews.table_top_craft.util.instancing.ChessPieceModels;
-import com.github.andrew0030.pandora_core.client.render.collective.CollectiveBufferBuilder;
+import com.github.andrew0030.pandora_core.modules.instancer.collective.CollectiveBufferBuilder;
 import com.github.andrew0030.pandora_core.client.render.obj.ObjLoader;
 import com.github.andrew0030.pandora_core.client.render.obj.ObjModel;
 import com.github.andrew0030.pandora_core.platform.Services;

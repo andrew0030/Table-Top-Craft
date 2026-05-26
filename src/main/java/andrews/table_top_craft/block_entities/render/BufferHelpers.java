@@ -1,10 +1,10 @@
 package andrews.table_top_craft.block_entities.render;
 
 import andrews.table_top_craft.util.DrawScreenHelper;
-import com.github.andrew0030.pandora_core.client.render.collective.CollectiveBufferBuilder;
-import com.github.andrew0030.pandora_core.client.render.collective.CollectiveDrawData;
-import com.github.andrew0030.pandora_core.client.render.instancing.InstanceData;
-import com.github.andrew0030.pandora_core.client.shader.templating.wrapper.ShaderWrapper;
+import com.github.andrew0030.pandora_core.modules.instancer.collective.CollectiveBufferBuilder;
+import com.github.andrew0030.pandora_core.modules.instancer.collective.CollectiveDrawData;
+import com.github.andrew0030.pandora_core.modules.instancer.instancing.InstanceData;
+import com.github.andrew0030.pandora_core.modules.templater.wrapper.ShaderWrapper;
 import com.mojang.blaze3d.platform.Window;
 import com.mojang.blaze3d.shaders.Uniform;
 import com.mojang.blaze3d.systems.RenderSystem;

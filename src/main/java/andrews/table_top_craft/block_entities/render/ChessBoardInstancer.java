@@ -15,13 +15,15 @@ import andrews.table_top_craft.game_logic.chess.player.WhiteChessPlayer;
 import andrews.table_top_craft.objects.blocks.ChessBlock;
 import andrews.table_top_craft.util.*;
 import andrews.table_top_craft.util.shader_compat.ShaderCompatHandler;
-import com.github.andrew0030.pandora_core.client.render.collective.CollectiveBufferBuilder;
-import com.github.andrew0030.pandora_core.client.render.collective.CollectiveDrawData;
-import com.github.andrew0030.pandora_core.client.render.collective.CollectiveVBO;
-import com.github.andrew0030.pandora_core.client.render.instancing.InstanceFormat;
-import com.github.andrew0030.pandora_core.client.render.instancing.engine.BatchData;
-import com.github.andrew0030.pandora_core.client.render.instancing.engine.BatchKey;
-import com.github.andrew0030.pandora_core.client.render.renderers.instancing.InstancedBlockEntityRenderer;
+import com.github.andrew0030.pandora_core.client.utils.shader.PaCoShaderStateShard;
+import com.github.andrew0030.pandora_core.modules.instancer.collective.CollectiveBufferBuilder;
+import com.github.andrew0030.pandora_core.modules.instancer.collective.CollectiveDrawData;
+import com.github.andrew0030.pandora_core.modules.instancer.collective.CollectiveVBO;
+import com.github.andrew0030.pandora_core.modules.instancer.instancing.InstanceFormat;
+import com.github.andrew0030.pandora_core.modules.instancer.instancing.engine.BatchData;
+import com.github.andrew0030.pandora_core.modules.instancer.instancing.engine.BatchKey;
+import com.github.andrew0030.pandora_core.modules.instancer.renderers.instancing.InstancedBlockEntityRenderer;
+import com.github.andrew0030.pandora_core.test.PaCoRenderTypes;
 import com.google.common.primitives.Ints;
 import com.mojang.blaze3d.shaders.FogShape;
 import com.mojang.blaze3d.systems.RenderSystem;
@@ -432,10 +434,13 @@ public class ChessBoardInstancer extends InstancedBlockEntityRenderer<ChessBlock
                 ChessPieceFigureTileEntityRenderer.SHADER_COMPAT_WHITE
         );
         type.setupRenderState();
-        RenderSystem.getShader().apply();
-        vbo().bind();
-        batchData.flush();
-        vbo().unbindVBO();
+	    PaCoShaderStateShard shaderShard = TTCShaders.CHESS_INSTANCED_SHARD;
+	    if (shaderShard.shouldRender()) {
+		    RenderSystem.getShader().apply();
+		    vbo().bind();
+		    batchData.flush();
+		    vbo().unbindVBO();
+	    }
         type.clearRenderState();
         RenderSystem.setShaderFogShape(FogShape.CYLINDER);
     }

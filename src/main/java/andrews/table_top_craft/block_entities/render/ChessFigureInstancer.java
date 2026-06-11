@@ -13,9 +13,9 @@ import com.github.andrew0030.pandora_core.modules.instancer.collective.Collectiv
 import com.github.andrew0030.pandora_core.modules.instancer.instancing.InstanceFormat;
 import com.github.andrew0030.pandora_core.modules.instancer.instancing.engine.BatchData;
 import com.github.andrew0030.pandora_core.modules.instancer.instancing.engine.BatchKey;
+import com.github.andrew0030.pandora_core.modules.instancer.instancing.engine.PacoInstancingLevel;
 import com.github.andrew0030.pandora_core.modules.instancer.renderers.instancing.InstancedBlockEntityRenderer;
-import com.github.andrew0030.pandora_core.test.PaCoRenderTypes;
-import com.github.andrew0030.pandora_core.test.TemplateShaderTest;
+import com.github.andrew0030.pandora_core.modules.instancer.state.PaCoShaderStateShard;
 import com.mojang.blaze3d.shaders.FogShape;
 import com.mojang.blaze3d.systems.RenderSystem;
 import com.mojang.math.Axis;
@@ -23,29 +23,27 @@ import net.minecraft.client.Minecraft;
 import net.minecraft.client.renderer.LightTexture;
 import net.minecraft.client.renderer.RenderType;
 import net.minecraft.core.BlockPos;
-import net.minecraft.resources.ResourceLocation;
-import net.minecraft.world.level.ChunkPos;
 import net.minecraft.world.level.Level;
 import net.minecraft.world.level.LightLayer;
 import net.minecraft.world.level.block.state.BlockState;
-import net.minecraft.world.level.levelgen.XoroshiroRandomSource;
-import org.joml.Matrix3f;
+import net.minecraft.world.phys.Vec3;
 import org.joml.Matrix4f;
 import org.joml.Quaternionf;
-import org.joml.Random;
 
 public class ChessFigureInstancer extends InstancedBlockEntityRenderer<ChessPieceFigureBlockEntity> {
+	CollectiveVBO vbo;
+	
     public ChessFigureInstancer(InstanceFormat format, CollectiveVBO vbo) {
-        super(format, vbo);
+        super(format);
+		this.vbo = vbo;
     }
 
-    protected CollectiveVBO vbo() {
+    protected static CollectiveVBO vbo() {
         return DrawScreenHelper.CHESS_PIECE_MODEL.getCollectiveVBO();
     }
 
-    private final BatchKey STANDARD_KEY = new BatchKey() {
+    public static final BatchKey STANDARD_KEY = new BatchKey() {
         public void flush(CollectiveDrawData data) {
-//            TTCShaders.CHESS_INSTANCED.apply();
             vbo().setupData(data, TTCShaders.CHESS_INSTANCED);
             data.upload();
             vbo().drawWithShader(
@@ -53,24 +51,24 @@ public class ChessFigureInstancer extends InstancedBlockEntityRenderer<ChessPiec
                     RenderSystem.getProjectionMatrix(),
                     RenderSystem.getShader()
             );
-//            TTCShaders.CHESS_INSTANCED.clear();
         }
     };
 
     @Override
-    public void render(Level level, ChessPieceFigureBlockEntity blockEntity, BlockPos pos, BatchData batchData, float pct) {
-        BasePiece.PieceModelSet set = BasePiece.PieceModelSet.get(blockEntity.getPieceSet());
-        BasePiece.PieceType piece = BasePiece.PieceType.get(blockEntity.getPieceType());
-//        BasePiece.PieceModelSet set = BasePiece.PieceModelSet.STANDARD;
-//        BasePiece.PieceType piece = BasePiece.PieceType.PAWN;
-        CollectiveBufferBuilder.MeshRange pawnBuffer = DrawScreenHelper.getBuffer(
-                set,
-                piece
-        );
-        // prevent the world from catching on fire
-        if (pawnBuffer == null)
-            return;
-
+    public void render(PacoInstancingLevel ilevel, ChessPieceFigureBlockEntity blockEntity, BlockPos pos, BatchData batchData, float pct, Vec3 camera) {
+	    BasePiece.PieceModelSet set = BasePiece.PieceModelSet.get(blockEntity.getPieceSet());
+	    if (set == null) return;
+	    BasePiece.PieceType piece = BasePiece.PieceType.get(blockEntity.getPieceType());
+	    CollectiveBufferBuilder.MeshRange pawnBuffer = DrawScreenHelper.getBuffer(
+			    set,
+			    piece
+	    );
+	    // prevent the world from catching on fire
+	    if (pawnBuffer == null)
+		    return;
+	    
+	    Level level = (Level) ilevel;
+		
         CollectiveDrawData data = batchData.buildBatch(STANDARD_KEY);
 
         int rotation = 0;
@@ -82,6 +80,7 @@ public class ChessFigureInstancer extends InstancedBlockEntityRenderer<ChessPiec
         }
 
         Matrix4f matrix3f = new Matrix4f();
+		matrix3f.translate((float) -camera.x, (float) -camera.y, (float) -camera.z);
         matrix3f.translate(pos.getX() + 8 * 0.0625F, pos.getY() + 2 * 0.0625F, pos.getZ() + 8 * 0.0625F);
 
         Quaternionf rotationQuat = Axis.YN.rotationDegrees(rotation * 22.5F);
@@ -120,16 +119,19 @@ public class ChessFigureInstancer extends InstancedBlockEntityRenderer<ChessPiec
     }
 
     @Override
-    public void flush(Level level, BatchData batchData) {
+    public void flush(PacoInstancingLevel level, BatchData batchData) {
         RenderSystem.setShaderFogShape(FogShape.SPHERE);
         RenderType type = TTCRenderTypes.getChessPieceSolid(
-                ChessPieceFigureTileEntityRenderer.SHADER_COMPAT_WHITE
+                ShaderCompatTexture.SHADER_COMPAT_WHITE
         );
         type.setupRenderState();
-        RenderSystem.getShader().apply();
-        vbo().bind();
-        batchData.flush();
-        vbo().unbindVBO();
+	    PaCoShaderStateShard shaderShard = TTCShaders.CHESS_INSTANCED_SHARD;
+	    if (shaderShard.shouldRender()) {
+		    RenderSystem.getShader().apply();
+		    vbo().bind();
+		    batchData.flush();
+		    vbo().unbindVBO();
+	    }
         type.clearRenderState();
         RenderSystem.setShaderFogShape(FogShape.CYLINDER);
     }

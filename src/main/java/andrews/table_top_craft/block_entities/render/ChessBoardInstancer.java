@@ -10,12 +10,10 @@ import andrews.table_top_craft.game_logic.chess.board.ChessMoveLog;
 import andrews.table_top_craft.game_logic.chess.board.moves.BaseMove;
 import andrews.table_top_craft.game_logic.chess.board.tiles.BaseChessTile;
 import andrews.table_top_craft.game_logic.chess.pieces.BasePiece;
-import andrews.table_top_craft.game_logic.chess.player.BlackChessPlayer;
-import andrews.table_top_craft.game_logic.chess.player.WhiteChessPlayer;
 import andrews.table_top_craft.objects.blocks.ChessBlock;
 import andrews.table_top_craft.util.*;
-import andrews.table_top_craft.util.shader_compat.ShaderCompatHandler;
 import com.github.andrew0030.pandora_core.modules.instancer.instancing.InstanceData;
+import com.github.andrew0030.pandora_core.modules.instancer.instancing.engine.PacoInstancingLevel;
 import com.github.andrew0030.pandora_core.modules.instancer.state.PaCoShaderStateShard;
 import com.github.andrew0030.pandora_core.modules.instancer.collective.CollectiveBufferBuilder;
 import com.github.andrew0030.pandora_core.modules.instancer.collective.CollectiveDrawData;
@@ -24,7 +22,6 @@ import com.github.andrew0030.pandora_core.modules.instancer.instancing.InstanceF
 import com.github.andrew0030.pandora_core.modules.instancer.instancing.engine.BatchData;
 import com.github.andrew0030.pandora_core.modules.instancer.instancing.engine.BatchKey;
 import com.github.andrew0030.pandora_core.modules.instancer.renderers.instancing.InstancedBlockEntityRenderer;
-import com.github.andrew0030.pandora_core.test.PaCoRenderTypes;
 import com.google.common.primitives.Ints;
 import com.mojang.blaze3d.shaders.FogShape;
 import com.mojang.blaze3d.systems.RenderSystem;
@@ -38,6 +35,7 @@ import net.minecraft.core.Direction;
 import net.minecraft.world.level.Level;
 import net.minecraft.world.level.LightLayer;
 import net.minecraft.world.level.block.state.BlockState;
+import net.minecraft.world.phys.Vec3;
 import org.joml.Matrix3f;
 import org.joml.Matrix4f;
 import org.joml.Quaternionf;
@@ -52,29 +50,16 @@ public class ChessBoardInstancer extends InstancedBlockEntityRenderer<ChessBlock
     private final PoseStack poseStack = new PoseStack();
     private final Matrix4f cpyPose = new Matrix4f();
     private final Matrix3f cpyNorm = new Matrix3f();
-
+	
+	CollectiveVBO vbo;
+	
     public ChessBoardInstancer(InstanceFormat format, CollectiveVBO vbo) {
-        super(format, vbo);
+        super(format);
+		this.vbo = vbo;
     }
-
-    // TODO: this should not require applying and clearing the shader manually
-    private final BatchKey STANDARD_KEY = new BatchKey() {
-        public void flush(CollectiveDrawData data) {
-//            TTCShaders.CHESS_INSTANCED.apply();
-            vbo().setupData(data, TTCShaders.CHESS_INSTANCED);
-            data.upload();
-            vbo().drawWithShader(
-                    RenderSystem.getModelViewMatrix(),
-                    RenderSystem.getProjectionMatrix(),
-                    RenderSystem.getShader()
-            );
-//            TTCShaders.CHESS_INSTANCED.clear();
-        }
-    };
 
     private final BatchKey LINE_KEY = new BatchKey() {
         public void flush(CollectiveDrawData data) {
-//            TTCShaders.CHESS_INSTANCED.apply();
             RenderSystem.polygonMode(GL11.GL_FRONT_AND_BACK, GL11.GL_LINE);
             vbo().setupData(data, TTCShaders.CHESS_INSTANCED);
             data.upload();
@@ -84,7 +69,6 @@ public class ChessBoardInstancer extends InstancedBlockEntityRenderer<ChessBlock
                     RenderSystem.getShader()
             );
             RenderSystem.polygonMode(GL11.GL_FRONT_AND_BACK, GL11.GL_FILL);
-//            TTCShaders.CHESS_INSTANCED.clear();
         }
     };
 
@@ -162,19 +146,22 @@ public class ChessBoardInstancer extends InstancedBlockEntityRenderer<ChessBlock
 	
 	private static final int numTypes = BasePiece.PieceType.values().length;
 	
-    @Override
-    public void render(Level level, ChessBlockEntity tileEntityIn, BlockPos pos, BatchData batchData, float pct) {
-        GhostModel ghostModel = getInstance().ghostModel;
-
-        ghostModel.updateAnimations(tileEntityIn, pct);
-
+	@Override
+    public void render(PacoInstancingLevel ilevel, ChessBlockEntity tileEntityIn, BlockPos pos, BatchData batchData, float pct, Vec3 vec3) {
         Board board = tileEntityIn.getBoard();
         if (board == null) return;
 		
 		InstanceData[] dCache = new InstanceData[numTypes];
 
         BasePiece.PieceModelSet boardSet = BasePiece.PieceModelSet.get(tileEntityIn.getPieceSet() + 1);
-        CollectiveDrawData batchDataStandard = batchData.buildBatch(STANDARD_KEY);
+	    if (boardSet == null) return;
+
+		Level level = (Level) ilevel;
+	    
+	    GhostModel ghostModel = getInstance().ghostModel;
+	    ghostModel.updateAnimations(tileEntityIn, pct);
+		
+        CollectiveDrawData batchDataStandard = batchData.buildBatch(ChessFigureInstancer.STANDARD_KEY);
         CollectiveDrawData batchDataLine = batchData.buildBatch(LINE_KEY);
 
         int lightmapCoord = LightTexture.pack(
@@ -191,6 +178,8 @@ public class ChessBoardInstancer extends InstancedBlockEntityRenderer<ChessBlock
             if (blockstate.getBlock() instanceof ChessBlock)
                 facing = blockstate.getValue(ChessBlock.FACING);
         }
+		
+		poseStack.translate(-vec3.x, -vec3.y, -vec3.z);
 
         poseStack.translate(
 				pos.getX() + 0.5D,
@@ -293,7 +282,7 @@ public class ChessBoardInstancer extends InstancedBlockEntityRenderer<ChessBlock
                                 poseStack, boardSet, pieceType, pieceColor,
                                 whiteLines, whiteLines, whiteLines,
                                 blackLines, blackLines, blackLines,
-                                batchDataLine, lightmapCoord, dCache
+                                batchDataLine, lightmapCoord, null
                         );
                         poseStack.popPose();
                     } else {
@@ -402,10 +391,10 @@ public class ChessBoardInstancer extends InstancedBlockEntityRenderer<ChessBlock
             poseStack.last().normal().set(cpyNorm);
         }
     }
-
-    protected CollectiveVBO vbo() {
-        return DrawScreenHelper.CHESS_PIECE_MODEL.getCollectiveVBO();
-    }
+	
+	protected CollectiveVBO vbo() {
+		return DrawScreenHelper.CHESS_PIECE_MODEL.getCollectiveVBO();
+	}
 
     private void renderPiece(
             PoseStack poseStack, BasePiece.PieceModelSet pieceSet,
@@ -420,13 +409,16 @@ public class ChessBoardInstancer extends InstancedBlockEntityRenderer<ChessBlock
 
         if (range == null) return;
 		
-		InstanceData dat = dCache[pieceType.ordinal()];
+		InstanceData dat = null;
+		if (dCache != null)
+			dat = dCache[pieceType.ordinal()];
 		if (dat == null) {
 			data.writeMesh(range);
 			data.activateData();
 			
 			dat = data.getWriting();
-			dCache[pieceType.ordinal()] = dat;
+			if (dCache != null)
+				dCache[pieceType.ordinal()] = dat;
 		}
 
         dat.ensureInstance();
@@ -442,12 +434,12 @@ public class ChessBoardInstancer extends InstancedBlockEntityRenderer<ChessBlock
     }
 
     @Override
-    public void flush(Level level, BatchData batchData) {
-        RenderSystem.setShaderFogShape(FogShape.SPHERE);
-        RenderType type = TTCRenderTypes.getChessPieceSolid(
-                ChessPieceFigureTileEntityRenderer.SHADER_COMPAT_WHITE
-        );
-        type.setupRenderState();
+    public void flush(PacoInstancingLevel level, BatchData batchData) {
+	    RenderSystem.setShaderFogShape(FogShape.SPHERE);
+	    RenderType type = TTCRenderTypes.getChessPieceSolid(
+			    ShaderCompatTexture.SHADER_COMPAT_WHITE
+	    );
+	    type.setupRenderState();
 	    PaCoShaderStateShard shaderShard = TTCShaders.CHESS_INSTANCED_SHARD;
 	    if (shaderShard.shouldRender()) {
 		    RenderSystem.getShader().apply();
@@ -455,7 +447,7 @@ public class ChessBoardInstancer extends InstancedBlockEntityRenderer<ChessBlock
 		    batchData.flush();
 		    vbo().unbindVBO();
 	    }
-        type.clearRenderState();
-        RenderSystem.setShaderFogShape(FogShape.CYLINDER);
+	    type.clearRenderState();
+	    RenderSystem.setShaderFogShape(FogShape.CYLINDER);
     }
 }

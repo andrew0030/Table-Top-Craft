@@ -1,8 +1,5 @@
 {
-  "parent": "builtin/entity",
-  "textures": {
-    "particle": "table_top_craft:block/chess_piece_figure_particle"
-  },
+  "parent": "table_top_craft:block/chess_piece_figure",
   "display": {
     "gui": {
       "rotation": [ 30, 135, 0 ],

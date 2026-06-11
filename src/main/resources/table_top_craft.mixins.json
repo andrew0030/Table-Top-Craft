@@ -8,7 +8,6 @@
     "LootTableMixin"
   ],
   "client": [
-    "GameRendererMixin",
     "ScreenMixin"
   ],
   "injectors": {

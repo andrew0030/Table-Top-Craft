@@ -23,7 +23,8 @@ public class DrawScreenHelper {
                     collect(
                             pieceSet(loader, PieceModelSet.STANDARD),
                             pieceSet(loader, PieceModelSet.CLASSIC),
-                            pieceSet(loader, PieceModelSet.PANDORAS_CREATURES)
+                            pieceSet(loader, PieceModelSet.PANDORAS_CREATURES),
+                            pieceSet(loader, PieceModelSet.CONE_HEAD)
                     )
             )
     );

@@ -2,6 +2,7 @@ package andrews.table_top_craft;
 
 import andrews.table_top_craft.block_entities.render.ChessBoardInstancer;
 import andrews.table_top_craft.block_entities.render.ChessFigureInstancer;
+import andrews.table_top_craft.block_entities.render.item.PieceFigureInstancer;
 import andrews.table_top_craft.network.TTCNetwork;
 import andrews.table_top_craft.registry.*;
 import andrews.table_top_craft.block_entities.model.chess.ChessBoardPlateModel;
@@ -17,9 +18,7 @@ import andrews.table_top_craft.util.DrawScreenHelper;
 import andrews.table_top_craft.util.Reference;
 import andrews.table_top_craft.util.instancing.InstanceFormats;
 import andrews.table_top_craft.util.shader_compat.ShaderCompatHandler;
-import com.github.andrew0030.pandora_core.modules.instancer.registry.InstancedBERendererRegistry;
-import com.github.andrew0030.pandora_core.registry.test.PaCoBlockEntities;
-import com.github.andrew0030.pandora_core.test.InstancingTestBlockEntityRenderer;
+import com.github.andrew0030.pandora_core.modules.instancer.registry.InstancedRendererRegistry;
 import com.mojang.blaze3d.vertex.DefaultVertexFormat;
 import net.minecraft.client.renderer.ShaderInstance;
 import net.minecraft.resources.ResourceLocation;
@@ -94,14 +93,16 @@ public class TableTopCraft
 	{
 		event.enqueueWork(TTCBlockEntities::registerTileRenders);
 
-		InstancedBERendererRegistry.register(TTCBlockEntities.CHESS_PIECE_FIGURE.get(), new ChessFigureInstancer(
+		InstancedRendererRegistry.register(TTCBlockEntities.CHESS_PIECE_FIGURE.get(), new ChessFigureInstancer(
 				InstanceFormats.TRANSFORM_COLOR_LIGHTMAP,
 				DrawScreenHelper.CHESS_PIECE_MODEL.getCollectiveVBO()
 		));
-		InstancedBERendererRegistry.register(TTCBlockEntities.CHESS.get(), new ChessBoardInstancer(
+		InstancedRendererRegistry.register(TTCBlockEntities.CHESS.get(), new ChessBoardInstancer(
 				InstanceFormats.TRANSFORM_COLOR_LIGHTMAP,
 				DrawScreenHelper.CHESS_PIECE_MODEL.getCollectiveVBO()
 		));
+		
+		InstancedRendererRegistry.register(TTCBlocks.CHESS_PIECE_FIGURE.get().asItem(), PieceFigureInstancer.INSTANCE);
 	}
 
 	void setupLayers(final EntityRenderersEvent.RegisterLayerDefinitions event)

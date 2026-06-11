@@ -3,10 +3,7 @@ package andrews.table_top_craft.block_entities.render;
 import andrews.table_top_craft.block_entities.ChessPieceFigureBlockEntity;
 import andrews.table_top_craft.game_logic.chess.pieces.BasePiece;
 import andrews.table_top_craft.objects.blocks.ChessPieceFigureBlock;
-import andrews.table_top_craft.util.DrawScreenHelper;
-import andrews.table_top_craft.util.NBTColorSaving;
-import andrews.table_top_craft.util.TTCRenderTypes;
-import andrews.table_top_craft.util.TTCShaders;
+import andrews.table_top_craft.util.*;
 import com.github.andrew0030.pandora_core.modules.instancer.collective.CollectiveBufferBuilder;
 import com.github.andrew0030.pandora_core.modules.instancer.collective.CollectiveDrawData;
 import com.github.andrew0030.pandora_core.modules.instancer.collective.CollectiveVBO;
@@ -92,12 +89,24 @@ public class ChessFigureInstancer extends InstancedBlockEntityRenderer<ChessPiec
             scale *= (float) blockEntity.getPieceScale();
 
         matrix3f.scale(scale, scale, scale);
-        rotationQuat.mul(Axis.ZN.rotationDegrees(180));
         if (blockEntity.getPieceName() != null && blockEntity.getPieceName().equals("Lyzantra")) {
             rotationQuat.mul(Axis.ZN.rotationDegrees(180));
 //            matrix3f.translate((float) 0.0D, (float) (-0.4D), (float) 0.0D);
             matrix3f.translate((float) 0.0D, (float) (1.75D), (float) 0.0D);
         }
+		matrix3f.rotate(rotationQuat);
+	    
+	    float red = NBTColorSaving.getRed(blockEntity.getPieceColor()) / 255F;
+	    float green = NBTColorSaving.getGreen(blockEntity.getPieceColor()) / 255F;
+	    float blue = NBTColorSaving.getBlue(blockEntity.getPieceColor()) / 255F;
+		if (blockEntity.getPieceName() != null && blockEntity.getPieceName().equals("andrew_")) {
+			int tickCount = Minecraft.getInstance().player.tickCount;
+			int value = (tickCount % 180) * 2;
+			Color color = new Color(0, 0, 0).fromHSV(value, 1.0F, 1.0F);
+			red = color.getRed() / 255f;
+			green = color.getGreen() / 255f;
+			blue = color.getBlue() / 255f;
+		}
 
         data.writeMesh(pawnBuffer);
         data.ensureInstance();
@@ -107,10 +116,7 @@ public class ChessFigureInstancer extends InstancedBlockEntityRenderer<ChessPiec
                 level.getBrightness(LightLayer.BLOCK, pos),
                 level.getBrightness(LightLayer.SKY, pos)
         );
-
-        float red = NBTColorSaving.getRed(blockEntity.getPieceColor()) / 255F;
-        float green = NBTColorSaving.getGreen(blockEntity.getPieceColor()) / 255F;
-        float blue = NBTColorSaving.getBlue(blockEntity.getPieceColor()) / 255F;
+		
         data.writeFloat(red, green, blue, 1);
 
         data.writeInt($$0);

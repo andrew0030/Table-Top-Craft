@@ -26,6 +26,7 @@ import net.minecraft.core.BlockPos;
 import net.minecraft.nbt.CompoundTag;
 import net.minecraft.nbt.Tag;
 import net.minecraft.world.item.BlockItem;
+import net.minecraft.world.item.ItemDisplayContext;
 import net.minecraft.world.item.ItemStack;
 import net.minecraft.world.phys.Vec3;
 import org.joml.Quaternionf;
@@ -119,16 +120,27 @@ public class PieceFigureInstancer extends InstancedItemRenderer
 			rotationQuat.mul(Axis.YN.rotationDegrees(Minecraft.getInstance().player.tickCount + pct));
 		
 		float scale = 0.0625F * 5;
+		boolean isInGui = itemDrawData.getDisplayContext() == ItemDisplayContext.GUI;
+		boolean isHeldOrHead = isHeldOrHead(itemDrawData.getDisplayContext());
+		if (isInGui || isHeldOrHead)
+		{
+			ps.scale(isHeldOrHead ? 1.3F : 1.4F, isHeldOrHead ? 1.3F : 1.4F, isHeldOrHead ? 1.3F : 1.4F);
+			if (blockEntity.getPieceName() != null && blockEntity.getPieceName().equals("Lyzantra"))
+			{
+				ps.translate(0.0D, 0.05D, 0.0D);
+			}
+		}
 		if (blockEntity.hasLevel())
 			scale *= (float) blockEntity.getPieceScale();
+		
 		ps.scale(scale, scale, scale);
 		
-		rotationQuat.mul(Axis.ZN.rotationDegrees(180));
 		if (blockEntity.getPieceName() != null && blockEntity.getPieceName().equals("Lyzantra")) {
 			rotationQuat.mul(Axis.ZN.rotationDegrees(180));
 //            matrix3f.translate((float) 0.0D, (float) (-0.4D), (float) 0.0D);
 			ps.translate((float) 0.0D, (float) (1.75D), (float) 0.0D);
 		}
+		ps.mulPose(rotationQuat);
 		
 		data.writeMesh(pawnBuffer);
 		data.ensureInstance();
@@ -164,14 +176,8 @@ public class PieceFigureInstancer extends InstancedItemRenderer
 		RenderSystem.setShaderFogShape(FogShape.CYLINDER);
 	}
 
-//    private boolean isHeldOrHead(ItemDisplayContext type)
-//    {
-//        return type.equals(ItemDisplayContext.HEAD) || type.equals(ItemDisplayContext.THIRD_PERSON_RIGHT_HAND) || type.equals(ItemDisplayContext.THIRD_PERSON_LEFT_HAND);
-//    }
-//
-//    private float getPartialTicks()
-//    {
-//        Minecraft mc = Minecraft.getInstance();
-//        return mc.isPaused() ?mc.pausePartialTick : mc.getFrameTime();
-//    }
+    private boolean isHeldOrHead(ItemDisplayContext type)
+    {
+        return type.equals(ItemDisplayContext.HEAD) || type.equals(ItemDisplayContext.THIRD_PERSON_RIGHT_HAND) || type.equals(ItemDisplayContext.THIRD_PERSON_LEFT_HAND);
+    }
 }

@@ -1,6 +1,6 @@
 {
 	"template": {
-		"vanilla": "minecraft:shaders/core/rendertype_entity_solid",
+		"vanilla": "table_top_craft:shaders/core/chess",
 		"core": "minecraft:shaders/core/rendertype_entity_solid",
 		"iris": "entities_solid",
 		"optifine": "entities"

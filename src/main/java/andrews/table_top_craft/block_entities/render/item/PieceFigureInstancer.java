@@ -13,9 +13,12 @@ import com.github.andrew0030.pandora_core.modules.instancer.collective.Collectiv
 import com.github.andrew0030.pandora_core.modules.instancer.instancing.InstanceFormat;
 import com.github.andrew0030.pandora_core.modules.instancer.instancing.builtin.ItemDrawData;
 import com.github.andrew0030.pandora_core.modules.instancer.instancing.engine.BatchData;
+import com.github.andrew0030.pandora_core.modules.instancer.instancing.engine.BatchKey;
 import com.github.andrew0030.pandora_core.modules.instancer.instancing.engine.InstancingEnvironment;
 import com.github.andrew0030.pandora_core.modules.instancer.renderers.instancing.InstancedItemRenderer;
+import com.github.andrew0030.pandora_core.modules.instancer.state.PaCoRenderState;
 import com.github.andrew0030.pandora_core.modules.instancer.state.PaCoShaderStateShard;
+import com.mojang.blaze3d.platform.Lighting;
 import com.mojang.blaze3d.shaders.FogShape;
 import com.mojang.blaze3d.systems.RenderSystem;
 import com.mojang.blaze3d.vertex.PoseStack;
@@ -48,6 +51,20 @@ public class PieceFigureInstancer extends InstancedItemRenderer
 	protected CollectiveVBO vbo() {
 		return DrawScreenHelper.CHESS_PIECE_MODEL.getCollectiveVBO();
 	}
+	
+	public final BatchKey GUI_KEY = new BatchKey() {
+		public void flush(CollectiveDrawData data) {
+			Lighting.setupForEntityInInventory();
+			vbo().setupData(data, TTCShaders.CHESS_INSTANCED);
+			data.upload();
+			vbo().drawWithShader(
+					RenderSystem.getModelViewMatrix(),
+					RenderSystem.getProjectionMatrix(),
+					RenderSystem.getShader()
+			);
+			Lighting.setupFor3DItems();
+		}
+	};
 	
 	@Override
 	public void render(InstancingEnvironment instancingEnvironment, ItemStack itemStack, ItemDrawData itemDrawData, BatchData batchData, float v, Vec3 vec3) {
@@ -111,7 +128,11 @@ public class PieceFigureInstancer extends InstancedItemRenderer
 		if (pawnBuffer == null)
 			return;
 		
-		CollectiveDrawData data = batchData.buildBatch(ChessFigureInstancer.STANDARD_KEY);
+		CollectiveDrawData data = batchData.buildBatch(
+				PaCoRenderState.isGUI() ?
+				GUI_KEY :
+				ChessFigureInstancer.STANDARD_KEY
+		);
 		PoseStack ps = itemDrawData.getPoseStack();
 		ps.translate(8 * 0.0625F, 2 * 0.0625F, 8 * 0.0625F);
 		

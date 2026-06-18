@@ -2,6 +2,7 @@ package andrews.table_top_craft.util;
 
 import andrews.table_top_craft.game_logic.chess.pieces.BasePiece.PieceModelSet;
 import andrews.table_top_craft.game_logic.chess.pieces.BasePiece.PieceType;
+import andrews.table_top_craft.registry.TTCCoreShaders;
 import andrews.table_top_craft.util.instancing.ChessPieceModels;
 import com.github.andrew0030.pandora_core.modules.instancer.collective.CollectiveBufferBuilder;
 import com.github.andrew0030.pandora_core.client.render.obj.ObjLoader;
@@ -15,6 +16,7 @@ import java.util.List;
 
 public class DrawScreenHelper {
     public static final ChessPieceModels CHESS_PIECE_MODEL = new ChessPieceModels();
+	public static final TTCCoreShaders coreShaders = new TTCCoreShaders();
 
     private static final ObjLoader loader = new ObjLoader(
             List.of("models/pieces"),
@@ -32,7 +34,7 @@ public class DrawScreenHelper {
     public static void setup() {
         Services.RELOAD_LISTENER.registerResourceLoader((side) -> {
             if (side == LogicalSide.CLIENT)
-                return List.of(loader);
+                return List.of(loader, coreShaders);
             return null;
         });
     }

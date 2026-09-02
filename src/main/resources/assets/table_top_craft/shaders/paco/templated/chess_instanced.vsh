@@ -21,7 +21,7 @@ mat3 normScale(mat3 mtr) {
 
 // transforms
 transform ModelViewMat = ModelViewMat * ttc_Transform;
-transform Normal = normalize(Normal * normScale(mat3(ttc_Transform)));
+transform Normal = normalize(normScale(mat3(ttc_Transform)) * Normal);
 replace Color = ttc_Color;
 replace UV2 = ttc_Lightmap;
 replace UV1 = ttc_Inject_ConstantOverlay;

@@ -18,6 +18,7 @@ import com.github.andrew0030.pandora_core.modules.instancer.instancing.engine.In
 import com.github.andrew0030.pandora_core.modules.instancer.renderers.instancing.InstancedItemRenderer;
 import com.github.andrew0030.pandora_core.modules.instancer.state.PaCoRenderState;
 import com.github.andrew0030.pandora_core.modules.instancer.state.PaCoShaderStateShard;
+import com.github.andrew0030.pandora_core.test.PaCoRenderTypes;
 import com.mojang.blaze3d.platform.Lighting;
 import com.mojang.blaze3d.shaders.FogShape;
 import com.mojang.blaze3d.systems.RenderSystem;
@@ -54,15 +55,26 @@ public class PieceFigureInstancer extends InstancedItemRenderer
 	
 	public final BatchKey GUI_KEY = new BatchKey() {
 		public void flush(CollectiveDrawData data) {
-			Lighting.setupForEntityInInventory();
-			vbo().setupData(data, TTCShaders.CHESS_INSTANCED);
-			data.upload();
-			vbo().drawWithShader(
-					RenderSystem.getModelViewMatrix(),
-					RenderSystem.getProjectionMatrix(),
-					RenderSystem.getShader()
-			);
-			Lighting.setupFor3DItems();
+			if (PaCoRenderState.isGUI()) {
+				Lighting.setupForEntityInInventory();
+				PaCoRenderState.rotateLightingY((float) Math.toRadians(180));
+				vbo().setupData(data, TTCShaders.CHESS_INSTANCED);
+				data.upload();
+				vbo().drawWithShader(
+						RenderSystem.getModelViewMatrix(),
+						RenderSystem.getProjectionMatrix(),
+						RenderSystem.getShader()
+				);
+				Lighting.setupFor3DItems();
+			} else {
+				vbo().setupData(data, TTCShaders.CHESS_INSTANCED);
+				data.upload();
+				vbo().drawWithShader(
+						RenderSystem.getModelViewMatrix(),
+						RenderSystem.getProjectionMatrix(),
+						RenderSystem.getShader()
+				);
+			}
 		}
 	};
 	
@@ -97,7 +109,7 @@ public class PieceFigureInstancer extends InstancedItemRenderer
 			if(itemStack.getHoverName().getString().equals("andrew_"))
 			{
 				int tickCount = Minecraft.getInstance().player.tickCount;
-				int value = (tickCount % 180) * 2;
+				float value = ((tickCount % 180) + v) * 2;
 				color = color.fromHSV(value, 1.0F, 1.0F);
 				chessPieceFigureBlockEntity.setPieceColor(color.getRed() + "/" + color.getGreen() + "/" + color.getBlue() + "/255");
 			}
@@ -199,6 +211,7 @@ public class PieceFigureInstancer extends InstancedItemRenderer
 
     private boolean isHeldOrHead(ItemDisplayContext type)
     {
-        return type.equals(ItemDisplayContext.HEAD) || type.equals(ItemDisplayContext.THIRD_PERSON_RIGHT_HAND) || type.equals(ItemDisplayContext.THIRD_PERSON_LEFT_HAND);
+//        return type.equals(ItemDisplayContext.HEAD) || type.equals(ItemDisplayContext.THIRD_PERSON_RIGHT_HAND) || type.equals(ItemDisplayContext.THIRD_PERSON_LEFT_HAND);
+        return type.equals(ItemDisplayContext.HEAD) || type.equals(ItemDisplayContext.FIRST_PERSON_LEFT_HAND) || type.equals(ItemDisplayContext.FIRST_PERSON_RIGHT_HAND)  || type.equals(ItemDisplayContext.THIRD_PERSON_RIGHT_HAND) || type.equals(ItemDisplayContext.THIRD_PERSON_LEFT_HAND);
     }
 }

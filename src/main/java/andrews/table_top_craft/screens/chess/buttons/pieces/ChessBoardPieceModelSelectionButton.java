@@ -6,6 +6,9 @@ import andrews.table_top_craft.game_logic.chess.pieces.BasePiece.PieceModelSet;
 import andrews.table_top_craft.registry.TTCBlocks;
 import andrews.table_top_craft.util.NetworkUtil;
 import andrews.table_top_craft.util.Reference;
+import com.github.andrew0030.pandora_core.modules.instancer.instancing.builtin.ItemInstancingEnv;
+import com.github.andrew0030.pandora_core.modules.instancer.instancing.engine.InstanceManager;
+import com.github.andrew0030.pandora_core.modules.instancer.state.PaCoRenderState;
 import com.mojang.blaze3d.platform.GlStateManager;
 import com.mojang.blaze3d.platform.Lighting;
 import com.mojang.blaze3d.systems.RenderSystem;
@@ -101,12 +104,29 @@ public class ChessBoardPieceModelSelectionButton extends AbstractButton
 
         // Swap through all the Piece Types
         int scale = 32;
+	    
+	    InstanceManager instancer = new InstanceManager();
+	    ItemInstancingEnv env = new ItemInstancingEnv(instancer);
+	    PaCoRenderState.ACTIVE_ENVIRONMENT = env;
+	    instancer.markFrame();
+	    
+	    Minecraft.getInstance().getTextureManager().getTexture(TextureAtlas.LOCATION_BLOCKS).setFilter(false, false);
+	    RenderSystem.setShaderTexture(0, TextureAtlas.LOCATION_BLOCKS);
+	    RenderSystem.enableBlend();
+	    RenderSystem.blendFunc(GlStateManager.SourceFactor.SRC_ALPHA, GlStateManager.DestFactor.ONE_MINUS_SRC_ALPHA);
+	    RenderSystem.setShaderColor(1.0F, 1.0F, 1.0F, 1.0F);
+	    Lighting.setupFor3DItems();
+		
         for (int i = 0; i < 6; i++)
         {
             this.chessPieceFigureBlockEntity.setPieceType(i + 1);
             this.chessPieceFigureBlockEntity.saveToItem(this.chessPieceStack);
             this.renderChessPiece(graphics.pose(), this.chessPieceStack, this.x + 16 + (27 * i), this.y + 16, scale);
         }
+		
+	    instancer.drawFrame(env);
+	    instancer.markFrame();
+	    instancer.close();
 
         // Renders all the Locked Button features over the Button if needed
         if (this.shouldButtonBeLocked())
@@ -131,18 +151,12 @@ public class ChessBoardPieceModelSelectionButton extends AbstractButton
     {
         ItemRenderer itemRenderer = Minecraft.getInstance().getItemRenderer();
         BakedModel itemBakedModel = itemRenderer.getModel(itemStack, null, null, 0);
-        Minecraft.getInstance().getTextureManager().getTexture(TextureAtlas.LOCATION_BLOCKS).setFilter(false, false);
-        RenderSystem.setShaderTexture(0, TextureAtlas.LOCATION_BLOCKS);
-        RenderSystem.enableBlend();
-        RenderSystem.blendFunc(GlStateManager.SourceFactor.SRC_ALPHA, GlStateManager.DestFactor.ONE_MINUS_SRC_ALPHA);
-        RenderSystem.setShaderColor(1.0F, 1.0F, 1.0F, 1.0F);
         poseStack.pushPose();
         poseStack.translate(pX, pY, 100.0F);
         poseStack.scale(1.0F, -1.0F, 1.0F);
         poseStack.scale(size, size, size);
         RenderSystem.applyModelViewMatrix();
         MultiBufferSource.BufferSource bufferSource = Minecraft.getInstance().renderBuffers().bufferSource();
-        Lighting.setupForFlatItems();
         itemRenderer.render(itemStack, ItemDisplayContext.GUI, false, poseStack, bufferSource, 15728880, OverlayTexture.NO_OVERLAY, itemBakedModel);
         bufferSource.endBatch();
         poseStack.popPose();

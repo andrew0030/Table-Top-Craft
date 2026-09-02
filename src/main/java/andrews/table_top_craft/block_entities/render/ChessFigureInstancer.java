@@ -101,7 +101,7 @@ public class ChessFigureInstancer extends InstancedBlockEntityRenderer<ChessPiec
 	    float blue = NBTColorSaving.getBlue(blockEntity.getPieceColor()) / 255F;
 		if (blockEntity.getPieceName() != null && blockEntity.getPieceName().equals("andrew_")) {
 			int tickCount = Minecraft.getInstance().player.tickCount;
-			int value = (tickCount % 180) * 2;
+			float value = ((tickCount % 180) + pct) * 2;
 			Color color = new Color(0, 0, 0).fromHSV(value, 1.0F, 1.0F);
 			red = color.getRed() / 255f;
 			green = color.getGreen() / 255f;

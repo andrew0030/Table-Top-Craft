@@ -251,7 +251,7 @@ public abstract class BasePiece
 		STANDARD("models/pieces/standard/%type%.obj"),
 		CLASSIC("models/pieces/classic/classic_%type%.obj"),
 		PANDORAS_CREATURES("models/pieces/pandoras_creatures/pc_%type%.obj"),
-		CONE_HEAD("models/pieces/cone_head/%type%.obj");
+		THEORETICAL_MIN_LOD("models/pieces/theoretical_min_lod/%type%.obj");
 		
 		private final String piecePath;
 		
@@ -268,7 +268,7 @@ public abstract class BasePiece
 				case 1 -> STANDARD;
 				case 2 -> CLASSIC;
 				case 3 -> PANDORAS_CREATURES;
-				case 4 -> CONE_HEAD;
+				case 4 -> THEORETICAL_MIN_LOD;
 				default -> null;
 			};
 		}

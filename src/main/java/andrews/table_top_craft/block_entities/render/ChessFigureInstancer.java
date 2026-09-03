@@ -4,6 +4,7 @@ import andrews.table_top_craft.block_entities.ChessPieceFigureBlockEntity;
 import andrews.table_top_craft.game_logic.chess.pieces.BasePiece;
 import andrews.table_top_craft.objects.blocks.ChessPieceFigureBlock;
 import andrews.table_top_craft.util.*;
+import com.github.andrew0030.pandora_core.modules.fastlib.render.CullBox;
 import com.github.andrew0030.pandora_core.modules.instancer.collective.CollectiveBufferBuilder;
 import com.github.andrew0030.pandora_core.modules.instancer.collective.CollectiveDrawData;
 import com.github.andrew0030.pandora_core.modules.instancer.collective.CollectiveVBO;
@@ -141,4 +142,9 @@ public class ChessFigureInstancer extends InstancedBlockEntityRenderer<ChessPiec
         type.clearRenderState();
         RenderSystem.setShaderFogShape(FogShape.CYLINDER);
     }
+	
+	@Override
+	public void getCullBox(CullBox box, PacoInstancingLevel level, ChessPieceFigureBlockEntity object, BlockPos pos) {
+		box.set(object.getRenderBoundingBox());
+	}
 }

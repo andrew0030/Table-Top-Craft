@@ -9,7 +9,6 @@ import com.github.andrew0030.pandora_core.client.render.obj.ObjLoader;
 import com.github.andrew0030.pandora_core.client.render.obj.ObjModel;
 import com.github.andrew0030.pandora_core.platform.Services;
 import com.github.andrew0030.pandora_core.utils.LogicalSide;
-import com.mojang.datafixers.util.Pair;
 import net.minecraft.resources.ResourceLocation;
 
 import java.util.List;
@@ -26,7 +25,7 @@ public class DrawScreenHelper {
                             pieceSet(loader, PieceModelSet.STANDARD),
                             pieceSet(loader, PieceModelSet.CLASSIC),
                             pieceSet(loader, PieceModelSet.PANDORAS_CREATURES),
-                            pieceSet(loader, PieceModelSet.CONE_HEAD)
+                            pieceSet(loader, PieceModelSet.THEORETICAL_MIN_LOD)
                     )
             )
     );

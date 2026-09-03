@@ -12,6 +12,7 @@ import andrews.table_top_craft.game_logic.chess.board.tiles.BaseChessTile;
 import andrews.table_top_craft.game_logic.chess.pieces.BasePiece;
 import andrews.table_top_craft.objects.blocks.ChessBlock;
 import andrews.table_top_craft.util.*;
+import com.github.andrew0030.pandora_core.modules.fastlib.render.CullBox;
 import com.github.andrew0030.pandora_core.modules.instancer.instancing.InstanceData;
 import com.github.andrew0030.pandora_core.modules.instancer.instancing.engine.PacoInstancingLevel;
 import com.github.andrew0030.pandora_core.modules.instancer.state.PaCoShaderStateShard;
@@ -450,4 +451,24 @@ public class ChessBoardInstancer extends InstancedBlockEntityRenderer<ChessBlock
 	    type.clearRenderState();
 	    RenderSystem.setShaderFogShape(FogShape.CYLINDER);
     }
+	
+	@Override
+	public boolean shouldRender(ChessBlockEntity object, Vec3 pCameraPos) {
+		if (object.getBoard() == null)
+			return false;
+		return super.shouldRender(object, pCameraPos);
+	}
+	
+	@Override
+	public void getCullBox(CullBox box, PacoInstancingLevel level, ChessBlockEntity chessBlockEntity, BlockPos pos) {
+		float bottom = chessBlockEntity.getMoveLog().size() == 0 ? (12 / 16f) : (5 / 16f);
+		box.set(
+				pos.getX(),
+				pos.getY() + bottom,
+				pos.getZ(),
+				pos.getX() + 1,
+				pos.getY() + (17 / 16f),
+				pos.getZ() + 1
+		);
+	}
 }
